@@ -1,0 +1,2528 @@
+admin/dashboard.blade.php
+@extends('admin.layout')
+
+@section('header_title', 'Dashboard')
+@section('header_subtitle', 'Visão geral do sistema')
+
+@section('content')
+<div class="admin-card">
+    <div class="admin-card-header">
+        <h2>
+            <x-lucide-chart-column-big class="lucid-icon" />
+            Visão Geral
+        </h2>
+    </div>
+
+    {{-- Stats Grid --}}
+    <div class="admin-stats">
+        {{-- Total de Usuários --}}
+        <div class="admin-stat-card">
+            {{-- <div class="stat-icon">👥</div>
+            <div class="stat-info"> --}}
+                <h3>Total de Usuários</h3>
+                <div class="value">{{ $totalUsers }}</div>
+                <div class="stat-detail">
+                    <span>Admin: {{ $totalAdmins }}</span>
+                    <span>Editor: {{ $totalEditors }}</span>
+                    <span>Viewer: {{ $totalViewers }}</span>
+                </div>
+            {{-- </div> --}}
+        </div>
+
+        {{-- Total de Páginas --}}
+        <div class="admin-stat-card">
+            <div class="stat-icon">📄</div>
+            <div class="stat-info">
+                <h3>Total de Páginas</h3>
+                <div class="value">{{ $totalPages }}</div>
+                <div class="stat-detail">
+                    <span>Publicadas: {{ $publishedPages }}</span>
+                    <span>Rascunho: {{ $draftPages }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Últimas Páginas --}}
+    <h2 style="margin-top: 2rem; margin-bottom: 1rem;">Últimas Páginas Criadas</h2>
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Título</th>
+                <th>Slug</th>
+                <th>Autor</th>
+                <th>Status</th>
+                <th>Data</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($recentPages as $page)
+            <tr>
+                <td>{{ $page->title }}</td>
+                <td><code>{{ $page->slug }}</code></td>
+                <td>{{ $page->author?->name ?? '-' }}</td>
+                <td>
+                    @if($page->status === 'published')
+                        <span class="admin-badge admin-badge-active">Publicado</span>
+                    @else
+                        <span class="admin-badge admin-badge-inactive">Rascunho</span>
+                    @endif
+                </td>
+                <td>{{ $page->created_at->format('d/m/Y H:i') }}</td>
+                <td class="admin-actions">
+                    <a href="{{ route('admin.pages.edit', $page->id) }}" class="admin-btn admin-btn-secondary" style="padding: 4px 12px;">
+                        <x-lucide-pencil class="lucid-icon" />
+                    </a>
+                </td>
+            </tr>
+            @empty
+            <tr>
+                <td colspan="6" class="admin-text-center admin-text-muted">Nenhuma página criada ainda</td>
+            </tr>
+            @endforelse
+        </tbody>
+    </table>
+
+    {{-- Últimos Usuários --}}
+    <h2 style="margin-top: 2rem; margin-bottom: 1rem;">Últimos Usuários Cadastrados</h2>
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>E-mail</th>
+                <th>Role</th>
+                <th>Data</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($recentUsers as $user)
+            <tr>
+                <td>{{ $user->name }}</td>
+                <td>{{ $user->email }}</td>
+                <td>
+                    @if($user->role?->slug === 'admin')
+                        <span class="admin-badge admin-badge-active">Admin</span>
+                    @elseif($user->role?->slug === 'editor')
+                        <span class="admin-badge admin-badge-warning">Editor</span>
+                    @else
+                        <span class="admin-badge admin-badge-secondary">Visualizador</span>
+                    @endif
+                </td>
+                <td>{{ $user->created_at->format('d/m/Y H:i') }}</td>
+                <td class="admin-actions">
+                    <a href="{{ route('admin.users.edit', $user->id) }}" class="admin-btn admin-btn-secondary" style="padding: 4px 12px;">
+                        <x-lucide-pencil class="lucid-icon" />
+                    </a>
+                </td>
+            </tr>
+            @empty
+            <tr>
+                <td colspan="5" class="admin-text-center admin-text-muted">Nenhum usuário cadastrado ainda</td>
+            </tr>
+            @endforelse
+        </tbody>
+    </table>
+</div>
+@endsection
+
+
+admin/layout.blade.php
+<!DOCTYPE html>
+@php
+    $info = config('admin');
+    $page_title = $info['page_title'] ?? 'Lunar Admin';
+    $title = $info['title'] ?? 'Lunar Admin';
+    $subtitle = $info['subtitle'] ?? 'Painel de Controle';
+    $logo = $info['logo'] ?? '🌙';
+    $colors = $info['colors'] ?? [];
+    $sortedMenu = collect($info['menu'] ?? [])->sortBy('order');
+@endphp
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ $page_title }}</title>
+
+    {{-- Cores dinâmicas via CSS variables
+    <style>
+        :root {
+        @foreach($colors as $key => $color)
+            --color-{{ $key }}: {{ $color }};
+        @endforeach
+
+        }
+    </style> --}}
+
+    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+    <script src="{{ asset('js/admin.js') }}"></script>
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+    @stack('styles')
+</head>
+<body>
+    <div class="admin-wrapper">
+        <!-- Sidebar -->
+        <button class="admin-menu-toggle" id="menuToggle">
+            <span></span> <span></span> <span></span>
+        </button>
+        <aside class="admin-sidebar">
+            <div class="admin-sidebar-header">
+                <h2>
+                    @if(filter_var($logo, FILTER_VALIDATE_URL) || preg_match('/\.(png|jpg|jpeg|gif|svg)$/i', $logo))
+                        <img src="{{ asset($logo) }}" alt="{{ $title }}" class="admin-logo-img">
+                    @else
+                        {{ $logo }}
+                    @endif
+                    {{ $title }}
+                </h2>
+                <p>{{ $subtitle }}</p>
+            </div>
+
+            <nav class="admin-nav">
+                @foreach($sortedMenu as $item)
+                    @php
+                        $isActive = request()->routeIs($item['active']);
+                    @endphp
+                    <a href="{{ route($item['route']) }}"
+                       class="admin-nav-item {{ $isActive ? 'active' : '' }}">
+                        <x-dynamic-component :component="'lucide-' . $item['icon']" class="lucid-icon" />
+                        <span>{{ $item['label'] }}</span>
+                    </a>
+                @endforeach
+            </nav>
+        </aside>
+
+        <!-- Conteúdo Principal -->
+        <main class="admin-main">
+            <div class="admin-header">
+                <div class="admin-header-title">
+                    <h1>@yield('header_title', 'Dashboard')</h1>
+                    <p>@yield('header_subtitle', 'Bem-vindo ao painel de controle')</p>
+                </div>
+                <div class="admin-header-user">
+                    <a href="{{ route('admin.profile.edit') }}">
+                        {{ auth()->user()->name }}
+                    </a>
+                    <form method="POST" action="{{ route('logout') }}" style="display: inline;">
+                        @csrf
+                        <button type="submit" class="admin-btn admin-btn-secondary" style="padding: 6px 12px;">
+                            <x-lucide-log-out class="lucid-icon" /> Sair
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="admin-content">
+                @if(session('success'))
+                    <div class="admin-alert admin-alert-success">
+                        {{ session('success') }}
+                    </div>
+                @endif
+
+                @if($errors->any())
+                    <div class="admin-alert admin-alert-error">
+                        {{ $errors->first() }}
+                    </div>
+                @endif
+
+                @yield('content')
+            </div>
+        </main>
+    </div>
+    @stack('scripts')
+</body>
+</html>
+
+
+admin/pages/create.blade.php
+@extends('admin.layout')
+
+@section('header_title', 'Nova Página')
+@section('header_subtitle', 'Crie uma nova página pública')
+
+@section('content')
+<div class="admin-card">
+    <div class="admin-card-header">
+        <h2><x-lucide-file-text class="lucid-icon" /> Nova Página</h2>
+        <a href="{{ route('admin.pages.index') }}" class="admin-btn admin-btn-secondary">
+            <x-lucide-arrow-left class="lucid-icon" /> <span>Voltar</span>
+        </a>
+    </div>
+
+    <form method="POST" action="{{ route('admin.pages.store') }}" id="create_form">
+        @csrf
+
+        <div class="admin-form-row">
+            <div class="form-group">
+                <label for="title">Título *</label>
+                <input type="text" name="title" id="title" value="{{ old('title') }}" required>
+                @error('title') <small class="error">{{ $message }}</small> @enderror
+            </div>
+        </div>
+
+        <div class="admin-form-row">
+            <div class="form-group">
+                <label for="slug">Slug *</label>
+                <input type="text" name="slug" id="slug" value="{{ old('slug') }}" required>
+                <small>URL amigável (ex: termos-de-uso, politica-privacidade)</small>
+                @error('slug') <small class="error">{{ $message }}</small> @enderror
+            </div>
+
+            <div class="form-group">
+                <label for="author_id">Autor</label>
+                <select name="author_id" id="author_id">
+                    <option value="">-- Selecione um autor --</option>
+                    @foreach($users as $user)
+                        <option value="{{ $user->id }}"
+                            {{ old('author_id', $page->author_id ?? Auth::id()) == $user->id ? 'selected' : '' }}>
+                            {{ $user->name }} ({{ $user->role->name }})
+                        </option>
+                    @endforeach
+                </select>
+                @error('author_id') <small class="error">{{ $message }}</small> @enderror
+            </div>
+        </div>
+
+        <div class="admin-form-row">
+            <div class="form-group">
+                <label for="status">Status *</label>
+                <select name="status" id="status" required>
+                    <option value="draft" {{ old('status') == 'draft' ? 'selected' : '' }}>Rascunho</option>
+                    <option value="published" {{ old('status') == 'published' ? 'selected' : '' }}>Publicado</option>
+                    <option value="archived" {{ old('status') == 'archived' ? 'selected' : '' }}>Arquivado</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="template">Template da página</label>
+                <select name="template" id="template">
+                    @foreach($templates as $value => $label)
+                        <option value="{{ $value }}" {{ old('template', $page->template ?? config('pageTemplates.default')) == $value ? 'selected' : '' }}>
+                            {{ $label }}
+                        </option>
+                    @endforeach
+                </select>
+                <small>Define como a página será exibida publicamente</small>
+                @error('template') <small class="error">{{ $message }}</small> @enderror
+            </div>
+        </div>
+
+        <div class="admin-form-row">
+            <div class="form-group">
+                <label for="excerpt">Resumo / Descrição curta</label>
+                <textarea name="excerpt" id="excerpt" rows="2">{{ old('excerpt') }}</textarea>
+                <small>Breve resumo da página (opcional)</small>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="content">Conteúdo *</label>
+            <textarea name="content" id="content" rows="15" style="display: none;"></textarea>
+            <div id="tiny-editor" class="tiny-editor"></div>
+            @error('content') <small class="error">{{ $message }}</small> @enderror
+        </div>
+
+        {{-- Taxonomias (Termos) --}}
+        <div class="form-group">
+            <label>Classificação</label>
+
+            @foreach($taxonomies as $taxonomy)
+                <div class="taxonomy-group" style="margin-bottom: 1rem; padding: 0.75rem; background: #f9fafb; border-radius: 0.5rem;">
+                    <h4 style="margin: 0 0 0.5rem 0; font-size: 0.875rem; font-weight: 600;">
+                        {{ $taxonomy->name }}
+                        @if($taxonomy->description)
+                            <small style="font-weight: normal; color: #6b7280;">({{ $taxonomy->description }})</small>
+                        @endif
+                    </h4>
+
+                    <div class="terms-checkbox-group" style="display: flex; flex-wrap: wrap; gap: 0.75rem;">
+                        @foreach($taxonomy->terms as $term)
+                            <label style="display: flex; align-items: center; gap: 0.25rem;">
+                                <input type="checkbox"
+                                    name="term_ids[]"
+                                    value="{{ $term->id }}"
+                                    {{ isset($selectedTermIds) && in_array($term->id, $selectedTermIds) ? 'checked' : '' }}>
+                                <span>{{ $term->name }}</span>
+                                @if($term->parent)
+                                    <small style="color: #9ca3af;">({{ $term->parent->name }})</small>
+                                @endif
+                            </label>
+                        @endforeach
+                    </div>
+                </div>
+            @endforeach
+
+            <small>Selecione os termos que classificam esta página</small>
+        </div>
+
+        <button type="submit" class="admin-btn admin-btn-primary">
+            <x-lucide-save class="lucid-icon" /> Salvar
+        </button>
+    </form>
+</div>
+@endsection
+
+
+@push('styles')
+<style>
+    .tiny-editor {
+        min-height: 400px;
+    }
+</style>
+@endpush
+
+@push('scripts')
+<script src="{{ asset('js/tinymce/tinymce.min.js') }}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    tinymce.init({
+        selector: '#tiny-editor',
+        height: 500,
+        menubar: true,
+        language: 'pt_BR',
+        plugins: [
+            'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+            'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+            'insertdatetime', 'media', 'table', 'help', 'wordcount'
+        ],
+        toolbar: 'undo redo | blocks | ' +
+            'bold italic backcolor | alignleft aligncenter ' +
+            'alignright alignjustify | bullist numlist outdent indent | ' +
+            'removeformat | link image | help',
+        content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:16px }',
+        // Remove tags vazias e limpa o HTML
+        remove_trailing_brs: true,
+        remove_linebreaks: false,
+        apply_source_formatting: true,
+        cleanup_on_startup: true,
+        // Configuração para não criar <p><br></p> desnecessários
+        forced_root_block: 'p',
+        // Setup para carregar conteúdo existente e salvar no textarea
+        setup: function(editor) {
+            // Carrega o conteúdo existente
+            var existingContent = document.getElementById('content').value;
+            if (existingContent) {
+                editor.on('init', function() {
+                    editor.setContent(existingContent);
+                });
+            }
+
+            // Salva no textarea antes de submeter
+            var form = document.querySelector('#create_form');
+            form.addEventListener('submit', function() {
+                document.getElementById('content').value = editor.getContent();
+            });
+        }
+    });
+
+    // No campo título, aplicar ao digitar
+    document.getElementById('title').addEventListener('input', function() {
+        const slugField = document.getElementById('slug');
+        if (slugField && !slugField.dataset.manuallyEdited) {
+            slugField.value = slugify(this.value);
+        }
+    });
+
+    // Permite que o usuário edite manualmente o slug sem ser sobrescrito
+    document.getElementById('slug').addEventListener('input', function() {
+        this.dataset.manuallyEdited = 'true';
+    });
+});
+
+function slugify(text) {
+    return text
+        .toString()
+        .normalize('NFD')                          // Separa acentos dos caracteres
+        .replace(/[\u0300-\u036f]/g, '')           // Remove acentos
+        .toLowerCase()                              // Minúsculas
+        .trim()                                     // Remove espaços do início/fim
+        .replace(/[^a-z0-9\s-]/g, '')              // Remove caracteres especiais
+        .replace(/[\s_-]+/g, '-')                  // Substitui espaços/underscores por hífen
+        .replace(/^-+|-+$/g, '');                  // Remove hífens do início/fim
+}
+</script>
+@endpush
+
+
+admin/pages/edit.blade.php
+@extends('admin.layout')
+
+@section('header_title', 'Editar Página')
+@section('header_subtitle', 'Modifique o conteúdo da página')
+
+@section('content')
+<div class="admin-card">
+    <div class="admin-card-header">
+        <h2><x-lucide-file-text class="lucid-icon" /> Editar: {{ $page->title }}</h2>
+        <div class="top-buttons">
+            <a href="{{ $page->public_url }}" class="admin-btn admin-btn-secondary" target="_blank">
+                <x-lucide-external-link class="lucid-icon" /> <span>Visitar</span>
+            </a>
+            <a href="{{ route('admin.pages.index') }}" class="admin-btn admin-btn-secondary">
+                <x-lucide-arrow-left class="lucid-icon" /> <span>Voltar</span>
+            </a>
+        </div>
+    </div>
+
+    <form method="POST" action="{{ route('admin.pages.update', $page->id) }}" id="edit_form">
+        @csrf
+        @method('PUT')
+
+        <div class="admin-form-row">
+            <div class="form-group">
+                <label for="title">Título *</label>
+                <input type="text" name="title" id="title" value="{{ old('title', $page->title) }}" required>
+                @error('title') <small class="error">{{ $message }}</small> @enderror
+            </div>
+        </div>
+
+        <div class="admin-form-row">
+            <div class="form-group">
+                <label for="slug">Slug *</label>
+                <input type="text" name="slug" id="slug" value="{{ old('slug', $page->slug) }}" required>
+                <small>URL amigável (ex: termos-de-uso, politica-privacidade)</small>
+                @error('slug') <small class="error">{{ $message }}</small> @enderror
+            </div>
+
+            <div class="form-group">
+                <label for="author_id">Autor</label>
+                <select name="author_id" id="author_id">
+                    <option value="">-- Selecione um autor --</option>
+                    @foreach($users as $user)
+                        <option value="{{ $user->id }}"
+                            {{ old('author_id', $page->author_id ?? Auth::id()) == $user->id ? 'selected' : '' }}>
+                            {{ $user->name }} ({{ $user->role->name }})
+                        </option>
+                    @endforeach
+                </select>
+                @error('author_id') <small class="error">{{ $message }}</small> @enderror
+            </div>
+        </div>
+
+        <div class="admin-form-row">
+            <div class="form-group">
+                <label for="status">Status *</label>
+                <select name="status" id="status" required>
+                    <option value="draft" {{ old('status', $page->status) == 'draft' ? 'selected' : '' }}>Rascunho</option>
+                    <option value="published" {{ old('status', $page->status) == 'published' ? 'selected' : '' }}>Publicado</option>
+                    <option value="archived" {{ old('status', $page->status) == 'archived' ? 'selected' : '' }}>Arquivado</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="template">Template da página</label>
+                <select name="template" id="template">
+                    @foreach($templates as $value => $label)
+                        <option value="{{ $value }}" {{ old('template', $page->template ?? config('pageTemplates.default')) == $value ? 'selected' : '' }}>
+                            {{ $label }}
+                        </option>
+                    @endforeach
+                </select>
+                <small>Define como a página será exibida publicamente</small>
+                @error('template') <small class="error">{{ $message }}</small> @enderror
+            </div>
+        </div>
+
+        <div class="admin-form-row">
+            <div class="form-group">
+                <label for="excerpt">Resumo / Descrição curta</label>
+                <textarea name="excerpt" id="excerpt" rows="2">{{ old('excerpt', $page->excerpt) }}</textarea>
+                <small>Breve resumo da página (opcional)</small>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="content">Conteúdo *</label>
+            <textarea name="content" id="content" rows="15" style="display: none;">{{ old('content', $page->content) }}</textarea>
+            <div id="tiny-editor" class="tiny-editor"></div>
+            @error('content') <small class="error">{{ $message }}</small> @enderror
+        </div>
+
+        {{-- Taxonomias (Termos) --}}
+        <div class="form-group">
+            <label>Classificação</label>
+
+            @foreach($taxonomies as $taxonomy)
+                <div class="taxonomy-group" style="margin-bottom: 1rem; padding: 0.75rem; background: #f9fafb; border-radius: 0.5rem;">
+                    <h4 style="margin: 0 0 0.5rem 0; font-size: 0.875rem; font-weight: 600;">
+                        {{ $taxonomy->name }}
+                        @if($taxonomy->description)
+                            <small style="font-weight: normal; color: #6b7280;">({{ $taxonomy->description }})</small>
+                        @endif
+                    </h4>
+
+                    <div class="terms-checkbox-group" style="display: flex; flex-wrap: wrap; gap: 0.75rem;">
+                        @foreach($taxonomy->terms as $term)
+                            <label style="display: flex; align-items: center; gap: 0.25rem;">
+                                <input type="checkbox"
+                                    name="term_ids[]"
+                                    value="{{ $term->id }}"
+                                    {{ isset($selectedTermIds) && in_array($term->id, $selectedTermIds) ? 'checked' : '' }}>
+                                <span>{{ $term->name }}</span>
+                                @if($term->parent)
+                                    <small style="color: #9ca3af;">({{ $term->parent->name }})</small>
+                                @endif
+                            </label>
+                        @endforeach
+                    </div>
+                </div>
+            @endforeach
+
+            <small>Selecione os termos que classificam esta página</small>
+        </div>
+
+        <button type="submit" class="admin-btn admin-btn-primary">
+            <x-lucide-save class="lucid-icon" /> Atualizar
+        </button>
+    </form>
+</div>
+@endsection
+
+@push('styles')
+<style>
+    .tiny-editor {
+        min-height: 400px;
+    }
+</style>
+@endpush
+
+@push('scripts')
+<script src="{{ asset('js/tinymce/tinymce.min.js') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        tinymce.init({
+            selector: '#tiny-editor',
+            height: 500,
+            menubar: true,
+            language: 'pt_BR',
+            plugins: [
+                'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                'insertdatetime', 'media', 'table', 'help', 'wordcount'
+            ],
+            toolbar: 'undo redo | blocks | ' +
+                'bold italic backcolor | alignleft aligncenter ' +
+                'alignright alignjustify | bullist numlist outdent indent | ' +
+                'removeformat | link image | help',
+            content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:16px }',
+            // Remove tags vazias e limpa o HTML
+            remove_trailing_brs: true,
+            remove_linebreaks: false,
+            apply_source_formatting: true,
+            cleanup_on_startup: true,
+            // Configuração para não criar <p><br></p> desnecessários
+            forced_root_block: 'p',
+            // Setup para carregar conteúdo existente e salvar no textarea
+            setup: function(editor) {
+                // Carrega o conteúdo existente
+                var existingContent = document.getElementById('content').value;
+                if (existingContent) {
+                    editor.on('init', function() {
+                        editor.setContent(existingContent);
+                    });
+                }
+
+                // Salva no textarea antes de submeter
+                var form = document.querySelector('#edit_form');
+                form.addEventListener('submit', function() {
+                    document.getElementById('content').value = editor.getContent();
+                });
+            }
+        });
+    });
+</script>
+@endpush
+
+
+admin/pages/index.blade.php
+@extends('admin.layout')
+
+@section('header_title', 'Páginas')
+@section('header_subtitle', 'Gerencie as páginas públicas')
+
+@section('content')
+<div class="admin-card">
+    <div class="admin-card-header">
+        <h2><x-lucide-file-text class="lucid-icon" /> Lista de Páginas</h2>
+        <a href="{{ route('admin.pages.create') }}" class="admin-btn admin-btn-primary">
+            <x-lucide-plus class="lucid-icon" /> <span>Nova Página</span>
+        </a>
+    </div>
+
+    <table class="admin-table">
+        <thead>
+            <tr>
+                {{-- <th>ID</th> --}}
+                <th>Título</th>
+                <th>Slug</th>
+                <th>Classificação</th>
+                <th>Status</th>
+                <th>Autor</th>
+                <th>Criada em</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($pages as $page)
+            <tr>
+                {{-- <td>{{ $page->id }}</td> --}}
+                <td>{{ $page->title }}</td>
+                <td><code>{{ $page->slug }}</code></td>
+                <td>
+                    @foreach($page->terms->groupBy('taxonomy.name') as $taxonomyName => $terms)
+                        <strong>{{ $taxonomyName }}:</strong>
+                        @foreach($terms as $term)
+                            <span class="term-badge">{{ $term->name }}</span>
+                        @endforeach
+                        <br>
+                    @endforeach
+                </td>
+                <td><span class="{{ $page->status_badge }}">{{ $page->status_label }}</span></td>
+                <td>{{ $page->author_name }}</td>
+                <td>{{ $page->created_at->format('d/m/Y H:i') }}</td>
+                <td class="admin-actions">
+                    <a href="{{ $page->public_url }}" class="admin-btn admin-btn-secondary" style="padding: 4px 12px;" target="_blank">
+                        <x-lucide-external-link class="lucid-icon" />
+                    </a>
+                    <a href="{{ route('admin.pages.edit', $page->id) }}" class="admin-btn admin-btn-secondary" style="padding: 4px 12px;">
+                        <x-lucide-pencil class="lucid-icon" />
+                    </a>
+                    <form method="POST" action="{{ route('admin.pages.destroy', $page->id) }}" style="display: inline;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="admin-btn admin-btn-danger" style="padding: 4px 12px;" onclick="return confirm('Remover esta página?')">
+                            <x-lucide-trash-2 class="lucid-icon" />
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            @empty
+            <tr>
+                <td colspan="8" class="admin-text-center admin-text-muted">Nenhuma página cadastrada</td>
+            </tr>
+            @endforelse
+        </tbody>
+    </table>
+
+    <div class="admin-pagination">
+        {{ $pages->links() }}
+    </div>
+</div>
+@endsection
+
+
+admin/settings/index.blade.php
+@extends('admin.layout')
+
+@section('header_title', 'Configurações')
+@section('header_subtitle', 'Configure o sistema')
+
+@section('content')
+<div class="admin-card">
+    <form method="POST" action="{{ route('admin.settings.update') }}" enctype="multipart/form-data">
+        @csrf
+
+        @foreach($groups as $groupName => $groupDefinitions)
+            <div class="settings-group" style="margin-bottom: 2rem;">
+                <h3 style="text-transform: capitalize; border-bottom: 1px solid #e5e7eb; padding-bottom: 0.5rem;">
+                    {{ ucfirst($groupName) }}
+                </h3>
+
+                @foreach($groupDefinitions as $def)
+                    @php
+                        $value = old($def['key'], $def['value'] ?? $def['default'] ?? '');
+                        $options = $def['options'] ?? [];
+                        $attributes = $def['attributes'] ?? [];
+                    @endphp
+
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                        <label for="{{ $def['key'] }}">{{ $def['label'] }}</label>
+
+                        @switch($def['type'])
+                            @case('textarea')
+                                <textarea name="{{ $def['key'] }}" id="{{ $def['key'] }}" rows="3" class="form-input">{{ $value }}</textarea>
+                                @break
+
+                            @case('select')
+                                <select name="{{ $def['key'] }}" id="{{ $def['key'] }}" class="form-input">
+                                    @foreach($options as $optValue => $optLabel)
+                                        <option value="{{ $optValue }}" {{ $value == $optValue ? 'selected' : '' }}>
+                                            {{ $optLabel }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @break
+
+                            @case('radio')
+                                <div class="radio-group">
+                                    @foreach($options as $optValue => $optLabel)
+                                        <label style="display: inline-flex; align-items: center; gap: 0.25rem; margin-right: 1rem;">
+                                            <input type="radio" name="{{ $def['key'] }}" value="{{ $optValue }}" {{ $value == $optValue ? 'checked' : '' }}>
+                                            <span>{{ $optLabel }}</span>
+                                        </label>
+                                    @endforeach
+                                </div>
+                                @break
+
+                            @case('checkbox')
+                                @if(!empty($options))
+                                    @php
+                                        $currentValues = is_array($value) ? $value : ($value ? explode(',', $value) : []);
+                                    @endphp
+                                    <div class="checkbox-group">
+                                        @foreach($options as $optValue => $optLabel)
+                                            <label style="display: inline-flex; align-items: center; gap: 0.25rem; margin-right: 1rem;">
+                                                <input type="checkbox"
+                                                    name="{{ $def['key'] }}[]"
+                                                    value="{{ $optValue }}"
+                                                    {{ in_array($optValue, $currentValues) ? 'checked' : '' }}>
+                                                <span>{{ $optLabel }}</span>
+                                            </label>
+                                        @endforeach
+                                    </div>
+                                    <input type="hidden" name="{{ $def['key'] }}_is_array" value="1">
+                                @else
+                                    <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <input type="hidden" name="{{ $def['key'] }}" value="0">
+                                        <input type="checkbox" name="{{ $def['key'] }}" value="1" {{ $value ? 'checked' : '' }}>
+                                        <span>Sim</span>
+                                    </label>
+                                @endif
+                                @break
+
+                            @case('number')
+                                <input type="number"
+                                    name="{{ $def['key'] }}"
+                                    id="{{ $def['key'] }}"
+                                    value="{{ $value }}"
+                                    @foreach($attributes as $attr => $attrValue)
+                                        {{ $attr }}="{{ $attrValue }}"
+                                    @endforeach
+                                    class="form-input"
+                                    style="width: 150px;">
+                                @break
+
+                            {{-- @case('image')
+                                <div class="image-preview">
+                                    @if($value)
+                                        <img src="{{ asset($value) }}" style="max-width: 150px; margin-bottom: 10px; display: block;">
+                                    @endif
+                                    <input type="file" name="{{ $def['key'] }}" accept="image/*">
+                                    <input type="hidden" name="{{ $def['key'] }}_current" value="{{ $value }}">
+                                    <small>Deixe em branco para manter a imagem atual</small>
+                                </div>
+                                @break --}}
+                                @case('image')
+                                    <div class="image-type" style="/* display: flex; flex-direction: column; gap: 0.5rem; */">
+                                        {{-- Preview da imagem atual --}}
+                                        @if($value)
+                                            <div class="image-preview" style="/* display: flex; align-items: center; gap: 1rem; */">
+                                                <img src="{{ $value }}"
+                                                    alt="{{ $def['label'] }}"
+                                                    style="/* max-width: 150px; border-radius: 0.375rem; border: 1px solid #e5e7eb; */">
+
+                                            </div>
+                                        @endif
+
+                                        <div class="image-input">
+
+                                            {{-- Input para novo upload --}}
+                                            <input type="file"
+                                                name="{{ $def['key'] }}"
+                                                accept="image/*"
+                                                class="form-input">
+
+                                            @if($value)
+                                            {{-- Checkbox para remover a imagem --}}
+                                            <label style="font-size: 0.875rem; color: #ef4444; cursor: pointer;">
+                                                <input type="checkbox"
+                                                    name="remove_settings[{{ $def['key'] }}]"
+                                                    value="1"
+                                                    style="margin-right: 0.25rem;">
+                                                Remover imagem
+                                            </label>
+                                            @endif
+
+                                            {{-- Hidden field com o PATH RELATIVO (não a URL!) --}}
+                                            <input type="hidden"
+                                                name="{{ $def['key'] }}_current"
+                                                value="{{ $def['path'] ?? $value }}">
+
+                                        </div>
+
+                                    </div>
+                                        <small style="color: #6b7280;">
+                                            @if($value)
+                                                Marque "Remover imagem" para apagar, ou selecione um novo arquivo para substituir.
+                                            @else
+                                                Selecione uma imagem para enviar.
+                                            @endif
+                                        </small>
+                                    @break
+
+                            @case('url')
+                                <input type="url" name="{{ $def['key'] }}" id="{{ $def['key'] }}" value="{{ $value }}" class="form-input" placeholder="https://...">
+                                @break
+
+                            @case('email')
+                                <input type="email" name="{{ $def['key'] }}" id="{{ $def['key'] }}" value="{{ $value }}" class="form-input" placeholder="email@exemplo.com">
+                                @break
+
+                            @default
+                                <input type="text" name="{{ $def['key'] }}" id="{{ $def['key'] }}" value="{{ $value }}" class="form-input">
+                        @endswitch
+
+                        @if(!empty($def['description']))
+                            <small class="form-help">{{ $def['description'] }}</small>
+                        @endif
+
+                        @error($def['key'])
+                            <small class="error" style="color: #ef4444; display: block;">{{ $message }}</small>
+                        @enderror
+                    </div>
+                @endforeach
+            </div>
+        @endforeach
+
+        <button type="submit" class="admin-btn admin-btn-primary">
+            <x-lucide-save class="lucid-icon" /> Salvar Configurações
+        </button>
+    </form>
+</div>
+@endsection
+
+@push('styles')
+<style>
+    .form-help {
+        display: block;
+        font-size: 0.75rem;
+        color: #6b7280;
+        margin-top: 0.25rem;
+    }
+    .image-type {
+        display: flex;
+        flex-direction: row;
+        gap: 1rem;
+        align-items: flex-end;
+    }
+    .image-input {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        flex-grow: 3;
+    }
+    .image-preview img {
+        width: 130px;
+        height: auto;
+    }
+    /* .form-input {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.375rem;
+    } */
+</style>
+@endpush
+
+
+admin/taxonomies/create.blade.php
+@extends('admin.layout')
+
+@section('header_title', 'Nova Taxonomia')
+@section('header_subtitle', 'Crie um novo tipo de classificação')
+
+@section('content')
+<div class="admin-card">
+    <div class="admin-card-header">
+        <h2><x-lucide-tags class="lucid-icon" /> Nova Taxonomia</h2>
+        <a href="{{ route('admin.taxonomies.index') }}" class="admin-btn admin-btn-secondary">
+            <x-lucide-arrow-left class="lucid-icon" /> Voltar
+        </a>
+    </div>
+
+    <form method="POST" action="{{ route('admin.taxonomies.store') }}">
+        @csrf
+
+        <div class="admin-form-row">
+            <div class="form-group">
+                <label for="name">Nome *</label>
+                <input type="text" name="name" id="name" value="{{ old('name') }}" required>
+                <small>Ex: Categorias, Tags, Assuntos</small>
+                @error('name') <small class="error">{{ $message }}</small> @enderror
+            </div>
+
+            <div class="form-group">
+                <label for="slug">Slug *</label>
+                <input type="text" name="slug" id="slug" value="{{ old('slug') }}" required>
+                <small>URL amigável (ex: categorias, tags)</small>
+                @error('slug') <small class="error">{{ $message }}</small> @enderror
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Descrição</label>
+            <textarea name="description" id="description" rows="3">{{ old('description') }}</textarea>
+            @error('description') <small class="error">{{ $message }}</small> @enderror
+        </div>
+
+        <div class="form-group">
+            <label class="checkbox-label">
+                <input type="checkbox" name="hierarchical" value="1" {{ old('hierarchical') ? 'checked' : '' }}>
+                <span>Hierárquica</span>
+            </label>
+            <small>Termos podem ter sub-termos (ex: Categorias com subcategorias)</small>
+        </div>
+
+        <button type="submit" class="admin-btn admin-btn-primary">
+            <x-lucide-save class="lucid-icon" /> Salvar
+        </button>
+    </form>
+</div>
+@endsection
+
+@push('scripts')
+<script>
+    document.getElementById('name').addEventListener('input', function() {
+        const slugField = document.getElementById('slug');
+        if (slugField && !slugField.dataset.manuallyEdited) {
+            slugField.value = slugify(this.value);
+        }
+    });
+
+    document.getElementById('slug').addEventListener('input', function() {
+        this.dataset.manuallyEdited = 'true';
+    });
+
+    function slugify(text) {
+        return text.toString().toLowerCase()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+            .trim()
+            .replace(/[^a-z0-9\s-]/g, '')
+            .replace(/[\s_-]+/g, '-')
+            .replace(/^-+|-+$/g, '');
+    }
+</script>
+@endpush
+
+
+admin/taxonomies/edit.blade.php
+@extends('admin.layout')
+
+@section('header_title', 'Editar Taxonomia')
+@section('header_subtitle', 'Modifique os dados da taxonomia')
+
+@section('content')
+<div class="admin-card">
+    <div class="admin-card-header">
+        <h2><x-lucide-tags class="lucid-icon" /> Editar: {{ $taxonomy->name }}</h2>
+        <a href="{{ route('admin.taxonomies.index') }}" class="admin-btn admin-btn-secondary">
+            <x-lucide-arrow-left class="lucid-icon" /> Voltar
+        </a>
+    </div>
+
+    <form method="POST" action="{{ route('admin.taxonomies.update', $taxonomy->id) }}">
+        @csrf
+        @method('PUT')
+
+        <div class="admin-form-row">
+            <div class="form-group">
+                <label for="name">Nome *</label>
+                <input type="text" name="name" id="name" value="{{ old('name', $taxonomy->name) }}" required>
+                @error('name') <small class="error">{{ $message }}</small> @enderror
+            </div>
+
+            <div class="form-group">
+                <label for="slug">Slug *</label>
+                <input type="text" name="slug" id="slug" value="{{ old('slug', $taxonomy->slug) }}" required>
+                @error('slug') <small class="error">{{ $message }}</small> @enderror
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Descrição</label>
+            <textarea name="description" id="description" rows="3">{{ old('description', $taxonomy->description) }}</textarea>
+            @error('description') <small class="error">{{ $message }}</small> @enderror
+        </div>
+
+        <div class="form-group">
+            <label class="checkbox-label">
+                <input type="checkbox" name="hierarchical" value="1" {{ old('hierarchical', $taxonomy->hierarchical) ? 'checked' : '' }}>
+                <span>Hierárquica</span>
+            </label>
+        </div>
+
+        <button type="submit" class="admin-btn admin-btn-primary">
+            <x-lucide-save class="lucid-icon" /> Atualizar
+        </button>
+    </form>
+</div>
+@endsection
+
+
+admin/taxonomies/index.blade.php
+@extends('admin.layout')
+
+@section('header_title', 'Taxonomias')
+@section('header_subtitle', 'Gerencie os tipos de classificação')
+
+@section('content')
+<div class="admin-card">
+    <div class="admin-card-header">
+        <h2><x-lucide-tags class="lucid-icon" /> Lista de Taxonomias</h2>
+        <a href="{{ route('admin.taxonomies.create') }}" class="admin-btn admin-btn-primary">
+            <x-lucide-plus class="lucid-icon" /> Nova Taxonomia
+        </a>
+    </div>
+
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Slug</th>
+                <th>Hierárquica</th>
+                <th>Termos</th>
+                <th>Data</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($taxonomies as $taxonomy)
+            <tr>
+                <td>{{ $taxonomy->id }}</td>
+                <td>{{ $taxonomy->name }}</td>
+                <td><code>{{ $taxonomy->slug }}</code></td>
+                <td class="text-center">
+                    @if($taxonomy->hierarchical)
+                        <span class="admin-badge admin-badge-active">✅ Sim</span>
+                    @else
+                        <span class="admin-badge admin-badge-inactive">❌ Não</span>
+                    @endif
+                </td>
+                <td>{{ $taxonomy->terms()->count() }}</td>
+                <td>{{ $taxonomy->created_at->format('d/m/Y H:i') }}</td>
+                <td class="admin-actions">
+                    <a href="{{ route('admin.taxonomies.edit', $taxonomy->id) }}" class="admin-btn admin-btn-secondary" style="padding: 4px 12px;">
+                        <x-lucide-pencil class="lucid-icon" />
+                    </a>
+                    <form method="POST" action="{{ route('admin.taxonomies.destroy', $taxonomy->id) }}" style="display: inline;" onsubmit="return confirm('Remover esta taxonomia?')">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="admin-btn admin-btn-danger" style="padding: 4px 12px;">
+                            <x-lucide-trash-2 class="lucid-icon" />
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            @empty
+            <tr>
+                <td colspan="7" class="admin-text-center admin-text-muted">Nenhuma taxonomia cadastrada</td>
+            </tr>
+            @endforelse
+        </tbody>
+    </table>
+
+    <div class="admin-pagination">
+        {{ $taxonomies->links() }}
+    </div>
+</div>
+@endsection
+
+
+admin/terms/create.blade.php
+@extends('admin.layout')
+
+@section('header_title', 'Novo Termo')
+@section('header_subtitle', 'Crie um novo termo')
+
+@section('content')
+<div class="admin-card">
+    <div class="admin-card-header">
+        <h2><x-lucide-tag class="lucid-icon" /> Novo Termo</h2>
+        <a href="{{ route('admin.terms.index', ['taxonomy_id' => $selectedTaxonomy->id ?? null]) }}" class="admin-btn admin-btn-secondary">
+            <x-lucide-arrow-left class="lucid-icon" /> Voltar
+        </a>
+    </div>
+
+    <form method="POST" action="{{ route('admin.terms.store') }}">
+        @csrf
+
+        <div class="admin-form-row">
+            <div class="form-group">
+                <label for="taxonomy_id">Taxonomia *</label>
+                <select name="taxonomy_id" id="taxonomy_id" required>
+                    <option value="">Selecione</option>
+                    @foreach($taxonomies as $tax)
+                        <option value="{{ $tax->id }}" {{ old('taxonomy_id', $selectedTaxonomy->id ?? '') == $tax->id ? 'selected' : '' }}>
+                            {{ $tax->name }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('taxonomy_id') <small class="error">{{ $message }}</small> @enderror
+            </div>
+
+            <div class="form-group">
+                <label for="name">Nome *</label>
+                <input type="text" name="name" id="name" value="{{ old('name') }}" required>
+                @error('name') <small class="error">{{ $message }}</small> @enderror
+            </div>
+        </div>
+
+        <div class="admin-form-row">
+            <div class="form-group">
+                <label for="slug">Slug *</label>
+                <input type="text" name="slug" id="slug" value="{{ old('slug') }}" required>
+                @error('slug') <small class="error">{{ $message }}</small> @enderror
+            </div>
+
+            <div class="form-group">
+                <label for="order">Ordem</label>
+                <input type="number" name="order" id="order" value="{{ old('order', 0) }}" min="0">
+                <small>Menor número aparece primeiro</small>
+            </div>
+        </div>
+
+        <div class="form-group" id="parent-group" style="display: none;">
+            <label for="parent_id">Termo Pai</label>
+            <select name="parent_id" id="parent_id">
+                <option value="">-- Nenhum --</option>
+                @foreach($parentTerms as $parent)
+                    <option value="{{ $parent->id }}" {{ old('parent_id') == $parent->id ? 'selected' : '' }}>
+                        {{ $parent->name }}
+                    </option>
+                @endforeach
+            </select>
+            <small>Apenas para taxonomias hierárquicas</small>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Descrição</label>
+            <textarea name="description" id="description" rows="3">{{ old('description') }}</textarea>
+            @error('description') <small class="error">{{ $message }}</small> @enderror
+        </div>
+
+        <button type="submit" class="admin-btn admin-btn-primary">
+            <x-lucide-save class="lucid-icon" /> Salvar
+        </button>
+    </form>
+</div>
+@endsection
+
+@push('scripts')
+<script>
+    // Slug automático
+    document.getElementById('name').addEventListener('input', function() {
+        const slugField = document.getElementById('slug');
+        if (slugField && !slugField.dataset.manuallyEdited) {
+            slugField.value = slugify(this.value);
+        }
+    });
+
+    document.getElementById('slug').addEventListener('input', function() {
+        this.dataset.manuallyEdited = 'true';
+    });
+
+    // Mostrar/esconder campo de termo pai baseado na taxonomia selecionada
+    const taxonomySelect = document.getElementById('taxonomy_id');
+    const parentGroup = document.getElementById('parent-group');
+    const parentSelect = document.getElementById('parent_id');
+
+    function checkHierarchical() {
+        const selectedOption = taxonomySelect.options[taxonomySelect.selectedIndex];
+        const isHierarchical = selectedOption.getAttribute('data-hierarchical') === 'true';
+
+        parentGroup.style.display = isHierarchical ? 'block' : 'none';
+        if (!isHierarchical) {
+            parentSelect.value = '';
+        }
+    }
+
+    // Adiciona atributo data-hierarchical às options
+    @foreach($taxonomies as $tax)
+        var option = document.querySelector('#taxonomy_id option[value="{{ $tax->id }}"]');
+        if (option) {
+            option.setAttribute('data-hierarchical', '{{ $tax->hierarchical ? 'true' : 'false' }}');
+        }
+    @endforeach
+
+    taxonomySelect.addEventListener('change', checkHierarchical);
+    checkHierarchical();
+
+    function slugify(text) {
+        return text.toString().toLowerCase()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+            .trim()
+            .replace(/[^a-z0-9\s-]/g, '')
+            .replace(/[\s_-]+/g, '-')
+            .replace(/^-+|-+$/g, '');
+    }
+</script>
+@endpush
+
+
+admin/terms/edit.blade.php
+@extends('admin.layout')
+
+@section('header_title', 'Editar Termo')
+@section('header_subtitle', 'Modifique os dados do termo')
+
+@section('content')
+<div class="admin-card">
+    <div class="admin-card-header">
+        <h2><x-lucide-tag class="lucid-icon" /> Editar: {{ $term->name }}</h2>
+        <a href="{{ route('admin.terms.index', ['taxonomy_id' => $term->taxonomy_id]) }}" class="admin-btn admin-btn-secondary">
+            <x-lucide-arrow-left class="lucid-icon" /> Voltar
+        </a>
+    </div>
+
+    <form method="POST" action="{{ route('admin.terms.update', $term->id) }}">
+        @csrf
+        @method('PUT')
+
+        <div class="admin-form-row">
+            <div class="form-group">
+                <label for="taxonomy_id">Taxonomia *</label>
+                <select name="taxonomy_id" id="taxonomy_id" required>
+                    <option value="">Selecione</option>
+                    @foreach($taxonomies as $tax)
+                        <option value="{{ $tax->id }}" {{ old('taxonomy_id', $term->taxonomy_id) == $tax->id ? 'selected' : '' }}>
+                            {{ $tax->name }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('taxonomy_id') <small class="error">{{ $message }}</small> @enderror
+            </div>
+
+            <div class="form-group">
+                <label for="name">Nome *</label>
+                <input type="text" name="name" id="name" value="{{ old('name', $term->name) }}" required>
+                @error('name') <small class="error">{{ $message }}</small> @enderror
+            </div>
+        </div>
+
+        <div class="admin-form-row">
+            <div class="form-group">
+                <label for="slug">Slug *</label>
+                <input type="text" name="slug" id="slug" value="{{ old('slug', $term->slug) }}" required>
+                @error('slug') <small class="error">{{ $message }}</small> @enderror
+            </div>
+
+            <div class="form-group">
+                <label for="order">Ordem</label>
+                <input type="number" name="order" id="order" value="{{ old('order', $term->order) }}" min="0">
+            </div>
+        </div>
+
+        <div class="form-group" id="parent-group" style="display: none;">
+            <label for="parent_id">Termo Pai</label>
+            <select name="parent_id" id="parent_id">
+                <option value="">-- Nenhum --</option>
+                @foreach($parentTerms as $parent)
+                    <option value="{{ $parent->id }}" {{ old('parent_id', $term->parent_id) == $parent->id ? 'selected' : '' }}>
+                        {{ $parent->name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Descrição</label>
+            <textarea name="description" id="description" rows="3">{{ old('description', $term->description) }}</textarea>
+            @error('description') <small class="error">{{ $message }}</small> @enderror
+        </div>
+
+        <button type="submit" class="admin-btn admin-btn-primary">
+            <x-lucide-save class="lucid-icon" /> Atualizar
+        </button>
+    </form>
+</div>
+@endsection
+
+@push('scripts')
+<script>
+    const taxonomySelect = document.getElementById('taxonomy_id');
+    const parentGroup = document.getElementById('parent-group');
+    const parentSelect = document.getElementById('parent_id');
+
+    function checkHierarchical() {
+        const selectedOption = taxonomySelect.options[taxonomySelect.selectedIndex];
+        const isHierarchical = selectedOption.getAttribute('data-hierarchical') === 'true';
+
+        parentGroup.style.display = isHierarchical ? 'block' : 'none';
+        if (!isHierarchical) {
+            parentSelect.value = '';
+        }
+    }
+
+    @foreach($taxonomies as $tax)
+        var option = document.querySelector('#taxonomy_id option[value="{{ $tax->id }}"]');
+        if (option) {
+            option.setAttribute('data-hierarchical', '{{ $tax->hierarchical ? 'true' : 'false' }}');
+        }
+    @endforeach
+
+    taxonomySelect.addEventListener('change', checkHierarchical);
+    checkHierarchical();
+</script>
+@endpush
+
+
+admin/terms/index.blade.php
+@extends('admin.layout')
+
+@section('header_title', 'Termos')
+@section('header_subtitle', 'Gerencie os termos das taxonomias')
+
+@section('content')
+<div class="admin-card">
+    <div class="admin-card-header">
+        <h2><x-lucide-tag class="lucid-icon" /> Lista de Termos</h2>
+        <a href="{{ route('admin.terms.create', ['taxonomy_id' => $taxonomyId]) }}" class="admin-btn admin-btn-primary">
+            <x-lucide-plus class="lucid-icon" /> Novo Termo
+        </a>
+    </div>
+
+    <!-- Filtro por taxonomia -->
+    <form method="GET" action="{{ route('admin.terms.index') }}" class="admin-filters" style="margin-bottom: 1rem;">
+        <div class="admin-filters-row">
+            <div class="admin-filter-group">
+                <select name="taxonomy_id" class="admin-filter-select" onchange="this.form.submit()">
+                    <option value="">Todas as taxonomias</option>
+                    @foreach($taxonomies as $tax)
+                        <option value="{{ $tax->id }}" {{ $taxonomyId == $tax->id ? 'selected' : '' }}>
+                            {{ $tax->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="admin-filter-actions">
+                <a href="{{ route('admin.terms.index') }}" class="admin-btn admin-btn-secondary">Limpar</a>
+            </div>
+        </div>
+    </form>
+
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Slug</th>
+                <th>Taxonomia</th>
+                <th>Termo Pai</th>
+                <th>Ordem</th>
+                <th>Páginas</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($terms as $term)
+            <tr>
+                <td>{{ $term->id }}</td>
+                <td>{{ $term->name }}</td>
+                <td><code>{{ $term->slug }}</code></td>
+                <td>{{ $term->taxonomy->name ?? '-' }}</td>
+                <td>{{ $term->parent->name ?? '-' }}</td>
+                <td>{{ $term->order }}</td>
+                <td>{{ $term->pages()->count() }}</td>
+                <td class="admin-actions">
+                    <a href="{{ route('admin.terms.edit', $term->id) }}" class="admin-btn admin-btn-secondary" style="padding: 4px 12px;">
+                        <x-lucide-pencil class="lucid-icon" />
+                    </a>
+                    <form method="POST" action="{{ route('admin.terms.destroy', $term->id) }}" style="display: inline;" onsubmit="return confirm('Remover este termo?')">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="admin-btn admin-btn-danger" style="padding: 4px 12px;">
+                            <x-lucide-trash-2 class="lucid-icon" />
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            @empty
+            <tr>
+                <td colspan="8" class="admin-text-center admin-text-muted">Nenhum termo cadastrado</td>
+            </tr>
+            @endforelse
+        </tbody>
+    </table>
+
+    <div class="admin-pagination">
+        {{ $terms->appends(request()->query())->links() }}
+    </div>
+</div>
+@endsection
+
+
+admin/users/create.blade.php
+@extends('admin.layout')
+
+@section('header_title', 'Novo Usuário')
+@section('header_subtitle', 'Adicione um novo administrador ou editor')
+
+@section('content')
+<div class="admin-card">
+    <div class="admin-card-header">
+        <h2><x-lucide-user class="lucid-icon" /> Novo Usuário</h2>
+        <a href="{{ route('admin.users.index') }}" class="admin-btn admin-btn-secondary">
+            <x-lucide-arrow-left class="lucid-icon" /> <span>Voltar</span>
+        </a>
+    </div>
+
+    <form method="POST" action="{{ route('admin.users.store') }}">
+        @csrf
+
+        <div class="admin-form-row">
+            <div class="form-group">
+                <label for="name">Nome *</label>
+                <input type="text" name="name" id="name" value="{{ old('name') }}" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email *</label>
+                <input type="email" name="email" id="email" value="{{ old('email') }}" required>
+            </div>
+        </div>
+
+        <div class="admin-form-row">
+            {{-- <div class="form-group">
+                <label for="password">Senha *</label>
+                <input type="password" name="password" id="password" required>
+            </div> --}}
+            <x-password-field name="password" label="Senha *" required="true" />
+            <div class="form-group">
+                <label for="role_id">Perfil *</label>
+                <select name="role_id" id="role_id" required>
+                    @foreach($roles as $role)
+                        <option value="{{ $role->id }}" {{ 3 == $role->id ? 'selected' : '' }}>
+                            {{ $role->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+
+        <button type="submit" class="admin-btn admin-btn-primary">
+            <x-lucide-save class="lucid-icon" /> Salvar
+        </button>
+    </form>
+</div>
+@endsection
+
+
+admin/users/edit.blade.php
+@extends('admin.layout')
+
+@section('header_title', 'Editar Usuário')
+@section('header_subtitle', $user->name)
+
+@section('content')
+<div class="admin-card">
+    <div class="admin-card-header">
+        <h2><x-lucide-user class="lucid-icon" /> Editar Usuário</h2>
+        <a href="{{ route('admin.users.index') }}" class="admin-btn admin-btn-secondary">
+            <x-lucide-arrow-left class="lucid-icon" /> <span>Voltar</span>
+        </a>
+    </div>
+
+    <form method="POST" action="{{ route('admin.users.update', $user->id) }}">
+        @csrf
+        @method('PUT')
+
+        <div class="admin-form-row">
+            <div class="form-group">
+                <label for="name">Nome *</label>
+                <input type="text" name="name" id="name" value="{{ old('name', $user->name) }}" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email *</label>
+                <input type="email" name="email" id="email" value="{{ old('email', $user->email) }}" required>
+            </div>
+        </div>
+
+        <div class="admin-form-row">
+            <div class="form-group">
+                <label for="password">Nova senha</label>
+                <input type="password" name="password" id="password" autocomplete="new-password">
+                <small>Deixe em branco para manter a senha atual</small>
+            </div>
+            <div class="form-group">
+                <label for="role_id">Perfil *</label>
+                <select name="role_id" id="role_id" required>
+                    @foreach($roles as $role)
+                        <option value="{{ $role->id }}" {{ $user->role_id == $role->id ? 'selected' : '' }}>
+                            {{ $role->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+
+        <button type="submit" class="admin-btn admin-btn-primary">
+            <x-lucide-save class="lucid-icon" /> Atualizar
+        </button>
+    </form>
+</div>
+@endsection
+
+
+admin/users/index.blade.php
+@extends('admin.layout')
+
+@section('header_title', 'Usuários')
+@section('header_subtitle', 'Gerencie administradores e parceiros')
+
+@section('content')
+<div class="admin-card">
+    <div class="admin-card-header">
+        <h2><x-lucide-users class="lucid-icon" /> Usuários</h2>
+        <a href="{{ route('admin.users.create') }}" class="admin-btn admin-btn-primary">
+            <x-lucide-plus class="lucid-icon" /> <span>Novo Usuário</span>
+        </a>
+    </div>
+
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Perfil</th>
+                {{-- <th>Parceiro</th> --}}
+                <th>Data</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($users as $user)
+            <tr>
+                <td>{{ $user->id }}</td>
+                <td>{{ $user->name }}</td>
+                <td>{{ $user->email }}</td>
+                {{-- <td>
+                    @if($user->role == 'admin')
+                        <span class="admin-badge admin-badge-admin">Admin</span>
+                    @else
+                        <span class="admin-badge admin-badge-partner">Parceiro</span>
+                    @endif
+                </td> --}}
+                <td>
+                    @if($user->isAdmin())
+                        <span class="admin-badge admin-badge-admin">Admin</span>
+                    @else
+                        <span class="admin-badge admin-badge-editor">Editor</span>
+                    @endif
+                </td>
+                {{-- <td>
+                    @if($user->partner)
+                        <a href="{{ route('admin.partners.edit', $user->partner->id) }}" class="admin-btn-link">Ver dados</a>
+                    @else
+                        -
+                    @endif
+                </td> --}}
+                <td>{{ $user->created_at->format('d/m/Y') }}</td>
+                <td class="admin-actions">
+                    <a href="{{ route('admin.users.edit', $user->id) }}" class="admin-btn admin-btn-secondary" style="padding: 4px 12px;">
+                        <x-lucide-pencil class="lucid-icon" />
+                    </a>
+                    @if($user->id !== auth()->id())
+                    <form method="POST" action="{{ route('admin.users.destroy', $user->id) }}" style="display: inline;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="admin-btn admin-btn-danger" style="padding: 4px 12px;" onclick="return confirm('Remover este usuário?')"><x-lucide-trash-2 class="lucid-icon" /></button>
+                    </form>
+                    @endif
+                </td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+    <div class="admin-pagination">
+        {{ $users->links('pagination::custom') }}
+    </div>
+</div>
+@endsection
+
+
+admin/users/profile.blade.php
+@extends('admin.layout')
+
+@section('header_title', 'Meu Perfil')
+@section('header_subtitle', 'Atualize seus dados e senha')
+
+@section('content')
+<div class="admin-card">
+    <div class="admin-card-header">
+        <h2><x-lucide-user class="lucid-icon" /> Meus Dados</h2>
+    </div>
+
+    <form method="POST" action="{{ route('admin.profile.update') }}">
+        @csrf
+        @method('PUT')
+
+        <div class="admin-form-row">
+            <div class="form-group">
+                <label for="name">Nome *</label>
+                <input type="text" name="name" id="name" value="{{ old('name', $user->name) }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email *</label>
+                <input type="email" name="email" id="email" value="{{ old('email', $user->email) }}" required>
+            </div>
+        </div>
+
+        <hr style="margin: 24px 0;">
+
+        <h3><x-lucide-lock class="lucid-icon" /> Alterar Senha</h3>
+
+        <div class="admin-form-row">
+            <x-password-field name="new_password" label="Nova senha *" confirm="true" required="true" />
+        </div>
+
+        <button type="submit" class="admin-btn admin-btn-primary">
+            <x-lucide-save class="lucid-icon" /> Salvar alterações
+        </button>
+    </form>
+</div>
+
+@endsection
+
+
+auth/login.blade.php
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Lunar API</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-container h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+            font-size: 1.8rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+        }
+
+        .error {
+            background: #fee;
+            border: 1px solid #fcc;
+            color: #c33;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .info {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .lucid-icon {
+            width: 20px;
+            height: 20px;
+            vertical-align: middle
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1><x-lucide-lock class="lucid-icon" style="width: 20px; height: 20px;" /> Lunar API</h1>
+
+        @if ($errors->any())
+            <div class="error">
+                {{ $errors->first() }}
+            </div>
+        @endif
+
+        <form method="POST" action="{{ route('login') }}">
+            @csrf
+
+            <div class="form-group">
+                <label for="email"><x-lucide-mail class="lucid-icon" /> E-mail</label>
+                <input type="email" name="email" id="email" value="{{ old('email') }}" required autofocus>
+            </div>
+
+            <div class="form-group">
+                <label for="password"><x-lucide-key class="lucid-icon" /> Senha</label>
+                <input type="password" name="password" id="password" required>
+            </div>
+
+            <button type="submit"><x-lucide-log-in class="lucid-icon" /> Entrar</button>
+        </form>
+
+        <div class="info">
+            Acesso restrito a administradores e parceiros
+        </div>
+    </div>
+</body>
+</html>
+
+
+components/password-field.blade.php
+@props(['name', 'label', 'id', 'required' => false, 'confirm' => false])
+
+<div class="password-component">
+    <div class="form-group">
+        <label for="{{ $id }}">{{ $label }}</label>
+        <div class="password-field">
+            <input type="password"
+                   name="{{ $name }}"
+                   id="{{ $id }}"
+                   class="password-input"
+                   autocomplete="new-password"
+                   readonly
+                   {{ $required ? 'required' : '' }}>
+            <button type="button" class="toggle-password" data-target="{{ $id }}">
+                <x-lucide-eye class="lucid-icon" />
+            </button>
+        </div>
+        <small>Mínimo de 8 caracteres</small>
+    </div>
+
+    @if($confirm)
+    <div class="form-group" style="margin-top: 16px;">
+        <label for="{{ $id }}_confirmation">Confirmar {{ strtolower($label) }}</label>
+        <div class="password-field">
+            <input type="password"
+                   name="{{ $name }}_confirmation"
+                   id="{{ $id }}_confirmation"
+                   class="password-input"
+                   autocomplete="new-password"
+                   readonly>
+            <button type="button" class="toggle-password" data-target="{{ $id }}_confirmation">
+                <x-lucide-eye class="lucid-icon" />
+            </button>
+        </div>
+    </div>
+    @endif
+</div>
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Configurar todos os campos de senha
+    document.querySelectorAll('.password-input[readonly]').forEach(input => {
+        input.addEventListener('focus', function() {
+            setTimeout(() => this.removeAttribute('readonly'), 100);
+        });
+        input.addEventListener('blur', function() {
+            this.setAttribute('readonly', true);
+        });
+    });
+
+    // Configurar botões de visualização
+    document.querySelectorAll('.toggle-password').forEach(button => {
+        const targetId = button.dataset.target;
+        const input = document.getElementById(targetId);
+
+        const showPassword = () => input.setAttribute('type', 'text');
+        const hidePassword = () => input.setAttribute('type', 'password');
+
+        button.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            showPassword();
+        });
+        button.addEventListener('mouseup', hidePassword);
+        button.addEventListener('mouseleave', hidePassword);
+        button.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            showPassword();
+        });
+        button.addEventListener('touchend', hidePassword);
+    });
+
+    // Força da senha (apenas no campo principal)
+    const mainPassword = document.querySelector('.password-input:not([id$="_confirmation"])');
+    const confirmInput = document.getElementById(mainPassword?.id + '_confirmation');
+    const submitBtn = mainPassword?.closest('form')?.querySelector('button[type="submit"]');
+
+    if (mainPassword) {
+        mainPassword.addEventListener('input', function() {
+            const strength = checkPasswordStrength(this.value);
+            const clsName = ['very-weak', 'weak', 'medium', 'strong', 'very-strong'][strength - 1];
+            this.className = `password-input ${clsName}`;
+            if (submitBtn) {
+                if (confirmInput) {
+                    submitBtn.disabled = this.value !== confirmInput.value || strength < 3;
+                } else {
+                    submitBtn.disabled = strength < 3;
+                }
+            }
+        });
+    }
+
+    if (confirmInput) {
+        confirmInput.addEventListener('input', function() {
+            if (this.value === mainPassword?.value) {
+                this.classList.remove('very-weak');
+                if (submitBtn) submitBtn.disabled = false;
+            } else {
+                this.classList.add('very-weak');
+                if (submitBtn) submitBtn.disabled = true;
+            }
+        });
+    }
+});
+
+function checkPasswordStrength(password) {
+    let score = 0;
+    if (password.length >= 8) score++;
+    if (password.match(/[a-z]/)) score++;
+    if (password.match(/[A-Z]/)) score++;
+    if (password.match(/[0-9]/)) score++;
+    if (password.match(/[^a-zA-Z0-9]/)) score++;
+    return score;
+}
+</script>
+@endpush
+@push('styles')
+<style>
+/* Container principal do componente */
+.password-component {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: baseline;
+}
+
+/* Quando tem confirmação, os campos ficam lado a lado */
+.password-component .form-group:first-child {
+    flex: 1;
+}
+
+.password-component .form-group:last-child {
+    flex: 1;
+}
+
+/* Layout lado a lado apenas quando há confirmação */
+.password-component:has(.form-group:last-child) {
+    flex-direction: row;
+    gap: 20px;
+}
+
+/* Para campos individuais (sem confirmação) */
+.password-component:has(.form-group:only-child) {
+    flex-direction: column;
+}
+
+.password-field {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+}
+
+.password-field input {
+    flex: 1;
+    padding-right: 40px;
+    width: 100%;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 8px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Força da senha */
+.password-input.very-weak {
+    background-color: #fff5f5;
+    border-color: #fc8181;
+}
+.password-input.weak {
+    background-color: #fffaf0;
+    border-color: #fbd38d;
+}
+.password-input.medium {
+    background-color: #fffff0;
+    border-color: #f6e05e;
+}
+.password-input.strong {
+    background-color: #f0fff4;
+    border-color: #9ae6b4;
+}
+.password-input.very-strong {
+    background-color: #f0fff4;
+    border-color: #48bb78;
+    background-image: linear-gradient(120deg, #48bb78 0%, #48bb78 100%);
+    background-repeat: no-repeat;
+    background-size: 100% 3px;
+    background-position: bottom;
+}
+
+button[type="submit"]:disabled,
+input[type="submit"]:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Ajustes para telas menores */
+@media (max-width: 768px) {
+    .password-component:has(.form-group:last-child) {
+        flex-direction: column;
+    }
+}
+</style>
+@endpush
+
+
+home.blade.php
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lunar Widgets - Widgets astrológicos interativos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .home-container {
+            text-align: center;
+            padding: 40px 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            font-weight: 700;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .tagline {
+            font-size: 1.3rem;
+            margin-bottom: 40px;
+            opacity: 0.95;
+        }
+
+        .description {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 48px;
+            opacity: 0.9;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 14px 32px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: white;
+            color: #667eea;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-2px);
+        }
+
+        .features {
+            margin-top: 60px;
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .feature {
+            flex: 1;
+            min-width: 200px;
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 12px;
+        }
+
+        .feature h3 {
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+
+        .feature p {
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+
+        footer {
+            margin-top: 60px;
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <div class="home-container">
+        <div class="logo">🌙</div>
+        <h1>Lunar Widgets</h1>
+        <div class="tagline">Widgets astrológicos interativos</div>
+        <div class="description">
+            Conecte mães e bebês através da energia da Lua.<br>
+            Widgets personalizados para sites, blogs e aplicações.
+        </div>
+
+        <div class="buttons">
+            <a href="{{ route('login') }}" class="btn btn-primary">
+                <x-lucide-lock class="lucid-icon" style="width: 20px; height: 20px;" /> Acessar painel
+            </a>
+            <a href="mailto:contato@lunarwidgets.com" class="btn btn-secondary">
+                <x-lucide-mail class="lucid-icon" style="width: 20px; height: 20px;" /> Entre em contato</a>
+        </div>
+
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon"><x-lucide-moon class="lucid-icon" style="width: 40px; height: 40px;" /></div>
+                <h3>Cálculo preciso</h3>
+                <p>Baseado em efemérides astronômicas Swiss Ephemeris</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon"><x-lucide-baby class="lucid-icon" style="width: 40px; height: 40px;" /></div>
+                <h3>Para mães e bebês</h3>
+                <p>Interpretações exclusivas para os primeiros anos</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon"><x-lucide-laptop class="lucid-icon" style="width: 40px; height: 40px;" /></div>
+                <h3>Widget embed</h3>
+                <p>Instale em qualquer site com uma única linha de código</p>
+            </div>
+        </div>
+
+        <footer>
+            <p>© {{ date('Y') }} Lunar Widgets. Todos os direitos reservados.</p>
+        </footer>
+    </div>
+</body>
+</html>
+
+
+public/empty-layout.blade.php
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@yield('title', config('app.name'))</title>
+    @stack('styles')
+</head>
+<body>
+    <main>
+        @yield('content')
+    </main>
+    @stack('scripts')
+</body>
+</html>
+
+
+public/layout.blade.php
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ $page->title }} - {{ config('app.name') }}</title>
+    <meta name="description" content="{{ $page->excerpt ?? $page->title }}">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .widget-badge {
+            text-align: right;
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #3381d5;
+        }
+
+        .page-header h1 {
+            font-size: 2rem;
+            color: #1a1a1a;
+            margin: 0;
+        }
+
+        .page-header .excerpt {
+            font-size: 1.1rem;
+            color: #666;
+            font-style: italic;
+        }
+
+        .page-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .page-content h1, .page-content h2, .page-content h3 {
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+            color: #1a1a1a;
+        }
+
+        .page-content h1 { font-size: 1.8rem; }
+        .page-content h2 { font-size: 1.5rem; }
+        .page-content h3 { font-size: 1.3rem; }
+
+        .page-content p {
+            margin-bottom: 1rem;
+        }
+
+        .page-content ul, .page-content ol {
+            margin: 1rem 0 1rem 2rem;
+        }
+
+        .page-content li {
+            margin-bottom: 0.25rem;
+        }
+
+        .page-content a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+
+        .page-content a:hover {
+            text-decoration: underline;
+        }
+
+        .page-content img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .page-footer {
+            text-align: right;
+            padding: 1rem;
+            color: #999;
+            font-size: 0.875rem;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 1rem;
+            }
+            .page-content {
+                padding: 1rem;
+            }
+            .page-header h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="page-header">
+            @if(isset($widget))
+            <div class="widget-badge">
+                {{ $widget->name }}
+            </div>
+            @endif
+            <h1>{{ $page->title }}</h1>
+            @if($page->excerpt)
+                <div class="excerpt">{{ $page->excerpt }}</div>
+            @endif
+        </div>
+
+        <div class="page-content">
+            {!! $page->content !!}
+        </div>
+
+        <div class="page-footer">
+            <p>Última atualização: {{ $page->updated_at->format('d/m/Y \à\s H:i') }}</p>
+            {{-- <p><a href="{{ url('/') }}">← Voltar para o início</a></p> --}}
+        </div>
+    </div>
+</body>
+</html>
+
+
+public/templates/fullwidth.blade.php
+@extends('public.empty-layout')
+
+@section('content')
+    <div class="page-fullwidth">
+        <h1>{{ $page->title }}</h1>
+        @if($page->excerpt)
+            <p class="page-excerpt">{{ $page->excerpt }}</p>
+        @endif
+        <div class="page-content">
+            {!! $page->content !!}
+        </div>
+    </div>
+@endsection
+
+@push('styles')
+<style>
+    .page-fullwidth {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+    .page-excerpt {
+        font-size: 1.2rem;
+        color: #666;
+        margin-bottom: 2rem;
+    }
+    .page-content {
+        line-height: 1.6;
+    }
+</style>
+@endpush
+
+
+public/templates/left-sidebar.blade.php
+@extends('public.empty-layout')
+
+@section('content')
+    <div class="container-with-sidebar">
+        <aside class="sidebar">
+            @yield('sidebar')
+        </aside>
+        <main class="main-content">
+            <h1>{{ $page->title }}</h1>
+            <div class="page-content">
+                {!! $page->content !!}
+            </div>
+        </main>
+    </div>
+@endsection
+
+
+public/templates/page.blade.php
+@extends('public.layout') {{-- ou seu layout público --}}
+
+@section('title', $page->title)
+
+@section('content')
+<div class="container">
+    <div class="page-header">
+        <h1>{{ $page->title }}</h1>
+        {{-- @if($page->excerpt)
+            <p class="excerpt">{{ $page->excerpt }}</p>
+        @endif --}}
+    </div>
+    <div class="page-content">
+        {!! $page->content !!}
+    </div>
+    <div class="page-footer">
+        <small>Última atualização: {{ $page->updated_at->format('d/m/Y H:i') }}</small>
+    </div>
+</div>
+@endsection
+
+
+vendor/pagination/custom.blade.php
+@if ($paginator->hasPages())
+    <div class="admin-pagination">
+        {{-- Versão Mobile --}}
+        <div class="pagination-mobile">
+            @if ($paginator->onFirstPage())
+                <span class="pagination-prev disabled">← Anterior</span>
+            @else
+                <a href="{{ $paginator->previousPageUrl() }}" class="pagination-prev">← Anterior</a>
+            @endif
+
+            @if ($paginator->hasMorePages())
+                <a href="{{ $paginator->nextPageUrl() }}" class="pagination-next">Próximo →</a>
+            @else
+                <span class="pagination-next disabled">Próximo →</span>
+            @endif
+        </div>
+
+        {{-- Versão Desktop --}}
+        <div class="pagination-desktop">
+            <div class="pagination-info">
+                Mostrando {{ $paginator->firstItem() }} a {{ $paginator->lastItem() }} de {{ $paginator->total() }} resultados
+            </div>
+
+            <div class="pagination-links">
+                {{-- Anterior --}}
+                @if ($paginator->onFirstPage())
+                    <span class="disabled">←</span>
+                @else
+                    <a href="{{ $paginator->previousPageUrl() }}" rel="prev">←</a>
+                @endif
+
+                {{-- Links das páginas --}}
+                @foreach ($elements as $element)
+                    @if (is_string($element))
+                        <span class="disabled">{{ $element }}</span>
+                    @endif
+
+                    @if (is_array($element))
+                        @foreach ($element as $page => $url)
+                            @if ($page == $paginator->currentPage())
+                                <span class="active">{{ $page }}</span>
+                            @else
+                                <a href="{{ $url }}">{{ $page }}</a>
+                            @endif
+                        @endforeach
+                    @endif
+                @endforeach
+
+                {{-- Próximo --}}
+                @if ($paginator->hasMorePages())
+                    <a href="{{ $paginator->nextPageUrl() }}" rel="next">→</a>
+                @else
+                    <span class="disabled">→</span>
+                @endif
+            </div>
+        </div>
+    </div>
+@endif
+
+
