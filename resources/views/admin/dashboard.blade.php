@@ -30,7 +30,7 @@
 
         {{-- Total de Páginas --}}
         <div class="admin-stat-card">
-            <div class="stat-icon">📄</div>
+            {{-- <div class="stat-icon">📄</div> --}}
             <div class="stat-info">
                 <h3>Total de Páginas</h3>
                 <div class="value">{{ $totalPages }}</div>

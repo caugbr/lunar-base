@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+// use Illuminate\Support\Facades\Storage;
 
 class SettingController extends Controller
 {
@@ -81,6 +81,7 @@ class SettingController extends Controller
 
                     $result = uploadImage($request->file($key), 'settings', [
                         'save_original' => true,
+                        'create_media_record' => false,
                         'thumb' => null,
                         'resize' => null,
                     ]);

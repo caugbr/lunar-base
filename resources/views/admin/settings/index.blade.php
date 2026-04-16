@@ -113,10 +113,11 @@
                                         <div class="image-input">
 
                                             {{-- Input para novo upload --}}
-                                            <input type="file"
+                                            {{-- <input type="file"
                                                 name="{{ $def['key'] }}"
                                                 accept="image/*"
-                                                class="form-input">
+                                                class="form-input"> --}}
+                                            <x-upload-area name="{{ $def['key'] }}" />
 
                                             @if($value)
                                             {{-- Checkbox para remover a imagem --}}
@@ -189,7 +190,7 @@
         display: flex;
         flex-direction: row;
         gap: 1rem;
-        align-items: flex-end;
+        align-items: center;
     }
     .image-input {
         display: flex;

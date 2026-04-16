@@ -19,14 +19,18 @@ class Page extends Model
         'excerpt',
         'author_id',
         'status',
-        'template'
+        'template',
+        'thumbnail_id'
     ];
 
     protected $casts = [
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
-    ];
+    ];// Relacionamento com a thumbnail
+
+    // Eager loading padrão (opcional, mas recomendado)
+    protected $with = ['thumbnail'];
 
     // ==========================================
     // RELACIONAMENTOS
@@ -43,6 +47,17 @@ class Page extends Model
     public function terms()
     {
         return $this->belongsToMany(Term::class, 'term_relationships');
+    }
+
+    public function thumbnail()
+    {
+        return $this->belongsTo(Media::class, 'thumbnail_id');
+    }
+
+    // Galeria (Polimórfico)
+    public function images()
+    {
+        return $this->morphMany(Media::class, 'mediaable');
     }
 
     // ==========================================

@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Page;
 use App\Models\User;
 use App\Models\Taxonomy;
-// use App\Models\Term;
+use App\Models\Media;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
@@ -39,15 +39,28 @@ class PageController extends Controller
             'author_id' => 'required|exists:users,id',
             'status' => 'required|in:draft,published,archived',
             'template' => 'required|string',
-            'term_ids' => 'nullable|array',  // 🆕
-            'term_ids.*' => 'exists:terms,id',  // 🆕
+            'thumbnail_id' => 'nullable|exists:media,id',
+            'term_ids' => 'nullable|array',
+            'term_ids.*' => 'exists:terms,id',
+            'gallery_ids' => 'nullable|array',
+            'gallery_ids.*' => 'exists:media,id',
         ]);
 
         $page = Page::create($validated);
 
-        // 🆕 Associar termos à página
+        // Associar termos à página
         if (!empty($request->term_ids)) {
             $page->terms()->sync($request->term_ids);
+        }
+
+        // Associa a galeria via polimórfico
+        if (!empty($validated['gallery_ids'])) {
+            // Atualiza todos os IDs da galeria para apontarem para esta página
+            Media::whereIn('id', $validated['gallery_ids'])
+                ->update([
+                    'mediaable_id' => $page->id,
+                    'mediaable_type' => Page::class
+                ]);
         }
 
         return redirect()->route('admin.pages.index')
@@ -78,21 +91,36 @@ class PageController extends Controller
             'author_id' => 'nullable|exists:users,id',
             'status' => 'required|in:draft,published,archived',
             'template' => 'nullable|string',
+            'thumbnail_id' => 'nullable|exists:media,id',
             'term_ids' => 'nullable|array',
             'term_ids.*' => 'exists:terms,id',
+            'gallery_ids' => 'nullable|array',
+            'gallery_ids.*' => 'exists:media,id',
         ]);
-
-        // Se author_id foi enviado, busca o nome do usuário
-        if (!empty($validated['author_id'])) {
-            $user = User::find($validated['author_id']);
-            $validated['author'] = $user->name;
-        }
-        unset($validated['author_id']);
 
         $page->update($validated);
 
-        // 🆕 Sincronizar termos
+        // Sincronizar termos
         $page->terms()->sync($request->term_ids ?? []);
+
+        // Atualiza a galeria
+        if (isset($validated['gallery_ids'])) {
+            // Remove vínculo antigo: tira o mediaable_id das imagens que NÃO estão mais na lista
+            Media::where('mediaable_id', $page->id)
+                ->where('mediaable_type', Page::class)
+                ->whereNotIn('id', $validated['gallery_ids'])
+                ->update([
+                    'mediaable_id' => null,
+                    'mediaable_type' => null
+                ]);
+
+            // Adiciona vínculo novo: atualiza as imagens selecionadas
+            Media::whereIn('id', $validated['gallery_ids'])
+                ->update([
+                    'mediaable_id' => $page->id,
+                    'mediaable_type' => Page::class
+                ]);
+        }
 
         return redirect()->route('admin.pages.index')
             ->with('success', 'Página atualizada com sucesso!');

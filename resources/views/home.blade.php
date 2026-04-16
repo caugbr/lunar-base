@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lunar Widgets - Widgets astrológicos interativos</title>
+    <title>Lunar Admin</title>
     <style>
         * {
             margin: 0;
@@ -140,41 +140,62 @@
 <body>
     <div class="home-container">
         <div class="logo">🌙</div>
-        <h1>Lunar Widgets</h1>
-        <div class="tagline">Widgets astrológicos interativos</div>
+        <h1>Lunar Admin</h1>
+        <div class="tagline">Um starter kit Laravel</div>
         <div class="description">
-            Conecte mães e bebês através da energia da Lua.<br>
-            Widgets personalizados para sites, blogs e aplicações.
+            Use como base para área administratica em projetos Laravel
         </div>
 
         <div class="buttons">
             <a href="{{ route('login') }}" class="btn btn-primary">
-                <x-lucide-lock class="lucid-icon" style="width: 20px; height: 20px;" /> Acessar painel
+                <x-lucide-lock class="lucid-icon" style="width: 20px; height: 20px;" /> Acessar administração
             </a>
-            <a href="mailto:contato@lunarwidgets.com" class="btn btn-secondary">
-                <x-lucide-mail class="lucid-icon" style="width: 20px; height: 20px;" /> Entre em contato</a>
         </div>
 
         <div class="features">
             <div class="feature">
-                <div class="feature-icon"><x-lucide-moon class="lucid-icon" style="width: 40px; height: 40px;" /></div>
-                <h3>Cálculo preciso</h3>
-                <p>Baseado em efemérides astronômicas Swiss Ephemeris</p>
+                <div class="feature-icon">
+                    <x-lucide-users class="lucid-icon" style="width: 40px; height: 40px;" />
+                </div>
+                <h3>Gestão de Usuários</h3>
+                <p>Controle de perfis, papéis e permissões com interface intuitiva</p>
             </div>
+
             <div class="feature">
-                <div class="feature-icon"><x-lucide-baby class="lucid-icon" style="width: 40px; height: 40px;" /></div>
-                <h3>Para mães e bebês</h3>
-                <p>Interpretações exclusivas para os primeiros anos</p>
+                <div class="feature-icon">
+                    <x-lucide-file-text class="lucid-icon" style="width: 40px; height: 40px;" />
+                </div>
+                <h3>Páginas Dinâmicas</h3>
+                <p>Crie e edite conteúdo com editor rich text e gerenciamento de mídia integrado</p>
             </div>
+
             <div class="feature">
-                <div class="feature-icon"><x-lucide-laptop class="lucid-icon" style="width: 40px; height: 40px;" /></div>
-                <h3>Widget embed</h3>
-                <p>Instale em qualquer site com uma única linha de código</p>
+                <div class="feature-icon">
+                    <x-lucide-library class="lucid-icon" style="width: 40px; height: 40px;" />
+                </div>
+                <h3>Biblioteca de Mídia</h3>
+                <p>Upload, organização e vinculação de imagens e documentos em um só lugar</p>
+            </div>
+
+            <div class="feature">
+                <div class="feature-icon">
+                    <x-lucide-tags class="lucid-icon" style="width: 40px; height: 40px;" />
+                </div>
+                <h3>Classificação Flexível</h3>
+                <p>Categorias, tags e termos personalizados para estruturar seu conteúdo</p>
+            </div>
+
+            <div class="feature">
+                <div class="feature-icon">
+                    <x-lucide-settings class="lucid-icon" style="width: 40px; height: 40px;" />
+                </div>
+                <h3>Configurações Globais</h3>
+                <p>Personalize o comportamento do site sem tocar em código</p>
             </div>
         </div>
 
         <footer>
-            <p>© {{ date('Y') }} Lunar Widgets. Todos os direitos reservados.</p>
+            <p>Lunar Admin, por Cau Guanabara</p>
         </footer>
     </div>
 </body>

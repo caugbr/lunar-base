@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\TaxonomyController;
 use App\Http\Controllers\Admin\TermController;
 use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\ProfileController as EditorProfileController;
 
@@ -25,6 +26,12 @@ Route::middleware(['auth', 'role:admin,editor'])->prefix('admin')->name('admin.'
     // Perfil (ambos editam seu próprio perfil)
     Route::get('/profile', [EditorProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [EditorProfileController::class, 'update'])->name('profile.update');
+
+    // Media Manager
+    Route::get('media/data', [MediaController::class, 'data'])->name('media.data');
+    Route::resource('media', MediaController::class)
+        ->except(['create', 'show'])
+        ->parameters(['media' => 'media']);
 });
 
 // ========== ROTAS ADMIN APENAS ==========

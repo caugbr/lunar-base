@@ -43,6 +43,9 @@
                     <a href="{{ route('admin.taxonomies.edit', $taxonomy->id) }}" class="admin-btn admin-btn-secondary" style="padding: 4px 12px;">
                         <x-lucide-pencil class="lucid-icon" />
                     </a>
+                    <a href="{{ route('admin.terms.index', ['taxonomy_id' => $taxonomy->id]) }}" class="admin-btn admin-btn-secondary" style="padding: 4px 12px;">
+                        <x-lucide-tags class="lucid-icon" />
+                    </a>
                     <form method="POST" action="{{ route('admin.taxonomies.destroy', $taxonomy->id) }}" style="display: inline;" onsubmit="return confirm('Remover esta taxonomia?')">
                         @csrf
                         @method('DELETE')

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Lunar API</title>
+    <title>Login - Lunar Admin</title>
     <style>
         * {
             margin: 0;
@@ -104,7 +104,7 @@
 </head>
 <body>
     <div class="login-container">
-        <h1><x-lucide-lock class="lucid-icon" style="width: 20px; height: 20px;" /> Lunar API</h1>
+        <h1><x-lucide-lock class="lucid-icon" style="width: 20px; height: 20px;" /> Lunar Admin</h1>
 
         @if ($errors->any())
             <div class="error">
@@ -129,7 +129,7 @@
         </form>
 
         <div class="info">
-            Acesso restrito a administradores e parceiros
+            Acesso restrito a usuários cadastrados
         </div>
     </div>
 </body>
