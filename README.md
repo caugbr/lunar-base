@@ -75,7 +75,5 @@ Distribuído sob a **Licença MIT**.
 
 > **Atribuição:** Se usar este kit como base para outros projetos, peço apenas que mantenha o crédito ao autor original nos arquivos.
 
----
-
 Criado por Cau Guanabara.
 
