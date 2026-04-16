@@ -31,7 +31,6 @@
 
 ## Instalação
 
-```bash
 # 1. Clonar e entrar no diretório
 git clone <url-do-repo> lunar-base
 cd lunar-base
