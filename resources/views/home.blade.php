@@ -143,7 +143,7 @@
         <h1>Lunar Admin</h1>
         <div class="tagline">Um starter kit Laravel</div>
         <div class="description">
-            Use como base para área administratica em projetos Laravel
+            Use como base para área administrativa em projetos Laravel
         </div>
 
         <div class="buttons">
