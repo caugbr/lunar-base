@@ -32,7 +32,7 @@ Focado em estrutura sólida, componentes reutilizáveis e fluxo de trabalho otim
 ## Instalação
 
 #### 1. Clonar e entrar no diretório
-git clone <url-do-repo> lunar-base
+git clone https://github.com/caugbr/lunar-base.git lunar-base \
 cd lunar-base
 
 #### 2. Instalar dependências
@@ -43,7 +43,7 @@ cp .env.example .env
 #### → Edite APP_URL, DB_* e demais credenciais
 
 #### 4. Gerar chave e preparar banco
-php artisan key:generate
+php artisan key:generate \
 php artisan migrate --seed
 
 #### 5. Criar link de armazenamento (Essencial para mídia)
