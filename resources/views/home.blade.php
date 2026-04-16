@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lunar Admin</title>
+    <title>{{ config('admin.page_title') }}</title>
     <style>
         * {
             margin: 0;
@@ -139,8 +139,8 @@
 </head>
 <body>
     <div class="home-container">
-        <div class="logo">🌙</div>
-        <h1>Lunar Admin</h1>
+        <div class="logo">{{ config('admin.logo') }}</div>
+        <h1>{{ config('admin.title') }}</h1>
         <div class="tagline">Um starter kit Laravel</div>
         <div class="description">
             Use como base para área administrativa em projetos Laravel

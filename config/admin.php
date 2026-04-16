@@ -7,10 +7,10 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'page_title' => 'Lunar Admin',
+    'page_title' => 'Lunar Admin - Laravel starter kit',
     'title' => 'Lunar Admin',
     'subtitle' => 'Painel de Controle',
-    'logo' => '🌙', // ou caminho da imagem
+    'logo' => '🌙', // ou html da imagem ou ícone
 
     /*
     |--------------------------------------------------------------------------

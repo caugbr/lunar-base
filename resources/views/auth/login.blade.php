@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Lunar Admin</title>
+    <title>Login - {{ config('admin.title') }}</title>
     <style>
         * {
             margin: 0;
@@ -104,7 +104,10 @@
 </head>
 <body>
     <div class="login-container">
-        <h1><x-lucide-lock class="lucid-icon" style="width: 20px; height: 20px;" /> Lunar Admin</h1>
+        <h1>
+            <x-lucide-lock class="lucid-icon" style="width: 20px; height: 20px;" />
+            {{ config('admin.title') }}
+        </h1>
 
         @if ($errors->any())
             <div class="error">
@@ -116,12 +119,18 @@
             @csrf
 
             <div class="form-group">
-                <label for="email"><x-lucide-mail class="lucid-icon" /> E-mail</label>
+                <label for="email">
+                    <x-lucide-mail class="lucid-icon" />
+                    E-mail
+                </label>
                 <input type="email" name="email" id="email" value="{{ old('email') }}" required autofocus>
             </div>
 
             <div class="form-group">
-                <label for="password"><x-lucide-key class="lucid-icon" /> Senha</label>
+                <label for="password">
+                    <x-lucide-key class="lucid-icon" />
+                    Senha
+                </label>
                 <input type="password" name="password" id="password" required>
             </div>
 

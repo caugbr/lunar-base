@@ -96,6 +96,9 @@
     width: 32px;
     margin-bottom: 0.25rem;
     padding: 8px;
+    color: #333;
+    background-color: rgba(0, 0, 0, 0);
+    border-color: rgba(0, 0, 0, 0);
 }
 
 .upload-area .message {

@@ -18,8 +18,6 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // ========== ROTAS PROTEGIDAS (ADMIN + EDITOR) ==========
 Route::middleware(['auth', 'role:admin,editor'])->prefix('admin')->name('admin.')->group(function () {
-// Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
-
     // Dashboard (ambos veem)
     Route::get('/dashboard', [AdminDashboard::class, 'index'])->name('dashboard');
 
@@ -36,7 +34,6 @@ Route::middleware(['auth', 'role:admin,editor'])->prefix('admin')->name('admin.'
 
 // ========== ROTAS ADMIN APENAS ==========
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
-// Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
     // CRUD de páginas (só admin)
     Route::resource('pages', PageController::class);
 

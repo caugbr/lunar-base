@@ -5,28 +5,34 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
 use Illuminate\Http\Request;
-// use Illuminate\Support\Facades\Storage;
 
 class SettingController extends Controller
 {
     public function index()
     {
-        $definitions = config('settings.definitions', []);
+        // Pega a estrutura hierárquica do config
+        $groups = config('settings.definitions', []);
 
-        foreach ($definitions as &$def) {
-            $saved = Setting::where('key', $def['key'])->first();
-            $value = $saved ? $saved->typed_value : ($def['default'] ?? null);
+        // Itera sobre cada grupo e seus campos para injetar os valores salvos
+        foreach ($groups as $groupKey => &$group) {
+            if (!isset($group['fields']) || !is_array($group['fields'])) {
+                continue;
+            }
 
-            // 🔁 Usa o helper para imagens: path → URL
-            if ($def['type'] === 'image' && $value) {
-                $def['value'] = getImage($value); // 👈 Simples e limpo
-                $def['path'] = $value; // Mantém o path original se precisar para delete
-            } else {
-                $def['value'] = $value;
+            foreach ($group['fields'] as &$field) {
+                $key = $field['key'];
+                $saved = Setting::where('key', $key)->first();
+                $value = $saved ? $saved->typed_value : ($field['default'] ?? null);
+
+                // 🔁 Usa o helper para imagens: path → URL
+                if (($field['type'] ?? '') === 'image' && $value) {
+                    $field['value'] = getImage($value);
+                    $field['path'] = $value; // Mantém o path original para delete
+                } else {
+                    $field['value'] = $value;
+                }
             }
         }
-
-        $groups = collect($definitions)->groupBy('group');
 
         return view('admin.settings.index', compact('groups'));
     }
@@ -35,101 +41,91 @@ class SettingController extends Controller
     {
         $definitions = config('settings.definitions', []);
 
-        foreach ($definitions as $def) {
-            $key = $def['key'];
-            $type = $def['type'];
+        foreach ($definitions as $groupKey => $group) {
+            // Pula se não tiver campos (defesa)
+            if (!isset($group['fields']) || !is_array($group['fields'])) {
+                continue;
+            }
 
-            // Tratamento especial para imagens
-            // if ($type === 'image') {
-            //     if ($request->hasFile($key)) {
-            //         $result = uploadImage($request->file($key), 'settings', [
-            //             'save_original' => true,
-            //             'thumb' => null,
-            //             'resize' => null,
-            //         ]);
+            foreach ($group['fields'] as $def) {
+                $key = $def['key'];
+                $type = $def['type'] ?? 'text';
 
-            //         $value = $result['original'];
+                // Tratamento especial para imagens
+                if ($type === 'image') {
+                    $shouldRemove = $request->boolean("remove_settings.{$key}");
 
-            //         // Remove imagem antiga
-            //         $oldSetting = Setting::where('key', $key)->first();
-            //         if ($oldSetting && $oldSetting->value) {
-            //             deleteImage($oldSetting->value, 'settings');
-            //         }
-            //     } else {
-            //         $value = $request->input($key . '_current');
-            //     }
-            // }
-            // Dentro do foreach, no tratamento de 'image':
-            if ($type === 'image') {
+                    if ($shouldRemove) {
+                        // Deleta arquivos físicos
+                        $oldSetting = Setting::where('key', $key)->first();
+                        if ($oldSetting && $oldSetting->value) {
+                            deleteImage($oldSetting->value, 'settings');
+                        }
+                        $value = null;
 
-                // 🔴 Verifica se pediu para remover
-                $shouldRemove = $request->boolean("remove_settings.{$key}");
+                    } elseif ($request->hasFile($key)) {
+                        // 🟡 Novo upload
+                        $request->validate([
+                            $key => 'image|max:5120'
+                        ]);
 
-                if ($shouldRemove) {
-                    // Deleta arquivos físicos
-                    $oldSetting = Setting::where('key', $key)->first();
-                    if ($oldSetting && $oldSetting->value) {
-                        deleteImage($oldSetting->value, 'settings');
-                    }
-                    $value = null; // Salva null no banco
+                        $result = uploadImage($request->file($key), 'settings', [
+                            'save_original' => true,
+                            'create_media_record' => false,
+                            'thumb' => null,
+                            'resize' => null,
+                        ]);
 
-                } elseif ($request->hasFile($key)) {
-                    // 🟡 Novo upload
-                    $request->validate([
-                        $key => 'image|max:5120' // opcional: valida tipo e tamanho
-                    ]);
+                        $value = $result['original'];
 
-                    $result = uploadImage($request->file($key), 'settings', [
-                        'save_original' => true,
-                        'create_media_record' => false,
-                        'thumb' => null,
-                        'resize' => null,
-                    ]);
+                        // Deleta a imagem antiga se existir
+                        $oldSetting = Setting::where('key', $key)->first();
+                        if ($oldSetting && $oldSetting->value) {
+                            deleteImage($oldSetting->value, 'settings');
+                        }
 
-                    $value = $result['original'];
-
-                    // Deleta a imagem antiga se existir
-                    $oldSetting = Setting::where('key', $key)->first();
-                    if ($oldSetting && $oldSetting->value) {
-                        deleteImage($oldSetting->value, 'settings');
+                    } else {
+                        // 🟢 Mantém a imagem atual (fallback)
+                        $value = $request->input($key . '_current');
                     }
 
-                } else {
-                    // 🟢 Mantém a imagem atual (fallback)
-                    $value = $request->input($key . '_current');
-                }
+                    Setting::set($key, $value, $groupKey, $type);
 
-                Setting::set($key, $value, $def['group'], $type);
-            }
-            // Tratamento para radio
-            elseif ($type === 'radio') {
-                $value = $request->input($key, $def['default'] ?? '');
-            }
-            // Tratamento para select
-            elseif ($type === 'select') {
-                $value = $request->input($key, $def['default'] ?? '');
-            }
-            // Tratamento para checkboxes com array
-            elseif ($type === 'checkbox' && !empty($def['options'])) {
-                $value = $request->input($key, []);
-                if (is_array($value)) {
-                    $value = implode(',', $value);
+                }
+                // Tratamento para radio
+                elseif ($type === 'radio') {
+                    $value = $request->input($key, $def['default'] ?? '');
+                    Setting::set($key, $value, $groupKey, $type);
+                }
+                // Tratamento para select
+                elseif ($type === 'select') {
+                    $value = $request->input($key, $def['default'] ?? '');
+                    Setting::set($key, $value, $groupKey, $type);
+                }
+                // Tratamento para checkboxes com array
+                elseif ($type === 'checkbox' && !empty($def['options'])) {
+                    $value = $request->input($key, []);
+                    if (is_array($value)) {
+                        $value = implode(',', $value);
+                    }
+                    Setting::set($key, $value, $groupKey, $type);
+                }
+                // Tratamento para checkbox único
+                elseif ($type === 'checkbox' && empty($def['options'])) {
+                    $value = $request->boolean($key);
+                    Setting::set($key, $value, $groupKey, $type);
+                }
+                // Tratamento para number
+                elseif ($type === 'number') {
+                    $value = $request->input($key, $def['default'] ?? 0);
+                    Setting::set($key, $value, $groupKey, $type);
+                }
+                // Tratamento para os demais tipos (text, textarea, url, email)
+                else {
+                    $value = $request->input($key, $def['default'] ?? '');
+                    Setting::set($key, $value, $groupKey, $type);
                 }
             }
-            // Tratamento para checkbox único
-            elseif ($type === 'checkbox' && empty($def['options'])) {
-                $value = $request->boolean($key);
-            }
-            // Tratamento para number
-            elseif ($type === 'number') {
-                $value = $request->input($key, $def['default'] ?? 0);
-            }
-            // Tratamento para os demais tipos (text, textarea, url, email)
-            else {
-                $value = $request->input($key, $def['default'] ?? '');
-            }
-
-            Setting::set($key, $value, $def['group'], $type);
         }
 
         return redirect()->route('admin.settings.index')

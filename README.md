@@ -57,16 +57,25 @@ php artisan serve
 ### Mídia e Storage
 *   **Caminho:** Os arquivos físicos ficam em `storage/app/public`.
 *   **Link:** O comando `storage:link` é obrigatório para que o `public/` acesse os arquivos.
-*   **Lógica de Vínculo:** As imagens são associadas às páginas via `mediaable_id` e `mediaable_type`. O vínculo só ocorre no momento do `save()` do formulário.
+*   **Lógica de Vínculo:** As imagens são associadas às páginas via `mediaable_id` e `mediaable_type`. O vínculo só ocorre no momento do `save()` do formulário em create / edit de páginas.
 
-### Frontend & Layout
+### Layout da admin
 *   **Zero Vite:** CSS e JS não compilam. Edite diretamente em `public/`.
-*   **Reatividade:** O Alpine.js controla os modais e o estado do editor.
+*   **Reatividade:** O Alpine.js controla os modais e outras coisas no editor de páginas.
 *   **Estrutura:** O layout principal é `resources/views/admin/layout.blade.php`. Use `@extends`, `@section` e `@push` para injetar estilos e scripts específicos.
+
+### Configurações
+*   **Admin:** Edite os itens do menu e outros detalhes da admin em `config/admin.php`.
+*   **Site:** Adicione ou remova itens de configuração em `config/settings.php`. Use as funções do helper (carregadas globalmente) para recuperar os valores salvos:
+```
+setting('item_name', 'default value'); // valor individual
+settingsGroup('group_name'); // array com todos os valores de um grupo
+settingsAll(); // todos os valores salvos
+```
 
 ### Acesso
 *   **Rota Base:** `/admin`
-*   **Middleware:** Protegido por auth e verificação de Roles.
+*   **Middleware:** Protegido por auth e verificação de Roles (Viewer não acessa a admin).
 *   **Seed:** Usuário padrão criado no migration/seed (verifique `DatabaseSeeder`).
 
 ## Licença
