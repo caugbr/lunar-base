@@ -5,18 +5,18 @@
 
 ---
 
-## ✨ Funcionalidades
+## Funcionalidades
 
-- 👥 **Gestão de Usuários & Permissões**: Controle granular de acesso com papéis (Roles) e políticas.
-- 📄 **Páginas Dinâmicas**: Editor rich text (TinyMCE), thumbnails, galerias e taxonomias hierárquicas.
-- 🖼️ **Biblioteca de Mídia Inteligente**: Upload com metadados, relações polimórficas, filtros por vínculo e integração nativa com o editor.
-- 🏷️ **Taxonomias Flexíveis**: Categorias, tags e termos aninhados para classificação de conteúdo.
-- ⚙️ **Painel de Configurações**: Gerenciamento centralizado de opções e variáveis do site.
-- 🧩 **Arquitetura Leve**: Blade Components + Alpine.js 3. Zero dependência de SPAs ou build steps complexos.
+- **Gestão de Usuários & Permissões**: Controle granular de acesso com papéis (Roles) e políticas.
+- **Páginas Dinâmicas**: Editor rich text (TinyMCE), thumbnails, galerias e taxonomias hierárquicas.
+- **Biblioteca de Mídia Inteligente**: Upload com metadados, relações polimórficas, filtros por vínculo e integração nativa com o editor.
+- **Taxonomias Flexíveis**: Categorias, tags e termos aninhados para classificação de conteúdo.
+- **Painel de Configurações**: Gerenciamento centralizado de opções e variáveis do site.
+- **Arquitetura Leve**: Blade Components + Alpine.js 3. Zero dependência de SPAs ou build steps complexos.
 
 ---
 
-## 🛠️ Stack
+## Stack
 
 | Camada        | Tecnologia                          |
 |---------------|-------------------------------------|
@@ -29,7 +29,7 @@
 
 ---
 
-## 🚀 Instalação
+## Instalação
 
 ```bash
 # 1. Clonar e entrar no diretório
@@ -47,8 +47,36 @@ cp .env.example .env
 php artisan key:generate
 php artisan migrate --seed
 
-# 5. Criar link de armazenamento (⚠️ Essencial para mídia)
+# 5. Criar link de armazenamento (Essencial para mídia)
 php artisan storage:link
 
 # 6. Servir
 php artisan serve
+
+## Notas de Uso
+
+### Mídia e Storage
+*   **Caminho:** Os arquivos físicos ficam em `storage/app/public`.
+*   **Link:** O comando `storage:link` é obrigatório para que o `public/` acesse os arquivos.
+*   **Lógica de Vínculo:** As imagens são associadas às páginas via `mediaable_id` e `mediaable_type`. O vínculo só ocorre no momento do `save()` do formulário.
+
+### Frontend & Layout
+*   **Zero Vite:** CSS e JS não compilam. Edite diretamente em `public/`.
+*   **Reatividade:** O Alpine.js controla os modais e o estado do editor.
+*   **Estrutura:** O layout principal é `resources/views/admin/layout.blade.php`. Use `@extends`, `@section` e `@push` para injetar estilos e scripts específicos.
+
+### Acesso
+*   **Rota Base:** `/admin`
+*   **Middleware:** Protegido por auth e verificação de Roles.
+*   **Seed:** Usuário padrão criado no migration/seed (verifique `DatabaseSeeder`).
+
+## Licença
+
+Distribuído sob a **Licença MIT**.
+
+> **Atribuição:** Se usar este kit como base para outros projetos, peço apenas que mantenha o crédito ao autor original nos arquivos.
+
+---
+
+Criado por Cau Guanabara.
+
