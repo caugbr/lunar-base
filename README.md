@@ -1,7 +1,7 @@
 # 🌙 Lunar Base
 
-> Starter Kit Laravel para desenvolvimento ágil de painéis administrativos e CMS.  
-> Focado em estrutura sólida, componentes reutilizáveis e fluxo de trabalho otimizado.
+Starter Kit Laravel para desenvolvimento ágil de painéis administrativos e CMS.  
+Focado em estrutura sólida, componentes reutilizáveis e fluxo de trabalho otimizado.
 
 ---
 
