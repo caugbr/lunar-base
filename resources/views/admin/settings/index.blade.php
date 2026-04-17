@@ -7,9 +7,8 @@
 <div class="admin-card">
     <form method="POST" action="{{ route('admin.settings.update') }}" enctype="multipart/form-data">
         @csrf
-
         {{-- Loop sobre os GRUPOS (nível 1) --}}
-        @foreach(config('settings.definitions') as $groupKey => $group)
+        @foreach($groups as $groupKey => $group)
             <div class="settings-group" style="margin-bottom: 2.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid #e5e7eb;">
 
                 {{-- Cabeçalho do Grupo --}}
