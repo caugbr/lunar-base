@@ -14,9 +14,7 @@ return [
     'templates' => [
         'page' => 'Default',
         'fullwidth' => 'Fullwidth',
-        'left-sidebar' => 'Left Sidebar',
-        // 'right-sidebar' => 'Right Sidebar (Barra lateral direita)',
-        // 'hero' => 'Hero (Banner no topo)',
+        'left-sidebar' => 'Left Sidebar'
     ],
 
     /*

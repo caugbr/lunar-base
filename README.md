@@ -73,6 +73,16 @@ settingsGroup('group_name'); // array com todos os valores de um grupo
 settingsAll(); // todos os valores salvos
 ```
 
+### 📄 Templates e Layouts de Páginas
+
+O sistema permite personalizar a exibição das páginas separando o conteúdo da estrutura global:
+
+*  **Templates:** Contêm a lógica de conteúdo da página. Devem ser criados em `resources/views/public/templates/`.
+    *   *Nota:* Após criar o arquivo, registre-o em `config/pageTemplates.php` para que ele apareça como opção no painel admin.
+*  **Layouts:** São as "molduras" HTML (head, header, footer). Devem ser criados em `resources/views/public/`.
+
+Cada template deve referenciar um layout base utilizando a diretiva `@extends('public.nome-do-layout')`.
+
 ### Acesso
 *   **Rota Base:** `/admin`
 *   **Middleware:** Protegido por auth e verificação de Roles (Viewer não acessa a admin).

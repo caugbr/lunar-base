@@ -136,7 +136,6 @@
 
         <div class="page-footer">
             <p>Última atualização: {{ $page->updated_at->format('d/m/Y \à\s H:i') }}</p>
-            {{-- <p><a href="{{ url('/') }}">← Voltar para o início</a></p> --}}
         </div>
     </div>
 </body>
