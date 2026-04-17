@@ -73,7 +73,7 @@ settingsGroup('group_name'); // array com todos os valores de um grupo
 settingsAll(); // todos os valores salvos
 ```
 
-### 📄 Templates e Layouts de Páginas
+### Templates e Layouts de Páginas
 
 O sistema permite personalizar a exibição das páginas separando o conteúdo da estrutura global:
 
