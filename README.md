@@ -78,7 +78,7 @@ settingsAll(); // todos os valores salvos
 O sistema permite personalizar a exibição das páginas separando o conteúdo da estrutura global:
 
 *  **Templates:** Contêm a lógica de conteúdo da página. Devem ser criados em `resources/views/public/templates/`.
-    *   *Nota:* Após criar o arquivo, registre-o em `config/pageTemplates.php` para que ele apareça como opção no painel admin.
+    *   *Nota:* Após criar o arquivo, registre-o em `config/pageTemplates.php` para que ele apareça como opção na admin.
 *  **Layouts:** São as "molduras" HTML (head, header, footer). Devem ser criados em `resources/views/public/`.
 
 Cada template deve referenciar um layout base utilizando a diretiva `@extends('public.nome-do-layout')`.
@@ -89,7 +89,6 @@ Cada template deve referenciar um layout base utilizando a diretiva `@extends('p
 *   **Seed:** Usuário padrão criado no migration/seed (verifique `DatabaseSeeder`).
 
 ## Licença
-
 Distribuído sob a **Licença MIT**.
 
 > **Atribuição:** Se usar este kit como base para outros projetos, peço apenas que mantenha o crédito ao autor original nos arquivos.
