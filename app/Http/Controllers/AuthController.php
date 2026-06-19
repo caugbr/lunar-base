@@ -4,15 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 
 class AuthController extends Controller
 {
     public function showLogin()
     {
-        if (Auth::check()) {
-            return redirect()->route('admin.dashboard');
-        }
-
         return view('auth.login');
     }
 
@@ -23,20 +20,35 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
+        if (setting('navigation.use_captcha')) {
+            // Validação do Turnstile
+            $response = Http::asForm()->post('https://challenges.cloudflare.com/turnstile/v0/siteverify', [
+                'secret' => config('services.turnstile.secret_key'),
+                'response' => $request->input('cf-turnstile-response'),
+                'remoteip' => $request->ip(),
+            ]);
+
+            if (!$response->json('success')) {
+                return back()->withErrors([
+                    'turnstile' => 'Verificação de segurança falhou. Recarregue a página e tente novamente.'
+                ])->withInput();
+            }
+        }
+
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
             $user = Auth::user();
 
-            // 🔧 Agora acessa a role através do relacionamento
-            $roleSlug = $user->role?->slug ?? 'viewer'; // admin, editor, viewer
-
-            if ($roleSlug === 'viewer') {
-                return redirect()->intended('/');
+            if ($user->role === 'admin') {
+                return redirect()->intended('/admin/dashboard');
             }
 
-            // Para editor ou visualizador, vai para o dashboard também
-            return redirect()->intended('/admin/dashboard');
+            if ($user->role === 'partner') {
+                return redirect()->intended('/partner/dashboard');
+            }
+
+            return redirect()->intended('/');
         }
 
         return back()->withErrors([

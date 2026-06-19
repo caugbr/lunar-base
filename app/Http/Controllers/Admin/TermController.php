@@ -109,10 +109,10 @@ class TermController extends Controller
     {
         $taxonomyId = $term->taxonomy_id;
 
-        // Verifica se há páginas associadas
-        if ($term->pages()->count() > 0) {
+        // Verifica se o termo está em uso em qualquer entidade (páginas, posts, etc.)
+        if ($term->isInUse()) {
             return redirect()->route('admin.terms.index', ['taxonomy_id' => $taxonomyId])
-                ->with('error', 'Não é possível excluir um termo que está associado a páginas.');
+                ->with('error', 'Não é possível excluir um termo que está em uso.');
         }
 
         // Verifica se há termos filhos

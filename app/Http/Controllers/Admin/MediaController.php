@@ -43,7 +43,7 @@ class MediaController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'file' => 'required|file|mimes:jpg,jpeg,png,gif,webp,pdf,doc,docx|max:10240', // 10MB
+            'file' => 'required|file|mimes:jpg,jpeg,png,gif,webp,svg,pdf,doc,docx|max:10240', // 10MB
             'folder' => 'nullable|string|max:50',
             'alt' => 'nullable|string|max:255',
             'caption' => 'nullable|string|max:500',
@@ -78,39 +78,30 @@ class MediaController extends Controller
     }
 
     /**
-     * Atualiza metadados (alt, caption, nome)
+     * Atualiza metadados (alt, caption, nome, meta)
      */
-    // public function update(Request $request, Media $media)
-    // {
-    //     $validated = $request->validate([
-    //         'name' => 'nullable|string|max:255',
-    //         'alt' => 'nullable|string|max:255',
-    //         'caption' => 'nullable|string|max:500',
-    //     ]);
-
-    //     $media->update($validated);
-
-    //     return $request->wantsJson()
-    //         ? response()->json(['success' => true, 'data' => $media])
-    //         : redirect()->back()->with('success', 'Metadados atualizados.');
-    // }
-    public function update(Request $request, Media $media) // ← Lembre: parâmetro é $medium, não $media
+    public function update(Request $request, Media $media)
     {
-        // \Log::info('Update recebido', [
-        //     'id' => $medium->id,
-        //     'input' => $request->only(['name', 'alt', 'caption']),
-        // ]);
-
         $validated = $request->validate([
             'name' => 'nullable|string|max:255',
             'alt' => 'nullable|string|max:255',
             'caption' => 'nullable|string|max:500',
+            'meta' => 'nullable|array',
+            'meta.alignment' => 'nullable|string|in:left,center,right,float-left,float-right',
         ]);
+
+        // Merge do meta existente com o novo, preservando outras chaves
+        if (isset($validated['meta'])) {
+            $validated['meta'] = array_merge(
+                $media->meta ?? [],
+                $validated['meta']
+            );
+        }
 
         $media->update($validated);
 
         return $request->wantsJson()
-            ? response()->json(['success' => true, 'data' => $media]) // ← fresh() garante dados atualizados
+            ? response()->json(['success' => true, 'data' => $media->fresh()])
             : redirect()->back()->with('success', 'Metadados atualizados.');
     }
 
@@ -186,14 +177,19 @@ class MediaController extends Controller
 
         // Transforma a coleção adicionando dados úteis para o frontend
         $media->getCollection()->transform(function ($item) {
-            // Gera URL da thumbnail de forma segura para qualquer extensão
-            $pathInfo = pathinfo($item->path);
-            $thumbName = $pathInfo['filename'] . '_thumb.' . $pathInfo['extension'];
-            $thumbPath = rtrim($pathInfo['dirname'], '/') . '/' . $thumbName;
+            // SVG não tem thumbnail, usa a própria imagem
+            if (str_starts_with($item->mime_type, 'image/svg')) {
+                $thumbnailUrl = $item->url;
+            } else {
+                // Gera URL da thumbnail de forma segura para qualquer extensão
+                $pathInfo = pathinfo($item->path);
+                $thumbName = $pathInfo['filename'] . '_thumb.' . $pathInfo['extension'];
+                $thumbPath = rtrim($pathInfo['dirname'], '/') . '/' . $thumbName;
 
-            $thumbnailUrl = Storage::disk('public')->exists($thumbPath)
-                ? Storage::disk('public')->url($thumbPath)
-                : $item->url; // Fallback para a original se não houver thumb
+                $thumbnailUrl = Storage::disk('public')->exists($thumbPath)
+                    ? Storage::disk('public')->url($thumbPath)
+                    : $item->url; // Fallback para a original se não houver thumb
+            }
 
             return [
                 'id' => $item->id,
@@ -202,6 +198,7 @@ class MediaController extends Controller
                 'thumbnail_url' => $thumbnailUrl,
                 'alt' => $item->alt,
                 'caption' => $item->caption,
+                'meta' => $item->meta ?? [],
                 'size_formatted' => $item->size_formatted,
                 'is_image' => $item->is_image,
                 'mime_type' => $item->mime_type,

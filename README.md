@@ -1,97 +1,176 @@
-# 🌙 Lunar Admin
+﻿# Lunar Base
 
-Starter Kit Laravel para desenvolvimento ágil de painéis administrativos e CMS.  
-Focado em estrutura sólida, componentes reutilizáveis e fluxo de trabalho otimizado.
+## Sobre o Projeto
 
----
+O **Lunar Base** é um Starter Kit híbrido para Laravel, projetado com características de CMS modular. Ele gerencia seu comportamento operacional através de estruturas declarativas em arquivos de configuração locais, traits de expansão e helpers de contexto, oferecendo uma base sólida e flexível para o desenvolvimento de aplicações web robustas.
 
-## Funcionalidades
+## Características Principais
 
-- **Gestão de Usuários & Permissões**: Controle granular de acesso com papéis (Roles) e políticas.
-- **Páginas Dinâmicas**: Editor rich text (TinyMCE), thumbnails, galerias e taxonomias hierárquicas.
-- **Biblioteca de Mídia Inteligente**: Upload com metadados, relações polimórficas, filtros por vínculo e integração nativa com o editor.
-- **Taxonomias Flexíveis**: Categorias, tags e termos aninhados para classificação de conteúdo.
-- **Painel de Configurações**: Gerenciamento centralizado de opções e variáveis do site.
-- **Arquitetura Leve**: Blade Components + Alpine.js 3. Zero dependência de SPAs ou build steps complexos.
+- **Painel Administrativo Intuitivo**: Interface limpa e organizada com módulos para gerenciamento completo do sistema.
+- **Arquitetura Declarativa**: Comportamento do sistema definido por arquivos de configuração (`.php`), eliminando queries repetitivas e melhorando o TTFB (tempo de resposta do servidor).
+- **RBAC Estático**: Controle de acesso baseado em papéis (Role-Based Access Control) definido em código, garantindo segurança e clareza.
+- **Roteamento Híbrido**: Sistema inteligente de roteamento que resolve dinamicamente URLs amigáveis para páginas, posts e taxonomias.
+- **Shortcodes**: Motor de renderização de conteúdo dinâmico via tags personalizadas `[shortcode]`.
+- **Helpers Globais**: Funções utilitárias para acesso a configurações, permissões e manipulação de dados.
 
----
+## Módulos do Painel Administrativo
 
-## Stack
+| Módulo         | Descrição                                                                                                                               |
+| :------------- | :-------------------------------------------------------------------------------------------------------------------------------------- |
+| **Dashboard**  | Ponto de ancoragem para futuros widgets, gráficos e relatórios gerenciais.                                                              |
+| **Páginas**    | CRUD para páginas estáticas/dinâmicas com suporte a thumbnails, seleção de layouts (`/config/pageTemplates.php`) e namespaces de URL. |
+| **Posts**      | Gerenciador de publicações cronológicas (blog/notícias) com agendamento, destaque (`featured`) e fixação (`sticky`).                    |
+| **Mídia**      | Biblioteca central de uploads com redimensionamento automático e compressão de imagens.                                                 |
+| **Taxonomias** | Agrupamentos relacionais para categorizar e filtrar Páginas e Posts.                                                                    |
+| **Formulários** | Estrutura de captura de dados renderizada via shortcode `[form slug="..."]`, com validação, notificações SMTP e feedback ao usuário.  |
+| **Usuários**   | Gerenciamento de identidades e credenciais administrativas.                                                                             |
+| **Permissões** | Interface *Read-Only* para auditoria do sistema RBAC definido em `/config/rolesPermissions.php`.                                      |
+| **Configurações** | Painel dinâmico para parametrização de variáveis globais (SEO, mídia, SMTP, etc.) baseado no schema `/config/settings.php`.         |
+| **Logs**       | Trilha de auditoria (Audit Trail) para monitoramento de ações críticas do sistema.                                                      |
 
-| Camada        | Tecnologia                          |
-|---------------|-------------------------------------|
-| **Backend**   | Laravel 11 / PHP 8.3+               |
-| **Frontend**  | Blade, Alpine.js 3, CSS puro        |
-| **Editor**    | TinyMCE (integrado com seletor)     |
-| **Ícones**    | Lucide Icons (Blade components)     |
-| **Assets**    | Servidos direto de `public/` (Sem Vite) |
-| **Banco**     | MySQL / PostgreSQL / SQLite         |
+## Estrutura de Arquivos de Configuração
 
----
+A lógica central do Lunar Base é guiada por arquivos de configuração declarativos:
+
+- **`/config/adminMenu.php`**: Define a estrutura do menu lateral administrativo (rótulos, ícones, rotas e permissões).
+- **`/config/rolesPermissions.php`**: Repositório estático para definir papéis (roles) e suas respectivas permissões.
+- **`/config/settings.php`**: Schema do painel de configurações gerais, definindo campos, tipos e valores padrão para cada grupo.
+- **`/config/pageTemplates.php`** & **`/config/postTemplates.php`**: Listam os arquivos Blade utilizáveis como templates para páginas e posts.
+- **`/config/site.php`**: Concentra diretivas estruturais do site, como o menu principal de navegação (`config('site.mainMenu')`).
+
+## Helpers e Traits Globais
+
+### `SettingHelper`
+
+Facilita o acesso às configurações do sistema, mesclando valores do banco de dados com os *fallbacks* definidos em `/config/settings.php`.
+
+```php
+// Obtém o valor de uma configuração específica
+$siteName = setting('general.site_name');
+
+// Retorna todas as configurações de um grupo
+$smtpConfig = settingsGroup('mail');
+
+// Retorna todas as configurações do sistema
+$allSettings = settingsAll();
+
+// Obtém o valor padrão estático de uma configuração
+$fallbackTheme = settingDefault('general.site_theme');
+```
+
+### `Shortcodes` (Trait)
+
+Processa blocos textuais e renderiza dinamicamente conteúdo no front-end através do método `ContentHelper::parseShortcodes($content)`. Para adicionar um novo shortcode, crie um método privado na trait seguindo o padrão `render{NomeDoShortcode}`.
+
+```php
+// Estrutura para a tag [form slug="meu-formulario"]
+private static function renderForm($attributes) {
+    $slug = $attributes['slug'] ?? null;
+    // ... lógica para buscar e renderizar o formulário
+}
+```
+
+### `RolePermissionHelper`
+
+Fornece validadores booleanos para verificação rápida de papéis e permissões em controladores e views Blade.
+
+```php
+// Verifica se o usuário logado tem um papel específico
+if (isRole('admin')) {
+    // Código para administradores
+}
+
+// Verifica se o usuário tem uma permissão específica
+if (userCan('manage-pages')) {
+    // Código para quem pode gerenciar páginas
+}
+```
+
+## Orquestrador de Permalinks e Roteamento Híbrido
+
+O sistema utiliza um roteamento híbrido para evitar conflitos e oferecer flexibilidade. As requisições públicas são capturadas no final do arquivo `routes/web.php` e centralizadas no `RouteOrchestratorController`. Este componente analisa a URL com base nos segmentos e as despacha para o controller correto, disparando um erro 404 caso nenhuma definição seja encontrada.
+
+```php
+// Captura de rota para URLs com 3 segmentos (ex: base/namespace/slug)
+Route::get('/{base}/{namespace}/{slug}', [RouteOrchestratorController::class, 'handleThreeSegments']);
+
+// Captura de rota para URLs com 2 segmentos (ex: base/slug)
+Route::get('/{base}/{slug}', [RouteOrchestratorController::class, 'handleTwoSegments']);
+
+// Captura de rota para URLs com 1 segmento (ex: base)
+Route::get('/{base}', [RouteOrchestratorController::class, 'handleOneSegment']);
+```
 
 ## Instalação
 
-#### 1. Clonar e entrar no diretório
-git clone https://github.com/caugbr/lunar-base.git lunar-base \
-cd lunar-base
+Se você tem intimidade com o Laravel e preferir fazer manualmente, siga seu roteiro de instalação, mas temos o script `install.sh` automatiza toda a instalação do Lunar Base de forma interativa.
 
-#### 2. Instalar dependências
-composer install
+### Requisitos
 
-#### 3. Configurar ambiente
-cp .env.example .env
-#### → Edite APP_URL, DB_* e demais credenciais
+- PHP >= 8.1
+- Composer
+- Bash (Git Bash se estiver no Windows)
 
-#### 4. Gerar chave e preparar banco
-php artisan key:generate \
-php artisan migrate --seed
+### Uso básico
 
-#### 5. Criar link de armazenamento (Essencial para mídia)
-php artisan storage:link
-
-#### 6. Servir
-php artisan serve
-
-## Notas de Uso
-
-### Mídia e Storage
-*   **Caminho:** Os arquivos físicos ficam em `storage/app/public`.
-*   **Link:** O comando `storage:link` é obrigatório para que o `public/` acesse os arquivos.
-*   **Lógica de Vínculo:** As imagens são associadas às páginas via `mediaable_id` e `mediaable_type`. O vínculo só ocorre no momento do `save()` do formulário em create / edit de páginas.
-
-### Layout da admin
-*   **Zero Vite:** CSS e JS não compilam. Edite diretamente em `public/`.
-*   **Reatividade:** O Alpine.js controla os modais e outras coisas no editor de páginas.
-*   **Estrutura:** O layout principal é `resources/views/admin/layout.blade.php`. Use `@extends`, `@section` e `@push` para injetar estilos e scripts específicos.
-
-### Configurações
-*   **Admin:** Edite os itens do menu e outros detalhes da admin em `config/admin.php`.
-*   **Site:** Adicione ou remova itens de configuração em `config/settings.php`. Use as funções do helper (carregadas globalmente) para recuperar os valores salvos:
-```
-setting('item_name', 'default value'); // valor individual
-settingsGroup('group_name'); // array com todos os valores de um grupo
-settingsAll(); // todos os valores salvos
+```bash
+chmod +x install.sh
+./install.sh
 ```
 
-### Templates e Layouts de Páginas
+### Opções
 
-O sistema permite personalizar a exibição das páginas separando o conteúdo da estrutura global:
+| Flag | Descrição |
+|------|-----------|
+| `./install.sh --help` | Exibe o roteiro de instalação |
+| `./install.sh --dry-run` | Executa apenas as perguntas e gera o JSON, sem instalar |
 
-*  **Templates:** Contêm a lógica de conteúdo da página. Devem ser criados em `resources/views/public/templates/`.
-    *   *Nota:* Após criar o arquivo, registre-o em `config/pageTemplates.php` para que ele apareça como opção na admin.
-*  **Layouts:** São as "molduras" HTML (head, header, footer). Devem ser criados em `resources/views/public/`.
+### O que será perguntado
 
-Cada template deve referenciar um layout base utilizando a diretiva `@extends('public.nome-do-layout')`.
+1. **Informações do site** — nome e URL (padrões: `Lunar Base`, `http://localhost`)
+2. **Administrador principal** — nome, e-mail e senha (com confirmação)
+3. **Usuários de demonstração** — senha única para todos os roles. E-mails gerados automaticamente como `role@dominio.com`
+4. **Persistência** — se deseja manter os dados em `storage/app/.install/default_users_data.json` para futuros seeds
+5. **Banco de dados** — `sqlite` (padrão), `mysql`, `pgsql` ou `sqlsrv`. Se não for SQLite, pergunta host, porta, nome, usuário e senha
 
-### Acesso
-*   **Rota Base:** `/admin`
-*   **Middleware:** Protegido por auth e verificação de Roles (Viewer não acessa a admin).
-*   **Seed:** Usuário padrão criado no migration/seed (verifique `DatabaseSeeder`).
+### O que o script faz
+
+1. Gera `storage/app/.install/default_users_data.json` (será utilizado durante o seed)
+2. `composer install`
+3. Cria `.env` a partir de `.env.example` (se não existir)
+4. Gera `APP_KEY`
+5. Preenche `APP_NAME`, `APP_URL` e `DB_*` no `.env`
+6. Cria `database/database.sqlite` (se SQLite)
+7. `php artisan migrate --force`
+8. `php artisan db:seed --force`
+9. `php artisan storage:link`
+10. Limpa caches
+11. Remove ou preserva o JSON temporário
+
+### Fallback sem JSON
+
+Se `default_users_data.json` não existir, `config/defaultUsers.php` gera usuários automaticamente a partir de `config/rolesPermissions.php`:
+- E-mails: `role@lunar.base` (ou domínio do `APP_URL`)
+- Senha padrão: `Pass#1029`
+
+### Windows
+
+Requer ambiente Bash: **Git Bash** (recomendado), **WSL** ou **Cygwin**.
+
+### Arquivos de configuração
+
+| Arquivo | Função |
+|---------|--------|
+| `config/rolesPermissions.php` | Roles e permissions |
+| `config/defaultUsers.php` | Array de usuários (lê JSON ou fallback) |
+| `database/seeders/AdminUsersSeeder.php` | Cria usuários via `config('defaultUsers')` |
+| `storage/app/.install/default_users_data.json` | Dados temporários do install.sh |
+
+## Contribuição
+
+Contribuições são bem-vindas! Sinta-se à vontade para abrir issues e pull requests para melhorias, correções de bugs ou novas funcionalidades.
 
 ## Licença
-Distribuído sob a **Licença MIT**.
 
-> **Atribuição:** Se usar este kit como base para outros projetos, peço apenas que mantenha o crédito ao autor original nos arquivos.
-
-Criado por Cau Guanabara.
+Este projeto é licenciado sob a [MIT License](https://mit-license.org/).
 

@@ -1,0 +1,87 @@
+:root {
+    --glow-color: #f5f5dc;
+    --dark-color: #666666;
+    --moon-width: 20px;
+    --duration: 2s;
+}
+
+.moon-loader-wrapper {
+    width: var(--moon-width);
+    height: var(--moon-width);
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.moon-loader {
+    width: var(--moon-width);
+    height: var(--moon-width);
+    border-radius: 50%;
+    border: 0px solid;
+    animation: moonCycle var(--duration) linear infinite;
+    display: inline-block;
+}
+
+@keyframes moonCycle {
+    /* 0% - LUA CHEIA */
+    0% {
+        background-color: var(--glow-color);
+        border-color: var(--dark-color);
+        border-left-width: 0px;
+        border-right-width: 1px;
+        border-right-color: var(--glow-color);
+    }
+
+    /* 25% - MEIA LUA MINGUANTE */
+    25% {
+        background-color: var(--glow-color);
+        border-color: var(--dark-color);
+        border-left-width: calc(var(--moon-width) / 2);
+        border-right-width: 1px;
+        border-right-color: var(--glow-color);
+    }
+
+    /* 25% - SNAP! Inverte tudo */
+    25.01% {
+        background-color: var(--dark-color);
+        border-color: var(--glow-color);
+        border-left-width: 1px;
+        border-left-color: var(--dark-color);
+        border-right-width: calc(var(--moon-width) / 2);
+    }
+
+    /* 50% - LUA NOVA */
+    50% {
+        background-color: var(--dark-color);
+        border-color: var(--glow-color);
+        border-left-width: 1px;
+        border-left-color: var(--dark-color);
+        border-right-width: 0px;
+    }
+
+    /* 75% - MEIA LUA CRESCENTE */
+    75% {
+        background-color: var(--dark-color);
+        border-color: var(--glow-color);
+        border-left-width: calc(var(--moon-width) / 2);
+        border-right-width: 1px;
+        border-right-color: var(--dark-color);
+    }
+
+    /* 75% - SNAP! Inverte de volta */
+    75.01% {
+        background-color: var(--glow-color);
+        border-color: var(--dark-color);
+        border-left-width: 1px;
+        border-left-color: var(--glow-color);
+        border-right-width: calc(var(--moon-width) / 2);
+    }
+
+    /* 100% - LUA CHEIA */
+    100% {
+        background-color: var(--glow-color);
+        border-color: var(--dark-color);
+        border-left-width: 0px;
+        border-right-width: 1px;
+        border-right-color: var(--glow-color);
+    }
+}

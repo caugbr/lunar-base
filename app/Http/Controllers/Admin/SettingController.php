@@ -5,15 +5,14 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 
 class SettingController extends Controller
 {
     public function index()
     {
-        // Pega a estrutura hierárquica do config
         $groups = config('settings.definitions', []);
 
-        // Itera sobre cada grupo e seus campos para injetar os valores salvos
         foreach ($groups as $groupKey => &$group) {
             if (!isset($group['fields']) || !is_array($group['fields'])) {
                 continue;
@@ -24,10 +23,9 @@ class SettingController extends Controller
                 $saved = Setting::where('key', $key)->first();
                 $value = $saved ? $saved->typed_value : ($field['default'] ?? null);
 
-                // 🔁 Usa o helper para imagens: path → URL
                 if (($field['type'] ?? '') === 'image' && $value) {
                     $field['value'] = getImage($value);
-                    $field['path'] = $value; // Mantém o path original para delete
+                    $field['path'] = $value;
                 } else {
                     $field['value'] = $value;
                 }
@@ -41,8 +39,45 @@ class SettingController extends Controller
     {
         $definitions = config('settings.definitions', []);
 
+        // === INÍCIO DA ADIÇÃO: VALIDAÇÃO DINÂMICA ===
+        $rules = [];
+        $messages = [];
+
         foreach ($definitions as $groupKey => $group) {
-            // Pula se não tiver campos (defesa)
+            foreach ($group['fields'] ?? [] as $def) {
+                $key = $def['key'];
+                $fieldRules = ['nullable'];
+
+                if (isset($def['forbidden']) && is_array($def['forbidden'])) {
+                    $resolvedForbidden = [];
+
+                    foreach ($def['forbidden'] as $word) {
+                        // Se apontar para outra configuração, resolve o valor dinamicamente
+                        if (str_starts_with($word, 'setting:')) {
+                            $settingKey = str_replace('setting:', '', $word);
+                            $resolvedForbidden[] = setting($settingKey);
+                        } else {
+                            $resolvedForbidden[] = $word;
+                        }
+                    }
+
+                    // Remove valores vazios e junta na regra not_in do Laravel
+                    $resolvedForbidden = array_filter($resolvedForbidden);
+                    if (!empty($resolvedForbidden)) {
+                        $fieldRules[] = 'not_in:' . implode(',', $resolvedForbidden);
+                        $messages["{$key}.not_in"] = "O valor informado no campo \"{$def['label']}\" é uma palavra reservada ou já está em uso por outro namespace.";
+                    }
+                }
+
+                $rules[$key] = $fieldRules;
+            }
+        }
+
+        // Executa a validação antes de começar a salvar
+        $request->validate($rules, $messages);
+        // === FIM DA ADIÇÃO: VALIDAÇÃO DINÂMICA ===
+
+        foreach ($definitions as $groupKey => $group) {
             if (!isset($group['fields']) || !is_array($group['fields'])) {
                 continue;
             }
@@ -51,12 +86,29 @@ class SettingController extends Controller
                 $key = $def['key'];
                 $type = $def['type'] ?? 'text';
 
-                // Tratamento especial para imagens
+                // === PASSWORD: criptografa antes de salvar ===
+                if ($type === 'password') {
+                    $input = $request->input($key);
+
+                    // Se o campo veio vazio, mantém o valor existente
+                    if (blank($input)) {
+                        $existing = Setting::where('key', $key)->value('value');
+                        if ($existing) {
+                            Setting::set($key, $existing, $groupKey, $type);
+                        }
+                        continue;
+                    }
+
+                    $encrypted = Crypt::encryptString($input);
+                    Setting::set($key, $encrypted, $groupKey, $type);
+                    continue;
+                }
+
+                // === IMAGE ===
                 if ($type === 'image') {
                     $shouldRemove = $request->boolean("remove_settings.{$key}");
 
                     if ($shouldRemove) {
-                        // Deleta arquivos físicos
                         $oldSetting = Setting::where('key', $key)->first();
                         if ($oldSetting && $oldSetting->value) {
                             deleteImage($oldSetting->value, 'settings');
@@ -64,9 +116,8 @@ class SettingController extends Controller
                         $value = null;
 
                     } elseif ($request->hasFile($key)) {
-                        // 🟡 Novo upload
                         $request->validate([
-                            $key => 'image|max:5120'
+                            $key => 'file|mimetypes:image/jpeg,image/png,image/gif,image/webp,image/svg+xml|max:5120'
                         ]);
 
                         $result = uploadImage($request->file($key), 'settings', [
@@ -78,53 +129,51 @@ class SettingController extends Controller
 
                         $value = $result['original'];
 
-                        // Deleta a imagem antiga se existir
                         $oldSetting = Setting::where('key', $key)->first();
                         if ($oldSetting && $oldSetting->value) {
                             deleteImage($oldSetting->value, 'settings');
                         }
 
                     } else {
-                        // 🟢 Mantém a imagem atual (fallback)
                         $value = $request->input($key . '_current');
                     }
 
                     Setting::set($key, $value, $groupKey, $type);
+                    continue;
+                }
 
-                }
-                // Tratamento para radio
-                elseif ($type === 'radio') {
+                // === RADIO / SELECT ===
+                if (in_array($type, ['radio', 'select'])) {
                     $value = $request->input($key, $def['default'] ?? '');
                     Setting::set($key, $value, $groupKey, $type);
+                    continue;
                 }
-                // Tratamento para select
-                elseif ($type === 'select') {
-                    $value = $request->input($key, $def['default'] ?? '');
-                    Setting::set($key, $value, $groupKey, $type);
-                }
-                // Tratamento para checkboxes com array
-                elseif ($type === 'checkbox' && !empty($def['options'])) {
+
+                // === CHECKBOX com array ===
+                if ($type === 'checkbox' && !empty($def['options'])) {
                     $value = $request->input($key, []);
-                    if (is_array($value)) {
-                        $value = implode(',', $value);
-                    }
+                    $value = is_array($value) ? implode(',', $value) : $value;
                     Setting::set($key, $value, $groupKey, $type);
+                    continue;
                 }
-                // Tratamento para checkbox único
-                elseif ($type === 'checkbox' && empty($def['options'])) {
+
+                // === CHECKBOX único / SWITCH ===
+                if ($type === 'checkbox' || $type === 'switch') {
                     $value = $request->boolean($key);
                     Setting::set($key, $value, $groupKey, $type);
+                    continue;
                 }
-                // Tratamento para number
-                elseif ($type === 'number') {
+
+                // === NUMBER ===
+                if ($type === 'number') {
                     $value = $request->input($key, $def['default'] ?? 0);
                     Setting::set($key, $value, $groupKey, $type);
+                    continue;
                 }
-                // Tratamento para os demais tipos (text, textarea, url, email)
-                else {
-                    $value = $request->input($key, $def['default'] ?? '');
-                    Setting::set($key, $value, $groupKey, $type);
-                }
+
+                // === DEFAULT: text, textarea, url, email ===
+                $value = $request->input($key, $def['default'] ?? '');
+                Setting::set($key, $value, $groupKey, $type);
             }
         }
 

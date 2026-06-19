@@ -6,14 +6,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
+use App\Traits\HasMeta;
 
 class Media extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, HasMeta;
 
     protected $fillable = [
         'name', 'path', 'mime_type', 'size', 'width', 'height',
-        'alt', 'caption', 'hash'
+        'alt', 'caption', 'hash',
+        'meta'
         // ⚠️ mediaable_id e mediaable_type são definidos via relacionamento, não mass assignment
     ];
 
@@ -51,6 +53,66 @@ class Media extends Model
     public function getUrlAttribute(): string
     {
         return Storage::disk('public')->url($this->path);
+    }
+
+    // public function getThumbUrlAttribute(): ?string
+    // {
+    //     // SVG não tem thumbnail, retorna a própria imagem
+    //     if (str_starts_with($this->mime_type, 'image/svg')) {
+    //         return $this->url;
+    //     }
+
+    //     $pathInfo = pathinfo($this->path);
+
+    //     $thumbName = $pathInfo['filename'] . '_thumb.' . $pathInfo['extension'];
+    //     $thumbPath = 'media/uploads/cache/' . $thumbName;
+
+    //     \Log::info("PATH INFO", [
+    //         "thumbPath" => $thumbPath,
+    //         "exists" => Storage::disk('public')->exists($thumbPath),
+    //         "url" => Storage::disk('public')->url($thumbPath)
+    //     ]);
+
+    //     // Verifica se o thumb existe, senão retorna a original
+    //     if (Storage::disk('public')->exists($thumbPath)) {
+    //         return Storage::disk('public')->url($thumbPath);
+    //     }
+
+    //     // fallback para original
+    //     return $this->url;
+    // }
+    public function getThumbUrlAttribute(): ?string
+    {
+        // SVG não tem thumbnail, retorna a própria imagem
+        if (str_starts_with($this->mime_type, 'image/svg')) {
+            return $this->url;
+        }
+
+        $pathInfo = pathinfo($this->path);
+
+        // 💡 CORREÇÃO: Pega o formato das configurações ou define 'webp' como padrão
+        // Igualzinho está no seu ImageProcessor.php
+        $format = strtolower(config('settings.media_formats', 'webp'));
+
+        // Se você não tiver esse config global, pode usar apenas 'webp' diretamente:
+        // $format = 'webp';
+
+        $thumbName = $pathInfo['filename'] . '_thumb.' . $format;
+        $thumbPath = 'media/uploads/cache/' . $thumbName;
+
+        \Log::info("PATH INFO CORRIGIDO", [
+            "thumbPath" => $thumbPath,
+            "exists" => Storage::disk('public')->exists($thumbPath),
+            "url" => Storage::disk('public')->url($thumbPath)
+        ]);
+
+        // Verifica se o thumb existe, senão retorna a original
+        if (Storage::disk('public')->exists($thumbPath)) {
+            return Storage::disk('public')->url($thumbPath);
+        }
+
+        // fallback para original
+        return $this->url;
     }
 
     public function getIsImageAttribute(): bool

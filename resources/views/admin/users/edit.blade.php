@@ -34,20 +34,19 @@
                 <small>Deixe em branco para manter a senha atual</small>
             </div>
             <div class="form-group">
-                <label for="role_id">Perfil *</label>
-                <select name="role_id" id="role_id" required>
-                    @foreach($roles as $role)
-                        <option value="{{ $role->id }}" {{ $user->role_id == $role->id ? 'selected' : '' }}>
-                            {{ $role->name }}
-                        </option>
-                    @endforeach
+                <label for="role">Perfil *</label>
+                <select name="role" id="role" required>
+                    <option value="admin" {{ $user->role == 'admin' ? 'selected' : '' }}>Administrador</option>
+                    <option value="editor" {{ $user->role == 'editor' ? 'selected' : '' }}>Editor</option>
                 </select>
             </div>
         </div>
 
-        <button type="submit" class="admin-btn admin-btn-primary">
-            <x-lucide-save class="lucid-icon" /> Atualizar
-        </button>
+        <div class="buttons">
+            <button type="submit" class="admin-btn admin-btn-primary">
+                <x-lucide-save class="lucid-icon" /> Atualizar
+            </button>
+        </div>
     </form>
 </div>
 @endsection

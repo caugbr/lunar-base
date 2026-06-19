@@ -1,0 +1,57 @@
+/* tinymce-content.css */
+body {
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #333;
+    /* max-width: 800px;
+    margin: 0 auto;
+    padding: 20px; */
+}
+
+figure {
+    margin: 0;
+    padding: 0;
+}
+
+figure.align-left {
+    float: left;
+    margin: 0 0 1rem 0;
+}
+figure.align-center {
+    display: block;
+    margin: 0 auto 1rem auto;
+    text-align: center;
+}
+figure.align-right {
+    float: right;
+    margin: 0 0 1rem 1.5rem;
+}
+
+figure img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+h1, h2, h3, h4 {
+    color: #1a1a1a;
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+}
+
+a {
+    color: #0066cc;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+
+.tmce-visual-hint {
+    opacity: 0.9;
+    transition: opacity 0.2s;
+}
+.tmce-visual-hint:hover {
+    opacity: 1;
+}

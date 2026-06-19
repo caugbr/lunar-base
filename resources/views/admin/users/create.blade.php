@@ -27,26 +27,26 @@
         </div>
 
         <div class="admin-form-row">
-            {{-- <div class="form-group">
-                <label for="password">Senha *</label>
-                <input type="password" name="password" id="password" required>
-            </div> --}}
-            <x-password-field name="password" label="Senha *" required="true" />
             <div class="form-group">
-                <label for="role_id">Perfil *</label>
-                <select name="role_id" id="role_id" required>
-                    @foreach($roles as $role)
-                        <option value="{{ $role->id }}" {{ 3 == $role->id ? 'selected' : '' }}>
-                            {{ $role->name }}
-                        </option>
+                <x-password-field name="password" label="Senha *" required="true" />
+            </div>
+            <div class="form-group">
+                <label for="role">Perfil *</label>
+                <select name="role" id="role" required>
+                    @foreach($roles as $role_id => $role)
+                    <option value="{{ $role_id }}">{{ $role['name'] }}</option>
                     @endforeach
+                    {{-- <option value="admin">Administrador</option>
+                    <option value="editor">Editor</option> --}}
                 </select>
             </div>
         </div>
 
-        <button type="submit" class="admin-btn admin-btn-primary">
-            <x-lucide-save class="lucid-icon" /> Salvar
-        </button>
+        <div class="buttons">
+            <button type="submit" class="admin-btn admin-btn-primary">
+                <x-lucide-save class="lucid-icon" /> Salvar
+            </button>
+        </div>
     </form>
 </div>
 @endsection

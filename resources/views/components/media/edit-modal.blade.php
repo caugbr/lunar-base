@@ -63,6 +63,18 @@
                     </div>
 
                     <div class="form-group">
+                        <label for="media-alignment">Alinhamento</label>
+                        <select id="media-alignment" x-model="media.meta.alignment" class="form-input">
+                            <option value="none">Sem alinhamento definido</option>
+                            <option value="left">Esquerda</option>
+                            <option value="center">Centro</option>
+                            <option value="right">Direita</option>
+                            <option value="float-left">Esquerda (dentro do texto)</option>
+                            <option value="float-right">Direita (dentro do texto)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
                         <label for="media-alt">Texto alternativo (SEO)</label>
                         <input type="text" id="media-alt" x-model="media.alt" class="form-input" placeholder="Descreva a imagem para acessibilidade">
                     </div>
@@ -203,7 +215,7 @@ function mediaEdit(id, csrf) {
         modalId: id,
 
         openModal(item) {
-            this.media = { ...this.media, ...item };
+            this.media = { ...this.media, ...item, meta: item.meta || {} };
             this.error = null;
             this.success = null;
             this.open = true;
@@ -231,7 +243,10 @@ function mediaEdit(id, csrf) {
                     body: JSON.stringify({
                         name: this.media.name.trim(),
                         alt: this.media.alt?.trim() || null,
-                        caption: this.media.caption?.trim() || null
+                        caption: this.media.caption?.trim() || null,
+                        meta: {
+                            alignment: this.media.meta?.alignment || 'none'
+                        }
                     })
                 });
 
@@ -254,4 +269,6 @@ function mediaEdit(id, csrf) {
     }
 }
 </script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 @endpush

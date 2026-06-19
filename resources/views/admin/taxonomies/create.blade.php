@@ -45,9 +45,11 @@
             <small>Termos podem ter sub-termos (ex: Categorias com subcategorias)</small>
         </div>
 
-        <button type="submit" class="admin-btn admin-btn-primary">
-            <x-lucide-save class="lucid-icon" /> Salvar
-        </button>
+        <div class="buttons">
+            <button type="submit" class="admin-btn admin-btn-primary">
+                <x-lucide-save class="lucid-icon" /> Salvar
+            </button>
+        </div>
     </form>
 </div>
 @endsection

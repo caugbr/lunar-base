@@ -1,6 +1,4 @@
-<div>
-    <!-- Life is available only in the present moment. - Thich Nhat Hanh -->
-</div>@props([
+@props([
     'name' => 'fileup',
     'id' => null,
     'label' => 'Upload de arquivo',

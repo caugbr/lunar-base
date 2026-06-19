@@ -43,9 +43,11 @@
             </label>
         </div>
 
-        <button type="submit" class="admin-btn admin-btn-primary">
-            <x-lucide-save class="lucid-icon" /> Atualizar
-        </button>
+        <div class="buttons">
+            <button type="submit" class="admin-btn admin-btn-primary">
+                <x-lucide-save class="lucid-icon" /> Atualizar
+            </button>
+        </div>
     </form>
 </div>
 @endsection

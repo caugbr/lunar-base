@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+// use Illuminate\Http\Request;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -20,9 +21,8 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Aliases para middlewares personalizados
         $middleware->alias([
-            'partner.auth' => \App\Http\Middleware\AuthenticatePartner::class,
-            'validate.domain' => \App\Http\Middleware\ValidateDomain::class,
             'role' => \App\Http\Middleware\CheckRole::class,
+            'permission' => \App\Http\Middleware\CheckPermission::class,
         ]);
 
         // ✅ EXCLUIR ROTAS API DO CSRF
@@ -32,5 +32,5 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        // ?
     })->create();

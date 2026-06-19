@@ -33,9 +33,11 @@
             <x-password-field name="new_password" label="Nova senha *" confirm="true" required="true" />
         </div>
 
-        <button type="submit" class="admin-btn admin-btn-primary">
-            <x-lucide-save class="lucid-icon" /> Salvar alterações
-        </button>
+        <div class="buttons">
+            <button type="submit" class="admin-btn admin-btn-primary">
+                <x-lucide-save class="lucid-icon" /> Salvar alterações
+            </button>
+        </div>
     </form>
 </div>
 

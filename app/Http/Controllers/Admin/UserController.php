@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -12,15 +11,14 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::with('role')->orderBy('created_at', 'desc')->paginate(20);
-
+        $users = User::whereIn('role', ['admin', 'editor'])->orderBy('created_at', 'desc')->paginate(20);
         return view('admin.users.index', compact('users'));
     }
 
     public function create()
     {
-        $roles = Role::get(); // Apenas admin e editor
-        return view('admin.users.create', compact('roles'));
+        $roles = config('rolesPermissions.roles');
+        return view('admin.users.create')->with('roles', $roles);
     }
 
     public function store(Request $request)
@@ -29,20 +27,17 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
             'password' => 'required|string|min:8',
-            'role_id' => 'required|exists:roles,id',
+            'role' => 'required|in:admin,editor',
         ]);
-
-        // Editor não pode criar admin
-        if (auth()->user()->role_id == 2 && $validated['role_id'] == 1) {
-            abort(403, 'Editores não podem criar administradores.');
-        }
 
         User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
-            'role_id' => $validated['role_id'],
+            'role' => $validated['role'],
         ]);
+
+        log_admin("Usuário criado: {$validated['name']}", "users");
 
         return redirect()->route('admin.users.index')
             ->with('success', 'Usuário criado com sucesso!');
@@ -50,41 +45,24 @@ class UserController extends Controller
 
     public function edit($id)
     {
-        $user = User::findOrFail($id);
-
-        // Editor não pode editar admin
-        if (auth()->user()->role_id == 2 && $user->role_id == 1) {
-            abort(403, 'Editores não podem editar administradores.');
-        }
-
-        $roles = Role::get();
-        return view('admin.users.edit', compact('user', 'roles'));
+        $user = User::whereIn('role', ['admin', 'editor'])->findOrFail($id);
+        return view('admin.users.edit', compact('user'));
     }
 
     public function update(Request $request, $id)
     {
-        $user = User::findOrFail($id);
-
-        // Editor não pode editar admin
-        if (auth()->user()->role_id == 2 && $user->role_id == 1) {
-            abort(403, 'Editores não podem editar administradores.');
-        }
+        $user = User::whereIn('role', ['admin', 'editor'])->findOrFail($id);
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $id,
             'password' => 'nullable|string|min:8',
-            'role_id' => 'required|exists:roles,id',
+            'role' => 'required|in:admin,editor',
         ]);
-
-        // Editor não pode promover alguém a admin
-        if (auth()->user()->role_id == 2 && $validated['role_id'] == 1) {
-            abort(403, 'Editores não podem promover usuários a administradores.');
-        }
 
         $user->name = $validated['name'];
         $user->email = $validated['email'];
-        $user->role_id = $validated['role_id'];
+        $user->role = $validated['role'];
 
         if (!empty($validated['password'])) {
             $user->password = Hash::make($validated['password']);
@@ -92,26 +70,24 @@ class UserController extends Controller
 
         $user->save();
 
+        log_admin("Usuário atualizado: {$validated['name']}", "users");
+
         return redirect()->route('admin.users.index')
             ->with('success', 'Usuário atualizado com sucesso!');
     }
 
     public function destroy($id)
     {
-        $user = User::findOrFail($id);
+        $user = User::whereIn('role', ['admin', 'editor'])->findOrFail($id);
 
-        // Impede excluir a si mesmo
         if ($user->id === auth()->id()) {
             return redirect()->route('admin.users.index')
                 ->with('error', 'Você não pode excluir seu próprio usuário.');
         }
 
-        // Editor não pode excluir admin
-        if (auth()->user()->role_id == 2 && $user->role_id == 1) {
-            abort(403, 'Editores não podem excluir administradores.');
-        }
-
         $user->delete();
+
+        log_admin("Usuário removido: {$validated['name']}", "users");
 
         return redirect()->route('admin.users.index')
             ->with('success', 'Usuário removido com sucesso!');

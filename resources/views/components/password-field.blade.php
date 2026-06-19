@@ -132,6 +132,7 @@ function checkPasswordStrength(password) {
 
 .password-component .form-group:last-child {
     flex: 1;
+    margin-bottom: 0;
 }
 
 /* Layout lado a lado apenas quando há confirmação */

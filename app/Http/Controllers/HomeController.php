@@ -2,12 +2,17 @@
 
 namespace App\Http\Controllers;
 
-// use Illuminate\Http\Request;
+use App\Traits\GetSiteElements;
 
 class HomeController extends Controller
 {
+    use GetSiteElements;
+
     public function index()
     {
-        return view('home');
+        $menu = $this->buildMenu();
+        $termsAndPrivacy = $this->getTermsAndPrivacyPages();
+
+        return view('public.home', compact('menu', 'termsAndPrivacy'));
     }
 }

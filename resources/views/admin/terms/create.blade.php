@@ -69,9 +69,11 @@
             @error('description') <small class="error">{{ $message }}</small> @enderror
         </div>
 
-        <button type="submit" class="admin-btn admin-btn-primary">
-            <x-lucide-save class="lucid-icon" /> Salvar
-        </button>
+        <div class="buttons">
+            <button type="submit" class="admin-btn admin-btn-primary">
+                <x-lucide-save class="lucid-icon" /> Salvar
+            </button>
+        </div>
     </form>
 </div>
 @endsection

@@ -47,10 +47,24 @@ if (!function_exists('uploadImage')) {
 
         // 🗄️ Cria registro no banco (se ativado)
         if ($options['create_media_record'] && isset($result['original'])) {
-            // Tenta extrair dimensões sem Intervention (fallback para null)
+            // Extrai dimensões: SVG via XML, imagens raster via getimagesize
             $width = null;
             $height = null;
-            if (function_exists('getimagesize') && str_starts_with($mimeType, 'image/')) {
+
+            if (str_starts_with($mimeType, 'image/svg')) {
+                $svgContent = file_get_contents($tempPath);
+                if (preg_match('/<svg[^>]*\sviewBox=["\']?([\d\s\.,]+)["\']?/i', $svgContent, $matches)) {
+                    $viewBox = preg_split('/[\s,]+/', trim($matches[1]));
+                    $width = (int) ($viewBox[2] ?? null);
+                    $height = (int) ($viewBox[3] ?? null);
+                }
+                if (!$width && preg_match('/<svg[^>]*\swidth=["\']?([\d\.]+)/i', $svgContent, $w)) {
+                    $width = (int) $w[1];
+                }
+                if (!$height && preg_match('/<svg[^>]*\sheight=["\']?([\d\.]+)/i', $svgContent, $h)) {
+                    $height = (int) $h[1];
+                }
+            } elseif (function_exists('getimagesize') && str_starts_with($mimeType, 'image/')) {
                 $size = @getimagesize($tempPath);
                 if ($size) {
                     $width = $size[0];
@@ -80,7 +94,10 @@ if (!function_exists('uploadImage')) {
         }
 
         // 🖼️ Gera thumbnail automaticamente com base nas configurações
-        generateMediaThumbnail($result['original'], $folder, settingsGroup('media'));
+        // SVG não recebe thumbnail (escala infinitamente)
+        if (!str_starts_with($mimeType, 'image/svg')) {
+            generateMediaThumbnail($result['original'], $folder, settingsGroup('media'));
+        }
 
         return $result;
     }

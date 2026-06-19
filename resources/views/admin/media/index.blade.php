@@ -10,9 +10,6 @@
             <button @click="$dispatch('media:upload-open', { id: 'mainUploader' })" class="admin-btn admin-btn-primary">
                 <x-lucide-upload class="lucid-icon" /> <span>Upload</span>
             </button>
-            {{-- <button @click="window.dispatchEvent(new CustomEvent('media:upload-open', { detail: { id: 'mainUploader' } }))" class="admin-btn admin-btn-primary">
-                <x-lucide-upload class="lucid-icon" /> <span>Upload</span>
-            </button> --}}
         </div>
     </div>
 
@@ -36,3 +33,7 @@
 
 <x-media.edit-modal />
 @endsection
+
+@push('scripts')
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+@endpush

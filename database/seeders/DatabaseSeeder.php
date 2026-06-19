@@ -15,16 +15,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
 
         $this->call([
-            RolePermissionSeeder::class,
-            TaxonomySeeder::class,
-            AdminUserSeeder::class,
-            // Adicione outros seeders aqui
+            AdminUsersSeeder::class
         ]);
 
-        $this->command->info('Database seeded com sucesso!');
+        $this->command->info('Database populada com sucesso!');
         $this->command->info('Admin: caugbr@gmail.com');
     }
 }

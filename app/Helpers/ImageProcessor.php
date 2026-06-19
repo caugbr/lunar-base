@@ -7,8 +7,13 @@
 if (!function_exists('generateMediaThumbnail')) {
     function generateMediaThumbnail($originalPath, $folder, $settings = [])
     {
-        $width    = (int) ($settings['media_thumbnail_width'] ?? 100);
-        $height   = (int) ($settings['media_thumbnail_height'] ?? 100);
+        // SVG não recebe thumbnail (escala infinitamente)
+        if (str_ends_with(strtolower($originalPath), '.svg')) {
+            return false;
+        }
+
+        $width    = (int) ($settings['media_thumbnail_width'] ?? 300);
+        $height   = (int) ($settings['media_thumbnail_height'] ?? 300);
         $crop     = (bool) ($settings['media_crop_thumbnail'] ?? false);
         $position = $settings['media_crop_position'] ?? 'center'; // Simplificado: top | center | bottom
         $quality  = max(1, min(100, (int) ($settings['media_quality'] ?? 80)));
@@ -129,6 +134,11 @@ if (!function_exists('processImageGD')) {
 if (!function_exists('deleteMediaVariants')) {
     function deleteMediaVariants($originalPath, $folder)
     {
+        // SVG não tem variações
+        if (str_ends_with(strtolower($originalPath), '.svg')) {
+            return true;
+        }
+
         $cacheDir = storage_path("app/public/media/{$folder}/cache");
         $filename = basename($originalPath);
         $nameInfo = pathinfo($filename);

@@ -16,7 +16,7 @@
     <form method="GET" action="{{ route('admin.terms.index') }}" class="admin-filters" style="margin-bottom: 1rem;">
         <div class="admin-filters-row">
             <div class="admin-filter-group">
-                <select name="taxonomy_id" class="admin-filter-select" onchange="this.form.submit()">
+                <select name="taxonomy_id" class="admin-filter-select">
                     <option value="">Todas as taxonomias</option>
                     @foreach($taxonomies as $tax)
                         <option value="{{ $tax->id }}" {{ $taxonomyId == $tax->id ? 'selected' : '' }}>
@@ -26,7 +26,13 @@
                 </select>
             </div>
             <div class="admin-filter-actions">
-                <a href="{{ route('admin.terms.index') }}" class="admin-btn admin-btn-secondary">Limpar</a>
+                <button type="submit" class="admin-btn admin-btn-primary">
+                    <x-lucide-filter class="lucid-icon" /> Filtrar
+                </button>
+                <a href="{{ route('admin.terms.index') }}" class="admin-btn admin-btn-secondary">
+                    <x-lucide-brush-cleaning class="lucid-icon" />
+                    Limpar
+                </a>
             </div>
         </div>
     </form>

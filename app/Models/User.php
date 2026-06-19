@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
+    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
     /**
@@ -17,7 +18,7 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'name', 'email', 'password', 'role_id'  // ← role_id, não role
+        'name', 'email', 'password', 'role'
     ];
 
     /**
@@ -31,55 +32,55 @@ class User extends Authenticatable
     ];
 
     /**
-     * Relacionamento com a role do usuário
+     * Verifica se o usuário possui o role informado.
      */
-    public function role()
+    public function hasRole(string $role): bool
     {
-        return $this->belongsTo(Role::class, 'role_id'); // ← especifique a FK
+        return $this->role === $role;
     }
 
     /**
-     * Verifica se o usuário tem uma permissão específica
+     * Retorna as permissões do usuário com base no seu role.
+     * Admin sempre retorna todas as permissões do sistema.
      */
-    public function hasPermission($permission): bool
+    public function getPermissionsAttribute(): array
     {
-        if (!$this->role) {
-            return false;
+        $config = config('rolesPermissions');
+
+        if ($this->role === 'admin') {
+            return array_keys(array_merge(...array_values($config['permissionGroups'] ?? [])));
         }
 
-        return $this->role->hasPermission($permission);
+        return $config['permissionsByRole'][$this->role] ?? [];
     }
 
     /**
-     * Verifica se o usuário tem uma role específica (por slug)
+     * Verifica se o usuário possui a permissão informada.
      */
-    public function hasRole($roleSlug): bool
+    public function hasPermission(string $permission): bool
     {
-        return $this->role && $this->role->slug === $roleSlug;
+        return in_array($permission, $this->permissions, true);
     }
 
-    /**
-     * Verifica se é administrador
-     */
-    public function isAdmin(): bool
+
+    public function isAdmin()
     {
-        return $this->hasRole('admin');
+        return $this->role === 'admin';
     }
 
-    /**
-     * Verifica se é editor
-     */
-    public function isEditor(): bool
+    public function isEditor()
     {
-        return $this->hasRole('editor');
+        return $this->role === 'editor';
     }
 
-    /**
-     * Verifica se é visualizador
-     */
-    public function isViewer(): bool
+    public function isAuthor()
     {
-        return $this->hasRole('viewer');
+        return $this->role === 'author';
+    }
+
+    public function isSubscriber()
+    {
+        return $this->role === 'subscriber';
     }
 
     /**

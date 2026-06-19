@@ -17,6 +17,8 @@ class Page extends Model
         'slug',
         'content',
         'excerpt',
+        'namespace',
+        'is_main',
         'author_id',
         'status',
         'template',
@@ -27,10 +29,8 @@ class Page extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
-    ];// Relacionamento com a thumbnail
-
-    // Eager loading padrão (opcional, mas recomendado)
-    protected $with = ['thumbnail'];
+        'is_main' => 'boolean'
+    ];
 
     // ==========================================
     // RELACIONAMENTOS
@@ -41,14 +41,7 @@ class Page extends Model
         return $this->belongsTo(User::class, 'author_id');
     }
 
-    /**
-     * Relacionamento com os termos (taxonomias)
-     */
-    public function terms()
-    {
-        return $this->belongsToMany(Term::class, 'term_relationships');
-    }
-
+    // Thumbnail
     public function thumbnail()
     {
         return $this->belongsTo(Media::class, 'thumbnail_id');
@@ -58,6 +51,14 @@ class Page extends Model
     public function images()
     {
         return $this->morphMany(Media::class, 'mediaable');
+    }
+
+    /**
+     * Relacionamento com os termos (taxonomias)
+     */
+    public function terms()
+    {
+        return $this->morphToMany(Term::class, 'termable', 'term_relationships');
     }
 
     // ==========================================
@@ -85,6 +86,36 @@ class Page extends Model
     // ==========================================
 
     /**
+     * URL pública e dinâmica da Página
+     */
+    // public function getUrlAttribute(): string
+    // {
+    //     $pagesBase = setting('permalinks.pages_base', 'page');
+
+    //     if ($this->namespace) {
+    //         return url("/{$pagesBase}/{$this->namespace}/{$this->slug}");
+    //     }
+
+    //     return url("/{$pagesBase}/{$this->slug}");
+    // }
+    public function getUrlAttribute(): string
+    {
+        $base = setting('permalinks.pages_base', '');
+        $base = $base ? "/{$base}" : "";
+
+        if ($this->namespace) {
+            return url('/' . $this->namespace . '/' . $this->slug);
+        }
+
+        return url('/' . $this->slug);
+    }
+
+    public function getAuthorNameAttribute()
+    {
+        return $this->author->name;
+    }
+
+    /**
      * Retorna o status formatado
      */
     public function getStatusLabelAttribute(): string
@@ -108,18 +139,6 @@ class Page extends Model
             'archived' => 'admin-badge admin-badge-suspended',
             default => 'admin-badge',
         };
-    }
-
-    public function getPublicUrlAttribute(): string
-    {
-        $baseUrl = config('app.url') . '/page';
-
-        return $baseUrl . '/' . $this->slug;
-    }
-
-    public function getAuthorNameAttribute()
-    {
-        return $this->author->name;
     }
 
     /**

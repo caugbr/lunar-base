@@ -1,0 +1,87 @@
+/* Grid Layout Responsivo */
+.lunar-dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 20px;
+    padding: 20px 0;
+}
+
+/* Estrutura Base do Box (Link clicável) */
+.lunar-stat-box {
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 20px;
+    text-decoration: none;
+    color: #1f2937;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.lunar-stat-box:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+    border-color: #cbd5e1;
+}
+
+/* Ícones laterais redondos e seus fundos suaves (estilo CMS moderno) */
+.stat-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    margin-right: 16px;
+    flex-shrink: 0;
+}
+
+.stat-icon .lucid-icon {
+    width: 24px;
+    height: 24px;
+}
+
+.icon-pages { background-color: #eff6ff; color: #1d4ed8; }
+.icon-posts { background-color: #fef2f2; color: #b91c1c; }
+.icon-forms { background-color: #f0fdf4; color: #15803d; }
+.icon-media { background-color: #faf5ff; color: #6b21a8; }
+.icon-users { background-color: #fff7ed; color: #c2410c; }
+
+/* Detalhes Textuais */
+.stat-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-number {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #111827;
+    line-height: 1.2;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: #6b7280;
+    font-weight: 500;
+    margin-top: 2px;
+}
+
+/* Seta indicativa de link à direita */
+.stat-arrow {
+    margin-left: auto;
+    color: #9ca3af;
+    opacity: 0;
+    transform: translateX(-5px);
+    transition: all 0.2s ease;
+}
+
+.lunar-stat-box:hover .stat-arrow {
+    opacity: 1;
+    transform: translateX(0);
+    color: #4b5563;
+}
