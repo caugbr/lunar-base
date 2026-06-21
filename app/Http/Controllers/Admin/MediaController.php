@@ -32,7 +32,7 @@ class MediaController extends Controller
             });
         }
 
-        $media = $query->latest()->paginate(24);
+        $media = $query->latest()->paginate(setting('reading.media_pagination_max_items'));
 
         return view('admin.media.index', compact('media'));
     }
@@ -172,7 +172,7 @@ class MediaController extends Controller
         }
 
         // Paginação
-        $perPage = $request->integer('per_page', 20);
+        $perPage = $request->integer('per_page', setting('reading.media_pagination_max_items'));
         $media = $query->latest()->paginate($perPage);
 
         // Transforma a coleção adicionando dados úteis para o frontend

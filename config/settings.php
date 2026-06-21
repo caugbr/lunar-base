@@ -8,7 +8,7 @@ return [
             'tab' => 'Geral',
             'title' => 'Configurações Gerais',
             'description' => 'Identidade e informações básicas do site',
-            'icon' => 'settings', // Opcional: para usar na view
+            'icon' => 'settings',
             'fields' => [
                 [
                     'key' => 'site_name',
@@ -43,7 +43,6 @@ return [
         ],
 
         // ========== NAVIGATION ==========
-
         'navigation' => [
             'tab' => 'Navegação',
             'title' => 'Navegação',
@@ -54,9 +53,9 @@ return [
                     'key' => 'use_captcha',
                     'type' => 'switch',
                     'label' => 'Usar CAPTCHA',
-                    'description' => 'CAPTCHA é um mecanismo que verifica se quem está fazendo login é uma pessoa. Isso evita tentativas de invasão.',
+                    'description' => 'CAPTCHA é um mecanismo que verifica se quem está fazendo login é uma pessoa.',
                     'default' => false,
-                    'active' => 'Usar CAPTCHA no login. Atenção, é preciso criar um app em Clouflare e definir no .env as variáveis TURNSTILE_*_KEY.',
+                    'active' => 'Usar CAPTCHA no login.',
                     'inactive' => 'Não usar',
                 ],
                 [
@@ -93,7 +92,6 @@ return [
                     'label' => 'Namespace para páginas',
                     'description' => 'Prefixo de URL padrão para o carregamento das páginas públicas.',
                     'default' => '',
-                    'forbidden' => ['admin', 'login', 'logout', 'setting:navigation.posts_base', 'formulario', 'api', 'home'],
                 ],
                 [
                     'key' => 'posts_base',
@@ -101,7 +99,6 @@ return [
                     'label' => 'Namespace para posts',
                     'description' => 'Prefixo de URL padrão para o carregamento dos posts do blog.',
                     'default' => 'post',
-                    'forbidden' => ['admin', 'login', 'logout', 'setting:navigation.pages_base', 'formulario', 'api', 'home'],
                 ],
                 [
                     'key' => 'blog_base',
@@ -109,7 +106,110 @@ return [
                     'label' => 'Namespace para o blog',
                     'description' => 'Prefixo de URL padrão para o carregamento do blog.',
                     'default' => 'blog',
-                    'forbidden' => ['admin', 'login', 'logout', 'setting:navigation.pages_base', 'formulario', 'api', 'home'],
+                ],
+            ],
+        ],
+
+        // ========== LEITURA ==========
+        'reading' => [
+            'title' => 'Leitura',
+            'description' => 'Configurações de leitura',
+            'icon' => 'glasses',
+            'fields' => [
+                [
+                    'key' => 'excerpt_size',
+                    'type' => 'number',
+                    'label' => 'Tamanho do resumo',
+                    'description' => 'Quantidade máxima de caracteres para resumos de posts e páginas',
+                    'default' => 160,
+                    'attributes' => ['min' => 50, 'max' => 600, 'step' => 10],
+                ],
+                [
+                    'key' => 'words_count',
+                    'type' => 'number',
+                    'label' => 'Palavras por minuto de leitura',
+                    'description' => 'Quantidade máxima de palavras por minuto para o cálculo de tempo de leitura',
+                    'default' => 200,
+                    'attributes' => ['min' => 50, 'max' => 400, 'step' => 10],
+                ],
+                [
+                    'key' => 'pagination_max_items',
+                    'type' => 'number',
+                    'label' => 'Itens por página (administração)',
+                    'description' => 'Quantidade máxima de itens para paginação em listagens na administração',
+                    'default' => 15,
+                    'attributes' => ['min' => 5, 'max' => 50],
+                ],
+                [
+                    'key' => 'media_pagination_max_items',
+                    'type' => 'number',
+                    'label' => 'Itens de mídia por página (administração)',
+                    'description' => 'Quantidade máxima de itens para paginação de mídia na administração',
+                    'default' => 24,
+                    'attributes' => ['min' => 6, 'max' => 60, 'step' => 6],
+                ],
+                [
+                    'key' => 'posts_max_items',
+                    'type' => 'number',
+                    'label' => 'Posts por página no blog (frontend)',
+                    'description' => 'Quantidade máxima de posts na paginação do blog',
+                    'default' => 15,
+                    'attributes' => ['min' => 5, 'max' => 50],
+                ],
+                [
+                    'key' => 'post_use_reaction',
+                    'type' => 'switch',
+                    'active' => 'Sim',
+                    'inactive' => 'Não',
+                    'label' => 'Usar reações nos posts',
+                    'description' => 'Habilita reações nos posts (Like)',
+                    'default' => true,
+                ],
+                [
+                    'key' => 'post_reaction_type',
+                    'type' => 'select',
+                    'options' => [
+                        'thumbs' => 'Legal',
+                        'heart' => 'Coração',
+                        'star' => 'Estrela',
+                    ],
+                    'label' => 'Tipo de reação',
+                    'description' => 'Se as reações estão habilitadas nos posts, que tipo usar?',
+                    'default' => 'thumbs',
+                    'depends_on' => [
+                        'field' => 'post_use_reaction',
+                        'operator' => '===',
+                        'value' => true,
+                    ],
+                ],
+                [
+                    'key' => 'post_negative_reaction',
+                    'type' => 'switch',
+                    'active' => 'Positivo e negativo',
+                    'inactive' => 'Apenas positivo',
+                    'label' => 'Usar reação negativa',
+                    'description' => 'Habilita reações negativas nos posts (Dislike)',
+                    'default' => false,
+                    'depends_on' => [
+                        'field' => 'post_use_reaction',
+                        'operator' => '===',
+                        'value' => true,
+                    ],
+                ],
+                [
+                    'key' => 'unique_reaction',
+                    'type' => 'switch',
+                    'active' => 'Uma reação por visitante',
+                    'inactive' => 'Reações ilimitadas',
+                    'label' => 'Reação única',
+                    'description' => 'Se ativado, cada visitante (identificado por hash de IP) pode reagir apenas uma vez. Se desativado, reações são ilimitadas e anônimas. O ideal é definir esse valor uma única vez.',
+                    'default' => true,
+                    'depends_on' => [
+                        'field' => 'post_use_reaction',
+                        'operator' => '===',
+                        'value' => true,
+                    ],
+                    'warn_on_change' => 'Ao mudar esse valor, o esquema no banco de dados muda e os totais de reações também mudam.'
                 ],
             ],
         ],
@@ -147,12 +247,17 @@ return [
                     'key' => 'media_crop_position',
                     'type' => 'select',
                     'label' => 'Posição do corte vertical',
-                    'description' => 'Define qual parte da imagem será priorizada ao cortar (horizontal sempre centralizado)',
+                    'description' => 'Define qual parte da imagem será priorizada ao cortar',
                     'default' => 'center',
                     'options' => [
                         'top' => 'Parte superior',
                         'center' => 'Centro (recomendado)',
                         'bottom' => 'Parte inferior',
+                    ],
+                    'depends_on' => [
+                        'field' => 'media_crop_thumbnail',
+                        'operator' => '===',
+                        'value' => true,
                     ],
                 ],
                 [

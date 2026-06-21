@@ -1,4 +1,11 @@
-@props(['name', 'id' => '', 'checked' => 0, 'disabled' => 0, 'active' => 'Ativado', 'inactive' => 'Desativado'])
+@props([
+    'name',
+    'id' => '',
+    'checked' => 0,
+    'disabled' => 0,
+    'active' => 'Ativado',
+    'inactive' => 'Desativado'
+])
 
 <label class="switch-label">
     <input type="hidden" name="{{ $name }}" value="0">

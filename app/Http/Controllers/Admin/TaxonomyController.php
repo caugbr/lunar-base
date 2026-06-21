@@ -10,7 +10,7 @@ class TaxonomyController extends Controller
 {
     public function index()
     {
-        $taxonomies = Taxonomy::orderBy('created_at', 'desc')->paginate(20);
+        $taxonomies = Taxonomy::orderBy('created_at', 'desc')->paginate(setting('reading.pagination_max_items'));
         return view('admin.taxonomies.index', compact('taxonomies'));
     }
 

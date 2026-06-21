@@ -86,11 +86,34 @@ class SettingController extends Controller
                 $key = $def['key'];
                 $type = $def['type'] ?? 'text';
 
+                // // === PASSWORD: criptografa antes de salvar ===
+                // if ($type === 'password') {
+                //     $input = $request->input($key);
+
+                //     // Se o campo veio vazio, mantém o valor existente
+                //     if (blank($input)) {
+                //         $existing = Setting::where('key', $key)->value('value');
+                //         if ($existing) {
+                //             Setting::set($key, $existing, $groupKey, $type);
+                //         }
+                //         continue;
+                //     }
+
+                //     $encrypted = Crypt::encryptString($input);
+                //     Setting::set($key, $encrypted, $groupKey, $type);
+                //     continue;
+                // }
                 // === PASSWORD: criptografa antes de salvar ===
                 if ($type === 'password') {
+                    // 1. Verifica se marcou para remover
+                    if ($request->boolean("remove_settings.{$key}")) {
+                        Setting::set($key, '', $groupKey, $type);
+                        continue;
+                    }
+
                     $input = $request->input($key);
 
-                    // Se o campo veio vazio, mantém o valor existente
+                    // 2. Se o campo veio vazio, mantém o valor existente
                     if (blank($input)) {
                         $existing = Setting::where('key', $key)->value('value');
                         if ($existing) {
@@ -99,6 +122,7 @@ class SettingController extends Controller
                         continue;
                     }
 
+                    // 3. Nova senha informada — criptografa e salva
                     $encrypted = Crypt::encryptString($input);
                     Setting::set($key, $encrypted, $groupKey, $type);
                     continue;

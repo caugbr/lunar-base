@@ -19,7 +19,7 @@ class TermController extends Controller
             $query->where('taxonomy_id', $taxonomyId);
         }
 
-        $terms = $query->orderBy('taxonomy_id')->orderBy('order')->paginate(20);
+        $terms = $query->orderBy('taxonomy_id')->orderBy('order')->paginate(setting('reading.pagination_max_items'));
 
         $taxonomies = Taxonomy::orderBy('name')->get();
 

@@ -25,9 +25,13 @@ class ContentHelper
     public static function parseShortcodes($content)
     {
         // 1. Lógica do TinyMCE (mantida)
-        $content = preg_replace_callback('/<!--(script|style)([^>]*)>(.*?)<\/\1-->/is', function($matches) {
-            return '<' . $matches[1] . $matches[2] . '>' . $matches[3] . '</' . $matches[1] . '>';
-        }, $content);
+        $content = preg_replace_callback(
+            '/<!--(script|style|link)([^>]*)>(.*?)<\/\1-->/is',
+            function($matches) {
+                return '<' . $matches[1] . $matches[2] . '>' . $matches[3] . '</' . $matches[1] . '>';
+            },
+            $content
+        );
 
         // 2. Parser e Roteamento
         return self::parseAndRenderShortcodes($content);

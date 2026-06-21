@@ -37,10 +37,13 @@
         </div>
 
         <div class="form-group">
-            <label class="checkbox-label">
+            {{-- <label class="checkbox-label">
                 <input type="checkbox" name="hierarchical" value="1" {{ old('hierarchical', $taxonomy->hierarchical) ? 'checked' : '' }}>
                 <span>Hierárquica</span>
-            </label>
+            </label> --}}
+            <label for="hierarchical">Hierárquica?</label>
+            <x-switch name="hierarchical" id="hierarchical" checked="{{ old('hierarchical', $taxonomy->hierarchical) ? true : false }}" active="Sim" inactive="Não" />
+            <small>Termos podem ter sub-termos (ex: Categorias com subcategorias)</small>
         </div>
 
         <div class="buttons">

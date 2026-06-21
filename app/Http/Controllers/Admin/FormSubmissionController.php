@@ -17,7 +17,7 @@ class FormSubmissionController extends Controller
         // Busca as respostas ordenadas da mais recente para a mais antiga
         $submissions = $form->submissions()
                             ->orderBy('created_at', 'desc')
-                            ->paginate(20);
+                            ->paginate(setting('reading.pagination_max_items'));
 
         return view('admin.forms.submissions.index', compact('form', 'submissions'));
     }

@@ -22,7 +22,7 @@ class FormController extends Controller
         // 🔥 O PULO DO GATO: Traz a contagem de respostas de uma vez só
         $forms = $query->withCount('submissions')
                     ->orderBy('created_at', 'desc')
-                    ->paginate(15);
+                    ->paginate(setting('reading.pagination_max_items'));
 
         return view('admin.forms.index', compact('forms'));
     }

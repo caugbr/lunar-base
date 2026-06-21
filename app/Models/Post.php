@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\HasReactions;
 
 class Post extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, HasReactions;
 
     protected $table = 'posts';
 
@@ -61,6 +62,11 @@ class Post extends Model
         return $this->morphToMany(Term::class, 'termable', 'term_relationships');
     }
 
+    public function meta()
+    {
+        return $this->hasMany(PostMeta::class, 'post_id');
+    }
+
     // ==========================================
     // SCOPES
     // ==========================================
@@ -99,6 +105,55 @@ class Post extends Model
     }
 
     /**
+     * Filtra posts que possuem um meta_key com meta_value específico
+     * Uso: Post::byMeta('seo_title', 'Meu Título')->get()
+     */
+    public function scopeByMeta($query, string $metaKey, string $metaValue)
+    {
+        return $query->whereHas('meta', function ($q) use ($metaKey, $metaValue) {
+            $q->where('meta_key', $metaKey)
+            ->where('meta_value', $metaValue);
+        });
+    }
+
+    /**
+     * Filtra posts que possuem o meta_key (independente do valor)
+     * Uso: Post::byMetaKey('seo_title')->get()
+     */
+    public function scopeByMetaKey($query, string $metaKey)
+    {
+        return $query->whereHas('meta', function ($q) use ($metaKey) {
+            $q->where('meta_key', $metaKey);
+        });
+    }
+
+    /**
+     * Filtra posts por meta com operador customizado
+     * Uso: Post::byMetaWhere('views', '>', '100')->get()
+     */
+    public function scopeByMetaWhere($query, string $metaKey, string $operator, string $metaValue)
+    {
+        return $query->whereHas('meta', function ($q) use ($metaKey, $operator, $metaValue) {
+            $q->where('meta_key', $metaKey)
+            ->where('meta_value', $operator, $metaValue);
+        });
+    }
+
+    /**
+     * Ordena posts por um meta_value (cast para decimal)
+     * Uso: Post::orderByMeta('views', 'desc')->get()
+     */
+    public function scopeOrderByMeta($query, string $metaKey, string $direction = 'asc')
+    {
+        return $query->leftJoin('post_meta', function ($join) use ($metaKey) {
+                $join->on('posts.id', '=', 'post_meta.post_id')
+                    ->where('post_meta.meta_key', '=', $metaKey);
+            })
+            ->orderByRaw("CAST(post_meta.meta_value AS UNSIGNED) $direction")
+            ->select('posts.*'); // evita colunas duplicadas no select
+    }
+
+    /**
      * Ordenação padrão do feed: sticky primeiro, depois published_at desc
      */
     public function scopeFeedOrder($query)
@@ -125,7 +180,7 @@ class Post extends Model
     // ACESSORS
     // ==========================================
 
-/**
+    /**
      * URL pública do Post individual: ex: /post/meu-post (ou /blog/meu-post)
      */
     public function getUrlAttribute(): string
@@ -192,8 +247,9 @@ class Post extends Model
      */
     public function getReadingTimeAttribute(): int
     {
+        $maxWords = intval(setting('reading.words_count', 200));
         $wordCount = str_word_count(strip_tags($this->content));
-        return max(1, ceil($wordCount / 200)); // 200 palavras/min
+        return max(1, ceil($wordCount / $maxWords));
     }
 
     /**
@@ -204,6 +260,7 @@ class Post extends Model
         if ($value) {
             return $value;
         }
+        $maxChars = intval(setting('reading.excerpt_size', 160));
         return \Str::limit(strip_tags($this->content), 160);
     }
 
@@ -216,5 +273,34 @@ class Post extends Model
             return $this->created_at->format('d/m/Y H:i');
         }
         return $this->published_at->format('d/m/Y H:i');
+    }
+
+    /**
+     * Recupera um meta value pelo key. Retorna default se não existir.
+     * Suporta múltiplos valores (quando meta_key não é único).
+     */
+    public function getMeta(string $key, mixed $default = null): mixed
+    {
+        $meta = $this->meta()->where('meta_key', $key)->first();
+        return $meta ? $meta->meta_value : $default;
+    }
+
+    /**
+     * Define ou atualiza um meta value
+     */
+    public function setMeta(string $key, mixed $value): void
+    {
+        $this->meta()->updateOrCreate(
+            ['meta_key' => $key],
+            ['meta_value' => is_array($value) || is_object($value) ? json_encode($value) : $value]
+        );
+    }
+
+    /**
+     * Remove um meta pelo key
+     */
+    public function deleteMeta(string $key): void
+    {
+        $this->meta()->where('meta_key', $key)->delete();
     }
 }

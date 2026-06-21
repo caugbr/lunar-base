@@ -94,7 +94,7 @@
     <div class="login-container">
         <h1>
             <a href="{{ route('home') }}">
-                <x-lucide-lock class="lucid-icon" style="width: 20px; height: 20px;" />
+                <x-lucide-circle-alert class="lucid-icon" style="width: 20px; height: 20px;" />
                 {{ setting('general.site_name') }}
             </a>
         </h1>

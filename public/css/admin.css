@@ -10,6 +10,34 @@
     vertical-align: bottom;
 }
 
+.wait-editor {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.wait-editor .tox-tinymce {
+    flex: 1;
+}
+
+.wait-editor::before {
+    content: '';
+    width: 24px;
+    height: 24px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 12a9 9 0 1 1-6.219-8.56'/%3E%3C/svg%3E");
+    background-size: contain;
+    animation: spin 1s linear infinite;
+}
+
+.wait-editor:has(#tiny-editor[aria-hidden="true"])::before {
+    content: none;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
 body {
     margin: 0;
     padding: 0;
@@ -184,6 +212,107 @@ pre { margin: 0; }
     white-space: nowrap;
 }
 
+/* ===== EDIT POST / PAGE ===== */
+.edit-page-inner {
+    display: flex;
+    flex-direction: row;
+    gap: 1.5rem;
+}
+
+.edit-page-inner .main-column {
+    flex: 1;
+}
+
+.edit-page-inner .aside-column {
+    flex: 0 0 360px;
+}
+
+.edit-page-inner input#title {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+/* O Box principal (Container) */
+.edit-box {
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #fff;
+  margin-bottom: 20px;
+}
+
+/* O Header do Box */
+.edit-box header {
+  background-color: #f5f5f5;
+  padding: 10px 16px;
+  color: #333;
+  margin: 0;
+  font-size: 1.1rem;
+  border-bottom: 1px solid #ddd;
+}
+
+/* O Conteúdo do Box (Article) */
+.edit-box article {
+  padding: 16px;
+  color: #2d3748;
+}
+
+.edit-box .thumbnail-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.edit-box .thumbnail-preview {
+    max-width: 100%;
+}
+
+.edit-box .thumbnail-actions {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+}
+
+.edit-box .form-group:last-child {
+    margin-bottom: 0;
+}
+
+.edit-box button[type="submit"] {
+    width: 100%;
+    justify-content: center;
+}
+
+.edit-box .checkbox-label {
+    margin: 0;
+}
+
+.edit-box small {
+    display: block;
+}
+
+.buttons.bottom-buttons {
+    display: none;
+}
+
+@media (max-width: 1300px) {
+    .edit-page-inner {
+        flex-direction: column;
+    }
+
+    .buttons.bottom-buttons {
+        display: block;
+    }
+
+    .edit-box .buttons {
+        display: none;
+    }
+}
+
+
+
+
+
 /* Cores específicas */
 .admin-stat-card.total .value {
     color: #3b82f6; /* Azul */
@@ -344,6 +473,30 @@ select {
     border-color: #667eea;
 }
 
+.form-group.field-disabled {
+    opacity: 0.45;
+    pointer-events: none;
+}
+
+.form-group.field-disabled .field-label {
+    color: #9ca3af;
+}
+
+.form-group.field-disabled input,
+.form-group.field-disabled select,
+.form-group.field-disabled textarea {
+    background-color: #f3f4f6;
+    cursor: not-allowed;
+}
+
+/* Switch customizado desabilitado */
+.form-group.field-disabled .switch-track {
+    background-color: #d1d5db !important;
+}
+.form-group.field-disabled .switch-thumb {
+    background-color: #e5e7eb;
+}
+
 .admin-form-row {
     display: flex;
     flex-direction: row;
@@ -409,22 +562,9 @@ select {
     gap: 6px;
 }
 
-/* ===== PAGINAÇÃO ===== */
-/* .admin-pagination {
-    margin-top: 20px;
-}
-
-.admin-pagination nav {
-    display: inline-block;
-} */
 
 /* ===== STATUS BADGES ===== */
 .admin-badge {
-    /* display: inline-block;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 500; */
     display: inline-flex;
     padding: 4px 12px;
     border-radius: 20px;

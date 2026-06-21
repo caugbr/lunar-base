@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Post;
 use App\Models\Term;
 use Illuminate\Http\Request;
+use App\Helpers\ContentHelper;
 use App\Traits\GetSiteElements;
 
 class PublicPostController extends Controller
@@ -23,7 +24,7 @@ class PublicPostController extends Controller
             $query->whereHas('terms', fn($q) => $q->where('slug', $request->input('term')));
         }
 
-        $posts = $query->paginate(12);
+        $posts = $query->paginate(setting('reading.posts_max_items'));
         $menu = $this->buildMenu();
         $termsAndPrivacy = $this->getTermsAndPrivacyPages();
 
@@ -43,7 +44,15 @@ class PublicPostController extends Controller
         $menu = $this->buildMenu();
         $termsAndPrivacy = $this->getTermsAndPrivacyPages();
 
-        return view('public.post-templates.' . $post->template, compact('post', 'menu', 'termsAndPrivacy'));
+        $reactionData = setting('reading.post_use_reaction', false) ? [
+            'positive' => $post->positiveCount(),
+            'negative' => $post->negativeCount(),
+            'user' => $post->userReaction(),
+        ] : [];
+
+        $post->content = ContentHelper::parseShortcodes($post->content);
+
+        return view('public.post-templates.' . $post->template, compact('post', 'menu', 'termsAndPrivacy', 'reactionData'));
     }
 
     /**
@@ -59,7 +68,7 @@ class PublicPostController extends Controller
             ->published()
             ->byTerm($taxonomySlug, $termSlug)
             ->feedOrder()
-            ->paginate(12);
+            ->paginate(setting('reading.posts_max_items'));
 
         $menu = $this->buildMenu();
         $termsAndPrivacy = $this->getTermsAndPrivacyPages();

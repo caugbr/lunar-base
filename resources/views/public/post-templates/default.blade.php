@@ -29,6 +29,11 @@
                         <x-lucide-clock class="lucid-icon" />
                         {{ $post->reading_time }} min de leitura
                     </span>
+                    @if(setting('reading.post_use_reaction', false))
+                    <span class="meta-reaction-links">
+                        <x-reaction-links type="post" :id="$post->id" :data="$reactionData" />
+                    </span>
+                    @endif
                 </div>
             </div>
         </header>

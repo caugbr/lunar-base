@@ -88,16 +88,6 @@ class Page extends Model
     /**
      * URL pública e dinâmica da Página
      */
-    // public function getUrlAttribute(): string
-    // {
-    //     $pagesBase = setting('permalinks.pages_base', 'page');
-
-    //     if ($this->namespace) {
-    //         return url("/{$pagesBase}/{$this->namespace}/{$this->slug}");
-    //     }
-
-    //     return url("/{$pagesBase}/{$this->slug}");
-    // }
     public function getUrlAttribute(): string
     {
         $base = setting('permalinks.pages_base', '');

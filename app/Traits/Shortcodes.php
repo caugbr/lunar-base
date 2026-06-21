@@ -6,7 +6,7 @@
  * Motor de renderização de shortcodes dinâmicos (estilo WordPress).
  *
  * =========================================================
- * COMO ADICIONAR UM NOVO SHORTCODE NO FUTURO:
+ * COMO ADICIONAR UM NOVO SHORTCODE:
  * =========================================================
  * Crie um método privado estático nesta trait seguindo o padrão:
  *    render{NomeEmStudlyCase}

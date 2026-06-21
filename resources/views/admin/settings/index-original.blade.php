@@ -56,17 +56,9 @@
                         $value = old($def['key'], $def['value'] ?? $def['default'] ?? '');
                         $options = $def['options'] ?? [];
                         $attributes = $def['attributes'] ?? [];
-                        $hasDependency = isset($def['depends_on']);
                     @endphp
 
-                    <div class="form-group"
-                        @if($hasDependency)
-                            data-depends-on="{{ json_encode($def['depends_on']) }}"
-                        @endif
-                        @if(isset($def['warn_on_change']))
-                            data-warn-on-change="{{ $def['warn_on_change'] }}"
-                        @endif
-                    >
+                    <div class="form-group">
                         <label for="{{ $def['key'] }}" class="field-label">
                             {{ $def['label'] }}
                         </label>
@@ -108,8 +100,7 @@
                                                 <input type="checkbox"
                                                     name="{{ $def['key'] }}[]"
                                                     value="{{ $optValue }}"
-                                                    {{ in_array($optValue, $currentValues) ? 'checked' : '' }}
-                                                   >
+                                                    {{ in_array($optValue, $currentValues) ? 'checked' : '' }}>
                                                 <span>{{ $optLabel }}</span>
                                             </label>
                                         @endforeach
@@ -141,8 +132,7 @@
                                     @foreach($attributes as $attr => $attrValue)
                                         {{ $attr }}="{{ $attrValue }}"
                                     @endforeach
-                                    class="form-input form-input-narrow"
-                                >
+                                    class="form-input form-input-narrow">
                                 @break
 
                             @case('image')
@@ -160,8 +150,7 @@
                                             <label class="remove-image-label">
                                                 <input type="checkbox"
                                                     name="remove_settings[{{ $def['key'] }}]"
-                                                    value="1"
-                                                   >
+                                                    value="1">
                                                 Remover imagem
                                             </label>
                                         @endif
@@ -188,27 +177,12 @@
                                 <input type="email" name="{{ $def['key'] }}" id="{{ $def['key'] }}" value="{{ $value }}" class="form-input" placeholder="email@exemplo.com">
                                 @break
 
-                            {{-- @case('password')
+                            @case('password')
                                 <input type="password" name="{{ $def['key'] }}" id="{{ $def['key'] }}" value="" class="form-input" placeholder="••••••••">
                                 @if($value)
                                     <small class="form-help">Senha configurada. Deixe em branco para manter.</small>
                                 @endif
-                                @break --}}
-                        @case('password')
-                            <div class="password-field">
-                                <input type="password" name="{{ $def['key'] }}" id="{{ $def['key'] }}" value="" class="form-input" placeholder="••••••••">
-
-                            </div>
-                            @if($value)
-                                <label class="remove-password-label">
-                                    <input type="checkbox" name="remove_settings[{{ $def['key'] }}]" value="1">
-                                    Remover senha atual
-                                </label>
-                                <small class="form-help">Senha configurada. Deixe em branco para manter, ou marque para remover.</small>
-                            @else
-                                <small class="form-help">Nenhuma senha configurada.</small>
-                            @endif
-                            @break
+                                @break
 
                             @default
                                 <input type="text" name="{{ $def['key'] }}" id="{{ $def['key'] }}" value="{{ $value }}" class="form-input">
@@ -335,6 +309,10 @@
         font-weight: 500;
         margin-bottom: 0.25rem;
         color: #374151;
+    }
+
+    .form-input {
+        /* suas regras existentes de form-input */
     }
 
     .form-input-narrow {
@@ -472,279 +450,33 @@
         display: block;
         margin-top: 0.5rem;
     }
-
-    /* ===== Campos desabilitados por dependência ===== */
-    .form-group.field-disabled {
-        opacity: 0.45;
-        pointer-events: none;
-    }
-
-    .form-group.field-disabled .field-label {
-        color: #9ca3af;
-    }
 </style>
 @endpush
 
 @push('scripts')
 <script>
 function switchTab(tabKey) {
+    // Atualiza botões
     document.querySelectorAll('.settings-tab').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.tab === tabKey);
     });
 
+    // Atualiza painéis
     document.querySelectorAll('.tab-panel').forEach(panel => {
         panel.classList.toggle('active', panel.dataset.panel === tabKey);
     });
 
+    // Atualiza hidden input para persistir aba ativa no submit
     const hidden = document.getElementById('_active_tab');
     if (hidden) hidden.value = tabKey;
 }
 
+// Restaura aba ativa após erro de validação (se houver _active_tab no old input)
 document.addEventListener('DOMContentLoaded', function() {
     const activeTab = document.getElementById('_active_tab')?.value;
     if (activeTab) {
         switchTab(activeTab);
     }
-
-    // ===== Dependency Manager =====
-    new DependencyManager().init();
-});
-
-class DependencyManager {
-    constructor() {
-        this.dependents = [];
-    }
-
-    init() {
-        document.querySelectorAll('[data-depends-on]').forEach(el => {
-            try {
-                const rule = JSON.parse(el.dataset.dependsOn);
-                const childKey = this.findFieldKey(el);
-                if (!childKey) return;
-
-                this.dependents.push({ element: el, childKey, rule });
-
-                this.extractParents(rule).forEach(parentKey => {
-                    this.bindParent(parentKey);
-                });
-            } catch (e) {
-                console.error('Erro ao parsear dependência:', el.dataset.dependsOn, e);
-            }
-        });
-
-        this.evaluateAll();
-    }
-
-    findFieldKey(groupEl) {
-        const input = groupEl.querySelector('input[name]:not([type="hidden"]), select[name], textarea[name]');
-        return input?.name?.replace(/\[\]$/, '');
-    }
-
-    findGroup(key) {
-        const checkbox = document.querySelector(`[name="${key}"][type="checkbox"]`);
-        if (checkbox) return checkbox.closest('.form-group');
-
-        const el = document.querySelector(`[name="${key}"]`)
-                || document.querySelector(`[name="${key}[]"]`);
-        return el?.closest('.form-group');
-    }
-
-    bindParent(parentKey) {
-        const group = this.findGroup(parentKey);
-        if (!group) {
-            console.warn('DependencyManager: campo pai não encontrado:', parentKey);
-            return;
-        }
-
-        const checkbox = group.querySelector(`[name="${parentKey}"][type="checkbox"]`);
-        const select = group.querySelector(`[name="${parentKey}"]`);
-        const input = checkbox || select;
-
-        if (!input) return;
-
-        input.addEventListener('change', () => this.evaluateAll());
-
-        const switchTrack = group.querySelector('.switch-track');
-        if (switchTrack) {
-            switchTrack.addEventListener('click', () => {
-                requestAnimationFrame(() => this.evaluateAll());
-            });
-        }
-    }
-
-    extractParents(rule) {
-        if (typeof rule === 'string') return [rule];
-        if (rule.field) return [rule.field];
-        return [];
-    }
-
-    evaluateAll() {
-        this.dependents.forEach(({ element, rule }) => {
-            const enabled = this.evaluate(rule);
-            this.setState(element, enabled);
-        });
-    }
-
-    evaluate(rule) {
-        if (typeof rule === 'string') {
-            return this.isTruthy(rule);
-        }
-        if (rule.field && rule.operator && 'value' in rule) {
-            const actual = this.getValue(rule.field);
-            return this.compare(actual, rule.operator, rule.value);
-        }
-        return true;
-    }
-
-    getValue(key) {
-        const checkbox = document.querySelector(`[name="${key}"][type="checkbox"]`);
-        if (checkbox) return checkbox.checked;
-
-        const radio = document.querySelector(`[name="${key}"][type="radio"]:checked`);
-        if (radio) return radio.value;
-
-        const el = document.querySelector(`[name="${key}"]`)
-                || document.querySelector(`[name="${key}[]"]`);
-
-        if (!el) return null;
-
-        if (el.tagName === 'SELECT') {
-            const val = el.value;
-            if (val === 'true' || val === '1' || val === 'on') return true;
-            if (val === 'false' || val === '0' || val === '') return false;
-            return val;
-        }
-
-        return el.value;
-    }
-
-    isTruthy(key) {
-        const v = this.getValue(key);
-        if (typeof v === 'boolean') return v;
-        if (typeof v === 'number') return v !== 0;
-        return v !== '' && v !== null && v !== undefined && v !== false;
-    }
-
-    compare(actual, op, expected) {
-        const toBool = (v) => {
-            if (v === true || v === 'true' || v === '1' || v === 1 || v === 'on') return true;
-            if (v === false || v === 'false' || v === '0' || v === 0 || v === '' || v === null || v === undefined) return false;
-            return v;
-        };
-
-        if (typeof expected === 'boolean' || typeof actual === 'boolean') {
-            return toBool(actual) === toBool(expected);
-        }
-
-        switch (op) {
-            case '==': return actual == expected;
-            case '===': return actual === expected;
-            case '!=': return actual != expected;
-            case '!==': return actual !== expected;
-            case '>': return actual > expected;
-            case '<': return actual < expected;
-            default: return !!actual;
-        }
-    }
-
-    setState(groupEl, enabled) {
-        // SÓ A CLASSE — sem manipular disabled nos inputs
-        groupEl.classList.toggle('field-disabled', !enabled);
-    }
-}
-
-function revertGroup(inputs, originalValue) {
-    const first = inputs[0];
-
-    // Checkbox group
-    if (first.type === 'checkbox' && inputs.length > 1) {
-        const values = originalValue ? originalValue.split(',') : [];
-        inputs.forEach(cb => {
-            cb.checked = values.includes(cb.value);
-        });
-        first.dispatchEvent(new Event('change'));
-        return;
-    }
-
-    // Checkbox único
-    if (first.type === 'checkbox') {
-        first.checked = originalValue;
-        first.dispatchEvent(new Event('change'));
-        return;
-    }
-
-    // Radio group
-    if (first.type === 'radio') {
-        inputs.forEach(r => {
-            r.checked = (r.value === originalValue);
-        });
-        first.dispatchEvent(new Event('change'));
-        return;
-    }
-
-    // Select, text, textarea, number
-    first.value = originalValue !== null ? originalValue : '';
-    first.dispatchEvent(new Event('change'));
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    if (document.querySelectorAll('[data-depends-on]').length > 0) {
-        window.depManager = new DependencyManager();
-        window.depManager.init();
-    }
-
-    document.querySelectorAll('.form-group[data-warn-on-change]').forEach(group => {
-        const message = group.dataset.warnOnChange;
-        const inputs = group.querySelectorAll('input:not([type="hidden"]), select, textarea');
-        if (!inputs.length) return;
-
-        // Lê o valor atual do grupo inteiro
-        const readValue = () => {
-            const first = inputs[0];
-
-            // Checkbox group (múltiplos checkboxes)
-            if (first.type === 'checkbox' && inputs.length > 1) {
-                return Array.from(inputs)
-                    .filter(cb => cb.checked)
-                    .map(cb => cb.value)
-                    .sort()
-                    .join(',');
-            }
-
-            // Checkbox único
-            if (first.type === 'checkbox') {
-                return first.checked;
-            }
-
-            // Radio group (sempre múltiplos, mesmo name)
-            if (first.type === 'radio') {
-                const checked = Array.from(inputs).find(r => r.checked);
-                return checked ? checked.value : null;
-            }
-
-            // Select, text, textarea, number, etc
-            return first.value;
-        };
-
-        // Guarda valor original
-        let originalValue = readValue();
-
-        // Bind em TODOS os inputs do grupo
-        inputs.forEach(input => {
-            input.addEventListener('change', () => {
-                const newValue = readValue();
-
-                if (newValue !== originalValue) {
-                    if (!confirm(message)) {
-                        // Reverte
-                        revertGroup(inputs, originalValue);
-                    } else {
-                        originalValue = newValue;
-                    }
-                }
-            });
-        });
-    });
 });
 </script>
 @endpush

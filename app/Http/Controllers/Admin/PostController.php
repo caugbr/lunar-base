@@ -7,6 +7,7 @@ use App\Models\Post;
 use App\Models\User;
 use App\Models\Taxonomy;
 use App\Models\Media;
+use App\Models\PostMeta;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
@@ -45,7 +46,7 @@ class PostController extends Controller
 
         $posts = $query->orderBy('sticky', 'desc')
                        ->orderBy('published_at', 'desc')
-                       ->paginate(15);
+                       ->paginate(setting('reading.pagination_max_items'));
 
         // Dados para os selects dos filtros
         $authors = User::whereIn('role', ['admin', 'editor'])->orderBy('name')->get();
@@ -59,8 +60,13 @@ class PostController extends Controller
         $currentUserId = Auth::id();
         $templates = Config::get('postTemplates.templates', []);
         $taxonomies = Taxonomy::with('terms')->get();
+        $existingMetaKeys = PostMeta::select('meta_key')
+            ->distinct()
+            ->orderBy('meta_key')
+            ->pluck('meta_key')
+            ->toArray();
 
-        return view('admin.posts.create', compact('users', 'currentUserId', 'templates', 'taxonomies'));
+        return view('admin.posts.create', compact('users', 'currentUserId', 'templates', 'taxonomies', 'existingMetaKeys'));
     }
 
     public function store(Request $request)
@@ -90,6 +96,23 @@ class PostController extends Controller
 
         $post = Post::create($validated);
 
+        $post->meta()->delete(); // Limpa tudo e reinsere (simples)
+
+        if ($request->has('meta') && is_array($request->input('meta'))) {
+            foreach ($request->input('meta') as $pair) {
+                $key = $pair['key'] ?? null;
+                $value = $pair['value'] ?? null;
+
+                if (!empty($key) && $value !== null && $value !== '') {
+                    PostMeta::create([
+                        'post_id' => $post->id,
+                        'meta_key' => $key,
+                        'meta_value' => $value,
+                    ]);
+                }
+            }
+        }
+
         // Sincronizar termos
         $post->terms()->sync($request->term_ids ?? []);
 
@@ -118,7 +141,19 @@ class PostController extends Controller
         // IDs dos termos já associados ao post
         $selectedTermIds = $post->terms->pluck('id')->toArray();
 
-        return view('admin.posts.edit', compact('post', 'users', 'templates', 'taxonomies', 'selectedTermIds'));
+        // Carrega metas do post para o formulário
+        $postMeta = $post->meta->pluck('meta_value', 'meta_key')->toArray();
+
+        $existingMetaKeys = PostMeta::select('meta_key')
+            ->distinct()
+            ->orderBy('meta_key')
+            ->pluck('meta_key')
+            ->toArray();
+
+        return view('admin.posts.edit', compact(
+            'post', 'users', 'templates', 'taxonomies',
+            'selectedTermIds', 'postMeta', 'existingMetaKeys'
+        ));
     }
 
     public function update(Request $request, Post $post)
@@ -152,6 +187,23 @@ class PostController extends Controller
         }
 
         $post->update($validated);
+
+        $post->meta()->delete(); // Limpa tudo e reinsere (simples)
+
+        if ($request->has('meta') && is_array($request->input('meta'))) {
+            foreach ($request->input('meta') as $pair) {
+                $key = $pair['key'] ?? null;
+                $value = $pair['value'] ?? null;
+
+                if (!empty($key) && $value !== null && $value !== '') {
+                    PostMeta::create([
+                        'post_id' => $post->id,
+                        'meta_key' => $key,
+                        'meta_value' => $value,
+                    ]);
+                }
+            }
+        }
 
         // Sincronizar termos
         $post->terms()->sync($request->term_ids ?? []);

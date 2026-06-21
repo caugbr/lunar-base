@@ -5,6 +5,7 @@ use App\Http\Controllers\HomeController;
 // use App\Http\Controllers\Public\PublicPostController;
 use App\Http\Controllers\DocsController;
 use App\Http\Controllers\GenericFormController;
+use App\Http\Controllers\Public\ReactionController;
 
 require __DIR__.'/admin.php';
 
@@ -18,14 +19,9 @@ Route::get('/docs', [DocsController::class, 'index'])->name('docs');
 Route::get('/formulario/{slug}', [GenericFormController::class, 'show'])->name('public.forms.show');
 Route::post('/formulario/{slug}', [GenericFormController::class, 'submit'])->name('public.forms.submit');
 
-// // public pages
-// Route::get('/{base}/{slug}', [PublicPageController::class, 'show'])->name('public.page');
-// Route::get('/{base}/{namespace}/{slug}', [PublicPageController::class, 'showNamespaced'])->name('public.namespace.page');
-
-// // Blog
-// Route::get('/{base}', [PublicPostController::class, 'index'])->name('public.blog.index');
-// Route::get('/{base}/{slug}', [PublicPostController::class, 'show'])->name('public.post');
-// Route::get('/{base}/{taxonomy}/{term}', [PublicPostController::class, 'byTerm'])->name('public.blog.term');
+Route::post('/react/{type}/{id}/{value}', [ReactionController::class, 'store'])
+    ->name('react')
+    ->where(['value' => 'plus|minus']);
 
 // =========================================================================
 // ORQUESTRADOR DE CONFIGURAÇÃO DE PERMALINKS

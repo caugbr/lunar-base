@@ -38,7 +38,7 @@ class PageController extends Controller
             $query->where('author_id', $request->input('author_id'));
         }
 
-        $pages = $query->orderBy('created_at', 'desc')->paginate(15);
+        $pages = $query->orderBy('created_at', 'desc')->paginate(setting('reading.pagination_max_items'));
         $namespaces = $this->getNamespaces();
 
         // Dados para os selects dos filtros
