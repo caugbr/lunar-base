@@ -72,8 +72,8 @@ return [
 
         // ========== TWO FACTOR AUTHENTICATION ==========
         'auth' => [
-            'tab' => 'Segurança',
-            'title' => 'Autenticação',
+            'tab' => 'Autenticação',
+            'title' => 'Reforços na autenticação',
             'description' => 'Configurações de segurança no login',
             'icon' => 'shield',
             'fields' => [
@@ -81,10 +81,35 @@ return [
                     'key' => 'use_captcha',
                     'type' => 'switch',
                     'label' => 'Usar CAPTCHA',
-                    'description' => 'CAPTCHA é um mecanismo que verifica se quem está fazendo login é uma pessoa.',
+                    // 'description' => 'CAPTCHA é um mecanismo que verifica se quem está fazendo login é uma pessoa.',
+                    'description' => 'CAPTCHA é um mecanismo que verifica se quem está fazendo login é uma pessoa. Requer conta Cloudflare e widget Turnstile — <a href="https://developers.cloudflare.com/turnstile/get-started/" target="_blank">entenda como fazer (inglês)</a>.',
                     'default' => false,
                     'active' => 'Usar CAPTCHA no login.',
                     'inactive' => 'Não usar',
+                ],
+                [
+                    'key' => 'turnstile_site_key',
+                    'type' => 'text',
+                    'label' => 'Turnstile Site Key',
+                    'description' => 'Chave pública do widget Cloudflare Turnstile.',
+                    'default' => '',
+                    'depends_on' => [
+                        'field' => 'use_captcha',
+                        'operator' => '===',
+                        'value' => true,
+                    ],
+                ],
+                [
+                    'key' => 'turnstile_secret_key',
+                    'type' => 'password',
+                    'label' => 'Turnstile Secret Key',
+                    'description' => 'Chave secreta para validação no servidor. Não compartilhe.',
+                    'default' => '',
+                    'depends_on' => [
+                        'field' => 'use_captcha',
+                        'operator' => '===',
+                        'value' => true,
+                    ],
                 ],
                 [
                     'key' => '2fa_enabled',

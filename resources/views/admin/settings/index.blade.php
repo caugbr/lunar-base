@@ -215,11 +215,11 @@
                         @endswitch
 
                         @if(!empty($def['description']))
-                            <small class="form-help">{{ $def['description'] }}</small>
+                            <small class="form-help">{!! $def['description'] !!}</small>
                         @endif
 
                         @error($def['key'])
-                            <small class="error">{{ $message }}</small>
+                            <small class="error">{!! $message !!}</small>
                         @enderror
                     </div>
                 @endforeach

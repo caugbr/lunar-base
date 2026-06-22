@@ -60,6 +60,7 @@
                             </a>
 
                             @if($user->hasTwoFactorEnabled())
+                                @if(setting('auth.2fa_enabled'))
                                 <form method="POST" action="{{ route('admin.users.two-factor.disable', $user->id) }}" style="display: inline;">
                                     @csrf
                                     @method('DELETE')
@@ -67,6 +68,11 @@
                                         <x-lucide-shield-off class="lucid-icon" />
                                     </button>
                                 </form>
+                                @else
+                                    <button type="button" disabled class="admin-btn admin-btn-secondary" style="padding: 4px 12px;" onclick="return confirm('Desativar 2FA de {{ $user->name }}?')">
+                                        <x-lucide-shield-off class="lucid-icon" />
+                                    </button>
+                                @endif
                             @endif
 
                             @if($user->id !== auth()->id())

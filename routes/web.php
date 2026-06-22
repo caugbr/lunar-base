@@ -8,7 +8,9 @@ use App\Http\Controllers\GenericFormController;
 use App\Http\Controllers\Public\ReactionController;
 
 require __DIR__.'/admin.php';
-require __DIR__.'/2fa.php';
+if (setting('auth.2fa_enabled', false)) {
+    require __DIR__.'/2fa.php';
+}
 
 // home
 Route::get('/', [HomeController::class, 'index'])->name('home');

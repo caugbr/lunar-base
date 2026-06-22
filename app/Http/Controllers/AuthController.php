@@ -13,48 +13,6 @@ class AuthController extends Controller
         return view('auth.login');
     }
 
-    // public function login(Request $request)
-    // {
-    //     $credentials = $request->validate([
-    //         'email' => 'required|email',
-    //         'password' => 'required',
-    //     ]);
-
-    //     if (setting('navigation.use_captcha')) {
-    //         // Validação do Turnstile
-    //         $response = Http::asForm()->post('https://challenges.cloudflare.com/turnstile/v0/siteverify', [
-    //             'secret' => config('services.turnstile.secret_key'),
-    //             'response' => $request->input('cf-turnstile-response'),
-    //             'remoteip' => $request->ip(),
-    //         ]);
-
-    //         if (!$response->json('success')) {
-    //             return back()->withErrors([
-    //                 'turnstile' => 'Verificação de segurança falhou. Recarregue a página e tente novamente.'
-    //             ])->withInput();
-    //         }
-    //     }
-
-    //     if (Auth::attempt($credentials)) {
-    //         $request->session()->regenerate();
-
-    //         $user = Auth::user();
-
-    //         if ($user->role === 'admin') {
-    //             return redirect()->intended('/admin/dashboard');
-    //         }
-
-    //         if ($user->role === 'partner') {
-    //             return redirect()->intended('/partner/dashboard');
-    //         }
-
-    //         return redirect()->intended('/');
-    //     }
-
-    //     return back()->withErrors([
-    //         'email' => 'As credenciais informadas não correspondem aos nossos registros.',
-    //     ])->onlyInput('email');
-    // }
     public function login(Request $request)
     {
         $credentials = $request->validate([

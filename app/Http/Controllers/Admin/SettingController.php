@@ -86,23 +86,6 @@ class SettingController extends Controller
                 $key = $def['key'];
                 $type = $def['type'] ?? 'text';
 
-                // // === PASSWORD: criptografa antes de salvar ===
-                // if ($type === 'password') {
-                //     $input = $request->input($key);
-
-                //     // Se o campo veio vazio, mantém o valor existente
-                //     if (blank($input)) {
-                //         $existing = Setting::where('key', $key)->value('value');
-                //         if ($existing) {
-                //             Setting::set($key, $existing, $groupKey, $type);
-                //         }
-                //         continue;
-                //     }
-
-                //     $encrypted = Crypt::encryptString($input);
-                //     Setting::set($key, $encrypted, $groupKey, $type);
-                //     continue;
-                // }
                 // === PASSWORD: criptografa antes de salvar ===
                 if ($type === 'password') {
                     // 1. Verifica se marcou para remover
