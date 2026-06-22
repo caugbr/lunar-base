@@ -5,12 +5,9 @@ namespace App\Http\Controllers\Public;
 use App\Http\Controllers\Controller;
 use App\Models\Page;
 use App\Helpers\ContentHelper;
-use App\Traits\GetSiteElements;
 
 class PublicPageController extends Controller
 {
-    use GetSiteElements;
-
     /**
      * Exibe uma página a partir do slug.
      */
@@ -49,14 +46,11 @@ class PublicPageController extends Controller
      */
     protected function renderPage(Page $page)
     {
-        $menu = $this->buildMenu();
-        $termsAndPrivacy = $this->getTermsAndPrivacyPages();
-
         $page->content = ContentHelper::parseShortcodes($page->content);
 
         $templateName = $page->template ?? config('pageTemplates.default');
         $template = 'public.templates.' . $templateName;
 
-        return view($template, compact('page', 'menu', 'termsAndPrivacy'));
+        return view($template, compact('page'));
     }
 }

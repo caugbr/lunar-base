@@ -7,12 +7,9 @@ use App\Models\Post;
 use App\Models\Term;
 use Illuminate\Http\Request;
 use App\Helpers\ContentHelper;
-use App\Traits\GetSiteElements;
 
 class PublicPostController extends Controller
 {
-    use GetSiteElements;
-
     /**
      * Feed/listagem de posts: /blog
      */
@@ -25,10 +22,8 @@ class PublicPostController extends Controller
         }
 
         $posts = $query->paginate(setting('reading.posts_max_items'));
-        $menu = $this->buildMenu();
-        $termsAndPrivacy = $this->getTermsAndPrivacyPages();
 
-        return view('public.blog.index', compact('posts', 'menu', 'termsAndPrivacy'));
+        return view('public.blog.index', compact('posts'));
     }
 
     /**
@@ -41,9 +36,6 @@ class PublicPostController extends Controller
             ->where('slug', $slug)
             ->firstOrFail();
 
-        $menu = $this->buildMenu();
-        $termsAndPrivacy = $this->getTermsAndPrivacyPages();
-
         $reactionData = setting('reading.post_use_reaction', false) ? [
             'positive' => $post->positiveCount(),
             'negative' => $post->negativeCount(),
@@ -52,7 +44,7 @@ class PublicPostController extends Controller
 
         $post->content = ContentHelper::parseShortcodes($post->content);
 
-        return view('public.post-templates.' . $post->template, compact('post', 'menu', 'termsAndPrivacy', 'reactionData'));
+        return view('public.post-templates.' . $post->template, compact('post', 'reactionData'));
     }
 
     /**
@@ -70,9 +62,6 @@ class PublicPostController extends Controller
             ->feedOrder()
             ->paginate(setting('reading.posts_max_items'));
 
-        $menu = $this->buildMenu();
-        $termsAndPrivacy = $this->getTermsAndPrivacyPages();
-
-        return view('public.blog.term', compact('posts', 'term', 'menu', 'termsAndPrivacy'));
+        return view('public.blog.term', compact('posts', 'term'));
     }
 }
