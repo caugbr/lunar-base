@@ -249,7 +249,7 @@ return [
                     'key' => 'words_count',
                     'type' => 'number',
                     'label' => 'Palavras por minuto de leitura',
-                    'description' => 'Quantidade máxima de palavras por minuto para o cálculo de tempo de leitura',
+                    'description' => 'Quantidade de palavras por minuto para o cálculo de tempo de leitura',
                     'default' => 200,
                     'attributes' => ['min' => 50, 'max' => 400, 'step' => 10],
                 ],

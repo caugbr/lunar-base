@@ -66,6 +66,7 @@
                 </div>
                 <div class="admin-header-user">
                     <a href="{{ route('admin.profile.edit') }}">
+                        <x-lucide-user-pen class="lucid-icon" />
                         {{ auth()->user()->name }}
                     </a>
                     <form method="POST" action="{{ route('logout') }}" style="display: inline;">

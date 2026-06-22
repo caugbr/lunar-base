@@ -35,9 +35,4 @@ return [
         ],
     ],
 
-    // 'turnstile' => [
-    //     'site_key' => setting('auth.turnstile_site_key'), //env('TURNSTILE_SITE_KEY'),
-    //     'secret_key' => setting('auth.turnstile_secret_key'), //env('TURNSTILE_SECRET_KEY'),
-    // ],
-
 ];

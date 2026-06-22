@@ -126,11 +126,7 @@ function checkPasswordStrength(password) {
 }
 
 /* Quando tem confirmação, os campos ficam lado a lado */
-.password-component .form-group:first-child {
-    flex: 1;
-}
-
-.password-component .form-group:last-child {
+.password-component .form-group {
     flex: 1;
     margin-bottom: 0;
 }

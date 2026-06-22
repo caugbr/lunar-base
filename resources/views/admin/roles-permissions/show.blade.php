@@ -8,7 +8,7 @@
 <div class="admin-card">
     <div class="admin-card-header">
         <h2>
-            <x-lucide-file-text class="lucid-icon" />
+            <x-lucide-user-key class="lucid-icon" />
             Níveis e permissões
         </h2>
     </div>
@@ -68,7 +68,7 @@
 <div class="admin-card">
     <div class="admin-card-header">
         <h2>
-            <x-lucide-shield class="lucid-icon" />
+            <x-lucide-brick-wall-shield class="lucid-icon" />
             Matriz de Permissões
         </h2>
     </div>

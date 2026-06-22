@@ -66,6 +66,7 @@ return [
         ],
 
         'subscriber' => [
+            'view-dashboard',
             'edit-profile',
         ]
     ],

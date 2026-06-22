@@ -69,7 +69,7 @@
                                     </button>
                                 </form>
                                 @else
-                                    <button type="button" disabled class="admin-btn admin-btn-secondary" style="padding: 4px 12px;" onclick="return confirm('Desativar 2FA de {{ $user->name }}?')">
+                                    <button type="button" disabled class="admin-btn admin-btn-secondary" style="padding: 4px 12px;">
                                         <x-lucide-shield-off class="lucid-icon" />
                                     </button>
                                 @endif
