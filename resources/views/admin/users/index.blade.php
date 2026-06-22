@@ -58,6 +58,17 @@
                             <a href="{{ route('admin.users.edit', $user->id) }}" class="admin-btn admin-btn-secondary" style="padding: 4px 12px;">
                                 <x-lucide-pencil class="lucid-icon" />
                             </a>
+
+                            @if($user->hasTwoFactorEnabled())
+                                <form method="POST" action="{{ route('admin.users.two-factor.disable', $user->id) }}" style="display: inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="admin-btn admin-btn-secondary" style="padding: 4px 12px;" onclick="return confirm('Desativar 2FA de {{ $user->name }}?')">
+                                        <x-lucide-shield-off class="lucid-icon" />
+                                    </button>
+                                </form>
+                            @endif
+
                             @if($user->id !== auth()->id())
                             <form method="POST" action="{{ route('admin.users.destroy', $user->id) }}" style="display: inline;">
                                 @csrf

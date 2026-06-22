@@ -166,10 +166,6 @@ Requer ambiente Bash: **Git Bash** (recomendado), **WSL** ou **Cygwin**.
 | `database/seeders/AdminUsersSeeder.php` | Cria usuários via `config('defaultUsers')` |
 | `storage/app/.install/default_users_data.json` | Dados temporários do install.sh |
 
-## Contribuição
-
-Contribuições são bem-vindas! Sinta-se à vontade para abrir issues e pull requests para melhorias, correções de bugs ou novas funcionalidades.
-
 ## Licença
 
 Este projeto é licenciado sob a [MIT License](https://mit-license.org/).

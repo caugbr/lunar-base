@@ -1,5 +1,5 @@
 
-// Preservar parametros de busca ao navegar
+// // Preservar parametros de busca ao navegar
 (function() {
     const path = window.location.pathname;
     const key  = `filters_${path.replace(/\//g, '_')}`;
@@ -20,11 +20,19 @@
     }
 
     if (params.toString()) {
-        localStorage.setItem(key, params.toString());
         document.addEventListener('DOMContentLoaded', () => {
             const form = document.querySelector('.admin-filters');
             if (form) {
                 form.classList.add('searched');
+                const elems = form.querySelectorAll('input, select, textarea');
+                const names = Array.from(elems).map(el => el.name).filter(Boolean);
+                const newParams = new URLSearchParams();
+                params.forEach((value, key) => {
+                    if(names.includes(key)) {
+                        newParams.append(key, value);
+                    }
+                });
+                localStorage.setItem(key, newParams.toString());
             }
         });
     } else if (localStorage.getItem(key)) {

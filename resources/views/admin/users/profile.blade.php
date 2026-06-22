@@ -41,4 +41,8 @@
     </form>
 </div>
 
+@if(setting('auth.2fa_enabled', false))
+    @include('auth.partials.two-factor')
+@endif
+
 @endsection
