@@ -176,7 +176,7 @@
             <div class="captcha-wrapper">
                 <div
                     class="cf-turnstile"
-                    data-sitekey="{{ config('services.turnstile.site_key') }}"
+                    data-sitekey="{{ setting('auth.turnstile_site_key') }}"
                     data-theme="light"
                     data-size="normal"
                     data-callback="onSuccess"
