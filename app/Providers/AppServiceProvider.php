@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\View;
+use App\View\Composers\SiteComposer;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -29,6 +31,9 @@ class AppServiceProvider extends ServiceProvider
 
             // Comando crucial: limpa a memória do MailManager para assumir o banco em vez do .env
             app()->forgetInstance('mail.manager');
+
+            // Adiciona menu e legal pages
+            View::composer('public.*', SiteComposer::class);
         }
     }
 }

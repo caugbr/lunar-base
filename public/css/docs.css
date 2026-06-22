@@ -1,239 +1,228 @@
-/* Tipografia e Estilo Linear de Engenharia (Tema Clean Técnico Escuro) */
 /* ==========================================================================
-    TEMA PADRÃO (Escuro / Dark)
-    ========================================================================== */
+    VARIÁVEIS DE DOCUMENTAÇÃO (Mapeadas para vars.css)
+   ========================================================================== */
 :root {
-    --bg-document: #0f111a;
-    --border-doc: #23283d;
-    --text-base: #a6accd;
-    --text-bright: #ffffff;
-    --text-lead: #ccd7f5;
-    --text-item-muted: #b4bccc;
-    --accent-teal: #7fdbca;
-    --accent-purple: #c792ea;
-    --bg-code-panel: #090b11;
+    --doc-bg: var(--color-bg-deep);
+    --doc-border: var(--color-border);
+    --doc-text-bright: var(--color-text);
+    --doc-text-base: var(--color-text-muted);
+    --doc-accent: var(--color-primary);
+    --doc-accent-soft: var(--color-glow);
+    --doc-card-bg: var(--color-bg-card);
+    --doc-card-hover: var(--color-bg-card-hover);
 
-    /* Modificadores dinâmicos para inline codes */
-    --bg-inline-filepath: rgba(199, 146, 234, 0.1);
-    --bg-inline-shortcode: rgba(127, 219, 202, 0.1);
-    --bg-inline-generic: rgba(255, 255, 255, 0.06);
-    --text-inline-generic: #e2e8f0;
+    /* Cores de Código (Técnicas) */
+    --bg-inline-filepath: rgba(200, 182, 255, 0.1);
+    --bg-inline-shortcode: rgba(160, 196, 255, 0.1);
+    --text-filepath: var(--color-primary-light);
+    --text-shortcode: var(--color-secondary);
+}
+
+[data-theme="light"] {
+    --doc-bg: #ffffff;
+    --doc-text-bright: var(--color-text);
+    --doc-text-base: var(--color-text-muted);
+    --bg-inline-filepath: rgba(123, 95, 199, 0.1);
+    --bg-inline-shortcode: rgba(107, 155, 209, 0.1);
+    --text-filepath: var(--color-primary-dark);
+    --text-shortcode: var(--color-secondary);
 }
 
 /* ==========================================================================
-    TEMA ALTERNATIVO (Claro / Light)
-    Mapeia tanto por atributo [data-theme] quanto por classe se necessário
-    ========================================================================== */
-[data-theme="light"] {
-    --bg-document: #ffffff;
-    --border-doc: #e2e8f0; /* Alinhado com o Tailwind / bordas suaves claras */
-    --text-base: #4a5568;  /* Cinza escuro legível */
-    --text-bright: #1a202c; /* Preto quase puro para títulos */
-    --text-lead: #2d3748;
-    --text-item-muted: #4a5568;
-    --accent-teal: #007791; /* Teal mais escuro para contraste em fundo claro */
-    --accent-purple: #6b46c1; /* Violeta com peso visual para leitura */
-    --bg-code-panel: #f7fafc; /* Fundo de bloco de código estilo GitHub Light */
-
-    /* Ajustes de opacidade e cores de tags inline para o modo claro */
-    --bg-inline-filepath: rgba(107, 70, 193, 0.08);
-    --bg-inline-shortcode: rgba(0, 119, 145, 0.08);
-    --bg-inline-generic: rgba(0, 0, 0, 0.05);
-    --text-inline-generic: #1a202c;
+    LAYOUT & CONTAINER
+   ========================================================================== */
+.lunar-doc-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 30px 20px;
 }
-
-/* body {
-    background-color: var(--bg-document);
-    color: var(--text-base);
-    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    line-height: 1.75;
-} */
 
 .lunar-logo {
     width: 400px;
-    margin: auto;
+    margin: 40px auto;
     border: 10px solid #333;
     border-radius: 50px;
     overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
 }
 
 .lunar-logo img {
     max-width: 100%;
-    object-fit: cover;
     display: block;
 }
 
-.lunar-doc-container {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 30px 0 0;
-}
-
-/* Cabeçalhos Globais */
+/* ==========================================================================
+    HEADER & QUICK LINKS
+   ========================================================================== */
 .lunar-doc-header {
+    text-align: center;
     margin-bottom: 40px;
 }
 
 .lunar-doc-title {
-    color: var(--text-bright);
-    font-size: 2.8rem;
+    color: var(--doc-text-bright);
+    font-size: clamp(2rem, 5vw, 3rem);
     font-weight: 800;
-    letter-spacing: -1px;
     margin-bottom: 15px;
-    display: flex;
-    align-items: center;
-    gap: 15px;
+    justify-content: center;
 }
 
 .badge-version {
     font-size: 0.9rem;
-    background: rgba(127, 219, 202, 0.1);
-    color: var(--accent-teal);
+    background: var(--doc-accent-soft);
+    color: var(--doc-accent);
     padding: 4px 12px;
-    border-radius: 6px;
-    border: 1px solid rgba(127, 219, 202, 0.2);
-    font-family: monospace;
+    border-radius: 99px;
+    border: 1px solid var(--doc-border);
 }
 
-.lunar-doc-lead {
-    font-size: 1.15rem;
-    color: var(--text-lead);
-    text-align: justify;
+.doc-quick-links {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 2rem 0;
+}
+
+.quick-link {
+    background: var(--doc-card-bg);
+    border: 1px solid var(--doc-border);
+    padding: 0.5rem 1.25rem;
+    border-radius: 99px;
+    text-decoration: none;
+    color: var(--doc-text-base);
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all var(--transition-fast);
+}
+
+.quick-link:hover {
+    background: var(--doc-card-hover);
+    color: var(--doc-accent);
+    transform: translateY(-2px);
+}
+
+/* ==========================================================================
+    TECH GRID & CARDS
+   ========================================================================== */
+.tech-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+}
+
+.tech-card {
+    background: var(--doc-card-bg);
+    border: 1px solid var(--doc-border);
+    padding: 1.5rem;
+    border-radius: 1rem;
+    transition: all var(--transition-base);
+}
+
+.tech-card:hover {
+    border-color: var(--doc-accent);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px -10px rgba(0,0,0,0.3);
+}
+
+.tech-card h4 {
+    margin: 0 0 0.75rem 0;
+    color: var(--doc-accent);
+    font-size: 1.1rem;
+}
+
+.tech-card p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--doc-text-base);
+    line-height: 1.6;
+}
+
+/* ==========================================================================
+    SEÇÕES & ITENS
+   ========================================================================== */
+.lunar-doc-section {
+    margin-bottom: 80px;
+    scroll-margin-top: 100px; /* Para o link ancorado não colar no topo */
+}
+
+.section-title {
+    color: var(--doc-text-bright);
+    font-size: 1.75rem;
+    margin-bottom: 2rem;
+    border-left: 4px solid var(--doc-accent);
+    padding-left: 1rem;
+}
+
+.doc-item {
+    margin-bottom: 4rem;
+}
+
+.item-title {
+    color: var(--doc-text-bright);
+    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1rem;
+}
+
+.item-text {
+    font-size: 1.05rem;
+    color: var(--doc-text-base);
+    line-height: 1.8;
 }
 
 .lunar-divider {
     border: 0;
-    border-top: 1px solid var(--border-doc);
-    margin: 50px 0;
+    border-top: 1px solid var(--doc-border);
+    margin: 4rem 0;
 }
 
-/* Layout Sequencial Aberto (Sem boxes) */
-.lunar-doc-section {
-    margin-bottom: 60px;
-}
-
-.section-title {
-    color: var(--text-bright);
-    font-size: 1.7rem;
-    font-weight: 700;
-    margin-bottom: 25px;
-    letter-spacing: -0.5px;
-}
-
-.section-intro {
-    font-size: 1.05rem;
-    color: var(--text-base);
-    margin-bottom: 40px;
-    text-align: justify;
-}
-
-/* Itens de Documentação Lineares */
-.doc-item {
-    margin-bottom: 45px;
-    padding-bottom: 15px;
-}
-
-.item-title {
-    color: var(--text-bright);
-    font-size: 1.35rem;
-    font-weight: 600;
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.tech-subtitle {
-    color: var(--accent-teal);
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin-top: 30px;
-    margin-bottom: 12px;
-}
-
-.item-text {
-    font-size: 1rem;
-    color: var(--text-item-muted);
-    margin-bottom: 15px;
-    text-align: justify;
-}
-
-/* Elementos de Semântica e Inline Code */
+/* ==========================================================================
+    CÓDIGO & ICONS
+   ========================================================================== */
 .lucide-icon {
-    width: 22px;
-    height: 22px;
-    color: var(--accent-teal);
-    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    color: var(--doc-accent);
 }
 
 .code-filepath {
-    background-color: var(--bg-inline-filepath);
-    color: var(--accent-purple);
+    background: var(--bg-inline-filepath);
+    color: var(--text-filepath);
     padding: 2px 6px;
     border-radius: 4px;
-    font-family: Consolas, Monaco, monospace;
-    font-size: 0.9rem;
+    font-family: ui-monospace, monospace;
+    font-weight: 600;
 }
 
 .code-shortcode {
-    background-color: var(--bg-inline-shortcode);
-    color: var(--accent-teal);
+    background: var(--bg-inline-shortcode);
+    color: var(--text-shortcode);
     padding: 2px 6px;
     border-radius: 4px;
-    font-family: Consolas, Monaco, monospace;
-    font-size: 0.9rem;
+    font-family: ui-monospace, monospace;
 }
 
-.code-inline {
-    background-color: var(--bg-inline-generic);
-    color: var(--text-inline-generic);
-    padding: 2px 5px;
-    border-radius: 4px;
-    font-family: monospace;
-    font-size: 0.92rem;
-}
-
-/* Blocos de Código Expandidos */
 .code-block {
-    background-color: var(--bg-code-panel);
-    border: 1px solid var(--border-doc);
-    border-radius: 6px;
-    padding: 20px;
-    margin: 18px 0 25px 0;
+    background: var(--doc-card-bg);
+    border: 1px solid var(--doc-border);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
     overflow-x: auto;
 }
 
-.code-block pre {
-    margin: 0;
-}
-
+.code-block pre { margin: 0; }
 .code-block code {
-    font-family: 'Fira Code', Consolas, Menlo, monospace;
+    font-family: 'Fira Code', monospace;
     font-size: 0.9rem;
-    color: var(--text-base);
-    line-height: 1.55;
+    color: var(--doc-text-bright);
 }
 
-.tech-list {
-    list-style: none;
-    padding-left: 0;
-    margin: 20px 0;
-}
-
-.tech-list li {
-    position: relative;
-    padding-left: 20px;
-    margin-bottom: 15px;
-    font-size: 1rem;
-    color: var(--text-item-muted);
-}
-
-.tech-list li::before {
-    content: "›";
-    position: absolute;
-    left: 0;
-    top: -2px;
-    color: var(--accent-teal);
-    font-size: 1.3rem;
-    font-weight: bold;
+@media (max-width: 768px) {
+    .lunar-logo { width: 100%; border-radius: 20px; }
+    .tech-grid { grid-template-columns: 1fr; }
 }
