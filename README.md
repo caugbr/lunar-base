@@ -3,11 +3,7 @@
 O **Lunar Base** é um Starter Kit híbrido para Laravel, projetado com características de CMS modular. Ele gerencia seu comportamento operacional através de estruturas declarativas em arquivos de configuração locais, traits de expansão e helpers de contexto, oferecendo uma base sólida e flexível para o desenvolvimento de aplicações web robustas.
 
 <p align="center">
-  <img src="https://img.shields.io/badge/PHP-8.3+-777BB4?logo=php&logoColor=white" alt="PHP"><br>
-  <img src="https://img.shields.io/badge/Laravel-12.x-FF2D20?logo=laravel&logoColor=white" alt="Laravel"><br>
-  <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License"><br>
-  <img src="https://img.shields.io/badge/CAPTCHA-Turnstile-FFA500?logo=cloudflare&logoColor=white" alt="Captcha"><br>
-  <img src="https://img.shields.io/badge/2FA-TOTP-blue" alt="2FA">
+  <img src="https://img.shields.io/badge/PHP-8.3+-777BB4?logo=php&logoColor=white" alt="PHP"> <img src="https://img.shields.io/badge/Laravel-12.x-FF2D20?logo=laravel&logoColor=white" alt="Laravel"> <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License"> <img src="https://img.shields.io/badge/CAPTCHA-Turnstile-FFA500?logo=cloudflare&logoColor=white" alt="Captcha"> <img src="https://img.shields.io/badge/2FA-TOTP-blue" alt="2FA">
 </p>
 
 ## Características
