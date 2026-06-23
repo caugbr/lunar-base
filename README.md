@@ -1,8 +1,8 @@
 ﻿# Lunar Base
 
-## Sobre o Projeto
-
 O **Lunar Base** é um Starter Kit híbrido para Laravel, projetado com características de CMS modular. Ele gerencia seu comportamento operacional através de estruturas declarativas em arquivos de configuração locais, traits de expansão e helpers de contexto, oferecendo uma base sólida e flexível para o desenvolvimento de aplicações web robustas.
+
+![PHP](https://img.shields.io/badge/PHP-8.3+-777BB4?logo=php&logoColor=white) ![Laravel](https://img.shields.io/badge/Laravel-12.x-FF2D20?logo=laravel&logoColor=white) ![License](https://img.shields.io/badge/License-MIT-green.svg) ![Captcha](https://img.shields.io/badge/CAPTCHA-Turnstile-FFA500?logo=cloudflare&logoColor=white) ![2FA](https://img.shields.io/badge/2FA-TOTP-blue)
 
 ## Características
 
@@ -32,8 +32,8 @@ O **Lunar Base** é um Starter Kit híbrido para Laravel, projetado com caracter
 
 *   **Backend**: Laravel 12+ (PHP 8.2+)
 *   **Frontend**: Blade + Alpine.js
-*   **Editor**: TinyMCE customizado para aceitar scripts e estilos protegidos.
-*   **Segurança**: Google2FA + BaconQrCode.
+*   **Editor**: TinyMCE customizado para editar shortcodes.
+*   **Segurança**: Turnstile / Google2FA + BaconQrCode.
 *   **Ícones**: Lucide Icons (via Blade Components).
 
 ---

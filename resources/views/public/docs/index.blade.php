@@ -11,7 +11,7 @@
 <div class="lunar-doc-container">
 
     <header class="lunar-doc-header">
-        <h1 class="lunar-doc-title">Lunar Base <span class="badge-version">v{{ config('app.version', '2.1.0') }}</span></h1>
+        <h1 class="lunar-doc-title">Lunar Base <span class="badge-version">{{ config('app.version') }}</span></h1>
         <p class="lunar-doc-lead">
             Guia definitivo de engenharia e referência do ecossistema <strong>Lunar Base</strong>.
             Projetado como um Starter Kit híbrido com características de CMS modular, o sistema gerencia seu comportamento através de estruturas declarativas, traits de expansão e injeção dinâmica de dependências.
