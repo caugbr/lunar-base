@@ -14,7 +14,7 @@ O **Lunar Base** é um Starter Kit híbrido para Laravel, projetado com caracter
 - **Roteamento Híbrido**: Sistema inteligente de roteamento que resolve dinamicamente URLs amigáveis para páginas, posts e taxonomias.
 - **Shortcodes**: Motor de renderização de conteúdo dinâmico via tags personalizadas `[shortcode]`.
 - **Helpers Globais**: Funções utilitárias para acesso a configurações, permissões e manipulação de dados.
-- 
+
 ## Funcionalidades
 
 *   **Gestão de Conteúdo Completa**: CRUDs robustos para Páginas estáticas e Posts cronológicos (Blog).
