@@ -184,15 +184,6 @@ Se `default_users_data.json` não existir, `config/defaultUsers.php` gera usuár
 
 Requer ambiente Bash: **Git Bash** (recomendado), **WSL** ou **Cygwin**.
 
-### Arquivos de configuração
-
-| Arquivo | Função |
-|---------|--------|
-| `config/rolesPermissions.php` | Roles e permissions |
-| `config/defaultUsers.php` | Array de usuários (lê JSON ou fallback) |
-| `database/seeders/AdminUsersSeeder.php` | Cria usuários via `config('defaultUsers')` |
-| `storage/app/.install/default_users_data.json` | Dados temporários do install.sh |
-
 ## Licença
 
 Este projeto é licenciado sob a [MIT License](https://mit-license.org/).
