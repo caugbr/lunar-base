@@ -49,16 +49,16 @@ class AuthController extends Controller
 
             $request->session()->regenerate();
 
-            if ($user->role === 'admin') {
-                return redirect()->intended('/admin/dashboard');
+            log_admin("Login realizado com sucesso", "auth");
+
+            if ($user->role === 'subscriber') {
+                return redirect()->intended('/');
             }
 
-            if ($user->role === 'partner') {
-                return redirect()->intended('/partner/dashboard');
-            }
-
-            return redirect()->intended('/');
+            return redirect()->intended('/admin/dashboard');
         }
+
+        log_admin("Tentativa de login falhou: {$credentials['email']}", "auth");
 
         return back()->withErrors([
             'email' => 'As credenciais informadas não correspondem aos nossos registros.',

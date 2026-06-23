@@ -10,11 +10,6 @@ use PragmaRX\Google2FA\Google2FA;
 
 class ProfileController extends Controller
 {
-    // public function edit()
-    // {
-    //     $user = Auth::user();
-    //     return view('admin.users.profile', compact('user'));
-    // }
 
     public function edit()
     {
@@ -55,6 +50,7 @@ class ProfileController extends Controller
 
         if (!empty($validated['new_password'])) {
             $user->password = Hash::make($validated['new_password']);
+            log_admin("Usuário alterou a própria senha", "security");
         }
 
         $user->save();

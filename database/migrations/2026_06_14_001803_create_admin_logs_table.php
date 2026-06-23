@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('user_name')->nullable();
             $table->string('action');
             $table->string('category')->default('general');
+            $table->json('metadata')->nullable();
             $table->text('referrer')->nullable();
             $table->string('ip_address', 45)->nullable();
             $table->text('user_agent')->nullable();

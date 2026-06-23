@@ -38,6 +38,7 @@ class SettingController extends Controller
     public function update(Request $request)
     {
         $definitions = config('settings.definitions', []);
+        $originalValues = settingsAll();
 
         // === INÍCIO DA ADIÇÃO: VALIDAÇÃO DINÂMICA ===
         $rules = [];
@@ -76,6 +77,8 @@ class SettingController extends Controller
         // Executa a validação antes de começar a salvar
         $request->validate($rules, $messages);
         // === FIM DA ADIÇÃO: VALIDAÇÃO DINÂMICA ===
+
+        $this->logChanges($originalValues, $request->all());
 
         foreach ($definitions as $groupKey => $group) {
             if (!isset($group['fields']) || !is_array($group['fields'])) {
@@ -186,5 +189,77 @@ class SettingController extends Controller
 
         return redirect()->route('admin.settings.index')
             ->with('success', 'Configurações salvas com sucesso!');
+    }
+
+    private function logChanges(array $original, array $modified): void
+    {
+        // Campos internos do Laravel e de controle da interface
+        $ignoredKeys = ['_token', '_active_tab', '_method'];
+
+        // Tipos de campo que nunca devem ter valores logados
+        $sensitiveTypes = ['password'];
+
+        // Pega as definições para saber os tipos dos campos
+        $definitions = config('settings.definitions', []);
+        $fieldTypes = [];
+
+        foreach ($definitions as $group) {
+            foreach ($group['fields'] ?? [] as $field) {
+                $fieldTypes[$field['key']] = $field['type'] ?? 'text';
+            }
+        }
+
+        $changes = [];
+
+        foreach ($modified as $key => $newValue) {
+            // Ignora campos internos do Laravel
+            if (in_array($key, $ignoredKeys, true)) {
+                continue;
+            }
+
+            // Ignora campos auxiliares (ex: site_thumbnail_current, remove_settings.*)
+            if (str_ends_with($key, '_current') || str_starts_with($key, 'remove_settings.')) {
+                continue;
+            }
+
+            // Normaliza a chave: remove sufixo _current se existir no original
+            $originalKey = $key;
+
+            // Pega valor original (pode ser null se campo não existia)
+            $oldValue = $original[$originalKey] ?? null;
+
+            // Se não mudou, pula
+            if ($oldValue === $newValue || $newValue === NULL) {
+                continue;
+            }
+
+            // Se é campo de senha, loga apenas que foi alterado, sem o valor
+            $fieldType = $fieldTypes[$originalKey] ?? 'text';
+
+            if (in_array($fieldType, $sensitiveTypes, true)) {
+                $changes[$originalKey] = [
+                    'old' => '[SENSÍVEL]',
+                    'new' => '[SENSÍVEL]',
+                ];
+            } else {
+                $changes[$originalKey] = [
+                    'old' => $oldValue,
+                    'new' => $newValue,
+                ];
+            }
+        }
+
+        if (empty($changes)) {
+            return;
+        }
+
+        log_admin(
+            'Configurações do sistema atualizadas',
+            'settings',
+            [
+                'modified_keys' => array_keys($changes),
+                'changes' => $changes,
+            ]
+        );
     }
 }

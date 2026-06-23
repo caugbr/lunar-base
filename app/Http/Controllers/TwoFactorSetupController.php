@@ -17,41 +17,6 @@ class TwoFactorSetupController extends Controller
         $this->google2fa = new Google2FA();
     }
 
-    // public function show()
-    // {
-    //     if (!TwoFactorConfig::enabled()) {
-    //         abort(404);
-    //     }
-
-    //     $user = Auth::user();
-    //     $setting = $user->twoFactorSetting;
-
-    //     // Se já ativo, não precisa estar aqui
-    //     if ($setting && $setting->isActive()) {
-    //         return redirect()->route('admin.profile.edit');
-    //     }
-
-    //     // Se não tem secret, gera um novo
-    //     if (!$setting || !$setting->secret) {
-    //         $secret = $this->google2fa->generateSecretKey();
-
-    //         $setting = TwoFactorSetting::updateOrCreate(
-    //             ['user_id' => $user->id],
-    //             ['secret' => $secret, 'confirmed_at' => null]
-    //         );
-    //     }
-
-    //     $qrCodeUrl = $this->google2fa->getQRCodeUrl(
-    //         TwoFactorConfig::issuer(),
-    //         $user->email,
-    //         $setting->secret
-    //     );
-
-    //     return view('auth.two-factor.setup', [
-    //         'qrCodeUrl' => $qrCodeUrl,
-    //         'secret' => $setting->secret,
-    //     ]);
-    // }
     public function show()
     {
         if (!TwoFactorConfig::enabled()) {
@@ -108,6 +73,8 @@ class TwoFactorSetupController extends Controller
         }
 
         $setting->update(['confirmed_at' => now()]);
+
+        log_admin("Usuário ativou a autenticação de dois fatores", "security");
 
         return redirect()->route('admin.profile.edit')->with('success', 'Autenticação de dois fatores ativada com sucesso.');
     }

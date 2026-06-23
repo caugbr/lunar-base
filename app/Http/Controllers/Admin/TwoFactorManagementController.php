@@ -14,6 +14,8 @@ class TwoFactorManagementController extends Controller
             $user->twoFactorSetting->delete();
         }
 
+        log_admin("2FA desativado para o usuário: {$user->name}", "security");
+
         return back()->with('success', "2FA desativado para {$user->name}.");
     }
 }

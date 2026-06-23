@@ -88,15 +88,11 @@ class TwoFactorChallengeController extends Controller
         Auth::login($user);
         $request->session()->regenerate();
 
-        // Redirect baseado no role (mesma lógica do seu AuthController)
-        if ($user->role === 'admin') {
-            return redirect()->intended('/admin/dashboard');
+        // Redirect baseado no role
+        if ($user->role === 'subscriber') {
+            return redirect()->intended('/');
         }
 
-        if ($user->role === 'partner') {
-            return redirect()->intended('/partner/dashboard');
-        }
-
-        return redirect()->intended('/');
+        return redirect()->intended('/admin/dashboard');
     }
 }

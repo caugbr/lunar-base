@@ -60,12 +60,12 @@
             </thead>
             <tbody>
                 @forelse($logs as $log)
-                <tr title="IP: {{ $log->ip_address ?? 'N/D' }} &#10;Dispositivo: {{ $log->user_agent ?? 'N/D' }}">
+                <tr>
                     <td class="admin-text-muted">
                         <x-lucide-clock class="lucid-icon" style="width: 12px; height: 12px; display: inline-block; vertical-align: middle; margin-right: 4px;" />
                         {{ $log->created_at->format('d/m/Y H:i:s') }}
                     </td>
-                    <td>
+                    <td title="IP: {{ $log->ip_address ?? 'N/D' }} &#10;Dispositivo: {{ $log->user_agent ?? 'N/D' }}">
                         <strong>{{ $log->user_name ?? 'Sistema/Anônimo' }}</strong>
                     </td>
                     <td>
@@ -73,8 +73,21 @@
                             {{ strtoupper($log->category) }}
                         </span>
                     </td>
+                    @php
+                    $meta = count($log->metadata) ? json_encode($log->metadata, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) : false;
+                    @endphp
                     <td>
                         <span style="color: #1e293b; font-weight: 500;">{{ $log->action }}</span>
+                        @if($meta)
+<span class="meta-info">
+    <button type="button" popovertarget="meta-{{ $log->id }}">
+        <x-lucide-info class="lucid-icon" />
+    </button>
+    <span id="meta-{{ $log->id }}" popover class="meta-popup">
+        <code>{{ $meta }}</code>
+    </span>
+</span>
+                        @endif
                     </td>
                     <td class="admin-text-muted" style="max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                         @if($log->referrer)
@@ -102,3 +115,60 @@
     </div>
 </div>
 @endsection
+
+@push('styles')
+<style>
+.meta-info {
+    position: relative;
+    display: inline-block;
+    margin-left: 6px;
+    vertical-align: middle;
+}
+
+.meta-info > button {
+    color: #64748b;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    border: 0;
+    background-color: rgba(0, 0, 0, 0);
+    cursor: pointer;
+}
+
+.meta-info > a:hover {
+    color: #1e293b;
+}
+
+.meta-popup[popover] {
+    inset: auto;
+    margin: 0;
+    min-width: 320px;
+    max-width: 580px;
+    max-height: 600px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    overflow: auto;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    padding: 12px;
+}
+
+.meta-popup[popover]::backdrop {
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(2px);
+}
+
+.meta-popup code {
+    display: block;
+    font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+    font-size: 0.8rem;
+    line-height: 1.5;
+    color: #334155;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+</style>
+@endpush

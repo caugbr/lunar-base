@@ -6,17 +6,18 @@ if (!function_exists('log_admin')) {
     /**
      * Registra uma ação de auditoria no painel administrativo
      */
-    function log_admin(string $action, string $category = 'general')
+    function log_admin(string $action, string $category = 'general', array $metadata = [])
     {
         try {
-            $user = auth()->user(); 
-            
+            $user = auth()->user();
+
             \App\Models\AdminLog::create([
                 'user_id'    => $user?->id,
                 'user_name'  => $user?->name ?? 'Sistema/Anônimo',
                 'action'     => $action,
                 'category'   => $category,
-                'referrer'   => request()->headers->get('referer'), 
+                'metadata'   => $metadata,
+                'referrer'   => request()->headers->get('referer'),
                 'ip_address' => request()->ip(),
                 'user_agent' => request()->userAgent(),
             ]);
