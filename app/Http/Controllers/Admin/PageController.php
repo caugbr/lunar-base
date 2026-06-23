@@ -7,6 +7,7 @@ use App\Models\Page;
 use App\Models\User;
 use App\Models\Taxonomy;
 use App\Models\Media;
+use App\Helpers\ContentHelper;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
@@ -83,6 +84,8 @@ class PageController extends Controller
             'gallery_ids' => 'nullable|array',
             'gallery_ids.*' => 'exists:media,id',
         ]);
+
+         $validated['content'] = ContentHelper::sanitizeForStorage($request->content);
 
         $page = Page::create($validated);
 

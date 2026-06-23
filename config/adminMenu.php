@@ -1,5 +1,86 @@
 <?php
 
+/**
+ * =============================================================================
+ * GUIA DE CONFIGURAÇÃO DO MENU DA ADMIN
+ * =============================================================================
+ *
+ * Este arquivo define a estrutura do menu lateral da área administrativa.
+ * O menu é organizado em SEÇÕES, e cada seção contém ITENS de navegação.
+ *
+ * ESTRUTURA BÁSICA:
+ * -----------------
+ *
+ * 'menu' => [
+ *     [
+ *         'title' => 'Nome da Seção',     // Obrigatório. Título do grupo de itens.
+ *         'items' => [                     // Obrigatório. Array de links do menu.
+ *             // ... itens aqui
+ *         ],
+ *     ],
+ * ],
+ *
+ * CONFIGURAÇÕES DE CADA ITEM:
+ * -----------------------------
+ *
+ * [
+ *     'label'      => 'Nome do Link',         // Obrigatório. Texto exibido no menu.
+ *     'icon'       => 'nome-do-icone',        // Obrigatório. Ícone Lucide (ex: 'settings', 'users').
+ *     'route'      => 'nome.da.rota',         // Obrigatório. Rota Laravel ao clicar.
+ *     'active'     => 'prefixo.*',            // Obrigatório. Padrão que define se item está ativo.
+ *                                              // Use '*' como wildcard (ex: 'admin.pages.*').
+ *     'permission' => 'nome-da-permissao',    // Opcional. Exibe apenas se usuário tiver permissão.
+ *     'role'       => 'nome-do-role',         // Opcional. Exibe apenas se usuário tiver role.
+ * ],
+ *
+ * CONTROLE DE ACESSO:
+ * -------------------
+ *
+ * 'permission' => Filtra por permissão específica do usuário.
+ *                  Exemplo: 'manage-media', 'manage-pages'.
+ *
+ * 'role'       => Filtra por role do usuário.
+ *                  Exemplo: 'admin', 'editor'.
+ *
+ * Se ambos forem omitidos, o item aparece para todos os usuários autenticados.
+ *
+ * ÍCONES:
+ * -------
+ *
+ * Use nomes do Lucide: https://lucide.dev/icons/
+ * Exemplos comuns: 'layout-dashboard', 'file', 'files', 'image', 'tags',
+ * 'form', 'users', 'user-pen', 'user-key', 'settings', 'list-checks'.
+ *
+ * ROTAS E ACTIVE:
+ * ---------------
+ *
+ * 'route'  => Nome completo da rota Laravel. Usado em route('nome.da.rota').
+ *
+ * 'active' => Prefixo que marca o item como ativo. Use '*' para corresponder
+ *             a qualquer sub-rota. Exemplo: 'admin.pages.*' ativa para
+ *             admin.pages.index, admin.pages.create, admin.pages.edit, etc.
+ *
+ * EXEMPLO COMPLETO:
+ * -----------------
+ *
+ * [
+ *     'label'      => 'Mídia',
+ *     'icon'       => 'image',
+ *     'route'      => 'admin.media.index',
+ *     'active'     => 'admin.media.*',
+ *     'permission' => 'manage-media',
+ * ],
+ *
+ * DICAS:
+ * ------
+ * - Comente itens temporariamente com '//' em vez de remover.
+ * - Ordene os itens na ordem desejada de exibição no menu.
+ * - Agrupe logicamente por seções ('title') para organização visual.
+ * - Use 'role' => 'admin' para itens restritos ao administrador.
+ *
+ * =============================================================================
+ */
+
 return [
     'menu' => [
         [
@@ -25,10 +106,10 @@ return [
                 ],
                 [
                     'label' => 'Mídia',
-                    'icon' => 'image', // ou 'folder-image', 'gallery-horizontal'
+                    'icon' => 'image',
                     'route' => 'admin.media.index',
                     'active' => 'admin.media.*',
-                    'permission' => 'manage-media', // ⚠️ Remova se ainda não usa sistema de permissões // Ajuste conforme a posição desejada no menu
+                    'permission' => 'manage-media',
                 ],
                 [
                     'label' => 'Taxonomias',

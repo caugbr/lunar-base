@@ -1,7 +1,5 @@
 <?php
 
-// config/defaultUsers.php
-//
 // Este arquivo gera o array de usuários padrão para o AdminUsersSeeder.
 // Prioridade de leitura:
 //   1. Se existir storage/app/.install/default_users_data.json, usa os dados dele.

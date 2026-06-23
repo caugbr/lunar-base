@@ -1,5 +1,203 @@
 <?php
 
+/**
+ * =============================================================================
+ * GUIA DE CONFIGURAÇÃO DE SETTINGS
+ * =============================================================================
+ *
+ * Este arquivo define as configurações administráveis do sistema.
+ * As configurações são organizadas em GRUPOS, que viram grupos ou abas na
+ * interface, dependendo da configuração 'settings_in_tabs'.
+ *
+ * ESTRUTURA BÁSICA DE UM GRUPO:
+ * --------------------------------
+ * 'nome_do_grupo' => [
+ *     'tab'       => 'Nome da Aba',      // Opcional. Define a aba onde o grupo aparece.
+ *     'title'     => 'Título da Seção',   // Obrigatório. Título exibido na página.
+ *     'description' => 'Descrição',       // Opcional. Texto explicativo abaixo do título.
+ *     'icon'      => 'nome-do-icone',     // Opcional. Ícone Lucide (ex: 'settings', 'shield').
+ *     'fields'    => [                    // Obrigatório. Array de campos.
+ *         // ... campos aqui
+ *     ],
+ * ],
+ *
+ * A CHAVE DO CAMPO E A NOTAÇÃO DE PONTO:
+ * ----------------------------------------
+ * A função setting() usa o nome do grupo com notação de ponto:
+ *     setting('grupo.chave')
+ *
+ * Isso permite ter campos com o mesmo nome em grupos diferentes, embora não
+ * seja recomendado por questões de clareza.
+ *
+ * Exemplo: setting('general.site_name') ou setting('auth.2fa_enabled')
+ *
+ * TIPOS DE CAMPO E SUAS CONFIGURAÇÕES:
+ * --------------------------------------
+ *
+ * 1. TEXT (campo de texto simples)
+ *    [
+ *        'key'         => 'nome_da_chave', // Obrigatório. Usado em setting('grupo.chave').
+ *        'type'        => 'text',          // Obrigatório.
+ *        'label'       => 'Rótulo',        // Obrigatório. Nome exibido.
+ *        'description' => 'Descrição',     // Opcional. Texto auxiliar.
+ *        'default'     => 'valor padrão',  // Opcional. Valor inicial.
+ *    ]
+ *
+ * 2. TEXTAREA (campo de texto longo)
+ *    [
+ *        'key'         => 'nome_da_chave',
+ *        'type'        => 'textarea',
+ *        'label'       => 'Rótulo',
+ *        'description' => 'Descrição',
+ *        'default'     => 'valor padrão',
+ *    ]
+ *
+ * 3. NUMBER (campo numérico)
+ *    [
+ *        'key'         => 'nome_da_chave',
+ *        'type'        => 'number',
+ *        'label'       => 'Rótulo',
+ *        'description' => 'Descrição',
+ *        'default'     => 30,
+ *        'attributes'  => [ // Opcional. Atributos HTML do input.
+ *            'min'  => 15,
+ *            'max'  => 120,
+ *            'step' => 5,
+ *        ],
+ *    ]
+ *
+ * 4. EMAIL (campo de e-mail com validação)
+ *    [
+ *        'key'         => 'nome_da_chave',
+ *        'type'        => 'email',
+ *        'label'       => 'Rótulo',
+ *        'description' => 'Descrição',
+ *        'default'     => '',
+ *    ]
+ *
+ * 5. URL (campo de URL com validação)
+ *    [
+ *        'key'         => 'nome_da_chave',
+ *        'type'        => 'url',
+ *        'label'       => 'Rótulo',
+ *        'description' => 'Descrição',
+ *        'default'     => '',
+ *    ]
+ *
+ * 6. PASSWORD (campo de senha, mascara o valor)
+ *    [
+ *        'key'         => 'nome_da_chave',
+ *        'type'        => 'password',
+ *        'label'       => 'Rótulo',
+ *        'description' => 'Descrição',
+ *        'default'     => '',
+ *    ]
+ *
+ * 7. IMAGE (upload de imagem)
+ *    [
+ *        'key'         => 'nome_da_chave',
+ *        'type'        => 'image',
+ *        'label'       => 'Rótulo',
+ *        'description' => 'Descrição',
+ *        'default'     => '',
+ *    ]
+ *
+ * 8. SWITCH (ligar/desligar, booleano)
+ *    [
+ *        'key'         => 'nome_da_chave',
+ *        'type'        => 'switch',
+ *        'label'       => 'Rótulo',
+ *        'description' => 'Descrição',
+ *        'default'     => false,                    // true ou false.
+ *        'active'      => 'Texto quando LIGADO',    // Opcional. Exibido ao lado do switch.
+ *        'inactive'    => 'Texto quando DESLIGADO', // Opcional. Exibido ao lado do switch.
+ *    ]
+ *
+ * 9. SELECT (dropdown de opções)
+ *    [
+ *        'key'         => 'nome_da_chave',
+ *        'type'        => 'select',
+ *        'label'       => 'Rótulo',
+ *        'description' => 'Descrição',
+ *        'default'     => 'valor_padrao',
+ *        'options'     => [                 // Obrigatório. Opções do dropdown.
+ *            'valor1' => 'Label 1',
+ *            'valor2' => 'Label 2',
+ *        ],
+ *    ]
+ *
+ * 10. RADIO (botões de opção exclusiva)
+ *     [
+ *         'key'         => 'nome_da_chave',
+ *         'type'        => 'radio',
+ *         'label'       => 'Rótulo',
+ *         'description' => 'Descrição',
+ *         'default'     => 'valor_padrao',
+ *         'options'     => [                 // Obrigatório.
+ *             'valor1' => 'Label 1',
+ *             'valor2' => 'Label 2',
+ *         ],
+ *     ]
+ *
+ * 11. CHECKBOX (caixas de seleção múltipla)
+ *     [
+ *         'key'         => 'nome_da_chave',
+ *         'type'        => 'checkbox',
+ *         'label'       => 'Rótulo',
+ *         'description' => 'Descrição',
+ *         'default'     => ['valor1'],      // Array de valores selecionados.
+ *         'options'     => [                // Obrigatório.
+ *             'valor1' => 'Label 1',
+ *             'valor2' => 'Label 2',
+ *         ],
+ *     ]
+ *
+ * CONFIGURAÇÕES AVANÇADAS POR CAMPO:
+ * ------------------------------------
+ *
+ * depends_on (habilita/desabilita campo baseado em outro):
+ * ---------------------------------------------------------
+ * Habilita este campo SOMENTE se outro campo tiver um valor específico.
+ * Se a condição não for atendida, o campo fica desabilitado (não escondido).
+ *
+ *     'depends_on' => [
+ *         'field'    => 'nome_do_outro_campo',  // Chave do campo que controla.
+ *         'operator' => '===',                  // Operador: '===', '==', '!==', '!=', '>', '<', '>=' ou '<='.
+ *         'value'    => true,                   // Valor esperado para HABILITAR este campo.
+ *     ],
+ *
+ * Exemplo prático: habilitar chaves Turnstile apenas se CAPTCHA estiver ativo.
+ *
+ * warn_on_change (aviso ao alterar valor):
+ * -----------------------------------------
+ * Exibe um modal de confirmação quando o usuário tenta mudar o valor.
+ *
+ *     'warn_on_change' => 'Mensagem de aviso ao alterar este valor.',
+ *
+ * Exemplo prático: avisar que mudar a base de URLs quebra links antigos.
+ *
+ * COMO USAR AS SETTINGS NO CÓDIGO:
+ * ----------------------------------
+ *
+ * No PHP (controllers, models, etc.):
+ *     $valor = setting('grupo.chave', 'valor_padrao');
+ *
+ * No Blade (views):
+ *     {{ setting('grupo.chave', 'valor_padrao') }}
+ *
+ * Exemplo real:
+ *     if (setting('auth.use_captcha', false)) {
+ *         // valida CAPTCHA...
+ *     }
+ *
+ * DICAS:
+ * ------
+ * - Use uma 'key' descritiva e, se necessário, prefixada pelo contexto: '2fa_enabled'.
+ * - 'default' é usado quando nenhum valor foi salvo no banco.
+ * - 'tab' aparece no rótulo da aba, quando agrupado visualmente em abas, se 'settings_in_tabs' está ativo.
+ * - 'icon' usa nomes do Lucide: 'settings', 'shield', etc. (https://lucide.dev/icons/)
+ */
+
 return [
     'definitions' => [
 
@@ -213,6 +411,7 @@ return [
                     'label' => 'Namespace para páginas',
                     'description' => 'Prefixo de URL padrão para o carregamento das páginas públicas.',
                     'default' => '',
+                    'warn_on_change' => 'Ao mudar este valor, as URLs de todas as páginas irão mudar e se algum de seus usuários favoritou, seus links deixarão de funcionar. Tem certeza?'
                 ],
                 [
                     'key' => 'posts_base',
@@ -220,6 +419,7 @@ return [
                     'label' => 'Namespace para posts',
                     'description' => 'Prefixo de URL padrão para o carregamento dos posts do blog.',
                     'default' => 'post',
+                    'warn_on_change' => 'Ao mudar este valor, as URLs de todos os posts irão mudar e se algum de seus usuários favoritou, seus links deixarão de funcionar. Tem certeza?'
                 ],
                 [
                     'key' => 'blog_base',
@@ -227,6 +427,7 @@ return [
                     'label' => 'Namespace para o blog',
                     'description' => 'Prefixo de URL padrão para o carregamento do blog.',
                     'default' => 'blog',
+                    'warn_on_change' => 'Ao mudar este valor, a URL do blog vai mudar e se algum de seus usuários favoritou, seu link deixará de funcionar. Tem certeza?'
                 ],
             ],
         ],

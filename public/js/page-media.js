@@ -8,18 +8,23 @@ document.addEventListener('DOMContentLoaded', function() {
         plugins: [
             'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
             'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-            'insertdatetime', 'media', 'table', 'help', 'wordcount',
-            'customscriptstyle' // ✅ 1. Registrou o plugin
+            'insertdatetime', 'media', 'table', 'help', 'wordcount'
         ],
+        // Força o carregamento do arquivo exato:
+        external_plugins: {
+            'shortcode': '/js/tinymce/plugins/shortcode/plugin.js'
+        },
+
         toolbar: 'formatselect | ' +
             'bold italic backcolor | alignleft aligncenter ' +
             'alignright alignjustify | bullist numlist outdent indent | ' +
-            'removeformat | link image | code | help', // ✅ 2. Adicionou o botão na toolbar
+            'removeformat | link image | shortcode | code | help',
         content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:16px }',
         forced_root_block: 'p',
-        // valid_elements: 'script[*],style[*],div[*],span[*],p[*],a[*],figure[*],img[*],br,strong,em,i,b,u,h1,h2,h3,h4',
+        remove_trailing_brs: false,
+        verify_html: false,
         valid_elements: 'script[*],style[*],,link[href|rel|type|media|crossorigin|integrity|as],div[*],span[*],p[*],br,hr,h1,h2,h3,h4,h5,h6,strong,b,em,i,u,sub,sup,code,pre,mark,small,del,ins,a[href|target|title|rel|class],img[*],figure[*],figcaption[*],ul[*],ol[*],li[*],table[*],thead[*],tbody[*],tr[*],td[*],th[*],blockquote[*],q[*],cite[*],iframe[src|width|height|frameborder|allow|allowfullscreen],audio[*],video[*],source[*],details[*],summary[*],button[*],svg[*]',
-        extended_valid_elements: 'div[class|contenteditable|style]', // ✅ 3. Impede que o TinyMCE remova o placeholder
+        extended_valid_elements: 'span[class|data-tag|data-attrs|data-content|contenteditable|style],div[class|contenteditable|style]',
         content_css: '/css/tinymce-content.css',
         setup: function(editor) {
             var existingContent = document.getElementById('content').value;

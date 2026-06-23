@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Taxonomy;
 use App\Models\Media;
 use App\Models\PostMeta;
+use App\Helpers\ContentHelper;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
@@ -88,6 +89,8 @@ class PostController extends Controller
             'gallery_ids' => 'nullable|array',
             'gallery_ids.*' => 'exists:media,id',
         ]);
+
+         $validated['content'] = ContentHelper::sanitizeForStorage($request->content);
 
         // Se status published mas sem published_at, define agora
         if ($validated['status'] === 'published' && empty($validated['published_at'])) {
