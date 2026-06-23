@@ -4,7 +4,7 @@
 
 O **Lunar Base** é um Starter Kit híbrido para Laravel, projetado com características de CMS modular. Ele gerencia seu comportamento operacional através de estruturas declarativas em arquivos de configuração locais, traits de expansão e helpers de contexto, oferecendo uma base sólida e flexível para o desenvolvimento de aplicações web robustas.
 
-## Características Principais
+## Características
 
 - **Painel Administrativo Intuitivo**: Interface limpa e organizada com módulos para gerenciamento completo do sistema.
 - **Arquitetura Declarativa**: Comportamento do sistema definido por arquivos de configuração (`.php`), eliminando queries repetitivas e melhorando o TTFB (tempo de resposta do servidor).
@@ -12,6 +12,31 @@ O **Lunar Base** é um Starter Kit híbrido para Laravel, projetado com caracter
 - **Roteamento Híbrido**: Sistema inteligente de roteamento que resolve dinamicamente URLs amigáveis para páginas, posts e taxonomias.
 - **Shortcodes**: Motor de renderização de conteúdo dinâmico via tags personalizadas `[shortcode]`.
 - **Helpers Globais**: Funções utilitárias para acesso a configurações, permissões e manipulação de dados.
+- 
+## Funcionalidades
+
+*   **Gestão de Conteúdo Completa**: CRUDs robustos para Páginas estáticas e Posts cronológicos (Blog).
+*   **Mídia Polimórfica**: Biblioteca de mídia centralizada com redimensionamento automático e suporte a imagens (incluindo WebP/SVG) e documentos.
+*   **Formulários Dinâmicos**: Construtor de formulários via admin com renderização automática via Shortcodes.
+*   **Segurança Avançada**:
+    *   Autenticação de Dois Fatores (2FA) nativa via TOTP (Google Authenticator/Authy).
+    *   Integração opcional com Cloudflare Turnstile (CAPTCHA).
+    *   Sistema de RBAC (Role-Based Access Control) estático e imutável via código.
+*   **SEO Nativo**: Gerador automático de metadados Open Graph e Twitter Cards integrado aos modelos.
+*   **Logs de Auditoria**: Registro automático de ações administrativas para segurança e rastreabilidade.
+*   **Arquitetura Baseada em Configuração**: Altere o comportamento do core sem modificar o código-fonte, apenas editando arquivos em `/config`.
+
+---
+
+## Stack Técnica
+
+*   **Backend**: Laravel 12+ (PHP 8.2+)
+*   **Frontend**: Blade + Alpine.js
+*   **Editor**: TinyMCE customizado para aceitar scripts e estilos protegidos.
+*   **Segurança**: Google2FA + BaconQrCode.
+*   **Ícones**: Lucide Icons (via Blade Components).
+
+---
 
 ## Módulos do Painel Administrativo
 
