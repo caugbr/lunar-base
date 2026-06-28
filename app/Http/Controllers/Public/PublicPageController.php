@@ -48,6 +48,8 @@ class PublicPageController extends Controller
     {
         $page->content = ContentHelper::parseShortcodes($page->content);
 
+        $page->load(['children' => fn($q) => $q->published()]);
+
         $templateName = $page->template ?? config('pageTemplates.default');
         $template = 'public.templates.' . $templateName;
 

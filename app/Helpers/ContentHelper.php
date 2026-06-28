@@ -68,22 +68,20 @@ class ContentHelper
 
     private static function renderShortcode($tag, $attributes, $content = null)
     {
-        // 1. Tenta método na Trait (ex: renderForm)
         $method = "render" . Str::studly($tag);
         if (method_exists(self::class, $method)) {
             return self::{$method}($attributes, $content);
         }
 
-        // 2. Fallback: Tenta componente Blade em components/shortcodes/{tag}.blade.php
         $viewPath = "components.shortcodes." . $tag;
         if (view()->exists($viewPath)) {
             return view($viewPath, [
+                ...$attributes,
                 'attr' => $attributes,
                 'content' => $content
             ])->render();
         }
 
-        // 3. Fallback final: Retorna a tag original se não souber o que fazer
         return $content ? "[{$tag}]{$content}[/{$tag}]" : "[{$tag}]";
     }
 

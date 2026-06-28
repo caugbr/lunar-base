@@ -18,8 +18,8 @@ class Page extends Model
         'content',
         'excerpt',
         'namespace',
-        'is_main',
         'author_id',
+        'parent_id',
         'status',
         'template',
         'thumbnail_id'
@@ -29,12 +29,21 @@ class Page extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
-        'is_main' => 'boolean'
     ];
 
     // ==========================================
     // RELACIONAMENTOS
     // ==========================================
+
+    public function parent()
+    {
+        return $this->belongsTo(Page::class, 'parent_id');
+    }
+
+    public function children()
+    {
+        return $this->hasMany(Page::class, 'parent_id')->orderBy('title');
+    }
 
     public function author()
     {
@@ -91,13 +100,13 @@ class Page extends Model
     public function getUrlAttribute(): string
     {
         $base = setting('permalinks.pages_base', '');
-        $base = $base ? "/{$base}" : "";
+        $prefix = $base ? '/' . ltrim($base, '/') : '';
 
         if ($this->namespace) {
-            return url('/' . $this->namespace . '/' . $this->slug);
+            return url($prefix . '/' . $this->namespace . '/' . $this->slug);
         }
 
-        return url('/' . $this->slug);
+        return url($prefix . '/' . $this->slug);
     }
 
     public function getAuthorNameAttribute()

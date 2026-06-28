@@ -55,8 +55,9 @@ class PageController extends Controller
         $templates = Config::get('pageTemplates.templates', []);
         $taxonomies = Taxonomy::with('terms')->get();
         $namespaces = $this->getNamespaces();
+        $pages = Page::select('id', 'title')->orderBy('title')->get();
 
-        return view('admin.pages.create', compact('users', 'namespaces', 'currentUserId', 'templates', 'taxonomies'));
+        return view('admin.pages.create', compact('users', 'namespaces', 'currentUserId', 'templates', 'taxonomies', 'pages'));
     }
 
     public function store(Request $request)
@@ -76,6 +77,7 @@ class PageController extends Controller
             'namespace' => 'nullable|string',
             'is_main' => 'nullable|boolean',
             'author_id' => 'required|exists:users,id',
+            'parent_id' => 'nullable|exists:pages,id',
             'status' => 'required|in:draft,published,archived',
             'template' => 'required|string|in:' . implode(',', array_keys(Config::get('pageTemplates.templates', []))),
             'thumbnail_id' => 'nullable|exists:media,id',
@@ -116,10 +118,14 @@ class PageController extends Controller
         $taxonomies = Taxonomy::with('terms')->get();
         // IDs dos termos já associados à página
         $selectedTermIds = $page->terms->pluck('id')->toArray();
+        $pages = Page::where('id', '!=', $page->id)
+            ->select('id', 'title')
+            ->orderBy('title')
+            ->get();
 
         $namespaces = $this->getNamespaces();
 
-        return view('admin.pages.edit', compact('page', 'users', 'templates', 'taxonomies', 'selectedTermIds', 'namespaces'));
+        return view('admin.pages.edit', compact('page', 'users', 'templates', 'taxonomies', 'selectedTermIds', 'namespaces', 'pages'));
     }
 
     public function update(Request $request, Page $page)
@@ -139,6 +145,7 @@ class PageController extends Controller
             'namespace' => 'nullable|string',
             'is_main' => 'nullable|boolean',
             'author_id' => 'required|exists:users,id',
+            'parent_id' => 'nullable|exists:pages,id|not_in:' . $page->id,
             'status' => 'required|in:draft,published,archived',
             'template' => 'required|string|in:' . implode(',', array_keys(Config::get('pageTemplates.templates', []))),
             'thumbnail_id' => 'nullable|exists:media,id',

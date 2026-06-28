@@ -160,6 +160,20 @@
                             <small>Define como a página será exibida publicamente</small>
                             @error('template') <small class="error">{{ $message }}</small> @enderror
                         </div>
+
+                        <div class="form-group">
+                            <label for="parent_id">Página mãe</label>
+                            <select name="parent_id" id="parent_id">
+                                <option value="">-- Nenhuma --</option>
+                                @foreach($pages as $p)
+                                    <option value="{{ $p->id }}" {{ old('parent_id', $page->parent_id ?? '') == $p->id ? 'selected' : '' }}>
+                                        {{ $p->title }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <small>Define a página mãe dessa página (opcional)</small>
+                            @error('parent_id') <small class="error">{{ $message }}</small> @enderror
+                        </div>
                     </article>
                 </div>
                 <div class="edit-box">
