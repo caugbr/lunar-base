@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - {{ setting('site_name', 'Lunar Base') }}</title>
+    <title>Verificação de dois fatores - {{ setting('site_name', 'Lunar Base') }}</title>
     <style>
         * {
             margin: 0;
@@ -59,6 +59,8 @@
             border-radius: 8px;
             font-size: 1rem;
             transition: border 0.3s;
+            text-align: center;
+            letter-spacing: 0.5em;
         }
 
         .form-group input:focus {
@@ -109,44 +111,19 @@
             vertical-align: middle
         }
 
-        .pwd {
-            display: inline-block;
-            width: 100%;
-            padding: 0;
-            margin: 0;
-            position: relative;
-        }
-
-        .pwd .lucid-icon {
-            position: absolute;
-            top: 50%;
-            right: 10px;
-            transform: translateY(-50%);
-            cursor: pointer;
-        }
-
-        .pwd .hide {
-            display: none;
-        }
-
-        .pwd.visible .hide {
-            display: inline;
-        }
-
-        .pwd.visible .show {
-            display: none;
-        }
-
-        .pwd input {
-            padding-right: 32px;
+        .remaining {
+            text-align: center;
+            font-size: 0.85rem;
+            color: #888;
+            margin-top: 8px;
         }
     </style>
 </head>
 <body>
     <div class="login-container">
         <h1>
-            <x-lucide-lock class="lucid-icon" style="width: 20px; height: 20px;" />
-            <a href="{{ route('home') }}">{{ setting('site_name', 'Lunar Base') }}</a>
+            <x-lucide-shield class="lucid-icon" style="width: 20px; height: 20px;" />
+            Verificação de dois fatores
         </h1>
 
         @if ($errors->any())
@@ -155,65 +132,20 @@
             </div>
         @endif
 
-        <form method="POST" action="{{ route('login') }}">
+        <form method="POST" action="{{ url('/two-factor/challenge') }}">
             @csrf
 
             <div class="form-group">
-                <label for="email"><x-lucide-mail class="lucid-icon" /> E-mail</label>
-                <input type="email" name="email" id="email" value="{{ old('email') }}" required autofocus>
+                <label for="code"><x-lucide-smartphone class="lucid-icon" /> Código do aplicativo</label>
+                <input type="text" name="code" id="code" maxlength="6" inputmode="numeric" pattern="[0-9]*" required autofocus autocomplete="one-time-code">
             </div>
 
-            <div class="form-group">
-                <label for="password"><x-lucide-key class="lucid-icon" /> Senha</label>
-                <span class="pwd">
-                    <input type="password" name="password" id="password" required>
-                    <x-lucide-eye class="lucid-icon show" />
-                    <x-lucide-eye-off class="lucid-icon hide" />
-                </span>
-            </div>
-
-            @if(setting('navigation.use_captcha'))
-            <div class="captcha-wrapper">
-                <div
-                    class="cf-turnstile"
-                    data-sitekey="{{ setting('auth.turnstile_site_key') }}"
-                    data-theme="light"
-                    data-size="normal"
-                    data-callback="onSuccess"
-                ></div>
-            </div>
-            @endif
-
-            <button type="submit"><x-lucide-log-in class="lucid-icon" /> Entrar</button>
+            <button type="submit"><x-lucide-arrow-right class="lucid-icon" /> Verificar</button>
         </form>
 
         <div class="info">
-            Acesso restrito
+            Abra seu aplicativo autenticador e digite o código de 6 dígitos.
         </div>
     </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const pwd = document.querySelector('span.pwd');
-            const input = pwd.querySelector('input');
-            const eyes = pwd.querySelectorAll('.lucid-icon');
-
-            eyes.forEach(eye => {
-                eye.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    if (input.type === 'password') {
-                        input.type = 'text';
-                        pwd.classList.add('visible');
-                    } else {
-                        input.type = 'password';
-                        pwd.classList.remove('visible');
-                    }
-                });
-            });
-        });
-    </script>
-
-    @if(setting('auth.use_captcha'))
-    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-    @endif
 </body>
 </html>

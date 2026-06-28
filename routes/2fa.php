@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/two-factor/challenge', [TwoFactorChallengeController::class, 'show'])
     ->name('two-factor.challenge');
 Route::post('/two-factor/challenge', [TwoFactorChallengeController::class, 'verify']);
+Route::post('/two-factor/send-email', [TwoFactorChallengeController::class, 'sendEmailCode'])
+    ->name('two-factor.send-email');
 
 // 2FA Setup (requer autenticação completa)
 Route::middleware('auth')->group(function () {
@@ -17,6 +19,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/two-factor/setup', [TwoFactorSetupController::class, 'confirm']);
     Route::delete('/two-factor/setup', [TwoFactorSetupController::class, 'cancel'])
         ->name('two-factor.cancel');
+
+        // Rotas para Setup por Email
+    Route::post('/two-factor/setup-email-trigger', [TwoFactorSetupController::class, 'setupEmailTrigger'])
+        ->name('two-factor.setup-email-trigger');
+    Route::post('/two-factor/setup-email-confirm', [TwoFactorSetupController::class, 'setupEmailConfirm'])
+        ->name('two-factor.setup-email-confirm');
 });
 
 

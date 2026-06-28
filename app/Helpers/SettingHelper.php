@@ -37,17 +37,6 @@ if (!function_exists('setting')) {
             $default = settingDefault($key);
         }
 
-        // Para a busca no banco, separamos o grupo para filtrar corretamente na query
-        if (str_contains($key, '.')) {
-            [$groupKey, $fieldKey] = explode('.', $key, 2);
-
-            $dbSetting = Setting::where('group', $groupKey)
-                ->where('key', $fieldKey)
-                ->first();
-
-            return $dbSetting ? $dbSetting->value : $default;
-        }
-
         return Setting::get($key, $default);
     }
 }

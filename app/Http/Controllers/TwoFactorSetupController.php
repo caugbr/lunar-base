@@ -47,36 +47,40 @@ class TwoFactorSetupController extends Controller
 
     public function confirm(Request $request)
     {
-        if (!TwoFactorConfig::enabled()) {
-            abort(404);
-        }
-
-        $request->validate([
-            'code' => 'required|string|size:6',
-        ]);
-
+        $request->validate(['code' => 'required|string|size:6']);
         $user = Auth::user();
         $setting = $user->twoFactorSetting;
 
-        if (!$setting || !$setting->secret) {
-            return back()->withErrors(['code' => 'Configuração não iniciada. Tente novamente.']);
+        if (!$setting) return back()->withErrors(['code' => 'Configuração não iniciada.']);
+
+        $isAuthenticated = false;
+
+        // 1. Tentar validar via E-mail (se houver código ativo e o código bater)
+        if ($setting->otp_code && $setting->otp_expires_at && now()->lessThan($setting->otp_expires_at)) {
+            if (\Illuminate\Support\Facades\Hash::check($request->code, $setting->otp_code)) {
+                $isAuthenticated = true;
+            }
         }
 
-        $valid = $this->google2fa->verifyKey(
-            $setting->secret,
-            $request->input('code'),
-            TwoFactorConfig::windowPeriods()
-        );
-
-        if (!$valid) {
-            return back()->withErrors(['code' => 'Código inválido. Verifique e tente novamente.']);
+        // 2. Se não foi e-mail, tentar via Google Authenticator
+        if (!$isAuthenticated && $setting->secret) {
+            $validTotp = $this->google2fa->verifyKey($setting->secret, $request->code, \App\Support\TwoFactorConfig::windowPeriods());
+            if ($validTotp) {
+                $isAuthenticated = true;
+            }
         }
 
-        $setting->update(['confirmed_at' => now()]);
+        if ($isAuthenticated) {
+            $setting->update([
+                'confirmed_at' => now(),
+                'otp_code' => null,
+                'otp_expires_at' => null
+            ]);
+            log_admin("Usuário ativou a autenticação de duas etapas", "security");
+            return redirect()->route('admin.profile.edit')->with('success', 'Autenticação de dois fatores ativada!');
+        }
 
-        log_admin("Usuário ativou a autenticação de dois fatores", "security");
-
-        return redirect()->route('admin.profile.edit')->with('success', 'Autenticação de dois fatores ativada com sucesso.');
+        return back()->withErrors(['code' => 'Código inválido ou expirado.']);
     }
 
     public function cancel()
@@ -89,5 +93,20 @@ class TwoFactorSetupController extends Controller
         }
 
         return redirect()->route('admin.profile.edit');
+    }
+
+    public function setupEmailTrigger(Request $request)
+    {
+        $user = Auth::user();
+        // Gera um secret dummy (necessário para a lógica do sistema)
+        $secret = $this->google2fa->generateSecretKey();
+
+        TwoFactorSetting::updateOrCreate(
+            ['user_id' => $user->id],
+            ['secret' => $secret, 'confirmed_at' => null]
+        );
+
+        \App\Support\TwoFactorService::sendOtpEmail($user, 'setup');
+        return back()->with('info', 'Código enviado para seu e-mail!');
     }
 }

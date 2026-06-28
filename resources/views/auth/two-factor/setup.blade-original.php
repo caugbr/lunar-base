@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container">
-    <h1>Ativar autenticação de duas etapas</h1>
+    <h1>Ativar autenticação de dois fatores</h1>
 
     <p>Escaneie o QR code abaixo com seu aplicativo autenticador (Google Authenticator, Authy, etc.):</p>
 

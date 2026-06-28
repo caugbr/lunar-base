@@ -1,4 +1,4 @@
-@extends('public.layout') {{-- ou seu layout público --}}
+@extends('public.layout')
 
 @section('title', $page->title)
 
@@ -10,6 +10,7 @@
             <p class="excerpt">{{ $page->excerpt }}</p>
         @endif --}}
     </div>
+
     <div class="page-content">
         {!! $page->content !!}
     </div>

@@ -1,5 +1,5 @@
 
-<script>
+{{-- <script>
     const savedTheme = localStorage.getItem('savedTheme');
     if (savedTheme) {
         document.body.dataset.theme = savedTheme;
@@ -10,7 +10,7 @@
             }
         }, 2000);
     }
-</script>
+</script> --}}
 <header class="site-header">
     <div class="container">
         <a href="{{ route('home') }}" class="logo">{{ setting('general.site_name') }}</a>
@@ -25,14 +25,14 @@
             </nav>
 
             <span class="header-links">
-                <span class="switch-theme">
+                {{-- <span class="switch-theme">
                     <a class="theme-light" href="#" title="Tema claro">
                         <x-lucide-sun class="lucid-icon" />
                     </a>
                     <a class="theme-dark" href="#" title="Tema escuro">
                         <x-lucide-moon class="lucid-icon" />
                     </a>
-                </span>
+                </span> --}}
 
                 @auth
                     <a href="{{ route('admin.dashboard') }}" class="login" title="Admin">

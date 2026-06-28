@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verificação de dois fatores - {{ setting('site_name', 'Lunar Base') }}</title>
+    <title>Verificação de duas etapas - {{ setting('site_name', 'Lunar Base') }}</title>
     <style>
         * {
             margin: 0;
@@ -88,6 +88,23 @@
             transform: translateY(-2px);
         }
 
+        #by-mail button {
+
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 8px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            background: #718096;
+            color: white;
+            margin-top: 1.5rem;
+        }
+
         .error {
             background: #fee;
             border: 1px solid #fcc;
@@ -122,13 +139,19 @@
 <body>
     <div class="login-container">
         <h1>
-            <x-lucide-shield class="lucid-icon" style="width: 20px; height: 20px;" />
-            Verificação de dois fatores
+            <x-lucide-shield-check class="lucid-icon" style="width: 20px; height: 20px;" />
+            Verificação
         </h1>
 
         @if ($errors->any())
             <div class="error">
                 {{ $errors->first() }}
+            </div>
+        @endif
+
+        @if (session('status'))
+            <div style="background: #e6fffa; border: 1px solid #b7e4c7; color: #065f46; padding: 12px; border-radius: 8px; margin-bottom: 20px; text-align: center;">
+                {{ session('status') }}
             </div>
         @endif
 
@@ -144,8 +167,16 @@
         </form>
 
         <div class="info">
-            Abra seu aplicativo autenticador e digite o código de 6 dígitos.
+            Abra seu aplicativo autenticador e digite o código
         </div>
+
+        <form method="POST" action="{{ route('two-factor.send-email') }}" id="by-mail">
+            @csrf
+            <button type="submit">
+                <x-lucide-mail class="lucid-icon" />
+                Enviar código por e-mail
+            </button>
+        </form>
     </div>
 </body>
 </html>

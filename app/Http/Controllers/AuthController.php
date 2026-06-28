@@ -20,7 +20,7 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        if (setting('navigation.use_captcha')) {
+        if (setting('auth.use_captcha')) {
             $response = Http::asForm()->post('https://challenges.cloudflare.com/turnstile/v0/siteverify', [
                 'secret' => setting('auth.turnstile_secret_key'),
                 'response' => $request->input('cf-turnstile-response'),

@@ -19,7 +19,7 @@ if ($theme) {
 @endphp
 <body{!! $theme !!}>
     @include('public.partials.header')
-
+{{-- <x-text-size /> --}}
     <main class="site-content">
         @yield('content')
     </main>

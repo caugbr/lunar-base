@@ -235,7 +235,7 @@ a:hover {
 .nav-link.active {
     color: var(--color-primary);
 }
-
+/*
 .switch-theme {
     border: 1px solid var(--color-border-hover);
     height: 30px;
@@ -245,7 +245,6 @@ a:hover {
     align-items: stretch;
     margin-left: 0.8rem;
     vertical-align: middle;
-    /* background-color: #402e8d; */
     overflow: hidden;
 }
 
@@ -294,7 +293,7 @@ a:hover {
 
 [data-theme="light"] .switch-theme a.theme-light svg {
     fill: #c1b4f8;
-}
+} */
 
 .site-header a.login {
     margin-left: 0.8rem;
@@ -884,11 +883,15 @@ a:hover {
 
 .footer-bottom {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
     margin-top: var(--space-md);
     padding-top: var(--space-sm);
     border-top: 1px solid var(--color-border);
+}
+
+.footer-bottom > *:only-child {
+    margin-inline: auto;
 }
 
 .footer-bottom p {
@@ -1001,9 +1004,9 @@ a:hover {
 }
 
 /* ---------- Pages ---------- */
-.page-container {
+/* .page-container {
     padding-top: 72px;
-}
+} */
 
 .page-content {
     margin: 2rem auto;

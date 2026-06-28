@@ -35,7 +35,18 @@ class Setting extends Model
      */
     public static function get($key, $default = null)
     {
-        $setting = static::where('key', $key)->first();
+        $query = static::query();
+
+        // Se tiver notação de ponto, tratamos o primeiro termo como grupo
+        if (str_contains($key, '.')) {
+            [$group, $k] = explode('.', $key, 2);
+            $setting = $query->where('group', $group)->where('key', $k)->first();
+        } else {
+            // Se não tiver ponto, busca apenas pela chave (padrão antigo)
+            $setting = $query->where('key', $key)->first();
+        }
+
+        // Retorna o valor decriptado/convertido via acessor typed_value
         return $setting ? $setting->typed_value : $default;
     }
 
@@ -63,7 +74,7 @@ class Setting extends Model
             return Crypt::decryptString($value);
         } catch (\Exception $e) {
             // Se der erro (ex: um valor antigo que mudou de tipo mas não foi encriptado ainda)
-            return $value; 
+            return $value;
         }
     }
 }

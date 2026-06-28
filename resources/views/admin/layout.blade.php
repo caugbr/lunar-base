@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Lunar API</title>
+    <title>Admin - {{ setting('general.site_name') }}</title>
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
     <script src="{{ asset('js/admin.js') }}"></script>
 
@@ -66,7 +66,7 @@
                 </div>
                 <div class="admin-header-user">
                     <a href="{{ route('admin.profile.edit') }}">
-                        <x-lucide-user-pen class="lucid-icon" />
+                        <x-lucide-user-pen class="lucid-icon" style="vertical-align: baseline" />
                         {{ auth()->user()->name }}
                     </a>
                     <form method="POST" action="{{ route('logout') }}" style="display: inline;">

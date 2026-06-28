@@ -15,10 +15,13 @@ class TwoFactorSetting extends Model
         'user_id',
         'secret',
         'confirmed_at',
+        'otp_code',
+        'otp_expires_at',
     ];
 
     protected $casts = [
         'confirmed_at' => 'datetime',
+        'otp_expires_at' => 'datetime',
     ];
 
     public function user(): BelongsTo

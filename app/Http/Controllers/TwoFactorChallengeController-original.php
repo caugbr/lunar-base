@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Support\TwoFactorConfig;
 use App\Support\TwoFactorRateLimiter;
-use App\Support\TwoFactorService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use PragmaRX\Google2FA\Google2FA;
@@ -52,66 +51,48 @@ class TwoFactorChallengeController extends Controller
         $userId = session('mfa.user_id');
 
         if (TwoFactorRateLimiter::tooManyAttempts($userId)) {
-            return back()->withErrors(['code' => 'Muitas tentativas. Aguarde um minuto.']);
+            return back()->withErrors([
+                'code' => 'Muitas tentativas. Aguarde um minuto.'
+            ]);
         }
 
         $user = User::find($userId);
+
         if (!$user || !$user->hasTwoFactorEnabled()) {
             session()->forget(['mfa.user_id', 'mfa.started_at']);
             return redirect()->route('login');
         }
 
         $setting = $user->twoFactorSetting;
-        $inputCode = $request->input('code');
-        $isAuthenticated = false;
 
-        // 1. Tentar validar via E-mail (se houver código ativo)
-        if ($setting->otp_code && $setting->otp_expires_at && now()->lessThan($setting->otp_expires_at)) {
-            if (\Illuminate\Support\Facades\Hash::check($inputCode, $setting->otp_code)) {
-                $isAuthenticated = true;
-                // Limpa o código para evitar reuso
-                $setting->update(['otp_code' => null, 'otp_expires_at' => null]);
-            }
-        }
+        $valid = $this->google2fa->verifyKey(
+            $setting->secret,
+            $request->input('code'),
+            TwoFactorConfig::windowPeriods()
+        );
 
-        // 2. Se não validou por e-mail, tentar via Google Authenticator (TOTP)
-        if (!$isAuthenticated) {
-            $validTotp = $this->google2fa->verifyKey(
-                $setting->secret,
-                $inputCode,
-                \App\Support\TwoFactorConfig::windowPeriods()
-            );
-
-            if ($validTotp) {
-                $isAuthenticated = true;
-            }
-        }
-
-        // 3. Resultado final
-        if (!$isAuthenticated) {
+        if (!$valid) {
             TwoFactorRateLimiter::hit($userId);
             $remaining = TwoFactorRateLimiter::remaining($userId);
 
             return back()->withErrors([
-                'code' => 'Código inválido ou expirado.' . ($remaining > 0 ? " Tentativas restantes: {$remaining}." : '')
+                'code' => 'Código inválido.' . ($remaining > 0 ? " Tentativas restantes: {$remaining}." : '')
             ]);
         }
 
-        // Sucesso
+        // Limpa rate limiter e sessão parcial
         TwoFactorRateLimiter::clear($userId);
         session()->forget(['mfa.user_id', 'mfa.started_at']);
 
-        \Illuminate\Support\Facades\Auth::login($user);
+        // Login definitivo
+        Auth::login($user);
         $request->session()->regenerate();
 
-        return $user->role === 'subscriber' ? redirect()->intended('/') : redirect()->intended('/admin/dashboard');
-    }
+        // Redirect baseado no role (mesma lógica do seu AuthController)
+        if ($user->role !== 'subscriber') {
+            return redirect()->intended('/admin/dashboard');
+        }
 
-    public function sendEmailCode(Request $request)
-    {
-        $userId = session('mfa.user_id');
-        $user = User::find($userId);
-        TwoFactorService::sendOtpEmail($user);
-        return back()->with('status', 'Código enviado para seu e-mail!');
+        return redirect()->intended('/');
     }
 }

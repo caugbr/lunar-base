@@ -19,6 +19,9 @@ class SettingController extends Controller
             }
 
             foreach ($group['fields'] as &$field) {
+                if (!isset($field['key'])) {
+                    continue;
+                }
                 $key = $field['key'];
                 $saved = Setting::where('key', $key)->first();
                 $value = $saved ? $saved->typed_value : ($field['default'] ?? null);
@@ -46,6 +49,9 @@ class SettingController extends Controller
 
         foreach ($definitions as $groupKey => $group) {
             foreach ($group['fields'] ?? [] as $def) {
+                if (!isset($def['key'])) {
+                    continue;
+                }
                 $key = $def['key'];
                 $fieldRules = ['nullable'];
 
@@ -188,6 +194,7 @@ class SettingController extends Controller
         }
 
         return redirect()->route('admin.settings.index')
+            ->withInput($request->only('_active_tab'))
             ->with('success', 'Configurações salvas com sucesso!');
     }
 

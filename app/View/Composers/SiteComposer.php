@@ -15,6 +15,7 @@ class SiteComposer
     {
         $view->with('menu', $this->buildMenu());
         $view->with('termsAndPrivacy', $this->getTermsAndPrivacyPages());
+        $view->with('footerText', $this->getFooterText());
     }
 
     protected function buildMenu(): array
@@ -70,5 +71,23 @@ class SiteComposer
             'terms'   => $pages['termos-de-uso'] ?? null,
             'privacy' => $pages['politica-de-privacidade'] ?? null
         ];
+    }
+
+    protected function getFooterText(): string
+    {
+        $text = strip_tags(setting('general.footer_text', ''));
+
+        $text = preg_replace(
+            '/(https?:\/\/[^\s<]+[^\s.,])+/i',
+            '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>',
+            $text
+        );
+        $text = preg_replace(
+            '/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/i',
+            '<a href="mailto:$1">$1</a>',
+            $text
+        );
+
+        return $text;
     }
 }

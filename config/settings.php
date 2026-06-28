@@ -34,6 +34,12 @@
  * TIPOS DE CAMPO E SUAS CONFIGURAÇÕES:
  * --------------------------------------
  *
+ * 0. SUBTITLE (H3 - não é campo)
+ *    [
+ *        'type'  => 'subtitle',
+ *        'label' => 'Título da sub seção'
+ *    ]
+ *
  * 1. TEXT (campo de texto simples)
  *    [
  *        'key'         => 'nome_da_chave', // Obrigatório. Usado em setting('grupo.chave').
@@ -236,6 +242,13 @@ return [
                     'description' => 'Tema inicial do site (o usuário pode escolher)',
                     'default' => 'dark',
                     'options' => ['light' => 'Claro', 'dark' => 'Escuro'],
+                ],
+                [
+                    'key' => 'footer_text',
+                    'type' => 'text',
+                    'label' => 'Texto no footer',
+                    'description' => 'Texto opcional no footer (ao lado do copyright). HTML não é permitido, mas URLs e emails viram links automaticamente.',
+                    'default' => '',
                 ],
             ],
         ],
@@ -536,6 +549,92 @@ return [
             ],
         ],
 
+// ========== ACCESSIBILITY ==========
+        'accessibility' => [
+            'tab' => 'Acessibilidade',
+            'title' => 'Acessibilidade',
+            'description' => 'Ajuste o elemento que mostra o bloco de acessibilidade',
+            'icon' => 'accessibility',
+            'fields' => [
+                [
+                    'key' => 'position',
+                    'type' => 'select',
+                    'label' => 'Posição do elemento',
+                    'description' => 'Local para exibir o bloco de acessibilidade.',
+                    'default' => 'right-middle',
+                    'options' => [
+                        'right-middle' => 'No meio da tela, à direita',
+                        'right-top' => 'No topo da tela, à direita',
+                        'right-bottom' => 'No fundo da tela, à direita',
+                        'left-middle' => 'No meio da tela, à esquerda',
+                        'left-top' => 'No topo da tela, à esquerda',
+                        'left-bottom' => 'No fundo da tela, à esquerda',
+                    ]
+                ],
+                [
+                    'key' => 'switch_themes',
+                    'type' => 'switch',
+                    'label' => 'Seletor de temas',
+                    'description' => 'Exibir seletor para o usuário decidir pelo tema claro ou o escuro.',
+                    'default' => false,
+                    'active' => 'Mostrar',
+                    'inactive' => 'Não mostrar',
+                ],
+                [
+                    'key' => 'vlibras',
+                    'type' => 'switch',
+                    'label' => 'VLibras',
+                    'description' => 'Plugin para ler textos em linguagem de sinais (Vlibras).',
+                    'default' => false,
+                    'active' => 'Ativar',
+                    'inactive' => 'Não ativar',
+                ],
+                [
+                    'key' => 'increase_text_size',
+                    'type' => 'switch',
+                    'label' => 'Aumentar tamanho do texto',
+                    'description' => 'Exibir links para aumentar o tamanho do texto.',
+                    'default' => false,
+                    'active' => 'Ativar',
+                    'inactive' => 'Não ativar',
+                ],
+                [
+                    'key' => 'text_size_steps',
+                    'type' => 'number',
+                    'label' => 'Quantidade de passos (Variações)',
+                    'description' => 'Quantidade máxima de cliques para aumentar o texto antes de retornar ao tamanho original.',
+                    'default' => 2,
+                    'attributes' => [
+                        'min' => 1,
+                        'max' => 5,
+                        'step' => 1,
+                    ],
+                    'depends_on' => [
+                        'field' => 'increase_text_size',
+                        'operator' => '===',
+                        'value' => true,
+                    ]
+                ],
+                [
+                    'key' => 'text_size_step_value',
+                    'type' => 'number',
+                    'label' => 'Valor de cada passo (Pixels)',
+                    'description' => 'Quantidade de pixels (px) adicionada ao tamanho do texto a cada clique.',
+                    'default' => 4,
+                    'attributes' => [
+                        'min' => 1,
+                        'max' => 12,
+                        'step' => 1,
+                    ],
+                    'depends_on' => [
+                        'field' => 'increase_text_size',
+                        'operator' => '===',
+                        'value' => true,
+                    ]
+                ],
+            ],
+        ],
+
         // ========== MÍDIA ==========
         'media' => [
             'title' => 'Mídia e Imagens',
@@ -614,7 +713,7 @@ return [
 
         // ========== SOCIAL ==========
         'social' => [
-            'tab' => 'Social',
+            'tab' => 'Redes sociais',
             'title' => 'Redes Sociais',
             'description' => 'Links e comportamento de compartilhamento',
             'icon' => 'share-2',
