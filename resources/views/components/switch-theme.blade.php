@@ -22,7 +22,7 @@
     }
 </script>
 
-@push('accessibility-styles')
+@push('footer-styles')
 <style>
 .switch-theme {
     height: 32px;

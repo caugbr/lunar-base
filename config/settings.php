@@ -250,6 +250,15 @@ return [
                     'description' => 'Texto opcional no footer (ao lado do copyright). HTML não é permitido, mas URLs e emails viram links automaticamente.',
                     'default' => '',
                 ],
+                [
+                    'key' => 'cookies_consent',
+                    'type' => 'switch',
+                    'label' => 'Consentimento para cookies',
+                    'description' => 'Janela de consentimento de cookies. É preciso configurar os scripts que instalam cookies no navegador em <code>config/scripts.php</code>.',
+                    'default' => true,
+                    'active' => 'Usar',
+                    'inactive' => 'Não usar',
+                ],
             ],
         ],
 

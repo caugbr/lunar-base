@@ -10,7 +10,7 @@
     </a>
 </div>
 
-@push('accessibility-styles')
+@push('footer-styles')
 <style>
     .text-size {
         display: inline-flex;

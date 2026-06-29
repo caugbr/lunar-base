@@ -34,7 +34,7 @@ if (str_starts_with(setting('accessibility.position'), 'left')) {
 </script>
 @endpush
 
-@push('accessibility-styles')
+@push('footer-styles')
 <style>
     /* Garante que o botão fique acima de qualquer menu ou elemento flutuante do site */
     [vw] {
