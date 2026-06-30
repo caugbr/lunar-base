@@ -7,7 +7,7 @@
 
     <x-seo-meta />
 
-    @if(setting('general.cookie_consent'))
+    @if(setting('legal.cookies_consent'))
     <x-cookie.scripts />
     @endif
 
@@ -26,14 +26,16 @@ if ($theme) {
 {{-- <x-text-size /> --}}
     <main class="site-content">
         <div class="container">
-            <x-breadcrumbs />
+            @if(setting('navigation.breadcrumbs'))
+            <x-breadcrumbs :icon="setting('navigation.breadcrumbs_icon')" />
+            @endif
         </div>
         @yield('content')
     </main>
 
     @include('public.partials.footer')
 
-    @if(setting('general.cookie_consent'))
+    @if(setting('legal.cookies_consent'))
     <x-cookie.banner />
     @endif
 

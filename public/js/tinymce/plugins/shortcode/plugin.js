@@ -180,7 +180,7 @@ function openShortcodeDialog(existingNode = null) {
         });
 
         editor.ui.registry.addButton('shortcode', {
-            text: '{ } Shortcode',
+            text: '[/]',
             tooltip: 'Inserir Shortcode',
             onAction: function() {
                 openShortcodeDialog();

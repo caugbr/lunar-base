@@ -5,7 +5,7 @@
 
 @section('content')
 <div class="admin-card">
-    <form method="POST" action="{{ route('admin.settings.update') }}" enctype="multipart/form-data">
+    <form method="POST" action="{{ route('admin.settings.update') }}" enctype="multipart/form-data" id="settings_form">
         @csrf
 
         @php
@@ -51,179 +51,6 @@
                 </div>
 
                 {{-- Loop sobre os CAMPOS do grupo (nível 2) --}}
-                {{-- @foreach($group['fields'] as $def)
-
-                    @if($def['type'] == 'subtitle')
-                        <h3 class="group-title group-subtitle">{{ $def['label'] }}</h3>
-                        @continue
-                    @endif
-
-                    @php
-                        $value = old($def['key'], $def['value'] ?? $def['default'] ?? '');
-                        $options = $def['options'] ?? [];
-                        $attributes = $def['attributes'] ?? [];
-                        $hasDependency = isset($def['depends_on']);
-                    @endphp
-
-                    <div class="form-group"
-                        @if($hasDependency)
-                            data-depends-on="{{ json_encode($def['depends_on']) }}"
-                        @endif
-                        @if(isset($def['warn_on_change']))
-                            data-warn-on-change="{{ $def['warn_on_change'] }}"
-                        @endif
-                    >
-                        <label for="{{ $def['key'] }}" class="field-label">
-                            {{ $def['label'] }}
-                        </label>
-
-                        @switch($def['type'])
-                            @case('textarea')
-                                <textarea name="{{ $def['key'] }}" id="{{ $def['key'] }}" rows="3" class="form-input">{{ $value }}</textarea>
-                                @break
-
-                            @case('select')
-                                <select name="{{ $def['key'] }}" id="{{ $def['key'] }}" class="form-input">
-                                    @foreach($options as $optValue => $optLabel)
-                                        <option value="{{ $optValue }}" {{ $value == $optValue ? 'selected' : '' }}>
-                                            {{ $optLabel }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @break
-
-                            @case('radio')
-                                <div class="radio-group">
-                                    @foreach($options as $optValue => $optLabel)
-                                        <label class="radio-label">
-                                            <input type="radio" name="{{ $def['key'] }}" value="{{ $optValue }}" {{ $value == $optValue ? 'checked' : '' }}>
-                                            <span>{{ $optLabel }}</span>
-                                        </label>
-                                    @endforeach
-                                </div>
-                                @break
-
-                            @case('checkbox')
-                                @if(!empty($options))
-                                    @php
-                                        $currentValues = is_array($value) ? $value : ($value ? explode(',', $value) : []);
-                                    @endphp
-                                    <div class="checkbox-group">
-                                        @foreach($options as $optValue => $optLabel)
-                                            <label class="checkbox-label">
-                                                <input type="checkbox"
-                                                    name="{{ $def['key'] }}[]"
-                                                    value="{{ $optValue }}"
-                                                    {{ in_array($optValue, $currentValues) ? 'checked' : '' }}
-                                                   >
-                                                <span>{{ $optLabel }}</span>
-                                            </label>
-                                        @endforeach
-                                    </div>
-                                    <input type="hidden" name="{{ $def['key'] }}_is_array" value="1">
-                                @else
-                                    <label class="checkbox-label">
-                                        <input type="hidden" name="{{ $def['key'] }}" value="0">
-                                        <input type="checkbox" name="{{ $def['key'] }}" value="1" {{ $value ? 'checked' : '' }}>
-                                        <span>Sim</span>
-                                    </label>
-                                @endif
-                                @break
-
-                            @case('switch')
-                                <x-switch
-                                    name="{{ $def['key'] }}"
-                                    active="{{ $def['active'] ?? 'Ativado' }}"
-                                    inactive="{{ $def['inactive'] ?? 'Desativado' }}"
-                                    checked="{{ $value }}"
-                                />
-                                @break
-
-                            @case('number')
-                                <input type="number"
-                                    name="{{ $def['key'] }}"
-                                    id="{{ $def['key'] }}"
-                                    value="{{ $value }}"
-                                    @foreach($attributes as $attr => $attrValue)
-                                        {{ $attr }}="{{ $attrValue }}"
-                                    @endforeach
-                                    class="form-input form-input-narrow"
-                                >
-                                @break
-
-                            @case('image')
-                                <div class="image-type">
-                                    @if($value)
-                                        <div class="image-preview">
-                                            <img src="{{ $value }}" alt="{{ $def['label'] }}">
-                                        </div>
-                                    @endif
-
-                                    <div class="image-input">
-                                        <x-upload-area name="{{ $def['key'] }}" />
-
-                                        @if($value)
-                                            <label class="remove-image-label">
-                                                <input type="checkbox"
-                                                    name="remove_settings[{{ $def['key'] }}]"
-                                                    value="1"
-                                                   >
-                                                Remover imagem
-                                            </label>
-                                        @endif
-
-                                        <input type="hidden"
-                                            name="{{ $def['key'] }}_current"
-                                            value="{{ $def['path'] ?? $value }}">
-                                    </div>
-                                </div>
-                                <small class="image-help">
-                                    @if($value)
-                                        Marque "Remover imagem" para apagar, ou selecione um novo arquivo para substituir.
-                                    @else
-                                        Selecione uma imagem para enviar.
-                                    @endif
-                                </small>
-                                @break
-
-                            @case('url')
-                                <input type="url" name="{{ $def['key'] }}" id="{{ $def['key'] }}" value="{{ $value }}" class="form-input" placeholder="https://...">
-                                @break
-
-                            @case('email')
-                                <input type="email" name="{{ $def['key'] }}" id="{{ $def['key'] }}" value="{{ $value }}" class="form-input" placeholder="email@exemplo.com">
-                                @break
-
-                        @case('password')
-                            <div class="password-field">
-                                <input type="password" name="{{ $def['key'] }}" id="{{ $def['key'] }}" value="" class="form-input" placeholder="••••••••">
-
-                            </div>
-                            @if($value)
-                                <label class="remove-password-label">
-                                    <input type="checkbox" name="remove_settings[{{ $def['key'] }}]" value="1">
-                                    Remover senha atual
-                                </label>
-                                <small class="form-help">Senha configurada. Deixe em branco para manter, ou marque para remover.</small>
-                            @else
-                                <small class="form-help">Nenhuma senha configurada.</small>
-                            @endif
-                            @break
-
-                            @default
-                                <input type="text" name="{{ $def['key'] }}" id="{{ $def['key'] }}" value="{{ $value }}" class="form-input">
-                        @endswitch
-
-                        @if(!empty($def['description']))
-                            <small class="form-help">{!! $def['description'] !!}</small>
-                        @endif
-
-                        @error($def['key'])
-                            <small class="error">{!! $message !!}</small>
-                        @enderror
-                    </div>
-                @endforeach --}}
-                {{-- Loop sobre os CAMPOS do grupo (nível 2) --}}
                 @foreach($group['fields'] as $def)
 
                     @if($def['type'] == 'subtitle')
@@ -251,6 +78,18 @@
                         </label>
 
                         @switch($def['type'])
+                            @case('icon')
+                                <x-icon-selector
+                                    name="{{ $def['key'] }}" id="{{ $def['key'] }}"
+                                    label="{{ $def['label'] }}"
+                                    value="{{ $value }}"
+                                />
+                                @break
+
+                            @case('page')
+                                <x-page-picker :name="$def['key']" :id="$def['key']" :selected="$value" />
+                                @break
+
                             @case('textarea')
                                 <textarea name="{{ $def['key'] }}" id="{{ $def['key'] }}" rows="3" class="form-input">{{ $value }}</textarea>
                                 @break
@@ -409,6 +248,8 @@
         </div>
     </form>
 </div>
+
+<x-lost-changes-warn selector="#settings_form" />
 @endsection
 
 @push('styles')

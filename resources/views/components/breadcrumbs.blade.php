@@ -1,6 +1,7 @@
 @props([
     'page' => null,
-    'post' => null
+    'post' => null,
+    'icon' => ''
 ])
 
 @php
@@ -149,7 +150,10 @@
 
 <!-- Semântica HTML de Acessibilidade -->
 <nav aria-label="breadcrumb" class="lunar-breadcrumbs">
-    <x-lucide-milestone class="lucid-icon" />
+    {{-- <x-lucide-milestone class="lucid-icon" /> --}}
+    @if($icon)
+    <x-dynamic-component :component="'lucide-' . $icon" class="lucid-icon" />
+    @endif
     <ol class="breadcrumbs-list">
         @foreach($crumbs as $crumb)
             <li class="breadcrumb-item {{ $loop->last ? 'active' : '' }}" {{ $loop->last ? 'aria-current="page"' : '' }}>

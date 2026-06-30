@@ -19,18 +19,22 @@ if (empty($pairs)) {
 <div class="meta-editor" id="{{ $name }}_editor" data-meta-name="{{ $name }}">
     <template id="{{ $name }}_template">
         <div class="meta-pair">
-            <x-select-input
-                :name="'__NAME__[__INDEX__][key]'"
-                :options="$existingKeys"
-                placeholder="-- Selecione ou insira --"
-                :allowInsert="true"
-                insertLabel="Inserir nova chave..."
-                insertPlaceholder="Nova chave"
-            />
-            <input type="text"
-                   name="__NAME__[__INDEX__][value]"
-                   placeholder="Valor"
-                   class="meta-value-input">
+            <div class="form-group">
+                <x-select-input
+                    :name="'__NAME__[__INDEX__][key]'"
+                    :options="$existingKeys"
+                    placeholder="-- Selecione ou insira --"
+                    :allowInsert="true"
+                    insertLabel="Inserir nova chave..."
+                    insertPlaceholder="Nova chave"
+                />
+            </div>
+            <div class="form-group" style="flex: 1">
+                <input type="text"
+                       name="__NAME__[__INDEX__][value]"
+                       placeholder="Valor"
+                       class="meta-value-input">
+            </div>
             <button type="button" class="meta-remove" title="Remover">
                 <x-lucide-trash-2 class="lucid-icon" />
             </button>
@@ -40,20 +44,19 @@ if (empty($pairs)) {
     <div class="meta-pairs-list">
         @foreach($pairs as $index => $pair)
             <div class="meta-pair">
-                <x-select-input
-                    :name="$name . '[' . $index . '][key]'"
-                    :options="$existingKeys"
-                    :value="$pair['key']"
-                    placeholder="-- Selecione ou insira --"
-                    :allowInsert="true"
-                    insertLabel="Inserir nova chave..."
-                    insertPlaceholder="Nova chave"
-                />
-                <input type="text"
-                       name="{{ $name }}[{{ $index }}][value]"
-                       value="{{ $pair['value'] }}"
-                       placeholder="Valor"
-                       class="meta-value-input">
+                <div class="form-group">
+                    <input type="text"
+                           name="{{ $name }}[{{ $index }}][key]"
+                           value="{{ $pair['key'] }}"
+                           readonly>
+                </div>
+                <div class="form-group" style="flex: 1">
+                    <input type="text"
+                        name="{{ $name }}[{{ $index }}][value]"
+                        value="{{ $pair['value'] }}"
+                        placeholder="Valor"
+                        class="meta-value-input">
+                </div>
                 <button type="button" class="meta-remove" title="Remover">
                     <x-lucide-trash-2 class="lucid-icon" />
                 </button>

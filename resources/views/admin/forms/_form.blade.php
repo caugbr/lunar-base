@@ -1,5 +1,5 @@
 <div x-data="formBuilder()" x-init="initOptions()" class="admin-card">
-    <form method="POST" action="{{ $action }}">
+    <form method="POST" action="{{ $action }}" id="edit_form">
         @csrf
         @if(isset($form)) @method('PUT') @endif
 
@@ -226,6 +226,8 @@
         </div>
     </form>
 </div>
+
+<x-lost-changes-warn selector="#edit_form" />
 
 @push('scripts')
 {{-- Alpine CDN --}}

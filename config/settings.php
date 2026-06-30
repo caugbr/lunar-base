@@ -250,6 +250,16 @@ return [
                     'description' => 'Texto opcional no footer (ao lado do copyright). HTML não é permitido, mas URLs e emails viram links automaticamente.',
                     'default' => '',
                 ],
+            ],
+        ],
+
+        // ========== LEGAL ==========
+        'legal' => [
+            'tab' => 'Legal',
+            'title' => 'Obrigações legais',
+            'description' => 'Detalhes exigidos por lei para o seu site',
+            'icon' => 'scale',
+            'fields' => [
                 [
                     'key' => 'cookies_consent',
                     'type' => 'switch',
@@ -259,6 +269,20 @@ return [
                     'active' => 'Usar',
                     'inactive' => 'Não usar',
                 ],
+                [
+                    'key' => 'privacy_page_id',
+                    'type' => 'page',
+                    'label' => 'Política de privacidade',
+                    'description' => 'Selecione a página usada para a política de privacidade do site',
+                    'default' => 'Lunar Base',
+                ],
+                [
+                    'key' => 'terms_page_id',
+                    'type' => 'page',
+                    'label' => 'Termos de uso',
+                    'description' => 'Selecione a página usada para os termos de uso do site',
+                    'default' => 'Lunar Base',
+                ],
             ],
         ],
 
@@ -266,9 +290,13 @@ return [
         'navigation' => [
             'tab' => 'Navegação',
             'title' => 'Navegação',
-            'description' => 'Detalhes sobre a navegação na admin',
+            'description' => 'Detalhes sobre a navegação no site',
             'icon' => 'signpost',
             'fields' => [
+                [
+                    'type' => 'subtitle',
+                    'label' => 'Administração'
+                ],
                 [
                     'key' => 'save_search_params',
                     'type' => 'switch',
@@ -286,6 +314,26 @@ return [
                     'default' => false,
                     'active' => 'Abas',
                     'inactive' => 'Sequencial',
+                ],
+                [
+                    'type' => 'subtitle',
+                    'label' => 'Frontend'
+                ],
+                [
+                    'key' => 'breadcrumbs',
+                    'type' => 'switch',
+                    'label' => 'Menu breadcrumbs',
+                    'description' => 'Mostrar menu de trilha (breadcrumbs) para o usuário se localizar no site.',
+                    'default' => false,
+                    'active' => 'Mostrar',
+                    'inactive' => 'Não mostrar',
+                ],
+                [
+                    'key' => 'breadcrumbs_icon',
+                    'type' => 'icon',
+                    'label' => '',
+                    'description' => 'Ícone exibido no menu de trilha.',
+                    'default' => '',
                 ],
             ],
         ],

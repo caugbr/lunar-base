@@ -92,6 +92,9 @@ class SettingController extends Controller
             }
 
             foreach ($group['fields'] as $def) {
+                if (!isset($def['key'])) {
+                    continue;
+                }
                 $key = $def['key'];
                 $type = $def['type'] ?? 'text';
 
@@ -212,7 +215,9 @@ class SettingController extends Controller
 
         foreach ($definitions as $group) {
             foreach ($group['fields'] ?? [] as $field) {
-                $fieldTypes[$field['key']] = $field['type'] ?? 'text';
+                if (isset($field['key'])) {
+                    $fieldTypes[$field['key']] = $field['type'] ?? 'text';
+                }
             }
         }
 

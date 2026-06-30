@@ -163,14 +163,7 @@
 
                         <div class="form-group">
                             <label for="parent_id">Página mãe</label>
-                            <select name="parent_id" id="parent_id">
-                                <option value="">-- Nenhuma --</option>
-                                @foreach($pages as $p)
-                                    <option value="{{ $p->id }}" {{ old('parent_id', $page->parent_id ?? '') == $p->id ? 'selected' : '' }}>
-                                        {{ $p->title }}
-                                    </option>
-                                @endforeach
-                            </select>
+                            <x-page-picker name="parent_id" id="parent_id" :selected="old('parent_id', $page->parent_id ?? '')" placeholder="-- Nenhuma --" />
                             <small>Define a página mãe dessa página (opcional)</small>
                             @error('parent_id') <small class="error">{{ $message }}</small> @enderror
                         </div>

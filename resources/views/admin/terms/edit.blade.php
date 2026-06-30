@@ -12,7 +12,7 @@
         </a>
     </div>
 
-    <form method="POST" action="{{ route('admin.terms.update', $term->id) }}">
+    <form method="POST" action="{{ route('admin.terms.update', $term->id) }}" id="term_form">
         @csrf
         @method('PUT')
 
@@ -75,6 +75,8 @@
         </div>
     </form>
 </div>
+
+<x-lost-changes-warn selector="#term_form" />
 @endsection
 
 @push('scripts')

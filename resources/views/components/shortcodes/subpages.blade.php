@@ -1,10 +1,69 @@
 @props([
     "title" => "Subpáginas",
-    "title_icon" => "link-tree",
+    "title_icon" => "list-tree",
     "item_icon" => "chevron-right",
+    "page" => null
 ])
 
-@if(isset($page) && $page->children->isNotEmpty())
+@php
+    // 1. Resolve os parâmetros de rota de forma dinâmica
+    $route = request()->route();
+    $baseParam = $route?->parameter('base');
+    $namespaceParam = $route?->parameter('namespace');
+    $slugParam = $route?->parameter('slug');
+
+    // Carrega a configuração da base de páginas do banco
+    $pagesBase = setting('permalinks.pages_base', 'page');
+    $blogBase = setting('permalinks.blog_base', 'blog');
+
+    // 2. A página atual pode vir da prop, do compartilhamento ou resolvida pela rota
+    $currentPage = $page ?? view()->shared('page');
+
+    if (!$currentPage) {
+        if ($slugParam) {
+            // 💡 Caso 1: 3 segmentos (Ex: /page/tutorial-x/item-a)
+            if ($namespaceParam) {
+                if ($baseParam === $pagesBase) {
+                    $currentPage = \App\Models\Page::where('slug', $slugParam)
+                        ->where('namespace', $namespaceParam)
+                        ->where('status', 'published')
+                        ->first();
+                }
+            } else {
+                // 💡 Caso 2: 2 segmentos
+                if ($baseParam === $pagesBase) {
+                    // Ex: /page/sobre-nos (Sem namespace)
+                    $currentPage = \App\Models\Page::where('slug', $slugParam)
+                        ->whereNull('namespace')
+                        ->where('status', 'published')
+                        ->first();
+                } elseif (empty($pagesBase)) {
+                    // Ex: /institucional/missao (Quando o prefixo 'pages_base' é vazio,
+                    // o primeiro parâmetro 'base' atua como o namespace e o segundo como 'slug')
+                    $currentPage = \App\Models\Page::where('slug', $slugParam)
+                        ->where('namespace', $baseParam)
+                        ->where('status', 'published')
+                        ->first();
+                }
+            }
+        } elseif ($baseParam) {
+            // 💡 Caso 3: 1 segmento
+            // Ex: /sobre-nos (Página sem base e sem namespace)
+            // Primeiro certificamos que não é o blog (caso o blog_base seja o mesmo do baseParam)
+            if ($baseParam !== $blogBase) {
+                $currentPage = \App\Models\Page::where('slug', $baseParam)
+                    ->whereNull('namespace')
+                    ->where('status', 'published')
+                    ->first();
+            }
+        }
+    }
+
+    // 3. Busca apenas as subpáginas publicadas associadas a esta página
+    $subpages = $currentPage ? $currentPage->children()->published()->get() : collect();
+@endphp
+
+@if($currentPage && $subpages->isNotEmpty())
 
 @once
 <style>
@@ -72,7 +131,7 @@
         {{ $title }}
     </h3>
     <ul>
-        @foreach($page->children as $subpage)
+        @foreach($subpages as $subpage)
             <li>
                 @if($item_icon)
                 <x-dynamic-component component="lucide-{{ $item_icon }}" class="lucid-icon" />

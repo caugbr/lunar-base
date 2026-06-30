@@ -75,6 +75,7 @@ class ContentHelper
 
         $viewPath = "components.shortcodes." . $tag;
         if (view()->exists($viewPath)) {
+            \Log::info('renderShortcode', ["path" => $viewPath]);
             return view($viewPath, [
                 ...$attributes,
                 'attr' => $attributes,

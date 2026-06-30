@@ -9,7 +9,7 @@
         <h2><x-lucide-user class="lucid-icon" /> Meus Dados</h2>
     </div>
 
-    <form method="POST" action="{{ route('admin.profile.update') }}">
+    <form method="POST" action="{{ route('admin.profile.update') }}" id="profile_form">
         @csrf
         @method('PUT')
 
@@ -40,6 +40,8 @@
         </div>
     </form>
 </div>
+
+<x-lost-changes-warn selector="#profile_form" />
 
 @if(setting('auth.2fa_enabled', false))
     @include('auth.partials.two-factor')

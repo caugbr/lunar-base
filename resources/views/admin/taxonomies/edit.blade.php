@@ -12,7 +12,7 @@
         </a>
     </div>
 
-    <form method="POST" action="{{ route('admin.taxonomies.update', $taxonomy->id) }}">
+    <form method="POST" action="{{ route('admin.taxonomies.update', $taxonomy->id) }}" id="tax_form">
         @csrf
         @method('PUT')
 
@@ -53,4 +53,6 @@
         </div>
     </form>
 </div>
+
+<x-lost-changes-warn selector="#tax_form" />
 @endsection

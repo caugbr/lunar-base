@@ -77,7 +77,9 @@ if (!function_exists('settingsAll')) {
         $defaults = [];
         foreach ($definitions as $groupKey => $group) {
             foreach ($group['fields'] ?? [] as $field) {
-                $defaults[$field['key']] = $field['default'] ?? null;
+                if (isset($field['key'])) {
+                    $defaults[$field['key']] = $field['default'] ?? null;
+                }
             }
         }
 

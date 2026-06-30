@@ -55,9 +55,8 @@ class PageController extends Controller
         $templates = Config::get('pageTemplates.templates', []);
         $taxonomies = Taxonomy::with('terms')->get();
         $namespaces = $this->getNamespaces();
-        $pages = Page::select('id', 'title')->orderBy('title')->get();
 
-        return view('admin.pages.create', compact('users', 'namespaces', 'currentUserId', 'templates', 'taxonomies', 'pages'));
+        return view('admin.pages.create', compact('users', 'namespaces', 'currentUserId', 'templates', 'taxonomies'));
     }
 
     public function store(Request $request)
@@ -118,14 +117,10 @@ class PageController extends Controller
         $taxonomies = Taxonomy::with('terms')->get();
         // IDs dos termos já associados à página
         $selectedTermIds = $page->terms->pluck('id')->toArray();
-        $pages = Page::where('id', '!=', $page->id)
-            ->select('id', 'title')
-            ->orderBy('title')
-            ->get();
 
         $namespaces = $this->getNamespaces();
 
-        return view('admin.pages.edit', compact('page', 'users', 'templates', 'taxonomies', 'selectedTermIds', 'namespaces', 'pages'));
+        return view('admin.pages.edit', compact('page', 'users', 'templates', 'taxonomies', 'selectedTermIds', 'namespaces'));
     }
 
     public function update(Request $request, Page $page)

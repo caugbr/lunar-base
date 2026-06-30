@@ -14,7 +14,12 @@ document.addEventListener('DOMContentLoaded', function() {
         external_plugins: {
             'shortcode': '/js/tinymce/plugins/shortcode/plugin.js'
         },
-
+        relative_urls: false,
+        convert_urls: false,
+        remove_script_host: true,
+        urlconverter_callback: function(url, node, on_save, name) {
+            return url;
+        },
         toolbar: 'formatselect | ' +
             'bold italic backcolor | alignleft aligncenter ' +
             'alignright alignjustify | bullist numlist outdent indent | ' +

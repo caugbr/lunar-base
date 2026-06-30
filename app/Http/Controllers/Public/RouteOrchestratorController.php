@@ -45,7 +45,7 @@ class RouteOrchestratorController extends Controller
     {
         $pagesBase = setting('permalinks.pages_base', 'page');
         $postsBase = setting('permalinks.posts_base', 'post');
-            // \Log::info('handleTwoSegments', ["namespace" => $base, "slug" => $slug, "pagesBase" => $pagesBase, "postsBase" => $postsBase]);
+            \Log::info('handleTwoSegments', ["namespace" => $base, "slug" => $slug, "pagesBase" => $pagesBase, "postsBase" => $postsBase]);
 
         // === CASO 1: É uma Página com base fixa (/pagina/sobre-nos) ===
         if ($base === $pagesBase) {
@@ -66,7 +66,7 @@ class RouteOrchestratorController extends Controller
         // === CASO 3: Página com namespace sem base (/institucional/missao) ===
         // $base pode ser um namespace, $slug é a página dentro dele
         if ($pagesBase === null) {
-            // \Log::info('sem base', ["namespace" => $base, "slug" => $slug]);
+            \Log::info('sem base', ["namespace" => $base, "slug" => $slug]);
             $page = Page::where('slug', $slug)
                 ->where('namespace', $base)
                 ->where('status', 'published')

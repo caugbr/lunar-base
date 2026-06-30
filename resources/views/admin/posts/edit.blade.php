@@ -172,16 +172,16 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="featured" value="1" {{ old('featured', $post->featured) ? 'checked' : '' }}>
+                            <label>
+                                <x-switch name="featured" checked="{{ old('featured', $post->featured) }}" active="" inactive="" />
                                 <span>Destacar na home</span>
                             </label>
                             <small>Exibe este post em destaque na página inicial</small>
                         </div>
 
                         <div class="form-group">
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="sticky" value="1" {{ old('sticky', $post->sticky) ? 'checked' : '' }}>
+                            <label>
+                                <x-switch name="sticky" checked="{{ old('sticky', $post->sticky) }}" active="" inactive="" />
                                 <span>Fixar no topo</span>
                             </label>
                             <small>Mantém este post sempre no topo da listagem</small>
@@ -251,6 +251,8 @@
         </div>
     </form>
 </div>
+
+<x-lost-changes-warn selector="#edit_form" />
 
 {{-- Modal de seleção --}}
 <x-modal id="selectorModal" title="Selecionar Mídia" size="xl">

@@ -12,7 +12,7 @@
         </a>
     </div>
 
-    <form method="POST" action="{{ route('admin.users.update', $user->id) }}">
+    <form method="POST" action="{{ route('admin.users.update', $user->id) }}" id="user_form">
         @csrf
         @method('PUT')
 
@@ -49,4 +49,6 @@
         </div>
     </form>
 </div>
+
+<x-lost-changes-warn selector="#user_form" />
 @endsection

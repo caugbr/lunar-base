@@ -6,7 +6,7 @@
                 <p>{{ setting('site_description', 'Laravel admin starter kit') }}</p>
             </div>
 
-            @if(setting('general.cookie_consent') || $termsAndPrivacy['terms'] || $termsAndPrivacy['privacy'])
+            @if(setting('legal.cookies_consent') || $termsAndPrivacy['terms'] || $termsAndPrivacy['privacy'])
             <div class="footer-links footer-column">
                 <h4>Legal</h4>
                 <ul class="footer-links-list">
@@ -20,7 +20,7 @@
                         <a href="{{ $termsAndPrivacy['privacy']->url }}">{{ $termsAndPrivacy['privacy']->title }}</a>
                     </li>
                     @endif
-                    @if(setting('general.cookie_consent'))
+                    @if(setting('legal.cookies_consent'))
                     <li>
                         <a href="#" id="open-cookie-preferences-link">Preferências de Cookies</a>
                     </li>
