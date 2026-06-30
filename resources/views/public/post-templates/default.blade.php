@@ -54,6 +54,11 @@
                 </div>
             @endif
 
+            {{-- @include('comments::comments-area', ['model' => $post]) --}}
+            @if(array_key_exists('comments', view()->getFinder()->getHints()))
+                @include('comments::comments-area', ['model' => $post])
+            @endif
+
             <div class="post-nav">
                 <a href="{{ url('/blog') }}" class="back-to-blog">
                     <x-lucide-arrow-left class="lucid-icon" />

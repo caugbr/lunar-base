@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\AdminLogController;
 use App\Http\Controllers\Admin\FormController;
 use App\Http\Controllers\Admin\FormSubmissionController;
 use App\Http\Controllers\Admin\RolesPermissionsController;
+use App\Http\Controllers\Admin\PluginController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\ProfileController as EditorProfileController;
 
@@ -27,6 +28,10 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     // Perfil (ambos editam seu próprio perfil)
     Route::get('/profile', [EditorProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [EditorProfileController::class, 'update'])->name('profile.update');
+
+    // Plugins
+    Route::get('plugins', [PluginController::class, 'index'])->name('plugins.index');
+    Route::post('plugins/{plugin}/toggle', [PluginController::class, 'toggle'])->name('plugins.toggle');
 
     // Dashboard (ambos veem)
     Route::get('/dashboard', [AdminDashboard::class, 'index'])->name('dashboard');

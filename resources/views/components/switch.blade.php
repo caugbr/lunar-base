@@ -4,10 +4,12 @@
     'checked' => 0,
     'disabled' => 0,
     'active' => 'Ativado',
-    'inactive' => 'Desativado'
+    'inactive' => 'Desativado',
+    'onChange' => ''
 ])
 
-<label class="switch-label">
+{{-- <label class="switch-label"> --}}
+<label {{ $attributes->merge(['class' => 'switch-label']) }}>
     <input type="hidden" name="{{ $name }}" value="0">
     <input type="checkbox"
         name="{{ $name }}"
@@ -15,6 +17,7 @@
         value="1"
         {{ $checked ? 'checked' : '' }}
         {{ $disabled ? 'disabled' : '' }}
+        @if($onChange) onchange="{{ $onChange }}" @endif
         class="switch-input">
     <span class="switch-track">
         <span class="switch-thumb"></span>

@@ -1,0 +1,6 @@
+{
+    "name": "Comments System",
+    "description": "Allows nesting comments and moderated replies on blog posts dynamically.",
+    "version": "1.0.0",
+    "provider": "Plugins\\Comments\\CommentsServiceProvider"
+}

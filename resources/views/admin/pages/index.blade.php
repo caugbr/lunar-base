@@ -110,10 +110,6 @@
         </table>
     </div>
 
-    {{-- <div class="admin-pagination">
-        {{ $pages->links() }}
-    </div> --}}
-
     <div class="admin-pagination">
         {{ $pages->appends(request()->query())->links() }}
     </div>

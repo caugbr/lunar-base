@@ -138,6 +138,12 @@ return [
                 //     'active' => 'admin.profile.edit',
                 // ],
                 [
+                    'label' => 'Plugins',
+                    'icon' => 'package',
+                    'route' => 'admin.plugins.index',
+                    'active' => 'admin.plugins.*',
+                ],
+                [
                     'label' => 'Permissões',
                     'icon' => 'user-key',
                     'route' => 'admin.roles-permissions',
