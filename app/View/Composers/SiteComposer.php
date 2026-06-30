@@ -60,16 +60,16 @@ class SiteComposer
 
     protected function getTermsAndPrivacyPages(): array
     {
-        $slugs = ['termos-de-uso', 'politica-de-privacidade'];
+        $ids = [setting('legal.privacy_page_id'), setting('legal.terms_page_id')];
         $pages = Page::published()
             ->whereNull('namespace')
-            ->whereIn('slug', $slugs)
+            ->whereIn('id', $ids)
             ->get()
-            ->keyBy('slug');
+            ->keyBy('id');
 
         return [
-            'terms'   => $pages['termos-de-uso'] ?? null,
-            'privacy' => $pages['politica-de-privacidade'] ?? null
+            'privacy' => $pages[$ids[0]] ?? null,
+            'terms'   => $pages[$ids[1]] ?? null,
         ];
     }
 

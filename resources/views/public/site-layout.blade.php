@@ -23,7 +23,7 @@ if ($theme) {
 @endphp
 <body{!! $theme !!}>
     @include('public.partials.header')
-{{-- <x-text-size /> --}}
+
     <main class="site-content">
         <div class="container">
             @if(setting('navigation.breadcrumbs'))

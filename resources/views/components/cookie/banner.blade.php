@@ -1,15 +1,13 @@
 @php
-    // Busca dinamicamente a página de privacidade salva no seu banco de dados para linkar no banner
-    $privacyPage = \App\Models\Page::published()->where('slug', 'politica-de-privacidade')->first();
-    $link = $privacyPage ? $privacyPage->url : '#';
+    $privacyPage = \App\Models\Page::find(setting('legal.privacy_page_id', 0));
+    $linkHref = $privacyPage ? " href='{$privacyPage->url}'" : '';
 @endphp
 
 <!-- Banner de Cookies Principal -->
 <div id="lgpd-cookie-banner" class="cookie-banner" style="display: none;">
     <div class="cookie-content">
         <p>
-            Nós usamos cookies para melhorar sua experiência. Ao continuar navegando, você concorda com a nossa
-            <a href="{{ $link }}">Política de Privacidade</a>.
+            Nós usamos cookies para melhorar sua experiência. Ao continuar navegando, você concorda com a nossa <a{{ $linkHref }}>Política de Privacidade</a>.
         </p>
         <div class="cookie-actions">
             <button id="cookie-customize-btn" class="cookie-btn-link">Personalizar</button>
