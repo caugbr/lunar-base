@@ -3,11 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script>
-        document.cookie = 'laravel_session=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-        document.cookie = 'XSRF-TOKEN=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-    </script>
-    <title>Sessão expirada - {{ setting('general.site_name') }}</title>
+    <title>Permissão negada - {{ setting('general.site_name') }}</title>
     <link rel="stylesheet" href="{{ asset('css/errors.css') }}">
 </head>
 <body>
@@ -25,8 +21,8 @@
             </div>
         @else
             <div class="error">
-                <strong>ERRO 419</strong>
-                Sessão expirada, faça o login novamente
+                <strong>ERRO 403</strong>
+                Permissão negada
             </div>
         @endif
 

@@ -13,9 +13,14 @@ class SiteComposer
      */
     public function compose(View $view)
     {
+        $theme = setting('site_theme') ?? '';
+        if ($theme) {
+            $theme = " data-theme=\"{$theme}\"";
+        }
         $view->with('menu', $this->buildMenu());
         $view->with('termsAndPrivacy', $this->getTermsAndPrivacyPages());
         $view->with('footerText', $this->getFooterText());
+        $view->with('theme', $theme);
     }
 
     protected function buildMenu(): array

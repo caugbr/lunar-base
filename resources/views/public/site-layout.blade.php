@@ -15,12 +15,7 @@
     <script src="{{ asset('js/site.js') }}"></script>
     @stack('styles')
 </head>
-@php
-$theme = setting('site_theme') ?? '';
-if ($theme) {
-    $theme = " data-theme=\"{$theme}\"";
-}
-@endphp
+
 <body{!! $theme !!}>
     @include('public.partials.header')
 
