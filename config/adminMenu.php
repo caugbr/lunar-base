@@ -139,9 +139,15 @@ return [
                 // ],
                 [
                     'label' => 'Plugins',
-                    'icon' => 'package',
+                    'icon' => 'puzzle',
                     'route' => 'admin.plugins.index',
                     'active' => 'admin.plugins.*',
+                ],
+                [
+                    'label' => 'Temas',
+                    'icon' => 'palette',
+                    'route' => 'admin.themes.index',
+                    'active' => 'admin.themes.*',
                 ],
                 [
                     'label' => 'Permissões',

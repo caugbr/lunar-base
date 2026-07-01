@@ -56,7 +56,7 @@
                                           data-inactive="Desativar">
                                     </span>
                                 </label> --}}
-                                <x-switch name="is_active" checked="{{ old('is_active', $plugin->is_active) }}" active="Ativar" inactive="Desativar" style="top: 0;" onChange="this.form.submit()" />
+                                <x-switch name="is_active" checked="{{ old('is_active', $plugin->is_active) }}" active="Ligado" inactive="Desligado" style="top: 0;" onChange="this.form.submit()" />
                             </form>
                         </div>
                     </td>

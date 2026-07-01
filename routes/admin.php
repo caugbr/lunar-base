@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\FormController;
 use App\Http\Controllers\Admin\FormSubmissionController;
 use App\Http\Controllers\Admin\RolesPermissionsController;
 use App\Http\Controllers\Admin\PluginController;
+use App\Http\Controllers\Admin\ThemeController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\ProfileController as EditorProfileController;
 
@@ -32,6 +33,12 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     // Plugins
     Route::get('plugins', [PluginController::class, 'index'])->name('plugins.index');
     Route::post('plugins/{plugin}/toggle', [PluginController::class, 'toggle'])->name('plugins.toggle');
+
+    // Temas
+    Route::get('themes', [ThemeController::class, 'index'])->name('themes.index');
+    // Route::post('themes/{theme}/activate', [ThemeController::class, 'activate'])->name('themes.activate');
+    Route::post('themes/{theme}/toggle', [ThemeController::class, 'toggle'])->name('themes.toggle');
+    Route::get('themes/{theme}/screenshot', [ThemeController::class, 'screenshot'])->name('themes.screenshot');
 
     // Dashboard (ambos veem)
     Route::get('/dashboard', [AdminDashboard::class, 'index'])->name('dashboard');

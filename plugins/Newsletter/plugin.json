@@ -1,6 +1,0 @@
-{
-    "name": "Newsletter",
-    "description": "Injeta um formul\u00e1rio para capta\u00e7\u00e3o de e-mails de leads",
-    "version": "1.0.0",
-    "provider": "Plugins\\Newsletter\\NewsletterServiceProvider"
-}
