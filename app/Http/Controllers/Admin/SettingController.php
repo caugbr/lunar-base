@@ -11,7 +11,8 @@ class SettingController extends Controller
 {
     public function index()
     {
-        $groups = config('settings.definitions', []);
+        // $groups = config('settings.definitions', []);
+        $groups = getSettingsDefinitions();
 
         foreach ($groups as $groupKey => &$group) {
             if (!isset($group['fields']) || !is_array($group['fields'])) {
@@ -40,7 +41,8 @@ class SettingController extends Controller
 
     public function update(Request $request)
     {
-        $definitions = config('settings.definitions', []);
+        // $definitions = config('settings.definitions', []);
+        $definitions = getSettingsDefinitions();
         $originalValues = settingsAll();
 
         // === INÍCIO DA ADIÇÃO: VALIDAÇÃO DINÂMICA ===
@@ -210,7 +212,8 @@ class SettingController extends Controller
         $sensitiveTypes = ['password'];
 
         // Pega as definições para saber os tipos dos campos
-        $definitions = config('settings.definitions', []);
+        // $definitions = config('settings.definitions', []);
+        $definitions = getSettingsDefinitions();
         $fieldTypes = [];
 
         foreach ($definitions as $group) {

@@ -11,13 +11,17 @@
     <x-cookie.scripts />
     @endif
 
-    <link rel="stylesheet" href="{{ asset('css/site.css') }}">
+    <x-hook name="main.head" />
+
+    <link rel="stylesheet" href="{{ asset('css/public/site.css') }}">
     <script src="{{ asset('js/site.js') }}"></script>
     @stack('styles')
 </head>
 
 <body{!! $theme !!}>
     @include('public.partials.header')
+
+    <x-hook name="main.before_content" />
 
     <main class="site-content">
         <div class="container">
@@ -27,6 +31,8 @@
         </div>
         @yield('content')
     </main>
+
+    <x-hook name="main.after_content" />
 
     @include('public.partials.footer')
 

@@ -1,0 +1,109 @@
+
+/* Forms */
+
+.dynamic-form-wrapper {
+    margin: 1rem auto;
+    max-width: 800px;
+}
+
+.dynamic-form-wrapper .success {
+    background: #d1fae5;
+    color: #065f46;
+    padding: 1rem;
+    border-radius: 0.375rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid #a7f3d0;
+}
+.dynamic-form-wrapper form {
+    margin: 0;
+    padding: 0;
+}
+.dynamic-form-wrapper h2 {
+    font-size: 2em;
+}
+.dynamic-form-wrapper .field-label {
+    display: block;
+    font-weight: 400;
+    margin-bottom: 0.5rem;
+    color: var(--form-label-color);
+}
+.dynamic-form-wrapper input[type="text"],
+.dynamic-form-wrapper input[type="password"],
+.dynamic-form-wrapper input[type="email"],
+.dynamic-form-wrapper input[type="tel"],
+.dynamic-form-wrapper input[type="url"],
+.dynamic-form-wrapper input[type="number"],
+.dynamic-form-wrapper select,
+.dynamic-form-wrapper textarea {
+    background-color: var(--form-input-bg);
+    border-color: var(--form-input-border-color);
+    color: var(--form-input-color);
+}
+.dynamic-form-wrapper textarea {
+    display: block;
+}
+.dynamic-form-wrapper .buttons {
+    margin-top: 1.5rem;
+}
+.dynamic-form-wrapper .form-help {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--form-label-color);
+    margin-top: 0.375rem;
+}
+.dynamic-form-wrapper button[type="submit"] {
+    background-color: var(--form-button-bg);
+    color: var(--form-button-color);
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 0.375rem;
+    font-weight: 400;
+    font-size: 1.1rem;
+    cursor: pointer;
+}
+
+
+/* ===== Input Group (Prefixo/Sufixo) ===== */
+.dynamic-form-wrapper .input-group {
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+}
+
+.dynamic-form-wrapper .input-group-addon {
+    display: flex;
+    align-items: center;
+    padding: 0.625rem 0.75rem;
+    background-color: var(--form-addon-bg);
+    border: 1px solid var(--form-input-border-color);
+    color: var(--form-addon-color);
+    font-size: 0.875rem;
+    white-space: nowrap;
+}
+
+/* Bordas arredondadas nos addons */
+.dynamic-form-wrapper .input-group-addon:first-child {
+    border-right: none;
+    border-radius: 0.375rem 0 0 0.375rem;
+}
+.dynamic-form-wrapper .input-group-addon:last-child {
+    border-left: none;
+    border-radius: 0 0.375rem 0.375rem 0;
+}
+
+/* Ajuste do input dentro do grupo */
+.dynamic-form-wrapper .input-group .form-input {
+    border-radius: 0 !important;
+    flex: 1;
+}
+.dynamic-form-wrapper .input-group .form-input:first-child {
+    border-radius: 0.375rem 0 0 0.375rem;
+}
+.dynamic-form-wrapper .input-group .form-input:last-child {
+    border-radius: 0 0.375rem 0.375rem 0;
+}
+
+/* Corrige inputs estreitos (como number) dentro do grupo */
+.dynamic-form-wrapper .input-group .form-input-narrow {
+    width: auto;
+}

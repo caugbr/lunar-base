@@ -119,24 +119,11 @@ return [
                     'permission' => 'manage-pages',
                 ],
                 [
-                    'label' => 'Formulários',
-                    'icon' => 'form',
-                    'route' => 'admin.forms.index',
-                    'active' => 'admin.forms.*',
-                    'permission' => 'manage-pages',
-                ],
-                [
                     'label' => 'Usuários',
                     'icon' => 'users',
                     'route' => 'admin.users.index',
                     'active' => 'admin.users.*',
                 ],
-                // [
-                //     'label' => 'Meu Perfil',
-                //     'icon' => 'user-pen',
-                //     'route' => 'admin.profile.edit',
-                //     'active' => 'admin.profile.edit',
-                // ],
                 [
                     'label' => 'Plugins',
                     'icon' => 'puzzle',

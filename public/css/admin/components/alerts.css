@@ -1,0 +1,48 @@
+.admin-alert {
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.admin-alert-success {
+    background: var(--color-success-bg);
+    color: var(--color-success-text);
+    border: 1px solid var(--color-success);
+}
+
+.admin-alert-error {
+    background: var(--color-danger-bg);
+    color: var(--color-danger-text);
+    border: 1px solid var(--color-danger);
+}
+
+.admin-alert-info {
+    background: var(--color-info-bg);
+    color: var(--color-info-text);
+    border: 1px solid var(--color-info);
+}
+
+.admin-alert-warning {
+    background: var(--color-warning-bg);
+    color: var(--color-warning-text);
+    border: 1px solid var(--color-warning);
+}
+
+.admin-alert .link-icon {
+    position: absolute;
+    top: 50%;
+    right: 16px;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+.admin-alert a::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+}

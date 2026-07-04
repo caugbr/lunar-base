@@ -258,7 +258,7 @@
 @endsection
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('css/page-media.css') }}">
+<link rel="stylesheet" href="{{ asset('css/admin/page-media.css') }}">
 @endpush
 
 @push('scripts')

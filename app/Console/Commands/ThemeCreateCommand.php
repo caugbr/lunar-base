@@ -15,6 +15,7 @@ class ThemeCreateCommand extends Command
     {
         $inputName = $this->argument('name');
         $studlyName = Str::studly($inputName);
+        $kebabName = Str::kebab($studlyName);
         $themePath = base_path("themes/{$studlyName}");
 
         if (File::exists($themePath)) {
@@ -29,7 +30,10 @@ class ThemeCreateCommand extends Command
         // 1. Criação de diretórios
         $directories = [
             $themePath,
-            $themePath . '/assets',
+            $themePath . '/resources/assets',
+            $themePath . '/resources/assets/images',
+            $themePath . '/resources/assets/css',
+            $themePath . '/resources/assets/js',
             $themePath . '/resources/views/public/templates',
             $themePath . '/resources/views/public/post-templates'
         ];
@@ -44,7 +48,7 @@ class ThemeCreateCommand extends Command
             'description' => $description,
             'version' => '1.0.0',
             'author' => 'Lunar Developer',
-            'screenshot' => 'assets/screenshot.png'
+            'screenshot' => 'resources/assets/images/screenshot.png'
         ];
         File::put($themePath . '/theme.json', json_encode($manifest, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
@@ -57,6 +61,35 @@ class ThemeCreateCommand extends Command
         $this->warn("Path: themes/{$studlyName}");
         $this->info("--------------------------------------------------");
 
+        $this->createPublicAssetLink($kebabName, $themePath);
+
         return Command::SUCCESS;
+    }
+
+    protected function createPublicAssetLink(string $kebabName, string $themePath): void
+    {
+        $publicThemesPath = public_path('themes');
+        File::ensureDirectoryExists($publicThemesPath, 0755, true);
+
+        $target = $themePath . '/resources/assets';
+        $link = $publicThemesPath . '/' . $kebabName;
+
+        if (File::exists($link)) return;
+
+        $isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
+
+        if ($isWindows) {
+            exec("mklink /J " . escapeshellarg(str_replace('/', '\\', $link)) . " " . escapeshellarg(str_replace('/', '\\', $target)), $output, $returnVar);
+
+            if ($returnVar !== 0) {
+                $this->error("Erro crítico: Não foi possível criar a junction do Windows.");
+                $this->error("Tente abrir o terminal como Administrador.");
+                die();
+            }
+        } else {
+            symlink($target, $link);
+        }
+
+        $this->info("Link criado com sucesso: public/themes/{$kebabName}");
     }
 }

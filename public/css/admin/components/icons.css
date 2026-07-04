@@ -1,0 +1,12 @@
+.lucid-icon {
+    width: 20px;
+    height: 20px;
+    vertical-align: bottom;
+}
+
+.modified-badge .lucid-icon,
+a .lucid-icon,
+button .lucid-icon {
+    width: 14px;
+    height: 14px;
+}

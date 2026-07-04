@@ -1,0 +1,46 @@
+.table-wrap {
+    overflow-x: auto;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.admin-table th,
+.admin-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-text);
+}
+
+.admin-table th {
+    color: var(--color-text-muted);
+    font-weight: 600;
+}
+
+.admin-table tr:last-child td {
+    border-bottom: none;
+}
+
+.admin-table .is-landing,
+.admin-table .is-main {
+    color: var(--color-success);
+    font-size: 2.6em;
+    line-height: 0.4em;
+    vertical-align: top;
+    cursor: help;
+}
+
+.admin-table .is-landing {
+    color: var(--color-success);
+}
+
+.admin-actions {
+    gap: 10px;
+}
+.admin-actions > div {
+    display: flex;
+    gap: 6px;
+}

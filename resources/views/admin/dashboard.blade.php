@@ -39,7 +39,7 @@
             </div>
         </a>
 
-        <a href="{{ route('admin.forms.index') }}" class="lunar-stat-box">
+        {{-- <a href="{{ route('admin.forms.index') }}" class="lunar-stat-box">
             <div class="stat-icon icon-forms">
                 <x-lucide-form-input class="lucid-icon" />
             </div>
@@ -50,7 +50,7 @@
             <div class="stat-arrow">
                 <x-lucide-arrow-right class="lucid-icon" />
             </div>
-        </a>
+        </a> --}}
 
         <a href="{{ route('admin.media.index') }}" class="lunar-stat-box">
             <div class="stat-icon icon-media">
@@ -84,5 +84,5 @@
 @endsection
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
+<link rel="stylesheet" href="{{ asset('css/admin/dashboard.css') }}">
 @endpush

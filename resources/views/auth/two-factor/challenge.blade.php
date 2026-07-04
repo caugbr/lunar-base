@@ -4,142 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verificação de duas etapas - {{ setting('site_name', 'Lunar Base') }}</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .login-container {
-            background: white;
-            padding: 40px;
-            border-radius: 16px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 400px;
-        }
-
-        .login-container h1 {
-            text-align: center;
-            margin-bottom: 30px;
-            color: #333;
-            font-size: 1.8rem;
-        }
-
-        .login-container h1 a {
-            color: #333;
-            text-decoration: none;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #555;
-            font-weight: 500;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: border 0.3s;
-            text-align: center;
-            letter-spacing: 0.5em;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        button {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s;
-            display: flex;
-            gap: 0.5rem;
-            justify-content: center;
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-        }
-
-        #by-mail button {
-
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-            padding: 8px 16px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-size: 0.9rem;
-            border: none;
-            cursor: pointer;
-            font-family: inherit;
-            background: #718096;
-            color: white;
-            margin-top: 1.5rem;
-        }
-
-        .error {
-            background: #fee;
-            border: 1px solid #fcc;
-            color: #c33;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .info {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 0.9rem;
-            color: #666;
-        }
-
-        .lucid-icon {
-            width: 20px;
-            height: 20px;
-            vertical-align: middle
-        }
-
-        .remaining {
-            text-align: center;
-            font-size: 0.85rem;
-            color: #888;
-            margin-top: 8px;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('css/admin/vars.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/auth.css') }}">
 </head>
 <body>
     <div class="login-container">
         <h1>
-            <x-lucide-shield-check class="lucid-icon" style="width: 20px; height: 20px;" />
+            <x-lucide-shield-check class="lucid-icon" />
             Verificação
         </h1>
 
@@ -150,7 +21,7 @@
         @endif
 
         @if (session('status'))
-            <div style="background: #e6fffa; border: 1px solid #b7e4c7; color: #065f46; padding: 12px; border-radius: 8px; margin-bottom: 20px; text-align: center;">
+            <div class="status-box">
                 {{ session('status') }}
             </div>
         @endif

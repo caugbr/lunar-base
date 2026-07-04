@@ -59,16 +59,16 @@ trait Shortcodes {
     /**
      * Renderiza: [form slug="contato"]
      */
-    private static function renderForm($attributes, $content = null)
-    {
-        $slug = $attributes['slug'] ?? null;
-        if (!$slug) return '';
+    // private static function renderForm($attributes, $content = null)
+    // {
+    //     $slug = $attributes['slug'] ?? null;
+    //     if (!$slug) return '';
 
-        $form = Form::active()->where('slug', $slug)->first();
-        if (!$form) return '';
+    //     $form = Form::active()->where('slug', $slug)->first();
+    //     if (!$form) return '';
 
-        return view('components.shortcodes.form', ['form' => $form])->render();
-    }
+    //     return view('components.shortcodes.form', ['form' => $form])->render();
+    // }
 
     /**
      * Renderiza: [script src="..." id="..." ...][/script]

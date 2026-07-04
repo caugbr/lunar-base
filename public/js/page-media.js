@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
         verify_html: false,
         valid_elements: 'script[*],style[*],,link[href|rel|type|media|crossorigin|integrity|as],div[*],span[*],p[*],br,hr,h1,h2,h3,h4,h5,h6,strong,b,em,i,u,sub,sup,code,pre,mark,small,del,ins,a[href|target|title|rel|class],img[*],figure[*],figcaption[*],ul[*],ol[*],li[*],table[*],thead[*],tbody[*],tr[*],td[*],th[*],blockquote[*],q[*],cite[*],iframe[src|width|height|frameborder|allow|allowfullscreen],audio[*],video[*],source[*],details[*],summary[*],button[*],svg[*]',
         extended_valid_elements: 'span[class|data-tag|data-attrs|data-content|contenteditable|style],div[class|contenteditable|style]',
-        content_css: '/css/tinymce-content.css',
+        content_css: '/css/admin/tinymce-content.css',
         setup: function(editor) {
             var existingContent = document.getElementById('content').value;
             if (existingContent) {

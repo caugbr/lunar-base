@@ -4,7 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - {{ setting('general.site_name') }}</title>
-    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+
+    @php
+    $skin = config('site.adminSkin');
+    $varsFile = $skin === 'default' ? 'css/vars.css' : "css/skins/vars-{$skin}.css";
+    @endphp
+    <link rel="stylesheet" href="{{ asset($varsFile) }}">
+    <link rel="stylesheet" href="{{ asset('css/admin/admin.css') }}">
+
     <script src="{{ asset('js/admin.js') }}"></script>
 
     @if(setting('navigation.save_search_params'))
@@ -14,7 +21,7 @@
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
     @stack('styles')
 </head>
-<body>
+<body data-theme="{{ setting('general.admin_theme', 'light') }}">
     <div class="admin-wrapper">
         <!-- Sidebar -->
         <button class="admin-menu-toggle" id="menuToggle">
@@ -30,9 +37,34 @@
             </div>
 
             <nav class="admin-nav">
+                {{-- @php
+                    $menuGroups = config('adminMenu.menu', []);
+                @endphp --}}
                 @php
                     $menuGroups = config('adminMenu.menu', []);
+                    $injectedItems = \App\Support\AdminMenu::getInjectedItems();
+
+                    foreach ($injectedItems as $injection) {
+                        foreach ($menuGroups as &$group) {
+                            $afterLabel = $injection['after'];
+                            $newItem = $injection['item'];
+
+                            // Busca pelo label (case-insensitive para não ter erro de digitação)
+                            $index = collect($group['items'])->search(function($item) use ($afterLabel) {
+                                return strtolower($item['label']) === strtolower($afterLabel);
+                            });
+
+                            if ($index !== false) {
+                                // Insere logo após o item encontrado
+                                array_splice($group['items'], $index + 1, 0, [$newItem]);
+                            } else {
+                                // Se não achar o label, joga no final do grupo
+                                $group['items'][] = $newItem;
+                            }
+                        }
+                    }
                 @endphp
+
 
                 @foreach($menuGroups as $group)
                     {{-- Título da seção --}}

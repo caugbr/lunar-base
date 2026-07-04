@@ -20,7 +20,7 @@
 
         <!-- Reply Button -->
         <button type="button" onclick="setReply({{ $comment->id }}, '{{ $comment->author_name }}')" class="btn comment-reply-btn">
-            Reply
+            Responder
         </button>
 
         <!-- Recursive Nested Replies -->

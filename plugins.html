@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual de Desenvolvimento de Plugins - Lunar Base CMS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        nav.toc {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+        }
+
+        nav.toc h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        nav.toc ul {
+            list-style: none;
+            columns: 2;
+        }
+
+        nav.toc li {
+            margin: 8px 0;
+            break-inside: avoid;
+        }
+
+        nav.toc a {
+            color: #667eea;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        nav.toc a:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+
+        section {
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #667eea;
+            font-size: 2em;
+            margin: 30px 0 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        h3 {
+            color: #764ba2;
+            font-size: 1.5em;
+            margin: 25px 0 15px;
+        }
+
+        h4 {
+            color: #333;
+            font-size: 1.2em;
+            margin: 20px 0 10px;
+        }
+
+        .intro {
+            background: #f8f9ff;
+            padding: 20px;
+            border-left: 4px solid #667eea;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .warning {
+            background: #fff3cd;
+            padding: 15px;
+            border-left: 4px solid #ffc107;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .tip {
+            background: #d1ecf1;
+            padding: 15px;
+            border-left: 4px solid #17a2b8;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        pre code {
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .code-label {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            font-size: 12px;
+            border-radius: 0 6px 0 6px;
+        }
+
+        .step {
+            background: #f8f9ff;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border: 2px solid #667eea;
+        }
+
+        .step h4 {
+            color: #667eea;
+            margin-top: 0;
+        }
+
+        .step-number {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        ul.features, ul.steps {
+            margin: 15px 0 15px 30px;
+        }
+
+        ul.features li, ul.steps li {
+            margin: 10px 0;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 8px;
+            transition: transform 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-card h4 {
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9ff;
+        }
+
+        .example-box {
+            background: #f8f9ff;
+            border: 2px dashed #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        .example-box h4 {
+            color: #667eea;
+            margin-top: 0;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 768px) {
+            nav.toc ul {
+                columns: 1;
+            }
+
+            section {
+                padding: 20px;
+            }
+
+            header h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🚀 Manual de Desenvolvimento de Plugins</h1>
+        <p>Lunar Base CMS - Guia Completo</p>
+    </header>
+
+    <div class="container">
+        <nav class="toc">
+            <h2>📑 Sumário</h2>
+            <ul>
+                <li><a href="#intro">Introdução</a></li>
+                <li><a href="#estrutura">Estrutura de um Plugin</a></li>
+                <li><a href="#criar">Criando seu Primeiro Plugin</a></li>
+                <li><a href="#admin-menu">Adicionando Itens ao Menu Admin</a></li>
+                <li><a href="#shortcodes">Registrando Shortcodes</a></li>
+                <li><a href="#hooks">Sistema de Hooks</a></li>
+                <li><a href="#rotas">Rotas Dinâmicas</a></li>
+                <li><a href="#models">Models e Relacionamentos</a></li>
+                <li><a href="#views">Views e Assets</a></li>
+                <li><a href="#migrations">Migrations e Banco de Dados</a></li>
+                <li><a href="#exemplo-comments">Exemplo Prático: Plugin Comments</a></li>
+                <li><a href="#exemplo-forms">Exemplo Prático: Plugin Forms</a></li>
+                <li><a href="#boas-praticas">Boas Práticas</a></li>
+            </ul>
+        </nav>
+
+        <section id="intro">
+            <h2>📖 Introdução</h2>
+            <div class="intro">
+                <p>O sistema de plugins do Lunar Base CMS permite estender funcionalidades de forma modular e organizada. Cada plugin é autocontido e pode adicionar controllers, models, views, rotas, shortcodes, hooks e muito mais.</p>
+            </div>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>🎯 Menu Admin</h4>
+                    <p>Adicione itens ao menu administrativo de forma dinâmica e posicione onde desejar.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>⚡ Shortcodes</h4>
+                    <p>Crie componentes reutilizáveis que podem ser inseridos em páginas e posts.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🔗 Hooks</h4>
+                    <p>Injete conteúdo em pontos específicos do site (head, before_content, after_content, etc).</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🛣️ Rotas Dinâmicas</h4>
+                    <p>Registre URLs customizadas sem modificar o core do sistema.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>💾 Models</h4>
+                    <p>Crie tabelas e relacionamentos usando Eloquent ORM.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🎨 Views & Assets</h4>
+                    <p>Templates Blade e arquivos estáticos com namespace próprio.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="estrutura">
+            <h2>📁 Estrutura de um Plugin</h2>
+            <p>Um plugin típico no Lunar Base segue esta estrutura:</p>
+
+            <pre><code>plugins/
+└── NomeDoPlugin/
+    ├── Http/
+    │   └── Controllers/
+    │       └── MeuController.php
+    ├── Models/
+    │   └── MeuModel.php
+    ├── database/
+    │   └── migrations/
+    │       └── 2026_01_01_000000_create_tabela_table.php
+    ├── resources/
+    │   ├── views/
+    │   │   ├── admin/
+    │   │   └── public/
+    │   └── assets/
+    │       ├── css/
+    │       └── js/
+    ├── plugin.json
+    ├── NomeDoPluginServiceProvider.php
+    └── routes.php</code></pre>
+
+            <h4>Arquivos Principais:</h4>
+            <table>
+                <tr>
+                    <th>Arquivo</th>
+                    <th>Descrição</th>
+                </tr>
+                <tr>
+                    <td><code>plugin.json</code></td>
+                    <td>Manifesto do plugin (nome, versão, descrição, provider)</td>
+                </tr>
+                <tr>
+                    <td><code>NomeDoPluginServiceProvider.php</code></td>
+                    <td>Classe de registro do plugin (carrega rotas, views, migrations)</td>
+                </tr>
+                <tr>
+                    <td><code>routes.php</code></td>
+                    <td>Definição das rotas do plugin</td>
+                </tr>
+            </table>
+        </section>
+
+        <section id="criar">
+            <h2>🔨 Criando seu Primeiro Plugin</h2>
+
+            <div class="step">
+                <h4><span class="step-number">1</span>Use o Comando Artisan</h4>
+                <pre><code class="code-label">BASH</code>php artisan plugin:create "Nome do Plugin" "Descrição do plugin"</pre>
+
+                <p>O comando fará perguntas interativas:</p>
+                <ul class="steps">
+                    <li>✅ <strong>Requer banco de dados?</strong> (Cria Models e migrations)</li>
+                    <li>✅ <strong>Requer Controller e Rotas?</strong> (Cria estrutura HTTP)</li>
+                    <li>✅ <strong>Requer Views?</strong> (Cria diretório de views)</li>
+                </ul>
+            </div>
+
+            <div class="step">
+                <h4><span class="step-number">2</span>Estrutura Gerada Automaticamente</h4>
+                <p>O comando cria:</p>
+                <ul class="steps">
+                    <li>Diretórios necessários</li>
+                    <li>Arquivo <code>plugin.json</code> com metadados</li>
+                    <li>ServiceProvider configurado</li>
+                    <li>Controller básico (se selecionado)</li>
+                    <li>Model básico (se selecionado)</li>
+                    <li>Migration em branco (se selecionado)</li>
+                    <li>View de exemplo (se selecionado)</li>
+                    <li>Link simbólico para assets em <code>public/plugins/nome-do-plugin</code></li>
+                </ul>
+            </div>
+
+            <div class="step">
+                <h4><span class="step-number">3</span>Ative o Plugin</h4>
+                <p>Acesse <strong>Admin → Plugins</strong> e ative seu plugin. O sistema automaticamente:</p>
+                <ul class="steps">
+                    <li>Registra o ServiceProvider</li>
+                    <li>Carrega migrations</li>
+                    <li>Registra rotas</li>
+                    <li>Disponibiliza views</li>
+                </ul>
+            </div>
+
+            <div class="tip">
+                <strong>Dica:</strong> Após criar o plugin, execute <code>php artisan migrate</code> para criar as tabelas no banco de dados.
+            </div>
+        </section>
+
+        <section id="admin-menu">
+            <h2>📋 Adicionando Itens ao Menu Admin</h2>
+
+            <div class="intro">
+                <p>Use o <code>AdminMenu::add()</code> no método <code>boot()</code> do seu ServiceProvider para injetar itens no menu administrativo.</p>
+            </div>
+
+            <h4>Sintaxe Básica:</h4>
+            <pre><code class="code-label">PHP</code>use App\Support\AdminMenu;
+
+AdminMenu::add([
+    'label'      => 'Meu Plugin',
+    'icon'       => 'puzzle',           // Ícone Lucide
+    'route'      => 'admin.meuplugin',  // Rota nomeada
+    'active'     => 'admin.meuplugin.*',// Padrão de ativação
+    'permission' => 'manage-pages',     // Permissão (opcional)
+    'role'       => 'admin',            // Role (opcional)
+], 'Taxonomias'); // Posição: após qual item?</code></pre>
+
+            <h4>Parâmetros Explicados:</h4>
+            <table>
+                <tr>
+                    <th>Parâmetro</th>
+                    <th>Obrigatório</th>
+                    <th>Descrição</th>
+                </tr>
+                <tr>
+                    <td><code>label</code></td>
+                    <td>✅ Sim</td>
+                    <td>Texto exibido no menu</td>
+                </tr>
+                <tr>
+                    <td><code>icon</code></td>
+                    <td>✅ Sim</td>
+                    <td>Ícone Lucide (ex: 'settings', 'users', 'file')</td>
+                </tr>
+                <tr>
+                    <td><code>route</code></td>
+                    <td>✅ Sim</td>
+                    <td>Nome da rota Laravel</td>
+                </tr>
+                <tr>
+                    <td><code>active</code></td>
+                    <td>✅ Sim</td>
+                    <td>Padrão para destacar item ativo (use * como wildcard)</td>
+                </tr>
+                <tr>
+                    <td><code>permission</code></td>
+                    <td>❌ Não</td>
+                    <td>Só aparece se usuário tiver esta permissão</td>
+                </tr>
+                <tr>
+                    <td><code>role</code></td>
+                    <td>❌ Não</td>
+                    <td>Só aparece se usuário tiver este role (admin, editor, etc)</td>
+                </tr>
+            </table>
+
+            <div class="example-box">
+                <h4>Exemplo Completo:</h4>
+                <pre><code class="code-label">PHP</code>// No ServiceProvider do plugin
+public function boot(): void
+{
+    $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
+    $this->loadViewsFrom(__DIR__ . '/resources/views', 'meuplugin');
+
+    // Adiciona ao menu após "Taxonomias"
+    \App\Support\AdminMenu::add([
+        'label'      => 'Formulários',
+        'icon'       => 'form',
+        'route'      => 'admin.forms.index',
+        'active'     => 'admin.forms.*',
+        'permission' => 'manage-pages',
+    ], 'Taxonomias');
+}</code></pre>
+            </div>
+
+            <div class="tip">
+                <strong>Ícones Disponíveis:</strong> Visite <a href="https://lucide.dev/icons/" target="_blank">Lucide Icons</a> para ver todos os ícones disponíveis.
+            </div>
+        </section>
+
+        <section id="shortcodes">
+            <h2>⚡ Registrando Shortcodes</h2>
+
+            <div class="intro">
+                <p>Shortcodes permitem inserir conteúdo dinâmico em páginas e posts usando tags simples como <code>[meu-shortcode]</code>.</p>
+            </div>
+
+            <h4>Como Registrar:</h4>
+            <pre><code class="code-label">PHP</code>use App\Helpers\ContentHelper;
+
+// No método boot() do ServiceProvider
+ContentHelper::registerShortcode('meu-componente', function($attributes, $content) {
+    // $attributes = array de parâmetros passados no shortcode
+    // $content = conteúdo entre [tag] e [/tag] (se houver)
+
+    return view('meuplugin::componente', [
+        'data' => $attributes,
+        'content' => $content
+    ])->render();
+});</code></pre>
+
+            <h4>Usando Shortcodes:</h4>
+            <table>
+                <tr>
+                    <th>Sintaxe</th>
+                    <th>Exemplo</th>
+                </tr>
+                <tr>
+                    <td>Sem parâmetros</td>
+                    <td><code>[meu-componente]</code></td>
+                </tr>
+                <tr>
+                    <td>Com parâmetros</td>
+                    <td><code>[meu-componente id="123" classe="destaque"]</code></td>
+                </tr>
+                <tr>
+                    <td>Com conteúdo</td>
+                    <td><code>[meu-componente]Texto interno[/meu-componente]</code></td>
+                </tr>
+            </table>
+
+            <div class="example-box">
+                <h4>Exemplo Prático - Shortcode de Formulário:</h4>
+                <pre><code class="code-label">PHP</code>ContentHelper::registerShortcode('form', function($attributes, $content) {
+    $slug = $attributes['slug'] ?? null;
+
+    if (!$slug) {
+        return '<!-- Erro: shortcode [form] requer atributo "slug" -->';
+    }
+
+    // Busca o formulário no banco
+    $form = \Plugins\Forms\Models\Form::active()
+        ->where('slug', $slug)
+        ->first();
+
+    if (!$form) {
+        return '<!-- Formulário não encontrado -->';
+    }
+
+    // Renderiza a view
+    return view('forms::public.embed', ['form' => $form])->render();
+});</code></pre>
+
+                <p><strong>Uso no editor:</strong></p>
+                <pre><code>[form slug="contato"]</code></pre>
+            </div>
+
+            <div class="tip">
+                <strong>Dica:</strong> O sistema automaticamente remove parágrafos envolvendo shortcodes (<code>&lt;p&gt;[shortcode]&lt;/p&gt;</code> vira <code>[shortcode]</code>).
+            </div>
+        </section>
+
+        <section id="hooks">
+            <h2>🔗 Sistema de Hooks</h2>
+
+            <div class="intro">
+                <p>Hooks são pontos de injeção no tema onde plugins podem inserir conteúdo dinamicamente. É ideal para adicionar scripts, estilos, comentários, widgets, etc.</p>
+            </div>
+
+            <h4>Hooks Disponíveis:</h4>
+
+            <h5>No Layout Principal (site-layout.blade.php):</h5>
+            <pre><code class="code-label">BLADE</code>&lt;x-hook name="main.head" /&gt;           {{-- Dentro do &lt;head&gt; --}}
+&lt;x-hook name="main.before_content" /&gt; {{-- Antes do conteúdo principal --}}
+&lt;x-hook name="main.after_content" /&gt;  {{-- Após o conteúdo principal --}}</code></pre>
+
+            <h5>Em Posts (post-templates/default.blade.php):</h5>
+            <pre><code class="code-label">BLADE</code>&lt;x-hook name="post.before_content" :params="['post' => $post]" /&gt;
+&lt;x-hook name="post.after_content" :params="['post' => $post]" /&gt;
+&lt;x-hook name="post.footer_end" :params="['post' => $post]" /&gt;
+&lt;x-hook name="post.after_footer" :params="['post' => $post]" /&gt;</code></pre>
+
+            <h5>Em Páginas (templates/default.blade.php):</h5>
+            <pre><code class="code-label">BLADE</code>&lt;x-hook name="page.before_content" :params="['page' => $page]" /&gt;
+&lt;x-hook name="page.after_content" :params="['page' => $page]" /&gt;
+&lt;x-hook name="page.after_footer" :params="['page' => $page]" /&gt;</code></pre>
+
+            <h4>Como Registrar um Hook:</h4>
+            <pre><code class="code-label">PHP</code>use App\Support\HookManager;
+
+// No método boot() do ServiceProvider
+HookManager::register('post.footer_end', function($params) {
+    // $params contém os dados passados pelo hook
+    $post = $params['post'] ?? null;
+
+    // Verifica se a view existe antes de renderizar
+    if (view()->exists('meuplugin::componente')) {
+        return view('meuplugin::componente', [
+            'post' => $post
+        ])->render();
+    }
+
+    return ''; // Retorna string vazia se não tiver conteúdo
+}, 'NomeDoPlugin'); // Identificador para debug</code></pre>
+
+            <div class="example-box">
+                <h4>Exemplo Prático - Sistema de Comentários:</h4>
+                <pre><code class="code-label">PHP</code>// No CommentsServiceProvider.php
+\App\Support\HookManager::register('post.footer_end', function($params) {
+    $post = $params['post'];
+
+    // Verifica se a view existe
+    if (view()->exists('comments::comments-area')) {
+        return view('comments::comments-area', [
+            'model' => $post
+        ])->render();
+    }
+
+    return '';
+}, 'Comments plugin');</code></pre>
+
+                <p><strong>Resultado:</strong> A área de comentários aparece automaticamente no final de todos os posts!</p>
+            </div>
+
+            <div class="tip">
+                <strong>Dica:</strong> Em modo debug (<code>APP_DEBUG=true</code>), o sistema adiciona comentários HTML mostrando qual plugin injetou cada hook, facilitando o debugging.
+            </div>
+        </section>
+
+        <section id="rotas">
+            <h2>🛣️ Rotas Dinâmicas</h2>
+
+            <div class="intro">
+                <p>O sistema de rotas dinâmicas permite registrar URLs customizadas que são resolvidas pelo <code>RouteOrchestratorController</code> quando nenhuma rota padrão é encontrada.</p>
+            </div>
+
+            <h4>Como Registrar:</h4>
+            <pre><code class="code-label">PHP</code>use App\Support\DynamicRoutes;
+
+// No método boot() do ServiceProvider
+DynamicRoutes::register('GET', 'portfolio/{slug}', function($slug) {
+    // Retorna uma view ou chama um controller
+    return app(\Plugins\Portfolio\Http\Controllers\PortfolioController::class)
+        ->show($slug);
+});
+
+// Ou diretamente retornando uma view:
+DynamicRoutes::register('GET', 'minha-pagina-customizada', function() {
+    return view('meuplugin::pagina-customizada');
+});</code></pre>
+
+            <h4>Parâmetros:</h4>
+            <table>
+                <tr>
+                    <th>Parâmetro</th>
+                    <th>Descrição</th>
+                </tr>
+                <tr>
+                    <td><code>method</code></td>
+                    <td>Método HTTP (GET, POST, PUT, DELETE, etc)</td>
+                </tr>
+                <tr>
+                    <td><code>path</code></td>
+                    <td>Caminho da URL (use {param} para parâmetros dinâmicos)</td>
+                </tr>
+                <tr>
+                    <td><code>resolver</code></td>
+                    <td>Callback que recebe os parâmetros e retorna a resposta</td>
+                </tr>
+            </table>
+
+            <div class="example-box">
+                <h4>Exemplo 1 - Rota Simples:</h4>
+                <pre><code class="code-label">PHP</code>DynamicRoutes::register('GET', 'contato', function() {
+    return view('meuplugin::contato');
+});</code></pre>
+                <p>Acessível em: <code>https://seusite.com/contato</code></p>
+            </div>
+
+            <div class="example-box">
+                <h4>Exemplo 2 - Rota com Parâmetros:</h4>
+                <pre><code class="code-label">PHP</code>DynamicRoutes::register('GET', 'produto/{slug}', function($slug) {
+    $produto = \Plugins\Loja\Models\Produto::where('slug', $slug)->firstOrFail();
+    return view('loja::produto', ['produto' => $produto]);
+});</code></pre>
+                <p>Acessível em: <code>https://seusite.com/produto/nome-do-produto</code></p>
+            </div>
+
+            <div class="example-box">
+                <h4>Exemplo 3 - Rota com Múltiplos Parâmetros:</h4>
+                <pre><code class="code-label">PHP</code>DynamicRoutes::register('GET', 'blog/{categoria}/{post}', function($categoria, $post) {
+    return view('blog::post', [
+        'categoria' => $categoria,
+        'post' => $post
+    ]);
+});</code></pre>
+                <p>Acessível em: <code>https://seusite.com/blog/tecnologia/meu-post</code></p>
+            </div>
+
+            <div class="warning">
+                <strong>Atenção:</strong> Rotas dinâmicas são resolvidas após as rotas padrão do sistema. Se houver conflito, a rota padrão tem prioridade.
+            </div>
+        </section>
+
+        <section id="models">
+            <h2>💾 Models e Relacionamentos</h2>
+
+            <div class="intro">
+                <p>Plugins podem criar models Eloquent com relacionamentos polimórficos, permitindo vincular dados a Posts, Pages ou qualquer outro model do sistema.</p>
+            </div>
+
+            <h4>Criando um Model:</h4>
+            <pre><code class="code-label">PHP</code>namespace Plugins\MeuPlugin\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class MeuModel extends Model
+{
+    protected $table = 'minha_tabela';
+
+    protected $fillable = [
+        'nome',
+        'descricao',
+        'user_id'
+    ];
+
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
+
+    // Relacionamentos
+    public function user()
+    {
+        return $this->belongsTo(\App\Models\User::class);
+    }
+}</code></pre>
+
+            <h4>Relacionamento Polimórfico (Exemplo: Comentários):</h4>
+            <pre><code class="code-label">PHP</code>// No Model Comment
+class Comment extends Model
+{
+    // Um comentário pertence a qualquer modelo (Post, Page, etc)
+    public function commentable()
+    {
+        return $this->morphTo();
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(\App\Models\User::class);
+    }
+}
+
+// No Model Post (usando resolveRelationUsing no ServiceProvider)
+Post::resolveRelationUsing('comments', function ($post) {
+    return $post->morphMany(Comment::class, 'commentable')
+        ->whereNull('parent_id')
+        ->where('status', 'approved')
+        ->orderBy('created_at', 'desc');
+});</code></pre>
+
+            <h4>Usando Relacionamentos:</h4>
+            <pre><code class="code-label">PHP</code>// Criando comentário em um post
+$post = Post::find(1);
+$post->comments()->create([
+    'user_id' => auth()->id(),
+    'content' => 'Ótimo post!',
+    'status' => 'approved'
+]);
+
+// Buscando comentários
+$comments = $post->comments; // Retorna coleção de comentários
+
+// Contando comentários
+$count = $post->comments()->count();</code></pre>
+
+            <div class="tip">
+                <strong>Dica:</strong> Use <code>resolveRelationUsing()</code> para adicionar relacionamentos a models do core sem modificá-los diretamente. Isso mantém seu plugin compatível com atualizações.
+            </div>
+        </section>
+
+        <section id="views">
+            <h2>🎨 Views e Assets</h2>
+
+            <div class="intro">
+                <p>Cada plugin tem seu próprio namespace de views e pode ter assets (CSS, JS, imagens) acessíveis publicamente.</p>
+            </div>
+
+            <h4>Estrutura de Views:</h4>
+            <pre><code>resources/views/
+├── admin/
+│   ├── index.blade.php
+│   ├── create.blade.php
+│   └── edit.blade.php
+└── public/
+    ├── componente.blade.php
+    └── partials/
+        └── item.blade.php</code></pre>
+
+            <h4>Carregando Views:</h4>
+            <pre><code class="code-label">PHP</code>// No ServiceProvider
+public function boot(): void
+{
+    $this->loadViewsFrom(__DIR__ . '/resources/views', 'meuplugin');
+}</code></pre>
+
+            <pre><code class="code-label">PHP</code>// Usando em controllers ou shortcodes
+return view('meuplugin::admin.index', ['data' => $data]);
+return view('meuplugin::public.componente', ['params' => $params]);</code></pre>
+
+            <h4>Assets (CSS/JS/Imagens):</h4>
+            <p>O comando <code>plugin:create</code> automaticamente:</p>
+            <ul class="steps">
+                <li>Cria diretório <code>resources/assets/</code></li>
+                <li>Cria link simbólico em <code>public/plugins/nome-do-plugin</code></li>
+            </ul>
+
+            <pre><code class="code-label">BLADE</code>{{!-- Referenciando assets --}}
+&lt;link rel="stylesheet" href="{{ asset('plugins/meuplugin/css/style.css') }}">
+&lt;script src="{{ asset('plugins/meuplugin/js/app.js') }}"&gt;&lt;/script&gt;</code></pre>
+
+            <div class="example-box">
+                <h4>Exemplo Completo - View com Assets:</h4>
+                <pre><code class="code-label">BLADE</code>{{-- resources/views/public/componente.blade.php --}}
+@once
+@push('styles')
+&lt;link rel="stylesheet" href="{{ asset('plugins/meuplugin/css/componente.css') }}"&gt;
+@endpush
+@endonce
+
+&lt;div class="meu-componente"&gt;
+    &lt;h2&gt;{{ $titulo }}&lt;/h2&gt;
+    &lt;div class="conteudo"&gt;
+        {!! $content !!}
+    &lt;/div&gt;
+&lt;/div&gt;
+
+@push('scripts')
+&lt;script src="{{ asset('plugins/meuplugin/js/componente.js') }}"&gt;&lt;/script&gt;
+@endpush</code></pre>
+            </div>
+
+            <div class="tip">
+                <strong>Dica:</strong> Use <code>@once</code> e <code>@onceAsset('id-unico')</code> para evitar carregar CSS/JS duplicado quando o mesmo componente aparece múltiplas vezes na página.
+            </div>
+        </section>
+
+        <section id="migrations">
+            <h2>🗄️ Migrations e Banco de Dados</h2>
+
+            <div class="intro">
+                <p>Migrations permitem versionar o esquema do banco de dados do seu plugin. Elas são automaticamente carregadas quando o plugin é ativado.</p>
+            </div>
+
+            <h4>Criando Migration:</h4>
+            <pre><code class="code-label">PHP</code>// database/migrations/2026_01_01_000000_create_meus_items_table.php
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration {
+    public function up(): void
+    {
+        Schema::create('meus_items', function (Blueprint $table) {
+            $table->id();
+            $table->string('nome');
+            $table->text('descricao')->nullable();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->boolean('ativo')->default(true);
+            $table->timestamps();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('meus_items');
+    }
+};</code></pre>
+
+            <h4>Relacionamentos Polimórficos:</h4>
+            <pre><code class="code-label">PHP</code>Schema::create('comentarios', function (Blueprint $table) {
+    $table->id();
+
+    // Cria commentable_id e commentable_type
+    $table->morphs('commentable');
+
+    $table->foreignId('parent_id')->nullable()
+          ->constrained('comentarios')->onDelete('cascade');
+    $table->foreignId('user_id')->nullable()
+          ->constrained()->onDelete('cascade');
+    $table->text('conteudo');
+    $table->string('status')->default('pending');
+    $table->timestamps();
+});</code></pre>
+
+            <h4>Executando Migrations:</h4>
+            <pre><code class="code-label">BASH</code># Migrar tudo (core + plugins)
+php artisan migrate
+
+# Migrar apenas plugins (se necessário)
+php artisan migrate --path=plugins/NomeDoPlugin/database/migrations</code></pre>
+
+            <div class="tip">
+                <strong>Dica:</strong> O PluginServiceProvider automaticamente carrega migrations de todos os plugins quando você executa <code>php artisan migrate</code>.
+            </div>
+        </section>
+
+        <section id="exemplo-comments">
+            <h2>📝 Exemplo Prático: Plugin Comments</h2>
+
+            <p>O plugin Comments demonstra múltiplas funcionalidades integradas:</p>
+
+            <h4>1. ServiceProvider Completo:</h4>
+            <pre><code class="code-label">PHP</code>namespace Plugins\Comments;
+
+use Illuminate\Support\ServiceProvider;
+use App\Models\Post;
+use Plugins\Comments\Models\Comment;
+
+class CommentsServiceProvider extends ServiceProvider
+{
+    public function boot(): void
+    {
+        // 1. Adiciona relacionamento polimórfico ao Post
+        Post::resolveRelationUsing('comments', function ($post) {
+            return $post->morphMany(Comment::class, 'commentable')
+                ->whereNull('parent_id')
+                ->where('status', 'approved')
+                ->orderBy('created_at', 'desc');
+        });
+
+        // 2. Carrega resources
+        $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
+        $this->loadRoutesFrom(__DIR__ . '/routes.php');
+        $this->loadViewsFrom(__DIR__ . '/resources/views', 'comments');
+
+        // 3. Registra hook para injetar área de comentários
+        \App\Support\HookManager::register('post.footer_end', function($params) {
+            $post = $params['post'];
+
+            if (view()->exists('comments::comments-area')) {
+                return view('comments::comments-area', [
+                    'model' => $post
+                ])->render();
+            }
+
+            return '';
+        }, 'Comments plugin');
+    }
+}</code></pre>
+
+            <h4>2. Model com Relacionamentos:</h4>
+            <pre><code class="code-label">PHP</code>class Comment extends Model
+{
+    protected $fillable = [
+        'commentable_id',
+        'commentable_type',
+        'parent_id',
+        'user_id',
+        'author_name',
+        'author_email',
+        'content',
+        'status',
+    ];
+
+    // Pertence a qualquer modelo (Post, Page, etc)
+    public function commentable()
+    {
+        return $this->morphTo();
+    }
+
+    // Autor do comentário
+    public function user()
+    {
+        return $this->belongsTo(\App\Models\User::class);
+    }
+
+    // Comentário pai (para respostas aninhadas)
+    public function parent()
+    {
+        return $this->belongsTo(Comment::class, 'parent_id');
+    }
+
+    // Respostas aprovadas
+    public function replies()
+    {
+        return $this->hasMany(Comment::class, 'parent_id')
+            ->where('status', 'approved')
+            ->orderBy('created_at', 'asc');
+    }
+}</code></pre>
+
+            <h4>3. Controller para Processamento:</h4>
+            <pre><code class="code-label">PHP</code>class CommentController extends Controller
+{
+    public function store(Request $request)
+    {
+        $rules = [
+            'commentable_id'   => 'required|integer',
+            'commentable_type' => 'required|string',
+            'parent_id'        => 'nullable|exists:comments,id',
+            'content'          => 'required|string|min:3|max:1000',
+        ];
+
+        // Validação adicional para visitantes
+        if (!Auth::check()) {
+            $rules['author_name'] = 'required|string|max:255';
+            $rules['author_email'] = 'required|email|max:255';
+        }
+
+        $validated = $request->validate($rules);
+
+        // Moderação simples por palavras-chave
+        $status = 'approved';
+        $spamKeywords = ['buy', 'viagra', 'spam'];
+        foreach ($spamKeywords as $keyword) {
+            if (stripos($validated['content'], $keyword) !== false) {
+                $status = 'pending';
+                break;
+            }
+        }
+
+        Comment::create([
+            'commentable_id'   => $validated['commentable_id'],
+            'commentable_type' => $validated['commentable_type'],
+            'parent_id'        => $validated['parent_id'],
+            'user_id'          => Auth::id(),
+            'author_name'      => Auth::check() ? Auth::user()->name : $validated['author_name'],
+            'author_email'     => Auth::check() ? Auth::user()->email : $validated['author_email'],
+            'content'          => strip_tags($validated['content']),
+            'status'           => $status
+        ]);
+
+        return back()->with('comment_status', 'Comentário enviado!');
+    }
+}</code></pre>
+
+            <h4>4. View com Recursão (Comentários Aninhados):</h4>
+            <pre><code class="code-label">BLADE</code>{{-- comments-area.blade.php --}}
+&lt;div class="comments-area"&gt;
+    &lt;h3&gt;Comentários ({{ $model->comments()->count() }})&lt;/h3&gt;
+
+    &lt;div class="comments-list"&gt;
+        @forelse($model->comments as $comment)
+            @include('comments::partials.comment-item', ['comment' => $comment])
+        @empty
+            &lt;p&gt;Sem comentários ainda.&lt;/p&gt;
+        @endforelse
+    &lt;/div&gt;
+
+    &lt;form action="{{ route('comments.store') }}" method="POST"&gt;
+        @csrf
+        &lt;input type="hidden" name="commentable_id" value="{{ $model->id }}"&gt;
+        &lt;input type="hidden" name="commentable_type" value="{{ get_class($model) }}"&gt;
+        &lt;textarea name="content" required&gt;&lt;/textarea&gt;
+        &lt;button type="submit"&gt;Comentar&lt;/button&gt;
+    &lt;/form&gt;
+&lt;/div&gt;
+
+{{-- partials/comment-item.blade.php --}}
+&lt;div class="comment-item"&gt;
+    &lt;div class="comment-author"&gt;{{ $comment->author_name }}&lt;/div&gt;
+    &lt;div class="comment-text"&gt;{{ $comment->content }}&lt;/div&gt;
+
+    &lt;button onclick="setReply({{ $comment->id }})"&gt;Responder&lt;/button&gt;
+
+    {{-- Respostas aninhadas recursivamente --}}
+    @if($comment->replies->count() > 0)
+        &lt;div class="comment-replies"&gt;
+            @foreach($comment->replies as $reply)
+                @include('comments::partials.comment-item', ['comment' => $reply])
+            @endforeach
+        &lt;/div&gt;
+    @endif
+&lt;/div&gt;</code></pre>
+
+            <div class="tip">
+                <strong>O que aprendemos:</strong> Este exemplo mostra hooks, models polimórficos, relacionamentos recursivos, controllers, migrations, views recursivas e validação condicional!
+            </div>
+        </section>
+
+        <section id="exemplo-forms">
+            <h2>📋 Exemplo Prático: Plugin Forms</h2>
+
+            <p>O plugin Forms demonstra criação de CRUD admin, shortcodes dinâmicos e processamento de formulários:</p>
+
+            <h4>1. Shortcode Dinâmico:</h4>
+            <pre><code class="code-label">PHP</code>ContentHelper::registerShortcode('form', function($attributes, $content) {
+    $slug = $attributes['slug'] ?? null;
+
+    if (!$slug) return '';
+
+    $form = Form::active()->where('slug', $slug)->first();
+
+    return $form
+        ? view('forms::public.embed', ['form' => $form])->render()
+        : '';
+});</code></pre>
+
+            <h4>2. Admin Menu Integration:</h4>
+            <pre><code class="code-label">PHP</code>\App\Support\AdminMenu::add([
+    'label'      => 'Formulários',
+    'icon'       => 'form',
+    'route'      => 'admin.forms.index',
+    'active'     => 'admin.forms.*',
+    'permission' => 'manage-pages',
+], 'Taxonomias');</code></pre>
+
+            <h4>3. Controller Admin com CRUD:</h4>
+            <pre><code class="code-label">PHP</code>class FormsController extends Controller
+{
+    public function index(Request $request)
+    {
+        $query = Form::query();
+
+        if ($request->filled('title')) {
+            $query->where('title', 'like', '%' . $request->title . '%');
+        }
+
+        $forms = $query->withCount('submissions')
+            ->orderBy('created_at', 'desc')
+            ->paginate(setting('reading.pagination_max_items'));
+
+        return view('forms::admin.forms.index', compact('forms'));
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'title' => 'nullable|string|max:255',
+            'slug' => 'required|string|unique:forms,slug|alpha_dash',
+            'email_to' => 'nullable|email',
+            'fields_schema' => 'required|json',
+            'is_active' => 'boolean',
+        ]);
+
+        Form::create($validated);
+
+        return redirect()->route('admin.forms.index')
+            ->with('success', 'Formulário criado!');
+    }
+}</code></pre>
+
+            <h4>4. Model com Cast Automático:</h4>
+            <pre><code class="code-label">PHP</code>class Form extends Model
+{
+    protected $fillable = [
+        'slug', 'title', 'email_to', 'fields_schema',
+        'is_active', 'submit_message'
+    ];
+
+    // Converte JSON automaticamente
+    protected $casts = [
+        'fields_schema' => 'array',
+        'is_active'     => 'boolean',
+    ];
+
+    public function submissions()
+    {
+        return $this->hasMany(FormSubmission::class, 'form_id');
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
+    }
+}</code></pre>
+
+            <h4>5. Processamento de Submissão:</h4>
+            <pre><code class="code-label">PHP</code>class GenericFormController extends Controller
+{
+    public function submit(Request $request, string $slug)
+    {
+        $form = Form::active()->where('slug', $slug)->firstOrFail();
+
+        // Validação dinâmica baseada no schema
+        $rules = [];
+        foreach ($form->fields_schema as $field) {
+            $rules[$field['key']] = $field['rules'] ?? 'nullable';
+        }
+
+        $validatedData = $request->validate($rules);
+
+        // Salva submissão
+        FormSubmission::create([
+            'form_id'    => $form->id,
+            'data'       => $validatedData,
+            'ip_address' => $request->ip(),
+        ]);
+
+        // Envia email se configurado
+        if (!empty($form->email_to)) {
+            Mail::to($form->email_to)
+                ->send(new FormSubmissionMail($form, $validatedData));
+        }
+
+        return back()->with('success', $form->submit_message);
+    }
+}</code></pre>
+
+            <div class="tip">
+                <strong>O que aprendemos:</strong> CRUD admin completo, shortcodes com parâmetros, validação dinâmica, casts JSON, scopes, envio de emails e processamento de formulários!
+            </div>
+        </section>
+
+        <section id="boas-praticas">
+            <h2>✅ Boas Práticas</h2>
+
+            <h4>1. Nomenclatura:</h4>
+            <ul class="steps">
+                <li>Use <strong>PascalCase</strong> para nomes de plugins (MeuPlugin, Nao meu-plugin)</li>
+                <li>Namespaces sempre em <strong>Plugins\NomeDoPlugin</strong></li>
+                <li>Slugs em <strong>kebab-case</strong> para URLs (meu-plugin)</li>
+            </ul>
+
+            <h4>2. Segurança:</h4>
+            <ul class="steps">
+                <li>Sempre valide inputs: <code>$request->validate()</code></li>
+                <li>Use <code>strip_tags()</code> em conteúdos de usuários</li>
+                <li>Verifique permissões com <code>userCan()</code> ou middleware</li>
+                <li>Nunca exponha dados sensíveis em views</li>
+            </ul>
+
+            <h4>3. Performance:</h4>
+            <ul class="steps">
+                <li>Use <code>@once</code> para CSS/JS não duplicar</li>
+                <li>Eager loading: <code>Post::with('comments')->get()</code></li>
+                <li>Verifique existência de views antes de renderizar</li>
+                <li>Use cache para dados frequentemente acessados</li>
+            </ul>
+
+            <h4>4. Organização:</h4>
+            <ul class="steps">
+                <li>Mantenha controllers focados (uma responsabilidade por controller)</li>
+                <li>Use partials para views reutilizáveis</li>
+                <li>Comente código complexo</li>
+                <li>Siga o padrão MVC rigidamente</li>
+            </ul>
+
+            <h4>5. Compatibilidade:</h4>
+            <ul class="steps">
+                <li>Use <code>resolveRelationUsing()</code> para não modificar models do core</li>
+                <li>Verifique se classes/funções existem antes de usar</li>
+                <li>Forneça fallbacks para quando recursos não estiverem disponíveis</li>
+            </ul>
+
+            <div class="warning">
+                <strong>Importante:</strong> Sempre teste seu plugin em um ambiente de desenvolvimento antes de publicar. Verifique compatibilidade com a versão do Laravel e do Lunar Base CMS.
+            </div>
+
+            <h4>Checklist antes de Publicar:</h4>
+            <table>
+                <tr>
+                    <th>Item</th>
+                    <th>Verificação</th>
+                </tr>
+                <tr>
+                    <td>Plugin.json</td>
+                    <td>✅ Nome, versão, descrição e provider corretos</td>
+                </tr>
+                <tr>
+                    <td>Migrations</td>
+                    <td>✅ Métodos up() e down() implementados</td>
+                </tr>
+                <tr>
+                    <td>ServiceProvider</td>
+                    <td>✅ Carrega views, rotas e migrations corretamente</td>
+                </tr>
+                <tr>
+                    <td>Views</td>
+                    <td>✅ Todas as views existem e não têm erros de sintaxe</td>
+                </tr>
+                <tr>
+                    <td>Rotas</td>
+                    <td>✅ Todas as rotas nomeadas e com middleware apropriado</td>
+                </tr>
+                <tr>
+                    <td>Assets</td>
+                    <td>✅ CSS/JS otimizados e linkados corretamente</td>
+                </tr>
+                <tr>
+                    <td>Segurança</td>
+                    <td>✅ Validações, sanitizações e verificações de permissão</td>
+                </tr>
+                <tr>
+                    <td>Documentação</td>
+                    <td>✅ README com instruções de instalação e uso</td>
+                </tr>
+            </table>
+        </section>
+
+        <footer>
+            <p>📚 Manual de Desenvolvimento de Plugins - Lunar Base CMS</p>
+            <p>Versão 1.0 | Última atualização: 2026</p>
+            <p>Desenvolvido com ❤️ para a comunidade Laravel</p>
+        </footer>
+    </div>
+</body>
+</html>

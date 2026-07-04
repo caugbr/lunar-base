@@ -1,0 +1,23 @@
+/* ============================================
+   LAYOUT - Wrapper, Container, Content
+   ============================================ */
+
+/* ---------- Site Wrapper ---------- */
+.site-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* ---------- Container ---------- */
+.container {
+  width: 100%;
+  max-width: var(--max-width-container, 1200px);
+  margin: 0 auto;
+  padding: 0 var(--space-md);
+}
+
+/* ---------- Site Content ---------- */
+.site-content {
+  margin: var(--space-4xl) 0 calc(var(--space-md) + var(--space-sm));
+}

@@ -271,7 +271,7 @@
         padding: 10px 16px;
         border: none;
         background: transparent;
-        color: #6b7280;
+        color: var(--color-text-muted);
         font-size: 0.9rem;
         font-weight: 500;
         cursor: pointer;

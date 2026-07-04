@@ -1,0 +1,92 @@
+.edit-page-inner {
+    display: flex;
+    flex-direction: row;
+    gap: 1.5rem;
+}
+
+.edit-page-inner .main-column {
+    flex: 1;
+}
+
+.edit-page-inner .aside-column {
+    flex: 0 0 360px;
+}
+
+.edit-page-inner input#title {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.edit-box {
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: var(--color-bg-card);
+  margin-bottom: 20px;
+}
+
+.edit-box header {
+  background-color: var(--color-bg-dark);
+  padding: 10px 16px;
+  color: var(--color-text);
+  margin: 0;
+  font-size: 1.1rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.edit-box article {
+  padding: 16px;
+  color: var(--color-text);
+}
+
+.edit-box .thumbnail-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.edit-box .thumbnail-preview {
+    max-width: 100%;
+}
+
+.edit-box .thumbnail-actions {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+}
+
+.edit-box .form-group:last-child {
+    margin-bottom: 0;
+}
+
+.edit-box button[type="submit"] {
+    width: 100%;
+    justify-content: center;
+}
+
+.edit-box .checkbox-label {
+    margin: 0;
+}
+
+.edit-box small {
+    display: block;
+}
+
+.buttons.bottom-buttons {
+    display: none;
+}
+
+@media (max-width: 1300px) {
+    .edit-page-inner {
+        flex-direction: column;
+    }
+
+    .buttons.bottom-buttons {
+        display: block;
+    }
+
+    .edit-box .buttons {
+        display: none;
+    }
+}

@@ -1,0 +1,38 @@
+/* ============================================
+   BASE - Reset & Global Styles
+   ============================================ */
+
+/* Universal Reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* HTML Base */
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Body Base */
+body {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--color-text);
+  background-color: var(--color-bg-deep);
+  min-height: 100vh;
+  overflow-x: hidden;
+  display: flex;
+  justify-content: space-around;
+  flex-direction: column;
+}
+
+/* Text Selection */
+::selection {
+  background: var(--color-primary-dark);
+  color: var(--color-white, #ffffff);
+}

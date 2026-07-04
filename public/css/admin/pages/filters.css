@@ -1,0 +1,46 @@
+.admin-filters {
+    margin-bottom: 24px;
+    padding: 16px;
+    background: var(--color-bg-dark);
+    border-radius: 8px;
+}
+.admin-filters.searched {
+    border: 1px solid var(--color-primary);
+}
+.admin-filters.searched::before {
+    content: 'Busca ativa';
+    margin-bottom: 1rem;
+    display: block;
+    color: var(--color-primary);
+}
+
+.admin-filters-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+.admin-filters-row:last-child {
+    margin-bottom: 0;
+}
+
+.admin-filter-group {
+    flex: 1;
+    min-width: 150px;
+}
+
+.admin-filter-select,
+.admin-filter-input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+.admin-filter-actions {
+    display: flex;
+    gap: 8px;
+    align-items: flex-end;
+}

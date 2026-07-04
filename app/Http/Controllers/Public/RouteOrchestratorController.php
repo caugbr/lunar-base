@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Support\DynamicRoutes;
 use App\Http\Controllers\Public\PublicPageController;
 use App\Http\Controllers\Public\PublicPostController;
 use App\Models\Taxonomy;
@@ -32,6 +33,10 @@ class RouteOrchestratorController extends Controller
             return app(PublicPageController::class)->show($base); // ou show($page->slug)
         }
 
+        if ($view = DynamicRoutes::resolve($base)) {
+            return $view;
+        }
+
         abort(404);
     }
 
@@ -45,28 +50,22 @@ class RouteOrchestratorController extends Controller
     {
         $pagesBase = setting('permalinks.pages_base', 'page');
         $postsBase = setting('permalinks.posts_base', 'post');
-            \Log::info('handleTwoSegments', ["namespace" => $base, "slug" => $slug, "pagesBase" => $pagesBase, "postsBase" => $postsBase]);
+            // \Log::info('handleTwoSegments', ["namespace" => $base, "slug" => $slug, "pagesBase" => $pagesBase, "postsBase" => $postsBase]);
 
         // === CASO 1: É uma Página com base fixa (/pagina/sobre-nos) ===
         if ($base === $pagesBase) {
             return app(PublicPageController::class)->show($slug);
         }
 
-        // === CASO 2: Está na base do Blog (/blog/...) ===
+        // === CASO 2: Está na base do Blog (/blog/slug) ===
         if ($base === $postsBase) {
-            $isTaxonomy = Taxonomy::where('slug', $slug)->exists();
-
-            if ($isTaxonomy) {
-                return app(PublicPostController::class)->byTerm($slug, null);
-            }
-
             return app(PublicPostController::class)->show($slug);
         }
 
         // === CASO 3: Página com namespace sem base (/institucional/missao) ===
         // $base pode ser um namespace, $slug é a página dentro dele
         if ($pagesBase === null) {
-            \Log::info('sem base', ["namespace" => $base, "slug" => $slug]);
+            // \Log::info('sem base', ["namespace" => $base, "slug" => $slug]);
             $page = Page::where('slug', $slug)
                 ->where('namespace', $base)
                 ->where('status', 'published')
@@ -75,6 +74,10 @@ class RouteOrchestratorController extends Controller
             if ($page) {
                 return app(PublicPageController::class)->showNamespaced($base, $slug);
             }
+        }
+
+        if ($view = DynamicRoutes::resolve("{$base}/{$slug}")) {
+            return $view;
         }
 
         abort(404);
@@ -98,6 +101,10 @@ class RouteOrchestratorController extends Controller
         // Se for página de 3 segmentos (Ex: /pagina/institucional/missao)
         if ($base === $blogBase) {
             return app(PublicPostController::class)->byTerm($namespace, $slug);
+        }
+
+        if ($view = DynamicRoutes::resolve("{$base}/{$namespace}/{$slug}")) {
+            return $view;
         }
 
         abort(404);

@@ -1,0 +1,105 @@
+.admin-pagination {
+    padding: 1rem 0;
+}
+
+.pagination-mobile {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.pagination-prev,
+.pagination-next {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background-color: var(--color-bg-card-hover);
+    border: 1px solid var(--color-border-strong);
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    color: var(--color-text);
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.pagination-prev:hover,
+.pagination-next:hover {
+    background-color: var(--color-bg-disabled);
+    border-color: var(--color-text-muted);
+}
+
+.pagination-prev.disabled,
+.pagination-next.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.pagination-desktop {
+    display: none;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.pagination-info {
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+}
+
+.pagination-links {
+    display: flex;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+}
+
+.pagination-links a,
+.pagination-links span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2rem;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+    border: 1px solid var(--color-border-strong);
+    border-radius: 0.375rem;
+    text-decoration: none;
+    background-color: var(--color-bg-card);
+    color: var(--color-text);
+    transition: all 0.2s;
+}
+
+.pagination-links a:hover {
+    background-color: var(--color-bg-card-hover);
+    border-color: var(--color-text-muted);
+}
+
+.pagination-links .active {
+    background-color: var(--color-text-muted);
+    border-color: var(--color-text-dim);
+    color: white;
+}
+
+.pagination-links .disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+@media (min-width: 640px) {
+    .pagination-mobile {
+        display: none;
+    }
+    .pagination-desktop {
+        display: flex;
+    }
+}
+
+@media (max-width: 639px) {
+    .pagination-mobile {
+        display: flex;
+    }
+    .pagination-desktop {
+        display: none;
+    }
+}

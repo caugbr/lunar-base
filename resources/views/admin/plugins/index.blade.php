@@ -26,9 +26,9 @@
                     <td><strong>{{ $plugin->name }}</strong></td>
                     <td style="max-width: 320px; white-space: normal;">
                         <span class="admin-text-muted" style="font-size: 0.875rem;">{{ $plugin->description ?? 'Nenhuma descrição fornecida.' }}</span>
-                        <div style="font-size: 0.725rem; color: #888; font-family: monospace; margin-top: 4px;">
+                        {{-- <div style="font-size: 0.725rem; color: #888; font-family: monospace; margin-top: 4px;">
                             Provider: {{ $plugin->service_provider_class }}
-                        </div>
+                        </div> --}}
                     </td>
                     <td><code>v{{ $plugin->version }}</code></td>
                     <td><code>plugins/{{ $plugin->folder_name }}</code></td>
@@ -42,20 +42,6 @@
                             {{-- Formulário de ativação rápida utilizando a estrutura nativa de switches do Lunar Base --}}
                             <form method="POST" action="{{ route('admin.plugins.toggle', $plugin->id) }}" style="display: inline;">
                                 @csrf
-                                {{-- <label class="switch-label">
-                                    <input type="checkbox"
-                                           name="is_active"
-                                           {{ $plugin->is_active ? 'checked' : '' }}
-                                           onChange="this.form.submit()"
-                                           class="switch-input">
-                                    <span class="switch-track">
-                                        <span class="switch-thumb"></span>
-                                    </span>
-                                    <span class="switch-text"
-                                          data-active="Ativar"
-                                          data-inactive="Desativar">
-                                    </span>
-                                </label> --}}
                                 <x-switch name="is_active" checked="{{ old('is_active', $plugin->is_active) }}" active="Ligado" inactive="Desligado" style="top: 0;" onChange="this.form.submit()" />
                             </form>
                         </div>

@@ -1,0 +1,67 @@
+.top-buttons {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2rem;
+}
+
+.admin-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 8px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.admin-btn[disabled] {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.admin-btn-primary {
+    background: var(--gradient-primary);
+    color: white;
+}
+
+.admin-btn-primary:hover {
+    opacity: 0.9;
+}
+
+.admin-btn-danger {
+    background: var(--color-danger);
+    color: white;
+}
+
+.admin-btn-danger:hover {
+    background: var(--color-danger);
+    opacity: 0.9;
+}
+
+.admin-btn-secondary {
+    background: var(--color-text-muted);
+    color: white;
+}
+
+.admin-btn-secondary:hover {
+    background: var(--color-text-dim);
+}
+
+.admin-btn-link {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-size: 0.85rem;
+}
+
+.admin-btn-link:hover {
+    text-decoration: underline;
+}

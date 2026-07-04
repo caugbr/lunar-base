@@ -16,7 +16,6 @@ class Media extends Model
         'name', 'path', 'mime_type', 'size', 'width', 'height',
         'alt', 'caption', 'hash',
         'meta'
-        // ⚠️ mediaable_id e mediaable_type são definidos via relacionamento, não mass assignment
     ];
 
     protected $casts = [
@@ -55,32 +54,6 @@ class Media extends Model
         return Storage::disk('public')->url($this->path);
     }
 
-    // public function getThumbUrlAttribute(): ?string
-    // {
-    //     // SVG não tem thumbnail, retorna a própria imagem
-    //     if (str_starts_with($this->mime_type, 'image/svg')) {
-    //         return $this->url;
-    //     }
-
-    //     $pathInfo = pathinfo($this->path);
-
-    //     $thumbName = $pathInfo['filename'] . '_thumb.' . $pathInfo['extension'];
-    //     $thumbPath = 'media/uploads/cache/' . $thumbName;
-
-    //     \Log::info("PATH INFO", [
-    //         "thumbPath" => $thumbPath,
-    //         "exists" => Storage::disk('public')->exists($thumbPath),
-    //         "url" => Storage::disk('public')->url($thumbPath)
-    //     ]);
-
-    //     // Verifica se o thumb existe, senão retorna a original
-    //     if (Storage::disk('public')->exists($thumbPath)) {
-    //         return Storage::disk('public')->url($thumbPath);
-    //     }
-
-    //     // fallback para original
-    //     return $this->url;
-    // }
     public function getThumbUrlAttribute(): ?string
     {
         // SVG não tem thumbnail, retorna a própria imagem
@@ -99,12 +72,6 @@ class Media extends Model
 
         $thumbName = $pathInfo['filename'] . '_thumb.' . $format;
         $thumbPath = 'media/uploads/cache/' . $thumbName;
-
-        \Log::info("PATH INFO CORRIGIDO", [
-            "thumbPath" => $thumbPath,
-            "exists" => Storage::disk('public')->exists($thumbPath),
-            "url" => Storage::disk('public')->url($thumbPath)
-        ]);
 
         // Verifica se o thumb existe, senão retorna a original
         if (Storage::disk('public')->exists($thumbPath)) {

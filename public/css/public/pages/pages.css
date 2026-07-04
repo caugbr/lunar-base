@@ -1,0 +1,76 @@
+/* ============================================
+   PAGES - Page Content & Figures
+   ============================================ */
+
+/* ---------- Page Content Container ---------- */
+.page-content {
+  margin: var(--space-md) auto;
+}
+
+.page-content h1,
+.page-content h2,
+.page-content h3,
+.page-content h4,
+.page-content h5,
+.page-content p {
+  margin: calc(var(--space-sm) + var(--space-xs)) auto;
+}
+
+/* ---------- Figures ---------- */
+.page-content figure {
+  max-width: 100%;
+  margin: 0 0 calc(var(--space-sm) + var(--space-xs)) 0;
+}
+
+.page-content figure img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Block: image left */
+.page-content figure.align-left img {
+  margin-right: auto;
+  margin-left: 0;
+}
+
+/* Block: image centered */
+.page-content figure.align-center img {
+  margin-right: auto;
+  margin-left: auto;
+}
+
+/* Block: image right */
+.page-content figure.align-right img {
+  margin-right: 0;
+  margin-left: auto;
+}
+
+/* Inline: float left, text wraps */
+.page-content figure.align-float-left {
+  float: left;
+  margin: 0 calc(var(--space-sm) + var(--space-xs)) var(--space-sm) 0;
+  max-width: 50%;
+}
+
+/* Inline: float right, text wraps */
+.page-content figure.align-float-right {
+  float: right;
+  margin: 0 0 var(--space-sm) calc(var(--space-sm) + var(--space-xs));
+  max-width: 50%;
+}
+
+/* Clear float after content */
+.page-content::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* ---------- Page Footer ---------- */
+.page-footer {
+  border-top: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  text-align: right;
+  padding: 2px 0 var(--space-md);
+}

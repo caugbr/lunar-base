@@ -11,6 +11,20 @@ class ContentHelper
 
     // Guarda os IDs de assets que já foram renderizados nesta requisição
     protected static $renderedAssets = [];
+    protected static $registeredShortcodes = [];
+
+    // Plugin chama isso no seu ServiceProvider
+    public static function registerShortcode(string $tag, callable $callback)
+    {
+        $tag = strtolower($tag);
+        if (isset(self::$registeredShortcodes[$tag])) {
+            // \Log::warning("The shortcode [{$tag}] is already registered");
+            return false;
+        }
+        // \Log::info('registerShortcode', ["tag" => $tag]);
+        self::$registeredShortcodes[$tag] = $callback;
+        return true;
+    }
 
     /**
      * Verifica se um asset já foi carregado e o registra.
@@ -68,6 +82,21 @@ class ContentHelper
 
     private static function renderShortcode($tag, $attributes, $content = null)
     {
+        $tag = strtolower($tag);
+        \Log::info('renderShortcode', ["tag" => $tag, "all" => self::$registeredShortcodes]);
+
+        // 1. Verifica se existe um shortcode registrado por um plugin
+        if (isset(self::$registeredShortcodes[$tag])) {
+            return call_user_func(self::$registeredShortcodes[$tag], $attributes, $content);
+        }
+
+        // 2. Fallback para métodos da Trait (Core)
+        $method = "render" . Str::studly($tag);
+        if (method_exists(self::class, $method)) {
+            return self::{$method}($attributes, $content);
+        }
+
+        // 3. Fallback para views no core
         $method = "render" . Str::studly($tag);
         if (method_exists(self::class, $method)) {
             return self::{$method}($attributes, $content);
@@ -75,7 +104,7 @@ class ContentHelper
 
         $viewPath = "components.shortcodes." . $tag;
         if (view()->exists($viewPath)) {
-            \Log::info('renderShortcode', ["path" => $viewPath]);
+            // \Log::info('renderShortcode', ["path" => $viewPath]);
             return view($viewPath, [
                 ...$attributes,
                 'attr' => $attributes,

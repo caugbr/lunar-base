@@ -1,0 +1,31 @@
+/* ============================================
+   COMPONENTS - Badges
+   ============================================ */
+
+/* ---------- Hero Badge ---------- */
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xxs) var(--space-sm);
+  background: var(--color-hero-badge-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  color: var(--color-primary);
+  width: fit-content;
+}
+
+.hero-badge .dot {
+  width: 6px;
+  height: 6px;
+  background: var(--color-primary);
+  border-radius: var(--radius-circle, 50%);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}

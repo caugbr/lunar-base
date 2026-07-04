@@ -238,7 +238,7 @@ return [
                 [
                     'key' => 'site_theme',
                     'type' => 'select',
-                    'label' => 'Tema padrão',
+                    'label' => 'Tema padrão do site',
                     'description' => 'Tema inicial do site (o usuário pode escolher)',
                     'default' => 'dark',
                     'options' => ['light' => 'Claro', 'dark' => 'Escuro'],
@@ -249,6 +249,14 @@ return [
                     'label' => 'Texto no footer',
                     'description' => 'Texto opcional no footer (ao lado do copyright). HTML não é permitido, mas URLs e emails viram links automaticamente.',
                     'default' => '',
+                ],
+                [
+                    'key' => 'admin_theme',
+                    'type' => 'select',
+                    'label' => 'Tema da admin',
+                    'description' => 'Tema claro ou escuro na administração?',
+                    'default' => 'light',
+                    'options' => ['light' => 'Claro', 'dark' => 'Escuro'],
                 ],
             ],
         ],

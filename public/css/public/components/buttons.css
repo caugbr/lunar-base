@@ -1,0 +1,52 @@
+/* ============================================
+   COMPONENTS - Buttons
+   ============================================ */
+
+/* ---------- Base Button ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-lg);
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  border-radius: var(--radius-lg);
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  text-decoration: none;
+}
+
+/* ---------- Primary Button ---------- */
+.btn-primary {
+  background: linear-gradient(135deg, var(--color-primary-dark), var(--color-primary));
+  color: var(--color-bg-deep);
+  box-shadow: 0 4px 20px var(--color-btn-primary-shadow);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px var(--color-btn-primary-shadow-hover);
+  color: var(--color-bg-deep);
+}
+
+/* ---------- Outline Button ---------- */
+.btn-outline {
+  background: transparent;
+  color: var(--color-primary);
+  border: 1.5px solid var(--color-primary);
+}
+
+.btn-outline:hover {
+  background: var(--color-btn-outline-hover);
+  color: var(--color-primary-light);
+}
+
+/* ---------- Small Button ---------- */
+.btn-sm {
+  padding: var(--space-xs) var(--space-md);
+  font-size: var(--font-size-sm);
+  border-radius: var(--radius-sm);
+}

@@ -1,0 +1,62 @@
+/* ============================================
+   BASE - Typography
+   Headings, paragraphs, lists, links
+   ============================================ */
+
+/* ---------- Headings ---------- */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--color-text);
+  letter-spacing: -0.02em;
+}
+
+h1 { font-size: clamp(2.5rem, 5vw, 4rem); }
+h2 { font-size: clamp(1.8rem, 3vw, 2.8rem); }
+h3 { font-size: clamp(1.3rem, 2vw, 1.6rem); }
+
+/* ---------- Paragraphs ---------- */
+p {
+  color: var(--color-text);
+  margin: var(--space-lg) 0;
+}
+
+/* ---------- Lists ---------- */
+ul, ol {
+  padding-left: var(--space-lg);
+}
+
+/* ---------- Blockquote ---------- */
+blockquote {
+  margin-left: var(--space-xl);
+  padding: var(--space-md);
+  border-left: 6px solid var(--color-primary-dark);
+  border-radius: var(--radius-xl);
+}
+
+blockquote p:first-child {
+  margin-top: 0;
+}
+
+blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+/* ---------- Links ---------- */
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--color-primary-light);
+}
+
+/* ---------- Inline Icon ---------- */
+.lucid-icon {
+  width: var(--size-icon-sm);
+  height: var(--size-icon-sm);
+  vertical-align: middle;
+}

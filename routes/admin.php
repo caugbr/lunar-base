@@ -10,8 +10,8 @@ use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\TaxonomyController;
 use App\Http\Controllers\Admin\TermController;
 use App\Http\Controllers\Admin\AdminLogController;
-use App\Http\Controllers\Admin\FormController;
-use App\Http\Controllers\Admin\FormSubmissionController;
+// use App\Http\Controllers\Admin\FormController;
+// use App\Http\Controllers\Admin\FormSubmissionController;
 use App\Http\Controllers\Admin\RolesPermissionsController;
 use App\Http\Controllers\Admin\PluginController;
 use App\Http\Controllers\Admin\ThemeController;
@@ -70,10 +70,10 @@ Route::middleware(['auth', 'role:admin,editor'])->prefix('admin')->name('admin.'
     // Logs
     Route::get('logs', [AdminLogController::class, 'index'])->name('logs.index');
 
-    // Formulários
-    Route::resource('forms', FormController::class);
-    // Respostas
-    Route::resource('forms.submissions', FormSubmissionController::class)->only(['index', 'show', 'destroy']);
+    // // Formulários
+    // Route::resource('forms', FormController::class);
+    // // Respostas
+    // Route::resource('forms.submissions', FormSubmissionController::class)->only(['index', 'show', 'destroy']);
 
 });
 

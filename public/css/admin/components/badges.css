@@ -1,0 +1,73 @@
+.admin-badge {
+    display: inline-flex;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    gap: 5px;
+}
+
+.admin-badge-active {
+    background: var(--color-success-bg);
+    color: var(--color-success-text);
+}
+
+.admin-badge-trial {
+    background: var(--color-warning-bg);
+    color: var(--color-warning-text);
+}
+
+.admin-badge-suspended {
+    background: var(--color-danger-bg);
+    color: var(--color-danger-text);
+}
+
+.admin-badge-paid {
+    background: var(--color-success-bg);
+    color: var(--color-success-text);
+    padding: 4px 8px;
+    font-size: 0.75rem;
+}
+
+.admin-badge-pending {
+    background: var(--color-warning-bg);
+    color: var(--color-warning-text);
+    padding: 4px 8px;
+    font-size: 0.75rem;
+}
+
+.admin-badge-failed {
+    background: var(--color-danger-bg);
+    color: var(--color-danger-text);
+    padding: 4px 8px;
+    font-size: 0.75rem;
+}
+
+.admin-badge-inactive {
+    background-color: var(--color-bg-disabled);
+    color: var(--color-text-muted);
+}
+
+.admin-badge-admin {
+    background: var(--color-primary);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+}
+
+.admin-badge-partner {
+    background: var(--color-success);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+}
+
+.admin-badge-editor {
+    background: var(--color-accent);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+}

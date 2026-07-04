@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Page;
 use App\Models\Post;
-use App\Models\Form;
+// use App\Models\Form;
 use App\Models\Media;
 
 class DashboardController extends Controller
@@ -17,7 +17,7 @@ class DashboardController extends Controller
             'users'   => User::count(),
             'pages'   => Page::count(),
             'posts'   => Post::count(),
-            'forms'   => Form::count(),
+            // 'forms'   => Form::count(),
             'media'   => Media::count(),
         ];
 

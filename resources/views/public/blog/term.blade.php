@@ -56,6 +56,6 @@
 @endsection
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('css/blog.css') }}">
+<link rel="stylesheet" href="{{ asset('css/public/blog.css') }}">
 @endpush
 

@@ -1,0 +1,25 @@
+.admin-card {
+    background: var(--color-bg-card);
+    border-radius: 12px;
+    box-shadow: var(--shadow-md);
+    padding: 20px;
+    margin-bottom: 30px;
+}
+
+.admin-card-header {
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.admin-card-header h2 {
+    font-size: 1.3rem;
+    color: var(--color-text);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}

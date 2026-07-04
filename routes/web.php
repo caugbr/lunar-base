@@ -1,13 +1,11 @@
 <?php
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
-// use App\Http\Controllers\Public\PublicPageController;
-// use App\Http\Controllers\Public\PublicPostController;
 use App\Http\Controllers\DocsController;
-use App\Http\Controllers\GenericFormController;
 use App\Http\Controllers\Public\ReactionController;
 
 require __DIR__.'/admin.php';
+
 if (setting('auth.2fa_enabled', false)) {
     require __DIR__.'/2fa.php';
 }
@@ -17,10 +15,6 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 
 //Docs
 Route::get('/docs', [DocsController::class, 'index'])->name('docs');
-
-// Forms
-Route::get('/formulario/{slug}', [GenericFormController::class, 'show'])->name('public.forms.show');
-Route::post('/formulario/{slug}', [GenericFormController::class, 'submit'])->name('public.forms.submit');
 
 Route::post('/react/{type}/{id}/{value}', [ReactionController::class, 'store'])
     ->name('react')

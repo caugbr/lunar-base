@@ -38,9 +38,13 @@
             </div>
         </header>
 
+        <x-hook name="post.before_content" :params="['post' => $post]" />
+
         <div class="post-content">
             {!! $post->content !!}
         </div>
+
+        <x-hook name="post.after_content" :params="['post' => $post]" />
 
         <footer class="post-footer">
             @if($post->terms->count())
@@ -54,10 +58,7 @@
                 </div>
             @endif
 
-            {{-- @include('comments::comments-area', ['model' => $post]) --}}
-            @if(array_key_exists('comments', view()->getFinder()->getHints()))
-                @include('comments::comments-area', ['model' => $post])
-            @endif
+            <x-hook name="post.footer_end" :params="['post' => $post]" />
 
             <div class="post-nav">
                 <a href="{{ url('/blog') }}" class="back-to-blog">
@@ -66,10 +67,12 @@
                 </a>
             </div>
         </footer>
+
+        <x-hook name="post.after_footer" :params="['post' => $post]" />
     </div>
 </article>
 @endsection
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('css/blog.css') }}">
+<link rel="stylesheet" href="{{ asset('css/public/blog.css') }}">
 @endpush

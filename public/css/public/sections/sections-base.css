@@ -1,0 +1,40 @@
+/* ============================================
+   SECTIONS - Base Styles
+   Generic section layout and headers
+   ============================================ */
+
+/* ---------- Section Container ---------- */
+.section {
+  padding: var(--space-xl) 0;
+  position: relative;
+}
+
+/* ---------- Section Header ---------- */
+.section-header {
+  text-align: center;
+  max-width: var(--max-width-section, 700px);
+  margin: 0 auto var(--space-lg);
+}
+
+/* ---------- Section Label ---------- */
+.section-label {
+  display: inline-block;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--color-primary);
+  margin-bottom: var(--space-sm);
+}
+
+/* ---------- Section Title ---------- */
+.section-title {
+  margin-bottom: var(--space-sm);
+}
+
+/* ---------- Section Description ---------- */
+.section-description {
+  font-size: var(--font-size-lg);
+  color: var(--color-text-muted);
+  margin: auto;
+}

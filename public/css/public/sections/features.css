@@ -1,0 +1,67 @@
+/* ============================================
+   SECTIONS - Features
+   ============================================ */
+
+/* ---------- Features Section ---------- */
+.features-section {
+  background: var(--color-bg-deep);
+}
+
+/* ---------- Features Grid ---------- */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--space-md);
+}
+
+/* ---------- Feature Item ---------- */
+.feature-item {
+  text-align: center;
+  padding: var(--space-md);
+}
+
+/* ---------- Feature Icon ---------- */
+.feature-icon {
+  width: var(--size-icon-2xl);
+  height: var(--size-icon-2xl);
+  margin: 0 auto var(--space-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+}
+
+.feature-icon svg {
+  width: var(--size-icon-lg);
+  height: var(--size-icon-lg);
+  stroke: var(--color-primary);
+}
+
+/* ---------- Feature Light Theme ---------- */
+[data-theme="light"] .feature-icon {
+  background: var(--color-primary-dark);
+}
+
+[data-theme="light"] .feature-icon svg {
+  stroke: var(--color-bg-deep);
+}
+
+/* ---------- Feature Typography ---------- */
+.feature-item h3 {
+  font-size: var(--font-size-2xl);
+  margin-bottom: var(--space-xs);
+}
+
+.feature-item p {
+  font-size: var(--font-size-base);
+  margin: 0 auto;
+}
+
+/* ---------- Features Responsive ---------- */
+@media (max-width: 768px) {
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+}
