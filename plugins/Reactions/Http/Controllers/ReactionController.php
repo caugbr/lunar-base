@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Public;
+namespace Plugins\Reactions\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Plugins\Reactions\Helpers\ReactionsHelper;
 
 class ReactionController extends Controller
 {
@@ -29,18 +30,18 @@ class ReactionController extends Controller
             default => 1,
         };
 
-        // Se negativo não permitido
         if ($intValue === -1 && !setting('reading.post_negative_reaction', false)) {
             return response()->json(['error' => 'Reação negativa desabilitada'], 403);
         }
 
-        $item->react($intValue);
+        // Executa a reação de forma estática sem precisar da trait no model
+        ReactionsHelper::react($item, $intValue);
 
         return response()->json([
-            'positive' => $item->positiveCount(),
-            'negative' => $item->negativeCount(),
-            'total' => $item->reactionScore(),
-            'user_reaction' => $item->userReaction(),
+            'positive' => ReactionsHelper::positiveCount($item),
+            'negative' => ReactionsHelper::negativeCount($item),
+            'total' => ReactionsHelper::reactionScore($item),
+            'user_reaction' => ReactionsHelper::userReaction($item),
         ]);
     }
 }

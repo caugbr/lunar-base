@@ -16,10 +16,6 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 //Docs
 Route::get('/docs', [DocsController::class, 'index'])->name('docs');
 
-Route::post('/react/{type}/{id}/{value}', [ReactionController::class, 'store'])
-    ->name('react')
-    ->where(['value' => 'plus|minus']);
-
 // =========================================================================
 // ORQUESTRADOR DE CONFIGURAÇÃO DE PERMALINKS
 // =========================================================================

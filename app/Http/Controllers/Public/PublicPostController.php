@@ -36,15 +36,9 @@ class PublicPostController extends Controller
             ->where('slug', $slug)
             ->firstOrFail();
 
-        $reactionData = setting('reading.post_use_reaction', false) ? [
-            'positive' => $post->positiveCount(),
-            'negative' => $post->negativeCount(),
-            'user' => $post->userReaction(),
-        ] : [];
-
         $post->content = ContentHelper::parseShortcodes($post->content);
 
-        return view('public.post-templates.' . $post->template, compact('post', 'reactionData'));
+        return view('public.post-templates.' . $post->template, compact('post'));
     }
 
     /**

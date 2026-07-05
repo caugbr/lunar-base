@@ -13,11 +13,18 @@ return new class extends Migration
     {
         Schema::create('form_submissions', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('form_id')->index('form_submissions_form_id_foreign');
+            // Criamos a coluna
+            $table->unsignedBigInteger('form_id')->index();
             $table->json('data');
             $table->string('ip_address', 45)->nullable();
             $table->timestamp('created_at')->nullable()->index();
             $table->timestamp('updated_at')->nullable();
+
+            $table->foreign('form_id')
+                  ->references('id')
+                  ->on('forms')
+                  ->onUpdate('no action')
+                  ->onDelete('cascade');
         });
     }
 

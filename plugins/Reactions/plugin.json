@@ -1,0 +1,6 @@
+{
+    "name": "Reactions",
+    "description": "Permite adicionar rea\u00e7\u00f5es (likes/dislikes) em posts de forma din\u00e2mica.",
+    "version": "1.0.0",
+    "provider": "Plugins\\Reactions\\ReactionsServiceProvider"
+}
