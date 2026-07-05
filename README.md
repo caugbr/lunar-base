@@ -59,7 +59,7 @@ O **Lunar Base** é um Starter Kit híbrido para Laravel, projetado com caracter
 
 A lógica central do Lunar Base é guiada por arquivos de configuração declarativos:
 
-- **`/config/adminMenu.php`**: Define a estrutura do menu lateral administrativo (rótulos, ícones, rotas e permissões).
+- **`/config/admin.php`**: Define a estrutura do menu lateral administrativo (rótulos, ícones, rotas e permissões). É o local para diretivas sobre o painel administrativo.
 - **`/config/rolesPermissions.php`**: Repositório estático para definir papéis (roles) e suas respectivas permissões.
 - **`/config/settings.php`**: Schema do painel de configurações gerais, definindo campos, tipos e valores padrão para cada grupo.
 - **`/config/pageTemplates.php`** & **`/config/postTemplates.php`**: Listam os arquivos Blade utilizáveis como templates para páginas e posts.

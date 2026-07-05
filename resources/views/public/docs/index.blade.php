@@ -101,8 +101,8 @@
         <h2 class="section-title">3. Arquivos de Configuração (/config/*)</h2>
         <div class="tech-grid">
             <div class="tech-card">
-                <h4>adminMenu.php</h4>
-                <p>Define toda a estrutura lateral do painel, incluindo ícones, rotas e permissões de acesso.</p>
+                <h4>admin.php</h4>
+                <p>Define toda a estrutura lateral do painel, incluindo ícones, rotas e permissões de acesso, além de outras diretivas da admin.</p>
             </div>
             <div class="tech-card">
                 <h4>settings.php</h4>

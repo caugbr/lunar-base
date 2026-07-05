@@ -37,11 +37,8 @@
             </div>
 
             <nav class="admin-nav">
-                {{-- @php
-                    $menuGroups = config('adminMenu.menu', []);
-                @endphp --}}
                 @php
-                    $menuGroups = config('adminMenu.menu', []);
+                    $menuGroups = config('admin.menu', []);
                     $injectedItems = \App\Support\AdminMenu::getInjectedItems();
 
                     foreach ($injectedItems as $injection) {
