@@ -2,7 +2,7 @@
 /* Importa todas as variáveis e estilos do painel administrativo */
 
 /* Variáveis globais (devem vir primeiro) */
-@import url('vars.css');
+/* @import url('vars.css'); */
 
 /* Base */
 @import url('base/reset.css');

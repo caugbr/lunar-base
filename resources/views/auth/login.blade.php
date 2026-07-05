@@ -4,7 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - {{ setting('site_name', 'Lunar Base') }}</title>
-    <link rel="stylesheet" href="{{ asset('css/admin/vars.css') }}">
+    @php
+    $skin = config('admin.skin');
+    $varsFile = $skin === 'default' ? 'css/admin/vars.css' : "css/admin/skins/vars-{$skin}.css";
+    @endphp
+    <link rel="stylesheet" href="{{ asset($varsFile) }}">
     <link rel="stylesheet" href="{{ asset('css/auth.css') }}">
 </head>
 <body>

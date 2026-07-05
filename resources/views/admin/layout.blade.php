@@ -6,8 +6,8 @@
     <title>Admin - {{ setting('general.site_name') }}</title>
 
     @php
-    $skin = config('site.adminSkin');
-    $varsFile = $skin === 'default' ? 'css/vars.css' : "css/skins/vars-{$skin}.css";
+    $skin = config('admin.skin');
+    $varsFile = $skin === 'default' ? 'css/admin/vars.css' : "css/admin/skins/vars-{$skin}.css";
     @endphp
     <link rel="stylesheet" href="{{ asset($varsFile) }}">
     <link rel="stylesheet" href="{{ asset('css/admin/admin.css') }}">
