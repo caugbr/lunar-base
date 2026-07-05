@@ -1,6 +1,6 @@
 {
     "name": "Comments",
-    "description": "Allows nesting comments and moderated replies on blog posts dynamically.",
+    "description": "Insere a funcionalidade de comentários nos posts.",
     "version": "1.0.0",
     "provider": "Plugins\\Comments\\CommentsServiceProvider"
 }

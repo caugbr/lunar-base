@@ -31,7 +31,8 @@
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/",
-            "Plugins\\": "plugins/"
+            "Plugins\\": "plugins/",
+            "Themes\\": "themes/"
         },
         "files": [
             "app/Helpers/HookHelper.php",

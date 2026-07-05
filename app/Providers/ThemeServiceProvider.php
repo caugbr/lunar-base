@@ -26,11 +26,10 @@ class ThemeServiceProvider extends ServiceProvider
 
     private function registerTheme(Theme $theme): void
     {
-        $providerClass = "Plugins\\{$theme->folder_name}\\ThemeServiceProvider";
+        $providerClass = "Themes\\{$theme->folder_name}\\ThemeServiceProvider";
 
         if (class_exists($providerClass)) {
             $this->app->register($providerClass);
-            return;
         }
 
         $this->registerThemeViews($theme);
