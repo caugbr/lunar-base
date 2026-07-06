@@ -15,6 +15,9 @@ class PublicPostController extends Controller
      */
     public function index(Request $request)
     {
+        // 💡 Identifica que é a listagem do blog
+        request()->route()->setParameter('resolved_entity', 'blog');
+
         $query = Post::with('thumbnail')->published()->feedOrder();
 
         if ($request->filled('term')) {
@@ -36,6 +39,9 @@ class PublicPostController extends Controller
             ->where('slug', $slug)
             ->firstOrFail();
 
+        // 💡 Injeta o modelo de post diretamente na rota ativa
+        request()->route()->setParameter('resolved_entity', $post);
+
         $post->content = ContentHelper::parseShortcodes($post->content);
 
         return view('public.post-templates.' . $post->template, compact('post'));
@@ -46,6 +52,9 @@ class PublicPostController extends Controller
      */
     public function byTerm(string $taxonomySlug, string $termSlug)
     {
+        // 💡 Identifica que é uma listagem de blog por termo
+        request()->route()->setParameter('resolved_entity', 'blog');
+
         $term = Term::whereHas('taxonomy', fn($q) => $q->where('slug', $taxonomySlug))
             ->where('slug', $termSlug)
             ->firstOrFail();

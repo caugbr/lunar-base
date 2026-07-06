@@ -41,6 +41,8 @@
     </form>
 </div>
 
+<x-hook name="profile.after_card" :params="['user' => $user]" />
+
 <x-lost-changes-warn selector="#profile_form" />
 
 @if(setting('auth.2fa_enabled', false))

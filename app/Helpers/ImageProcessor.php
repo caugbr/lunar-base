@@ -4,24 +4,17 @@ use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
 
 /**
- * Gera thumbnail baseado nas configurações.
- * Versão otimizada com Intervention Image.
+ * Gera as variações responsivas de tamanho para o tema e SEO (WordPress style)
  */
-if (!function_exists('generateMediaThumbnail')) {
-    function generateMediaThumbnail($originalPath, $folder, $settings = [])
+if (!function_exists('generateMediaVariants')) {
+    function generateMediaVariants($originalPath, $folder, $settings = [])
     {
         if (str_ends_with(strtolower($originalPath), '.svg')) {
             return false;
         }
 
-        $width    = (int) ($settings['media_thumbnail_width'] ?? 300);
-        $height   = (int) ($settings['media_thumbnail_height'] ?? 300);
-        $crop     = (bool) ($settings['media_crop_thumbnail'] ?? false);
-        $position = $settings['media_crop_position'] ?? 'center';
         $quality  = max(1, min(100, (int) ($settings['media_quality'] ?? 80)));
         $format   = strtolower($settings['media_formats'] ?? 'webp');
-
-        if ($width <= 0 || $height <= 0) return false;
 
         $fullPath = storage_path('app/public/' . $originalPath);
         if (!file_exists($fullPath)) return false;
@@ -30,58 +23,68 @@ if (!function_exists('generateMediaThumbnail')) {
         $ext = in_array($format, ['jpeg', 'jpg', 'png', 'webp']) ? $format : $pathInfo['extension'];
 
         $cacheDir = "media/{$folder}/cache";
-        $thumbName = $pathInfo['filename'] . '_thumb.' . $ext;
-        $thumbRelPath = "{$cacheDir}/{$thumbName}";
-        $thumbFullPath = storage_path('app/public/' . $thumbRelPath);
+        $variantFullPathDir = storage_path('app/public/' . $cacheDir);
 
-        if (!file_exists(dirname($thumbFullPath))) {
-            mkdir(dirname($thumbFullPath), 0755, true);
+        if (!file_exists($theme_test_container = $variantFullPathDir)) {
+            mkdir($theme_test_container, 0755, true);
         }
 
-        // Chamada da função que faz o trabalho pesado
-        return processImageWithIntervention($fullPath, $thumbFullPath, $width, $height, $crop, $position, $quality, $ext)
-            ? $thumbRelPath
-            : false;
-    }
-}
+        // Definição dos Breakpoints Padrão do Sistema
+        $sizes = [
+            'thumb' => [
+                'width' => (int) ($settings['media_thumbnail_width'] ?? 300),
+                'height' => (int) ($settings['media_thumbnail_height'] ?? 300),
+                'crop' => (bool) ($settings['media_crop_thumbnail'] ?? true),
+                'position' => $settings['media_crop_position'] ?? 'center',
+            ],
+            'large' => [
+                'width' => 1200,
+                'height' => 630, // Proporção exata recomendada para redes sociais (1.91:1)
+                'crop' => true,
+                'position' => 'center',
+            ]
+        ];
 
-/**
- * Processamento com Intervention Image: muito mais eficiente e legível que GD puro.
- */
-if (!function_exists('processImageWithIntervention')) {
-    function processImageWithIntervention($source, $destination, $width, $height, $crop, $position, $quality, $format)
-    {
+        $extraSizes = config('imageSizes', []);
+        $sizes = array_merge($sizes, $extraSizes);
+
         try {
-            // No v3, criamos o manager com o driver e lemos a imagem
             $manager = new ImageManager(new Driver());
-            $image = $manager->read($source);
 
-            if ($crop) {
-                // cover() redimensiona e corta para preencher
-                $image->cover($width, $height, $position);
-            } else {
-                // scale() apenas redimensiona proporcionalmente
-                $image->scale(width: $width, height: $height);
+            foreach ($sizes as $name => $config) {
+                // Abre uma nova leitura da imagem para cada variação
+                $image = $manager->read($fullPath);
+
+                if ($config['crop']) {
+                    $image->cover($config['width'], $config['height'], $config['position'] ?? 'center');
+                } else {
+                    $image->scale(width: $config['width'], height: $config['height']);
+                }
+
+                $encoded = match($ext) {
+                    'png'  => $image->toPng(),
+                    'webp' => $image->toWebp($quality),
+                    default => $image->toJpeg($quality),
+                };
+
+                $variantName = $pathInfo['filename'] . '_' . $name . '.' . $ext;
+                $variantFullPath = "{$variantFullPathDir}/{$variantName}";
+
+                $encoded->save($variantFullPath);
             }
 
-            // Codificação (PHP 8.3 match)
-            $encoded = match($format) {
-                'png'  => $image->toPng(),
-                'webp' => $image->toWebp($quality),
-                default => $image->toJpeg($quality),
-            };
-
-            $encoded->save($destination);
             return true;
 
         } catch (\Exception $e) {
-            \Log::error("Erro no Intervention v3: " . $e->getMessage());
+            \Log::error("Erro ao gerar variações responsivas: " . $e->getMessage());
             return false;
         }
     }
 }
 
-// Mantivemos a função de deletar variantes como estava, pois ela apenas lida com arquivos.
+/**
+ * Deleta fisicamente todas as variações em cache ao remover a imagem
+ */
 if (!function_exists('deleteMediaVariants')) {
     function deleteMediaVariants($originalPath, $folder)
     {
@@ -91,7 +94,8 @@ if (!function_exists('deleteMediaVariants')) {
         $filename = basename($originalPath);
         $nameInfo = pathinfo($filename);
 
-        $pattern = $cacheDir . '/' . $nameInfo['filename'] . '_thumb.*';
+        // Encontra qualquer variação com o padrão do arquivo (ex: _thumb, _medium, _large)
+        $pattern = $cacheDir . '/' . $nameInfo['filename'] . '_*.*';
         $variants = @glob($pattern);
 
         if (!$variants) return true;

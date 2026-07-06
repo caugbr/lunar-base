@@ -9,34 +9,23 @@
     x-data="modalComponent('{{ $id }}')"
     @modal-open.window="if ($event.detail?.id === id) open()"
     @modal-close.window="if ($event.detail?.id === id) close()"
-    x-show="isOpen"
     x-cloak
     class="modal-overlay"
     role="dialog"
     aria-modal="true"
 >
-    {{-- Backdrop --}}
+    {{-- Backdrop (Efeito de fade-in escurecido suave) --}}
     <div
         x-show="isOpen"
-        x-transition:enter="transition ease-out duration-300"
-        x-transition:enter-start="opacity-0"
-        x-transition:enter-end="opacity-100"
-        x-transition:leave="transition ease-in duration-200"
-        x-transition:leave-start="opacity-100"
-        x-transition:leave-end="opacity-0"
+        x-transition.opacity.duration.300ms {{-- 💡 Transição nativa de opacidade sem Tailwind! --}}
         @click="close()"
         class="modal-backdrop"
     ></div>
 
-    {{-- Modal Box --}}
+    {{-- Modal Box (Efeito de escala e fade-in suave) --}}
     <div
         x-show="isOpen"
-        x-transition:enter="transition ease-out duration-300"
-        x-transition:enter-start="opacity-0 scale-95 translate-y-4"
-        x-transition:enter-end="opacity-100 scale-100 translate-y-0"
-        x-transition:leave="transition ease-in duration-200"
-        x-transition:leave-start="opacity-100 scale-100 translate-y-0"
-        x-transition:leave-end="opacity-0 scale-95 translate-y-4"
+        x-transition.duration.300ms {{-- 💡 Transição nativa de escala e fade sem Tailwind! --}}
         @click.stop
         class="modal-box"
         :class="modalSizeClass"

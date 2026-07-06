@@ -1,0 +1,87 @@
+/* CSS Otimizado do Modo Manutenção (Plug-and-play) */
+
+.maintenance-body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: var(--font-body);
+    background: var(--gradient-primary);
+    color: var(--color-text, #e8e6f0);
+    box-sizing: border-box;
+}
+
+.maintenance-card {
+    background-color: var(--color-bg-card, #1a1e3a);
+    border: 1px solid var(--color-border, rgba(200, 182, 255, 0.12));
+    border-radius: var(--radius-xl, 16px);
+    padding: var(--space-xl, 2rem) var(--space-lg, 1.5rem);
+    max-width: 480px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    animation: maintenanceFadeIn 0.5s ease-out;
+}
+
+.maintenance-icon-wrapper {
+    width: var(--size-icon-2xl, 64px);
+    height: var(--size-icon-2xl, 64px);
+    background-color: var(--color-bg-dark, #12152b);
+    border: 1px solid var(--color-border, rgba(200, 182, 255, 0.12));
+    border-radius: var(--radius-lg, 12px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto var(--space-md, 1rem);
+    color: var(--color-primary, #c8b6ff);
+}
+
+.maintenance-icon-wrapper .lucid-icon {
+    width: 30px;
+    height: 30px;
+}
+
+.maintenance-title {
+    /* font-family: var(--font-heading, serif); */
+    font-size: var(--font-size-5xl, 1.8rem);
+    font-weight: 600;
+    margin: 0 0 var(--space-sm, 0.75rem);
+    color: var(--color-text, #e8e6f0);
+    line-height: 1.2;
+}
+
+.maintenance-text {
+    font-size: var(--font-size-base, 0.9rem);
+    color: var(--color-text-muted, #8a87a8);
+    line-height: 1.6;
+    margin: 0 0 var(--space-lg, 1.5rem);
+}
+
+.maintenance-footer {
+    border-top: 1px solid var(--color-border, rgba(200, 182, 255, 0.12));
+    padding-top: var(--space-md, 1rem);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: var(--font-size-xs, 0.8rem);
+    color: var(--color-text-dim, #5a5780);
+}
+
+.maintenance-footer .lucid-icon {
+    width: 14px;
+    height: 14px;
+}
+
+@keyframes maintenanceFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

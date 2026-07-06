@@ -46,6 +46,9 @@ class PublicPageController extends Controller
      */
     protected function renderPage(Page $page)
     {
+        // 💡 Injeta o modelo de página diretamente na rota ativa
+        request()->route()->setParameter('resolved_entity', $page);
+
         $page->content = ContentHelper::parseShortcodes($page->content);
 
         $page->load(['children' => fn($q) => $q->published()]);

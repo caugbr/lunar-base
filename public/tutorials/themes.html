@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual de Desenvolvimento de Temas - Lunar Base CMS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        nav.toc {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+        }
+
+        nav.toc h2 {
+            color: #1e3a8a;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #1e3a8a;
+            padding-bottom: 10px;
+        }
+
+        nav.toc ul {
+            list-style: none;
+            columns: 2;
+        }
+
+        nav.toc li {
+            margin: 8px 0;
+            break-inside: avoid;
+        }
+
+        nav.toc a {
+            color: #1e3a8a;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        nav.toc a:hover {
+            color: #3b82f6;
+            text-decoration: underline;
+        }
+
+        section {
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #1e3a8a;
+            font-size: 2em;
+            margin: 30px 0 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #1e3a8a;
+        }
+
+        h3 {
+            color: #3b82f6;
+            font-size: 1.5em;
+            margin: 25px 0 15px;
+        }
+
+        h4 {
+            color: #333;
+            font-size: 1.2em;
+            margin: 20px 0 10px;
+        }
+
+        .intro {
+            background: #f0f7ff;
+            padding: 20px;
+            border-left: 4px solid #1e3a8a;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .warning {
+            background: #fff3cd;
+            padding: 15px;
+            border-left: 4px solid #ffc107;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .tip {
+            background: #d1ecf1;
+            padding: 15px;
+            border-left: 4px solid #17a2b8;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        pre code {
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .code-label {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: #1e3a8a;
+            color: white;
+            padding: 4px 12px;
+            font-size: 12px;
+            border-radius: 0 6px 0 6px;
+        }
+
+        .step {
+            background: #f0f7ff;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border: 2px solid #1e3a8a;
+        }
+
+        .step h4 {
+            color: #1e3a8a;
+            margin-top: 0;
+        }
+
+        .step-number {
+            display: inline-block;
+            background: #1e3a8a;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        ul.features, ul.steps {
+            margin: 15px 0 15px 30px;
+        }
+
+        ul.features li, ul.steps li {
+            margin: 10px 0;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 8px;
+            transition: transform 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-card h4 {
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background: #1e3a8a;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f0f7ff;
+        }
+
+        .example-box {
+            background: #f0f7ff;
+            border: 2px dashed #1e3a8a;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        .example-box h4 {
+            color: #1e3a8a;
+            margin-top: 0;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 768px) {
+            nav.toc ul {
+                columns: 1;
+            }
+
+            section {
+                padding: 20px;
+            }
+
+            header h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Manual de Desenvolvimento de Temas</h1>
+        <p>Lunar Base CMS - Guia Completo para Temas</p>
+    </header>
+
+    <div class="container">
+        <nav class="toc">
+            <h2>Sumário</h2>
+            <ul>
+                <li><a href="#intro">Introdução</a></li>
+                <li><a href="#estrutura">Estrutura de um Tema</a></li>
+                <li><a href="#criar">Criando seu Primeiro Tema</a></li>
+                <li><a href="#manifesto">Manifesto (theme.json)</a></li>
+                <li><a href="#sobrescrita">Sobrescrita de Views</a></li>
+                <li><a href="#assets">Assets e Links Simbólicos</a></li>
+                <li><a href="#logica">Lógica Avançada (ThemeServiceProvider)</a></li>
+                <li><a href="#settings">Injeção de Configurações no Tema</a></li>
+                <li><a href="#hooks">Integração com Hooks</a></li>
+                <li><a href="#exemplo-pratico">Exemplo Prático: Tema Customizado</a></li>
+                <li><a href="#boas-praticas">Boas Práticas</a></li>
+            </ul>
+        </nav>
+
+        <section id="intro">
+            <h2>Introdução</h2>
+            <div class="intro">
+                <p>O sistema de temas do Lunar Base CMS é projetado para ser leve, modular e flexível. Por padrão, ele herda a estrutura visual básica do sistema, mas permite que o desenvolvedor reescreva layouts parciais ou inteiros e execute lógicas robustas de negócios, transformando o visual do site público de forma limpa.</p>
+            </div>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>View Override</h4>
+                    <p>Substitua qualquer página, post ou template global do núcleo apenas inserindo o arquivo correspondente.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Lógica PHP</h4>
+                    <p>Opcionalmente, use Service Providers para estender o painel, registrar rotas ou escutar hooks.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Settings Integradas</h4>
+                    <p>Injete parâmetros cosméticos (cores, layouts) no painel do Admin e dê controle ao administrador.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Assets Isolados</h4>
+                    <p>Estrutura de arquivos CSS, JS e imagens isolada em cada tema com carregamento otimizado.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="estrutura">
+            <h2>Estrutura de um Tema</h2>
+            <p>A pasta de temas está localizada na raiz do projeto em <code>/themes</code>. Um tema típico segue o seguinte mapa de arquivos:</p>
+
+            <pre><code>themes/
+└── NomeDoTema/
+    ├── resources/
+    │   ├── views/
+    │   │   └── public/
+    │   │       ├── templates/
+    │   │       │   └── default.blade.php  {{-- Template de Páginas --}}
+    │   │       └── post-templates/
+    │   │           └── default.blade.php  {{-- Template de Posts --}}
+    │   └── assets/
+    │       ├── css/
+    │       │   └── style.css
+    │       ├── js/
+    │       │   └── app.js
+    │       └── images/
+    │           └── screenshot.png
+    ├── theme.json
+    └── ThemeServiceProvider.php            {{-- Opcional (Lógica avançada) --}}</code></pre>
+
+            <h4>Arquivos Principais:</h4>
+            <table>
+                <tr>
+                    <th>Arquivo</th>
+                    <th>Descrição</th>
+                </tr>
+                <tr>
+                    <td><code>theme.json</code></td>
+                    <td>Manifesto com metadados do tema (autor, versão, imagem de preview)</td>
+                </tr>
+                <tr>
+                    <td><code>ThemeServiceProvider.php</code></td>
+                    <td>Classe PHP opcional para injetar comportamentos avançados</td>
+                </tr>
+                <tr>
+                    <td><code>resources/views/</code></td>
+                    <td>Templates Blade que substituem ou estendem o visual padrão do core</td>
+                </tr>
+            </table>
+        </section>
+
+        <section id="criar">
+            <h2>Criando seu Primeiro Tema</h2>
+
+            <div class="step">
+                <h4><span class="step-number">1</span>Use o Comando Artisan</h4>
+                <pre><code class="code-label">BASH</code>php artisan theme:create "NomeDoTema" "Descrição do tema"</pre>
+
+                <p>O console irá:</p>
+                <ul class="steps">
+                    <li>Criar a estrutura completa de pastas do tema em <code>/themes/NomeDoTema</code></li>
+                    <li>Gerar o arquivo <code>theme.json</code> pré-configurado</li>
+                    <li>Criar um arquivo de view de exemplo para páginas</li>
+                    <li>Criar o link simbólico na pasta pública <code>public/themes/nomedotema</code></li>
+                </ul>
+            </div>
+
+            <!-- <div class="step">
+                <h4><span class="step-number">2</span>Configurar Autoloading de Lógica (Necessário para PHP)</h4>
+                <p>Para criar temas que utilizam lógica avançada (com Service Providers), mapeie o namespace <code>Themes</code> no seu arquivo <code>composer.json</code> global do projeto:</p>
+
+                <pre><code class="code-label">JSON</code>"autoload": {
+    "psr-4": {
+        "App\\": "app/",
+        "Plugins\\": "plugins/",
+        "Themes\\": "themes/"  {{-- Adicione esta linha --}}
+    }
+}</pre>
+                <p>Após adicionar a linha, execute no terminal:</p>
+                <pre><code class="code-label">BASH</code>composer dump-autoload</pre>
+            </div> -->
+
+            <div class="step">
+                <h4><span class="step-number">2</span>Ative o Tema</h4>
+                <p>Acesse o menu <strong>Admin → Aparência (Temas)</strong>. O painel listará o seu tema com a imagem de preview. Basta ativá-lo para que suas views e lógicas entrem em ação.</p>
+            </div>
+        </section>
+
+        <section id="manifesto">
+            <h2>Manifesto (theme.json)</h2>
+            <div class="intro">
+                <p>O arquivo <code>theme.json</code> define as informações administrativas que serão mostradas na biblioteca de temas do Lunar Base Admin.</p>
+            </div>
+
+            <pre><code class="code-label">JSON</code>{
+    "name": "Astral Dark",
+    "description": "Um tema focado em tons escuros e constelações.",
+    "version": "1.0.0",
+    "author": "Equipe Lunar",
+    "screenshot": "resources/assets/images/screenshot.png"
+}</pre>
+
+            <div class="tip">
+                <strong>Screenshot:</strong> Garanta que a imagem de preview declarada em <code>screenshot</code> exista fisicamente na pasta do tema para carregar no painel do administrador.
+            </div>
+        </section>
+
+        <section id="sobrescrita">
+            <h2>Sobrescrita de Views (View Override)</h2>
+            <div class="intro">
+                <p>O Lunar Base CMS prioriza de forma transparente as views do tema ativo. Sempre que você colocar um arquivo dentro do diretório do tema que corresponda ao caminho das views do core, o sistema o usará no lugar do original.</p>
+            </div>
+
+            <h4>Como funciona a hierarquia de carregamento:</h4>
+            <p>Quando o usuário acessa um Post do blog, o Laravel procurará a view na seguinte ordem:</p>
+            <ul class="steps">
+                <li>1º: <code>/themes/NomeDoTema/resources/views/public/post-templates/default.blade.php</code></li>
+                <li>2º: <code>/resources/views/public/post-templates/default.blade.php</code> (Core fallback)</li>
+            </ul>
+
+            <div class="example-box">
+                <h4>Substituindo o Layout Geral do Site:</h4>
+                <p>Para mudar a estrutura inteira do site (como o Header, Footer e CSS globais), basta criar um arquivo em:</p>
+                <code>/themes/NomeDoTema/resources/views/public/site-layout.blade.php</code>
+                <p>Esse arquivo irá interceptar e substituir o layout original do sistema sem modificar o núcleo.</p>
+            </div>
+        </section>
+
+        <section id="assets">
+            <h2>Assets e Links Simbólicos</h2>
+            <div class="intro">
+                <p>Os arquivos estáticos (CSS, JS, imagens) do seu tema ficam isolados em sua pasta e são disponibilizados publicamente através de links simbólicos gerados em <code>public/themes/nomedotema</code>.</p>
+            </div>
+
+            <h4>Como referenciar seus arquivos em templates Blade:</h4>
+            <pre><code class="code-label">BLADE</code>{{-- Injeção elegante de CSS e JS isolados por Tema --}}
+@once
+@push('styles')
+<link rel="stylesheet" href="{{ asset('themes/nomedotema/css/style.css') }}">
+@endpush
+@endonce
+
+<div class="conteudo-customizado">
+    {{-- HTML do seu tema aqui --}}
+</div>
+
+@push('scripts')
+<script src="{{ asset('themes/nomedotema/js/app.js') }}"></script>
+@endpush</pre>
+
+            <div class="tip">
+                <strong>Gerando links manualmente:</strong> Se você estiver copiando um tema de forma manual, pode forçar a criação do link simbólico em disco usando o comando de console:
+                <pre style="margin-top: 10px;"><code>php artisan themes:link NomeDoTema</code></pre>
+            </div>
+        </section>
+
+        <section id="logica">
+            <h2>Lógica Avançada (ThemeServiceProvider)</h2>
+            <div class="intro">
+                <p>Os temas não precisam se limitar a HTML e CSS estáticos. Ao criar a classe opcional <code>ThemeServiceProvider.php</code> na raiz da pasta do seu tema, você ganha acesso total aos recursos do framework no boot do sistema.</p>
+            </div>
+
+            <h4>Assinatura Básica do Provedor:</h4>
+            <pre><code class="code-label">PHP</code>namespace Themes\NomeDoTema;
+
+use Illuminate\Support\ServiceProvider;
+
+class ThemeServiceProvider extends ServiceProvider
+{
+    public function register(): void
+    {
+        // Registro de bindings em tempo de execução
+    }
+
+    public function boot(): void
+    {
+        // Lógicas executadas antes de renderizar as páginas
+        // Nota: O carregamento de views do seu tema é realizado automaticamente pelo core!
+    }
+}</pre>
+
+            <div class="warning">
+                <strong>Registro Automático de Views:</strong> O core do Lunar Base cuida de prepender e indexar as views do seu tema de forma transparente. Você não precisa escrever códigos de carregamento de views no método <code>boot()</code>, deixando seu ServiceProvider focado unicamente na lógica de negócio.
+            </div>
+        </section>
+
+        <section id="settings">
+            <h2>Injeção de Configurações no Tema</h2>
+            <div class="intro">
+                <p>Você pode expor configurações cosméticas diretamente no painel administrativo geral do site. Quando seu tema é ativado, esses campos de formulário são injetados no Admin, e se tornam inativos ou ocultos quando o tema é desligado.</p>
+            </div>
+
+            <h4>Injetando campos estéticos no ServiceProvider do Tema:</h4>
+            <pre><code class="code-label">PHP</code>use App\Support\Settings;
+
+public function boot(): void
+{
+    // Adiciona um divisor estético na aba de configurações Gerais
+    Settings::add([
+        'type' => 'subtitle',
+        'label' => 'Aparência: Astral Dark',
+    ], 'general');
+
+    // Injeta um seletor de cores para que o Administrador mude a cor do tema no painel
+    Settings::add([
+        'key' => 'astral_dark_accent_color',
+        'type' => 'select',
+        'options' => [
+            'cyan' => 'Azul Celestial',
+            'gold' => 'Dourado Estelar',
+        ],
+        'label' => 'Cor de Destaque',
+        'description' => 'Escolha a cor principal para links e botões do site.',
+        'default' => 'cyan',
+    ], 'general', 'Aparência: Astral Dark');
+}</pre>
+
+            <h4>Utilizando a configuração no layout do tema:</h4>
+            <pre><code class="code-label">BLADE</code><body data-accent="{{ setting('general.astral_dark_accent_color', 'cyan') }}">
+    {{-- ... --}}
+</body></pre>
+        </section>
+
+        <section id="hooks">
+            <h2>Integração com Hooks</h2>
+            <div class="intro">
+                <p>Os temas podem escutar e injetar HTML nos hooks definidos pelo core ou pelos plugins, e também podem definir seus próprios ganchos em seus arquivos estruturais.</p>
+            </div>
+
+            <h4>Exemplo 1: Tema escutando e injetando HTML no Head do site:</h4>
+            <pre><code class="code-label">PHP</code>use App\Support\HookManager;
+
+public function boot(): void
+{
+    HookManager::register('main.head', function() {
+        return '<meta name="theme-color" content="#0b0d17">';
+    }, 'AstralDark');
+}</pre>
+
+            <h4>Exemplo 2: Tema disponibilizando novos Hooks em suas views:</h4>
+            <pre><code class="code-label">BLADE</code>{{-- Na sua página ou layout customizado --}}
+<div class="meu-layout-tema">
+    <x-hook name="theme.before_sidebar" />
+
+    <aside class="sidebar">
+        {{-- ... --}}
+    </aside>
+</div></pre>
+        </section>
+
+        <section id="exemplo-pratico">
+            <h2>Exemplo Prático: Tema Customizado</h2>
+            <p>O exemplo abaixo demonstra um arquivo de template de página customizado com injeção automática de estilo.</p>
+
+            <h4>1. Arquivo de Template de Página:</h4>
+            <p><code>themes/AstralDark/resources/views/public/templates/default.blade.php</code></p>
+            <pre><code class="code-label">BLADE</code>@extends('public.site-layout')
+
+@once
+@push('styles')
+<link rel="stylesheet" href="{{ asset('themes/astraldark/css/tema.css') }}">
+@endpush
+@endonce
+
+@section('content')
+<main class="astral-container">
+    <header class="astral-header">
+        <h1>{{ $page->title }}</h1>
+        @if($page->excerpt)
+            <p class="astral-excerpt">{{ $page->excerpt }}</p>
+        @endif
+    </header>
+
+    <div class="astral-content">
+        {!! $page->content !!}
+    </div>
+</main>
+@endsection</pre>
+
+            <h4>2. Arquivo CSS do Tema:</h4>
+            <p><code>themes/AstralDark/resources/assets/css/tema.css</code></p>
+            <pre><code class="code-label">CSS</code>.astral-container {
+    background-color: #0b0d17;
+    color: #f3f4f6;
+    padding: 3rem 1.5rem;
+    border-radius: 16px;
+    font-family: 'Georgia', serif;
+}
+.astral-header h1 {
+    font-size: 2.8rem;
+    color: #a0c4ff;
+    border-bottom: 2px solid rgba(255,255,255,0.1);
+    padding-bottom: 1rem;
+}</pre>
+        </section>
+
+        <section id="boas-praticas">
+            <h2>Boas Práticas</h2>
+
+            <h4>1. Organização e Isolamento:</h4>
+            <ul class="steps">
+                <li>Use <strong>PascalCase</strong> para pastas de temas (AstralDark, e não astral-dark).</li>
+                <li>Sempre referencie assets usando o caminho correto mapeado pelo link simbólico.</li>
+                <li>Nunca edite arquivos da pasta <code>/resources/views</code> do core caso queira mudar o visual. Sobrescreva-os na pasta do seu tema.</li>
+            </ul>
+
+            <h4>2. Compatibilidade e Fallbacks:</h4>
+            <ul class="steps">
+                <li>Ao ler chaves de configuração personalizadas via <code>setting()</code>, sempre forneça um valor padrão de fallback como segundo parâmetro para evitar quebras se o valor estiver em branco.</li>
+                <li>Utilize o suporte nativo do componente de Hooks com slots padrão para manter fallbacks visuais se o plugin associado for desativado.</li>
+            </ul>
+
+            <h4>3. Performance:</h4>
+            <ul class="steps">
+                <li>Sempre utilize a estrutura <code>@once</code> e <code>@push</code> para os links de CSS e JS dos seus templates. Isso evita sobrecarregar a página com arquivos repetidos caso o mesmo bloco apareça mais de uma vez.</li>
+                <li>Prefira imagens em formatos otimizados como WebP e SVG para compor os elementos estáticos do seu tema.</li>
+            </ul>
+        </section>
+
+        <footer>
+            <p>Manual de Desenvolvimento de Temas - Lunar Base CMS</p>
+            <p>Versão 1.0 | Última atualização: 2026</p>
+        </footer>
+    </div>
+</body>
+</html>

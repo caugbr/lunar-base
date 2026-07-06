@@ -65,3 +65,34 @@
 .admin-btn-link:hover {
     text-decoration: underline;
 }
+
+.transparent-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    color: var(--color-primary, #3b82f6); /* Herda a cor de destaque do seu tema */
+    font-family: inherit;
+    font-size: 0.875rem; /* Ajustável para o contexto (ex: 14px) */
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem; /* Espaço entre o ícone e o texto */
+    transition: color var(--transition-fast, 0.2s) ease;
+}
+
+.transparent-btn:hover {
+    color: var(--color-primary-dark, #1d4ed8); /* Tom sutilmente mais escuro no hover */
+    text-decoration: none; /* Garante que permaneça sem o sublinhado de link comum */
+}
+
+.transparent-btn:focus {
+    outline: none; /* Remove o contorno padrão do navegador */
+}
+
+.transparent-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

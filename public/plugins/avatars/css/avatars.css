@@ -1,0 +1,32 @@
+.avatar-manager-layout {
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+    align-items: flex-start;
+    padding: 10px 0;
+}
+
+.avatar-large-circle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--color-border);
+    box-shadow: var(--shadow-sm);
+    background-color: var(--color-bg-dark);
+}
+
+.avatar-actions-form {
+    flex: 1;
+}
+
+@media (max-width: 640px) {
+    .avatar-manager-layout {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    .avatar-actions-form .buttons {
+        justify-content: center !important;
+    }
+}

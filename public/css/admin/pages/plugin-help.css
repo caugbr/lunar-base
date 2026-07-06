@@ -1,0 +1,104 @@
+
+
+.plugin-help-content {
+    color: var(--color-text);
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
+
+.plugin-help-content header {
+    background: var(--color-bg-dark);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--color-border);
+    margin-bottom: 1.5rem;
+}
+
+.plugin-help-content header h3 {
+    margin: 0 0 0.5rem 0;
+    color: var(--color-primary);
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.plugin-help-content header p {
+     margin: 0;
+     color: var(--color-text-muted);
+}
+
+.plugin-help-content h4 {
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.plugin-help-content ul {
+    margin-left: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.plugin-help-content .code {
+    background: var(--color-bg-dark);
+    padding: 1rem;
+    border-radius: 6px;
+    border: 1px solid var(--color-border);
+    font-family: monospace;
+    font-size: 0.85rem;
+    margin: 1rem 0;
+}
+
+.plugin-help-content p:last-child {
+    margin-bottom: 0;
+}
+
+.plugin-help-content blockquote {
+    background: rgba(157, 124, 255, 0.05);
+    border-left: 4px solid var(--color-primary);
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1.5rem;
+}
+
+.plugin-help-content blockquote strong {
+    color: var(--color-primary);
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+.plugin-help-content blockquote p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    line-height: 1.5;
+}
+
+.plugin-help-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1.5rem;
+    font-size: 0.85rem;
+}
+
+.plugin-help-content thead tr {
+    border-bottom: 2px solid var(--color-border);
+    text-align: left;
+}
+
+.plugin-help-content thead th {
+    padding: 6px;
+    color: var(--color-text);
+}
+
+.plugin-help-content tbody tr {
+    border-bottom: 1px solid var(--color-border);
+}
+
+.plugin-help-content tbody td {
+    padding: 6px;
+}
+
+.plugin-help-content tbody td.txt {
+    padding: 6px;
+    color: var(--color-text-muted);
+}

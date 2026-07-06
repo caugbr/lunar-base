@@ -115,7 +115,8 @@ if (!function_exists('uploadImage')) {
 
         // Gera thumbnail
         if (str_starts_with($mimeType, 'image/') && !str_contains($mimeType, 'svg')) {
-            generateMediaThumbnail($result['original'], $folder, settingsGroup('media'));
+            // generateMediaThumbnail($result['original'], $folder, settingsGroup('media'));
+            generateMediaVariants($result['original'], $folder, settingsGroup('media'));
         }
 
         return $result;

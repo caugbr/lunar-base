@@ -81,9 +81,10 @@
                             @case('icon')
                                 <x-icon-selector
                                     name="{{ $def['key'] }}" id="{{ $def['key'] }}"
-                                    label="{{ $def['label'] }}"
                                     value="{{ $value }}"
+                                    can_clear="{{ $def['can_clear'] ?? true }}"
                                 />
+                                {{-- label="{{ $def['label'] }}" --}}
                                 @break
 
                             @case('page')

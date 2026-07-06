@@ -1,0 +1,6 @@
+{
+    "name": "Share",
+    "description": "Adiciona bot\u00f5es de compartilhamento social din\u00e2micos em posts do blog.",
+    "version": "1.0.0",
+    "provider": "Plugins\\Share\\ShareServiceProvider"
+}

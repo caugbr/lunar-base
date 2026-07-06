@@ -273,18 +273,19 @@
 </head>
 <body>
     <header>
-        <h1>🚀 Manual de Desenvolvimento de Plugins</h1>
-        <p>Lunar Base CMS - Guia Completo</p>
+        <h1>Manual de Desenvolvimento de Plugins</h1>
+        <p>Lunar Base CMS - Guia Completo para plugins</p>
     </header>
 
     <div class="container">
         <nav class="toc">
-            <h2>📑 Sumário</h2>
+            <h2>Sumário</h2>
             <ul>
                 <li><a href="#intro">Introdução</a></li>
                 <li><a href="#estrutura">Estrutura de um Plugin</a></li>
                 <li><a href="#criar">Criando seu Primeiro Plugin</a></li>
                 <li><a href="#admin-menu">Adicionando Itens ao Menu Admin</a></li>
+                <li><a href="#settings">Configurações Dinâmicas (Settings)</a></li>
                 <li><a href="#shortcodes">Registrando Shortcodes</a></li>
                 <li><a href="#hooks">Sistema de Hooks</a></li>
                 <li><a href="#rotas">Rotas Dinâmicas</a></li>
@@ -298,41 +299,41 @@
         </nav>
 
         <section id="intro">
-            <h2>📖 Introdução</h2>
+            <h2>Introdução</h2>
             <div class="intro">
                 <p>O sistema de plugins do Lunar Base CMS permite estender funcionalidades de forma modular e organizada. Cada plugin é autocontido e pode adicionar controllers, models, views, rotas, shortcodes, hooks e muito mais.</p>
             </div>
 
             <div class="feature-grid">
                 <div class="feature-card">
-                    <h4>🎯 Menu Admin</h4>
+                    <h4>Menu Admin</h4>
                     <p>Adicione itens ao menu administrativo de forma dinâmica e posicione onde desejar.</p>
                 </div>
                 <div class="feature-card">
-                    <h4>⚡ Shortcodes</h4>
+                    <h4>Shortcodes</h4>
                     <p>Crie componentes reutilizáveis que podem ser inseridos em páginas e posts.</p>
                 </div>
                 <div class="feature-card">
-                    <h4>🔗 Hooks</h4>
+                    <h4>Hooks</h4>
                     <p>Injete conteúdo em pontos específicos do site (head, before_content, after_content, etc).</p>
                 </div>
                 <div class="feature-card">
-                    <h4>🛣️ Rotas Dinâmicas</h4>
+                    <h4>Rotas Dinâmicas</h4>
                     <p>Registre URLs customizadas sem modificar o core do sistema.</p>
                 </div>
                 <div class="feature-card">
-                    <h4>💾 Models</h4>
+                    <h4>Models</h4>
                     <p>Crie tabelas e relacionamentos usando Eloquent ORM.</p>
                 </div>
                 <div class="feature-card">
-                    <h4>🎨 Views & Assets</h4>
+                    <h4>Views & Assets</h4>
                     <p>Templates Blade e arquivos estáticos com namespace próprio.</p>
                 </div>
             </div>
         </section>
 
         <section id="estrutura">
-            <h2>📁 Estrutura de um Plugin</h2>
+            <h2>Estrutura de um Plugin</h2>
             <p>Um plugin típico no Lunar Base segue esta estrutura:</p>
 
             <pre><code>plugins/
@@ -378,7 +379,7 @@
         </section>
 
         <section id="criar">
-            <h2>🔨 Criando seu Primeiro Plugin</h2>
+            <h2>Criando seu Primeiro Plugin</h2>
 
             <div class="step">
                 <h4><span class="step-number">1</span>Use o Comando Artisan</h4>
@@ -393,7 +394,7 @@
             </div>
 
             <div class="step">
-                <h4><span class="step-number">2</span>Estrutura Gerada Automaticamente</h4>
+                <h4><span class="step-number">2</span>Estrutura Gerada Automatically</h4>
                 <p>O comando cria:</p>
                 <ul class="steps">
                     <li>Diretórios necessários</li>
@@ -424,7 +425,7 @@
         </section>
 
         <section id="admin-menu">
-            <h2>📋 Adicionando Itens ao Menu Admin</h2>
+            <h2>Adicionando Itens ao Menu Admin</h2>
 
             <div class="intro">
                 <p>Use o <code>AdminMenu::add()</code> no método <code>boot()</code> do seu ServiceProvider para injetar itens no menu administrativo.</p>
@@ -451,32 +452,32 @@ AdminMenu::add([
                 </tr>
                 <tr>
                     <td><code>label</code></td>
-                    <td>✅ Sim</td>
+                    <td>Sim</td>
                     <td>Texto exibido no menu</td>
                 </tr>
                 <tr>
                     <td><code>icon</code></td>
-                    <td>✅ Sim</td>
+                    <td>Sim</td>
                     <td>Ícone Lucide (ex: 'settings', 'users', 'file')</td>
                 </tr>
                 <tr>
                     <td><code>route</code></td>
-                    <td>✅ Sim</td>
+                    <td>Sim</td>
                     <td>Nome da rota Laravel</td>
                 </tr>
                 <tr>
                     <td><code>active</code></td>
-                    <td>✅ Sim</td>
+                    <td>Sim</td>
                     <td>Padrão para destacar item ativo (use * como wildcard)</td>
                 </tr>
                 <tr>
                     <td><code>permission</code></td>
-                    <td>❌ Não</td>
+                    <td>Não</td>
                     <td>Só aparece se usuário tiver esta permissão</td>
                 </tr>
                 <tr>
                     <td><code>role</code></td>
-                    <td>❌ Não</td>
+                    <td>Não</td>
                     <td>Só aparece se usuário tiver este role (admin, editor, etc)</td>
                 </tr>
             </table>
@@ -505,8 +506,84 @@ public function boot(): void
             </div>
         </section>
 
+        <section id="settings">
+            <h2>Configurações Dinâmicas (Settings)</h2>
+
+            <div class="intro">
+                <p>O motor do Lunar Base permite que plugins estendam a página de configurações gerais de forma totalmente declarativa, registrando campos que geram formulários, validação e persistência de forma automatizada.</p>
+            </div>
+
+            <h4>Métodos Disponíveis:</h4>
+            <pre><code class="code-label">PHP</code>use App\Support\Settings;
+
+// 1. Registra um novo grupo de configurações (nova aba ou assunto)
+Settings::addGroup('meugrupo', [
+    'title'       => 'Meu Plugin',
+    'description' => 'Configurações de integração do meu plugin',
+    'icon'        => 'cpu',
+]);
+
+// 2. Injeta um campo em um grupo existente (core ou adicionado acima)
+Settings::add($campoArray, 'nome_do_grupo', 'RótuloReferência');</pre>
+
+            <h4>Parâmetros Explicados (Settings::add):</h4>
+            <table>
+                <tr>
+                    <th>Parâmetro</th>
+                    <th>Obrigatório</th>
+                    <th>Descrição</th>
+                </tr>
+                <tr>
+                    <td><code>$campoArray</code></td>
+                    <td>Sim</td>
+                    <td>Array contendo as propriedades do campo (key, type, label, description, etc.).</td>
+                </tr>
+                <tr>
+                    <td><code>$group</code></td>
+                    <td>Sim</td>
+                    <td>Chave do grupo onde o campo será injetado (ex: <code>'reading'</code>, <code>'general'</code>).</td>
+                </tr>
+                <tr>
+                    <td><code>$afterLabel</code></td>
+                    <td>Não</td>
+                    <td>String do rótulo âncora. O campo será posicionado logo após o campo que tiver esse título exato.</td>
+                </tr>
+            </table>
+
+            <div class="warning">
+                <strong>Âncora por Rótulo (afterLabel):</strong>
+                O sistema de injeção de layout usa o texto do rótulo para determinar a posição. Isso permite colocar novos campos de forma fluida após elementos apresentacionais que não possuem chave no banco de dados, como os subtítulos (<code>type => 'subtitle'</code>).
+            </div>
+
+            <div class="example-box">
+                <h4>Exemplo Prático (Como usado no Plugin Reactions):</h4>
+                <pre><code class="code-label">PHP</code>// No método boot() do seu ServiceProvider
+
+// 1. Injeta um subtítulo visual sem chave de banco de dados para criar um separador
+\App\Support\Settings::add([
+    'type' => 'subtitle',
+    'label' => 'Plugin: Reactions',
+], 'reading');
+
+// 2. Injeta o switch funcional logo em seguida usando o rótulo do subtítulo como âncora
+\App\Support\Settings::add([
+    'key' => 'post_use_reaction',
+    'type' => 'switch',
+    'active' => 'Sim',
+    'inactive' => 'Não',
+    'label' => 'Usar reações nos posts',
+    'description' => 'Habilita reações nos posts (Like)',
+    'default' => true,
+], 'reading', 'Plugin: Reactions');</pre>
+            </div>
+
+            <div class="tip">
+                <strong>Vantagem do Mecanismo:</strong> Qualquer configuração injetada através desse helper é integrada instantaneamente ao controlador de configurações, ganhando validação e gravação automática no banco de dados. Os valores podem ser resgatados em qualquer lugar do sistema via: <code>setting('reading.post_use_reaction')</code>.
+            </div>
+        </section>
+
         <section id="shortcodes">
-            <h2>⚡ Registrando Shortcodes</h2>
+            <h2>gistrando Shortcodes</h2>
 
             <div class="intro">
                 <p>Shortcodes permitem inserir conteúdo dinâmico em páginas e posts usando tags simples como <code>[meu-shortcode]</code>.</p>
@@ -524,7 +601,7 @@ ContentHelper::registerShortcode('meu-componente', function($attributes, $conten
         'data' => $attributes,
         'content' => $content
     ])->render();
-});</code></pre>
+});</pre>
 
             <h4>Usando Shortcodes:</h4>
             <table>
@@ -566,7 +643,7 @@ ContentHelper::registerShortcode('meu-componente', function($attributes, $conten
 
     // Renderiza a view
     return view('forms::public.embed', ['form' => $form])->render();
-});</code></pre>
+});</pre>
 
                 <p><strong>Uso no editor:</strong></p>
                 <pre><code>[form slug="contato"]</code></pre>
@@ -578,7 +655,7 @@ ContentHelper::registerShortcode('meu-componente', function($attributes, $conten
         </section>
 
         <section id="hooks">
-            <h2>🔗 Sistema de Hooks</h2>
+            <h2>stema de Hooks</h2>
 
             <div class="intro">
                 <p>Hooks são pontos de injeção no tema onde plugins podem inserir conteúdo dinamicamente. É ideal para adicionar scripts, estilos, comentários, widgets, etc.</p>
@@ -618,7 +695,7 @@ HookManager::register('post.footer_end', function($params) {
     }
 
     return ''; // Retorna string vazia se não tiver conteúdo
-}, 'NomeDoPlugin'); // Identificador para debug</code></pre>
+}, 'NomeDoPlugin'); // Identificador para debug</pre>
 
             <div class="example-box">
                 <h4>Exemplo Prático - Sistema de Comentários:</h4>
@@ -634,7 +711,7 @@ HookManager::register('post.footer_end', function($params) {
     }
 
     return '';
-}, 'Comments plugin');</code></pre>
+}, 'Comments plugin');</pre>
 
                 <p><strong>Resultado:</strong> A área de comentários aparece automaticamente no final de todos os posts!</p>
             </div>
@@ -645,7 +722,7 @@ HookManager::register('post.footer_end', function($params) {
         </section>
 
         <section id="rotas">
-            <h2>🛣️ Rotas Dinâmicas</h2>
+            <h2>tas Dinâmicas</h2>
 
             <div class="intro">
                 <p>O sistema de rotas dinâmicas permite registrar URLs customizadas que são resolvidas pelo <code>RouteOrchestratorController</code> quando nenhuma rota padrão é encontrada.</p>
@@ -664,7 +741,7 @@ DynamicRoutes::register('GET', 'portfolio/{slug}', function($slug) {
 // Ou diretamente retornando uma view:
 DynamicRoutes::register('GET', 'minha-pagina-customizada', function() {
     return view('meuplugin::pagina-customizada');
-});</code></pre>
+});</pre>
 
             <h4>Parâmetros:</h4>
             <table>
@@ -690,7 +767,7 @@ DynamicRoutes::register('GET', 'minha-pagina-customizada', function() {
                 <h4>Exemplo 1 - Rota Simples:</h4>
                 <pre><code class="code-label">PHP</code>DynamicRoutes::register('GET', 'contato', function() {
     return view('meuplugin::contato');
-});</code></pre>
+});</pre>
                 <p>Acessível em: <code>https://seusite.com/contato</code></p>
             </div>
 
@@ -699,7 +776,7 @@ DynamicRoutes::register('GET', 'minha-pagina-customizada', function() {
                 <pre><code class="code-label">PHP</code>DynamicRoutes::register('GET', 'produto/{slug}', function($slug) {
     $produto = \Plugins\Loja\Models\Produto::where('slug', $slug)->firstOrFail();
     return view('loja::produto', ['produto' => $produto]);
-});</code></pre>
+});</pre>
                 <p>Acessível em: <code>https://seusite.com/produto/nome-do-produto</code></p>
             </div>
 
@@ -710,7 +787,7 @@ DynamicRoutes::register('GET', 'minha-pagina-customizada', function() {
         'categoria' => $categoria,
         'post' => $post
     ]);
-});</code></pre>
+});</pre>
                 <p>Acessível em: <code>https://seusite.com/blog/tecnologia/meu-post</code></p>
             </div>
 
@@ -720,7 +797,7 @@ DynamicRoutes::register('GET', 'minha-pagina-customizada', function() {
         </section>
 
         <section id="models">
-            <h2>💾 Models e Relacionamentos</h2>
+            <h2>Models e Relacionamentos</h2>
 
             <div class="intro">
                 <p>Plugins podem criar models Eloquent com relacionamentos polimórficos, permitindo vincular dados a Posts, Pages ou qualquer outro model do sistema.</p>
@@ -751,7 +828,7 @@ class MeuModel extends Model
     {
         return $this->belongsTo(\App\Models\User::class);
     }
-}</code></pre>
+}</pre>
 
             <h4>Relacionamento Polimórfico (Exemplo: Comentários):</h4>
             <pre><code class="code-label">PHP</code>// No Model Comment
@@ -775,7 +852,7 @@ Post::resolveRelationUsing('comments', function ($post) {
         ->whereNull('parent_id')
         ->where('status', 'approved')
         ->orderBy('created_at', 'desc');
-});</code></pre>
+});</pre>
 
             <h4>Usando Relacionamentos:</h4>
             <pre><code class="code-label">PHP</code>// Criando comentário em um post
@@ -790,7 +867,7 @@ $post->comments()->create([
 $comments = $post->comments; // Retorna coleção de comentários
 
 // Contando comentários
-$count = $post->comments()->count();</code></pre>
+$count = $post->comments()->count();</pre>
 
             <div class="tip">
                 <strong>Dica:</strong> Use <code>resolveRelationUsing()</code> para adicionar relacionamentos a models do core sem modificá-los diretamente. Isso mantém seu plugin compatível com atualizações.
@@ -798,7 +875,7 @@ $count = $post->comments()->count();</code></pre>
         </section>
 
         <section id="views">
-            <h2>🎨 Views e Assets</h2>
+            <h2>Views e Assets</h2>
 
             <div class="intro">
                 <p>Cada plugin tem seu próprio namespace de views e pode ter assets (CSS, JS, imagens) acessíveis publicamente.</p>
@@ -820,11 +897,11 @@ $count = $post->comments()->count();</code></pre>
 public function boot(): void
 {
     $this->loadViewsFrom(__DIR__ . '/resources/views', 'meuplugin');
-}</code></pre>
+}</pre>
 
             <pre><code class="code-label">PHP</code>// Usando em controllers ou shortcodes
 return view('meuplugin::admin.index', ['data' => $data]);
-return view('meuplugin::public.componente', ['params' => $params]);</code></pre>
+return view('meuplugin::public.componente', ['params' => $params]);</pre>
 
             <h4>Assets (CSS/JS/Imagens):</h4>
             <p>O comando <code>plugin:create</code> automaticamente:</p>
@@ -835,7 +912,7 @@ return view('meuplugin::public.componente', ['params' => $params]);</code></pre>
 
             <pre><code class="code-label">BLADE</code>{{!-- Referenciando assets --}}
 &lt;link rel="stylesheet" href="{{ asset('plugins/meuplugin/css/style.css') }}">
-&lt;script src="{{ asset('plugins/meuplugin/js/app.js') }}"&gt;&lt;/script&gt;</code></pre>
+&lt;script src="{{ asset('plugins/meuplugin/js/app.js') }}"&gt;&lt;/script&gt;</pre>
 
             <div class="example-box">
                 <h4>Exemplo Completo - View com Assets:</h4>
@@ -844,7 +921,7 @@ return view('meuplugin::public.componente', ['params' => $params]);</code></pre>
 @push('styles')
 &lt;link rel="stylesheet" href="{{ asset('plugins/meuplugin/css/componente.css') }}"&gt;
 @endpush
-@endonce
+@once
 
 &lt;div class="meu-componente"&gt;
     &lt;h2&gt;{{ $titulo }}&lt;/h2&gt;
@@ -855,7 +932,7 @@ return view('meuplugin::public.componente', ['params' => $params]);</code></pre>
 
 @push('scripts')
 &lt;script src="{{ asset('plugins/meuplugin/js/componente.js') }}"&gt;&lt;/script&gt;
-@endpush</code></pre>
+@endpush</pre>
             </div>
 
             <div class="tip">
@@ -864,7 +941,7 @@ return view('meuplugin::public.componente', ['params' => $params]);</code></pre>
         </section>
 
         <section id="migrations">
-            <h2>🗄️ Migrations e Banco de Dados</h2>
+            <h2>Migrations e Banco de Dados</h2>
 
             <div class="intro">
                 <p>Migrations permitem versionar o esquema do banco de dados do seu plugin. Elas são automaticamente carregadas quando o plugin é ativado.</p>
@@ -893,7 +970,7 @@ return new class extends Migration {
     {
         Schema::dropIfExists('meus_items');
     }
-};</code></pre>
+};</pre>
 
             <h4>Relacionamentos Polimórficos:</h4>
             <pre><code class="code-label">PHP</code>Schema::create('comentarios', function (Blueprint $table) {
@@ -909,14 +986,14 @@ return new class extends Migration {
     $table->text('conteudo');
     $table->string('status')->default('pending');
     $table->timestamps();
-});</code></pre>
+});</pre>
 
             <h4>Executando Migrations:</h4>
             <pre><code class="code-label">BASH</code># Migrar tudo (core + plugins)
 php artisan migrate
 
 # Migrar apenas plugins (se necessário)
-php artisan migrate --path=plugins/NomeDoPlugin/database/migrations</code></pre>
+php artisan migrate --path=plugins/NomeDoPlugin/database/migrations</pre>
 
             <div class="tip">
                 <strong>Dica:</strong> O PluginServiceProvider automaticamente carrega migrations de todos os plugins quando você executa <code>php artisan migrate</code>.
@@ -924,7 +1001,7 @@ php artisan migrate --path=plugins/NomeDoPlugin/database/migrations</code></pre>
         </section>
 
         <section id="exemplo-comments">
-            <h2>📝 Exemplo Prático: Plugin Comments</h2>
+            <h2>Exemplo Prático: Plugin Comments</h2>
 
             <p>O plugin Comments demonstra múltiplas funcionalidades integradas:</p>
 
@@ -965,7 +1042,7 @@ class CommentsServiceProvider extends ServiceProvider
             return '';
         }, 'Comments plugin');
     }
-}</code></pre>
+}</pre>
 
             <h4>2. Model com Relacionamentos:</h4>
             <pre><code class="code-label">PHP</code>class Comment extends Model
@@ -1006,7 +1083,7 @@ class CommentsServiceProvider extends ServiceProvider
             ->where('status', 'approved')
             ->orderBy('created_at', 'asc');
     }
-}</code></pre>
+}</pre>
 
             <h4>3. Controller para Processamento:</h4>
             <pre><code class="code-label">PHP</code>class CommentController extends Controller
@@ -1051,7 +1128,7 @@ class CommentsServiceProvider extends ServiceProvider
 
         return back()->with('comment_status', 'Comentário enviado!');
     }
-}</code></pre>
+}</pre>
 
             <h4>4. View com Recursão (Comentários Aninhados):</h4>
             <pre><code class="code-label">BLADE</code>{{-- comments-area.blade.php --}}
@@ -1090,7 +1167,7 @@ class CommentsServiceProvider extends ServiceProvider
             @endforeach
         &lt;/div&gt;
     @endif
-&lt;/div&gt;</code></pre>
+&lt;/div&gt;</pre>
 
             <div class="tip">
                 <strong>O que aprendemos:</strong> Este exemplo mostra hooks, models polimórficos, relacionamentos recursivos, controllers, migrations, views recursivas e validação condicional!
@@ -1098,7 +1175,7 @@ class CommentsServiceProvider extends ServiceProvider
         </section>
 
         <section id="exemplo-forms">
-            <h2>📋 Exemplo Prático: Plugin Forms</h2>
+            <h2>Exemplo Prático: Plugin Forms</h2>
 
             <p>O plugin Forms demonstra criação de CRUD admin, shortcodes dinâmicos e processamento de formulários:</p>
 
@@ -1113,7 +1190,7 @@ class CommentsServiceProvider extends ServiceProvider
     return $form
         ? view('forms::public.embed', ['form' => $form])->render()
         : '';
-});</code></pre>
+});</pre>
 
             <h4>2. Admin Menu Integration:</h4>
             <pre><code class="code-label">PHP</code>\App\Support\AdminMenu::add([
@@ -1122,7 +1199,7 @@ class CommentsServiceProvider extends ServiceProvider
     'route'      => 'admin.forms.index',
     'active'     => 'admin.forms.*',
     'permission' => 'manage-pages',
-], 'Taxonomias');</code></pre>
+], 'Taxonomias');</pre>
 
             <h4>3. Controller Admin com CRUD:</h4>
             <pre><code class="code-label">PHP</code>class FormsController extends Controller
@@ -1157,7 +1234,7 @@ class CommentsServiceProvider extends ServiceProvider
         return redirect()->route('admin.forms.index')
             ->with('success', 'Formulário criado!');
     }
-}</code></pre>
+}</pre>
 
             <h4>4. Model com Cast Automático:</h4>
             <pre><code class="code-label">PHP</code>class Form extends Model
@@ -1182,7 +1259,7 @@ class CommentsServiceProvider extends ServiceProvider
     {
         return $query->where('is_active', true);
     }
-}</code></pre>
+}</pre>
 
             <h4>5. Processamento de Submissão:</h4>
             <pre><code class="code-label">PHP</code>class GenericFormController extends Controller
@@ -1214,7 +1291,7 @@ class CommentsServiceProvider extends ServiceProvider
 
         return back()->with('success', $form->submit_message);
     }
-}</code></pre>
+}</pre>
 
             <div class="tip">
                 <strong>O que aprendemos:</strong> CRUD admin completo, shortcodes com parâmetros, validação dinâmica, casts JSON, scopes, envio de emails e processamento de formulários!
@@ -1222,7 +1299,7 @@ class CommentsServiceProvider extends ServiceProvider
         </section>
 
         <section id="boas-praticas">
-            <h2>✅ Boas Práticas</h2>
+            <h2>Boas Práticas</h2>
 
             <h4>1. Nomenclatura:</h4>
             <ul class="steps">
@@ -1274,44 +1351,45 @@ class CommentsServiceProvider extends ServiceProvider
                 </tr>
                 <tr>
                     <td>Plugin.json</td>
-                    <td>✅ Nome, versão, descrição e provider corretos</td>
+                    <td>Nome, versão, descrição e provider corretos</td>
                 </tr>
                 <tr>
                     <td>Migrations</td>
-                    <td>✅ Métodos up() e down() implementados</td>
+                    <td>Métodos up() e down() implementados</td>
                 </tr>
                 <tr>
                     <td>ServiceProvider</td>
-                    <td>✅ Carrega views, rotas e migrations corretamente</td>
+                    <td>Carrega views, rotas e migrations corretamente</td>
                 </tr>
                 <tr>
                     <td>Views</td>
-                    <td>✅ Todas as views existem e não têm erros de sintaxe</td>
+                    <td>Todas as views existem e não têm erros de sintaxe</td>
                 </tr>
                 <tr>
                     <td>Rotas</td>
-                    <td>✅ Todas as rotas nomeadas e com middleware apropriado</td>
+                    <td>Todas as rotas nomeadas e com middleware apropriado</td>
                 </tr>
                 <tr>
                     <td>Assets</td>
-                    <td>✅ CSS/JS otimizados e linkados corretamente</td>
+                    <td>CSS/JS otimizados e linkados corretamente</td>
                 </tr>
                 <tr>
                     <td>Segurança</td>
-                    <td>✅ Validações, sanitizações e verificações de permissão</td>
+                    <td>Validações, sanitizações e verificações de permissão</td>
                 </tr>
                 <tr>
                     <td>Documentação</td>
-                    <td>✅ README com instruções de instalação e uso</td>
+                    <td>README com instruções de instalação e uso</td>
                 </tr>
             </table>
         </section>
 
         <footer>
-            <p>📚 Manual de Desenvolvimento de Plugins - Lunar Base CMS</p>
+            <p>Manual de Desenvolvimento de Plugins - Lunar Base CMS</p>
             <p>Versão 1.0 | Última atualização: 2026</p>
-            <p>Desenvolvido com ❤️ para a comunidade Laravel</p>
         </footer>
     </div>
 </body>
 </html>
+
+--- END OF FILE plugins.html ---

@@ -84,6 +84,10 @@
                     @endforeach
                 @endforeach
             </nav>
+            <div class="system-assign">
+                {{ config('app.name') }}
+                {{ config('app.version') }}
+            </div>
         </aside>
 
         <!-- Conteúdo Principal -->
@@ -94,8 +98,15 @@
                     <p>@yield('header_subtitle', 'Bem-vindo ao painel de controle')</p>
                 </div>
                 <div class="admin-header-user">
-                    <a href="{{ route('admin.profile.edit') }}">
+                    {{-- <a href="{{ route('admin.profile.edit') }}">
                         <x-lucide-user-pen class="lucid-icon" style="vertical-align: baseline" />
+                        {{ auth()->user()->name }}
+                    </a> --}}
+                    <a href="{{ route('admin.profile.edit') }}">
+                        <x-hook name="admin.header_user_avatar" :params="['user' => auth()->user()]">
+                            {{-- Esse conteúdo só aparece se o plugin de avatar estiver desativado --}}
+                            <x-lucide-user-pen class="lucid-icon" style="vertical-align: baseline" />
+                        </x-hook>
                         {{ auth()->user()->name }}
                     </a>
                     <form method="POST" action="{{ route('logout') }}" style="display: inline;">

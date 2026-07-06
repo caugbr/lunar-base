@@ -3,6 +3,7 @@
     'value' => null,
     'label' => null,
     'id' => null,
+    'can_clear' => true
 ])
 
 @php
@@ -80,9 +81,11 @@
                autocomplete="off"
                readonly>
 
+        @if($can_clear)
         <button type="button" class="admin-btn admin-btn-secondary clear-btn">
             <x-lucide-brush-cleaning class="lucid-icon" /> Limpar
         </button>
+        @endif
 
         <button type="button" class="admin-btn admin-btn-secondary choose-btn">
             <x-lucide-library class="lucid-icon" /> Escolher

@@ -1,0 +1,68 @@
+/* CSS Otimizado para Botões de Compartilhamento (Lunar Base) */
+
+.reaction-and-share-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-md, 1rem);
+    margin: var(--space-md, 1rem) 0;
+    padding: var(--space-md, 1rem) 0;
+    border-top: 1px solid var(--color-border, rgba(200, 182, 255, 0.12));
+    border-bottom: 1px solid var(--color-border, rgba(200, 182, 255, 0.12));
+}
+
+.share-wrapper {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm, 0.75rem);
+}
+
+.share-label {
+    font-size: var(--font-size-xs, 0.8rem);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted, #8a87a8);
+}
+
+.share-buttons-list {
+    display: inline-flex;
+    gap: 0.5rem;
+}
+
+.share-item {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: var(--color-bg-card, #1a1e3a);
+    border: 1px solid var(--color-border, rgba(200, 182, 255, 0.12));
+    color: var(--color-text-muted, #8a87a8);
+    transition: transform var(--transition-fast, 0.2s ease),
+                background-color var(--transition-fast, 0.2s ease),
+                border-color var(--transition-fast, 0.2s ease),
+                color var(--transition-fast, 0.2s ease);
+    text-decoration: none;
+}
+
+.share-item:hover {
+    transform: translateY(-2px);
+    border-color: transparent;
+    color: #ffffff; /* Garante que a logo fique visível em branco sobre o fundo colorido */
+}
+
+.share-item img,
+.share-item svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* Transições de Cores Oficiais de Marca */
+.share-item.share-whatsapp:hover { background-color: #25D366; }
+.share-item.share-facebook:hover { background-color: #039be5; }
+.share-item.share-twitter:hover { background-color: #000000; }
+.share-item.share-linkedin:hover { background-color: #0288d1; }
+.share-item.share-email:hover { background-color: #718096; }

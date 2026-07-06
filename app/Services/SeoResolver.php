@@ -13,11 +13,29 @@ class SeoResolver
     {
         $route = Route::current();
 
-        return match ($route?->getName()) {
+        if (!$route) {
+            return $this->fallback();
+        }
+
+        // 1. Lê a entidade que o controlador já resolveu e pendurou na rota
+        $entity = $route->parameter('resolved_entity');
+
+        // 2. Formata o SEO de forma limpa e direta
+        if ($entity instanceof Page) {
+            return $this->formatPageSeo($entity);
+        }
+
+        if ($entity instanceof Post) {
+            return $this->formatPostSeo($entity);
+        }
+
+        if ($entity === 'blog') {
+            return $this->fromBlog();
+        }
+
+        // 3. Fallback para rotas estáticas nomeadas do core (como 'home', etc.)
+        return match ($route->getName()) {
             'home' => $this->fromHome(),
-            'public.page', 'public.widget.page' => $this->fromPage($route),
-            'public.post' => $this->fromPost($route),
-            'public.blog.index', 'public.blog.term' => $this->fromBlog(),
             default => $this->fallback(),
         };
     }
@@ -35,15 +53,8 @@ class SeoResolver
         ];
     }
 
-    private function fromPage($route): array
+    private function formatPageSeo(Page $page): array
     {
-        $page = $route->parameter('page')
-            ?? $this->resolvePageFromRoute($route);
-
-        if (!$page) {
-            return $this->fallback();
-        }
-
         $image = $this->stringOr(
             $page->thumbnail?->thumb_url,
             $page->thumbnail?->url,
@@ -56,7 +67,7 @@ class SeoResolver
         );
 
         return [
-            'title' => $page->title,
+            'title' => $page->title . ' | ' . setting('general.site_name', config('app.name')),
             'description' => $description,
             'image' => $image,
             'url' => url()->current(),
@@ -64,22 +75,16 @@ class SeoResolver
         ];
     }
 
-    private function fromPost($route): array
+    private function formatPostSeo(Post $post): array
     {
-        $post = $route->parameter('post');
-
-        if (!$post) {
-            return $this->fallback();
-        }
-
         $image = $this->stringOr(
-            $post->thumbnail?->thumb_url,
+            $post->thumbnail?->large_url,
             $post->thumbnail?->url,
             $this->settingsImageUrl(setting('site_thumbnail'))
         );
 
         return [
-            'title' => $post->title,
+            'title' => $post->title . ' | ' . setting('general.site_name', config('app.name')),
             'description' => $this->stringOr($post->excerpt, setting('site_description')),
             'image' => $image,
             'url' => $post->url,
@@ -131,19 +136,5 @@ class SeoResolver
         }
 
         return '';
-    }
-
-    private function resolvePageFromRoute($route): ?Page
-    {
-        $slug = $route->parameter('slug');
-        $widgetSlug = $route->parameter('widget_slug');
-
-        if ($widgetSlug) {
-            return Page::where('slug', $slug)
-                ->whereHas('widget', fn($q) => $q->where('slug', $widgetSlug))
-                ->first();
-        }
-
-        return Page::where('slug', $slug)->first();
     }
 }

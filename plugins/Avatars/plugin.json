@@ -1,0 +1,6 @@
+{
+    "name": "Avatars",
+    "description": "Permite ao usu\u00e1rio criar uma imagem de perfil (avatar).",
+    "version": "1.0.0",
+    "provider": "Plugins\\Avatars\\AvatarsServiceProvider"
+}

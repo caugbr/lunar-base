@@ -47,38 +47,53 @@ class Media extends Model
     }
 
     /**
-     * Acessores
+     * Acessores Globais
      */
     public function getUrlAttribute(): string
     {
         return Storage::disk('public')->url($this->path);
     }
 
+    /**
+     * Acessor do Thumbnail (300x300)
+     */
     public function getThumbUrlAttribute(): ?string
     {
-        // SVG não tem thumbnail, retorna a própria imagem
+        return $this->getUrlForVariant('thumb');
+    }
+
+    /**
+     * Acessor em Alta Resolução para SEO e Redes Sociais (1200x630)
+     */
+    public function getLargeUrlAttribute(): ?string
+    {
+        return $this->getUrlForVariant('large');
+    }
+
+    /**
+     * Auxiliar interno que resolve qualquer variação em cache evitando duplicação
+     */
+    public function getUrlForVariant(string $suffix): string
+    {
+        // SVG não tem variação, retorna a própria imagem original
         if (str_starts_with($this->mime_type, 'image/svg')) {
             return $this->url;
         }
 
         $pathInfo = pathinfo($this->path);
 
-        // 💡 CORREÇÃO: Pega o formato das configurações ou define 'webp' como padrão
-        // Igualzinho está no seu ImageProcessor.php
+        // Pega o formato padrão das configurações (ex: webp)
         $format = strtolower(config('settings.media_formats', 'webp'));
 
-        // Se você não tiver esse config global, pode usar apenas 'webp' diretamente:
-        // $format = 'webp';
+        $variantName = $pathInfo['filename'] . '_' . $suffix . '.' . $format;
+        $variantPath = 'media/uploads/cache/' . $variantName;
 
-        $thumbName = $pathInfo['filename'] . '_thumb.' . $format;
-        $thumbPath = 'media/uploads/cache/' . $thumbName;
-
-        // Verifica se o thumb existe, senão retorna a original
-        if (Storage::disk('public')->exists($thumbPath)) {
-            return Storage::disk('public')->url($thumbPath);
+        // Se o arquivo da variação existir fisicamente no disco, retorna ele
+        if (Storage::disk('public')->exists($variantPath)) {
+            return Storage::disk('public')->url($variantPath);
         }
 
-        // fallback para original
+        // Fallback seguro: se a variação física não existir (uploads antigos), retorna a original
         return $this->url;
     }
 
@@ -100,16 +115,23 @@ class Media extends Model
     }
 
     /**
-     * Deleção segura: remove o arquivo físico ao deletar o registro
-     * ⚠️ Futuramente, adapte aqui para também remover thumbnails/derivados
+     * Deleção segura: remove o arquivo físico e todos os seus caches ao deletar o registro
      */
     protected static function boot()
     {
         parent::boot();
 
         static::deleting(function (Media $media) {
+            // 1. Remove a imagem original física
             if (Storage::disk('public')->exists($media->path)) {
                 Storage::disk('public')->delete($media->path);
+            }
+
+            // 2. Limpa as variações associadas em cache (_thumb, _large) de forma segura
+            if (function_exists('deleteMediaVariants')) {
+                $pathParts = explode('/', $media->path);
+                $folder = $pathParts[1] ?? 'uploads';
+                deleteMediaVariants($media->path, $folder);
             }
         });
     }

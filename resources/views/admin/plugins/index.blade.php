@@ -6,7 +6,7 @@
 @section('content')
 <div class="admin-card">
     <div class="admin-card-header">
-        <h2><x-lucide-puzzle class="lucid-icon" /> Lista de Plugins</h2>
+        <h2><x-lucide-puzzle class="lucid-icon" /> Plugins instalados</h2>
     </div>
     <div class="table-wrap">
         <table class="admin-table">
@@ -22,8 +22,32 @@
             </thead>
             <tbody>
                 @forelse($plugins as $plugin)
+                @php
+                    $namespaceLower = strtolower($plugin->folder_name);
+
+                    $helpView = null;
+                    if (view()->exists("{$namespaceLower}::help")) {
+                        $helpView = "{$namespaceLower}::help"; // Ex: comments::help
+                    } elseif (view()->exists("{$namespaceLower}::admin.help")) {
+                        $helpView = "{$namespaceLower}::admin.help"; // Fallback caso queira organizar em subpastas
+                    }
+                @endphp
                 <tr>
-                    <td><strong>{{ $plugin->name }}</strong></td>
+                    <td>
+                        <strong>{{ $plugin->name }}</strong>
+                        @if($helpView)
+                        {{-- @click="$dispatch('modal-open', { id: 'help-{{ $plugin->id }}' })" --}}
+                        <button type="button"
+                            onclick="window.dispatchEvent(new CustomEvent('modal-open', { detail: { id: 'help-{{ $plugin->id }}' } }))"
+                            class="transparent-btn"
+                            title="Ver documentação">
+                            <x-lucide-help-circle class="lucid-icon" />
+                        </button>
+                        <x-modal id="help-{{ $plugin->id }}" title="Ajuda: {{ $plugin->name }}" size="lg">
+                            @include($helpView)
+                        </x-modal>
+                        @endif
+                    </td>
                     <td style="max-width: 320px; white-space: normal;">
                         <span class="admin-text-muted" style="font-size: 0.875rem;">{{ $plugin->description ?? 'Nenhuma descrição fornecida.' }}</span>
                         {{-- <div style="font-size: 0.725rem; color: #888; font-family: monospace; margin-top: 4px;">
@@ -57,3 +81,11 @@
     </div>
 </div>
 @endsection
+
+@push('styles')
+<link rel="stylesheet" href="{{ asset('css/admin/pages/plugin-help.css') }}">
+@endpush
+@push('scripts')
+{{-- Alpine CDN --}}
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+@endpush
