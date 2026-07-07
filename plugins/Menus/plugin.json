@@ -1,0 +1,6 @@
+{
+    "name": "Menus",
+    "description": "Gerencia e adiciona menus customizados ao site.",
+    "version": "1.0.0",
+    "provider": "Plugins\\Menus\\MenusServiceProvider"
+}

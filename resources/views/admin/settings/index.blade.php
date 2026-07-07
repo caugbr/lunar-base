@@ -54,8 +54,20 @@
                 @foreach($group['fields'] as $def)
 
                     @if($def['type'] == 'subtitle')
-                        <h3 class="group-title group-subtitle">{{ $def['label'] }}</h3>
-                        @continue
+                    <h3 class="group-title group-subtitle">
+                        @if(isset($def['icon']))
+                        <x-dynamic-component component="{{ 'lucide-' . $def['icon'] }}" class="lucid-icon" />
+                        @endif
+                        {{ $def['label'] }}
+                    </h3>
+                    @continue
+                    @endif
+
+                    @if($def['type'] == 'paragraph')
+                    <p class="group-paragraph group-description">
+                        {{ $def['text'] }}
+                    </p>
+                    @continue
                     @endif
 
                     @php
@@ -335,6 +347,14 @@
         font-size: 1.25rem;
         font-weight: 600;
         color: #1f2937;
+    }
+
+    .group-subtitle {
+        margin-top: 2.5rem;
+    }
+
+    .group-subtitle + p {
+        margin-bottom: 1.5rem;
     }
 
     .group-description {

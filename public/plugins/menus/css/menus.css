@@ -1,0 +1,174 @@
+/* CSS Otimizado do Painel do Construtor de Menus (Lunar Base) */
+
+.menu-builder-container {
+    display: flex;
+    flex-direction: row;
+    gap: 1.5rem;
+    align-items: flex-start;
+}
+
+.sources-column {
+    flex: 0 0 280px;
+}
+
+.builder-column {
+    flex: 1;
+}
+
+/* Sanfonas da Esquerda (Accordions) */
+.accordion-item {
+    border: 1px solid var(--color-border, rgba(200, 182, 255, 0.12));
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    overflow: hidden;
+}
+
+.accordion-header {
+    width: 100%;
+    background-color: var(--color-bg-dark, #12152b);
+    padding: 10px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: none;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-text, #e8e6f0);
+}
+
+.accordion-body {
+    background: #ffffff;
+    border-top: 1px solid var(--color-border, rgba(200, 182, 255, 0.12));
+    padding: 10px;
+}
+
+.checkbox-list {
+    max-height: 200px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-right: 4px;
+}
+
+/* Árvore Construtora (Lado Direito) */
+.menu-items-tree {
+    background-color: var(--color-bg-dark, #12152b);
+    border: 1px solid var(--color-border, rgba(200, 182, 255, 0.12));
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.tree-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.tree-item-wrapper {
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+/* Linha pontilhada lateral de sub-menu */
+.tree-item-wrapper.has-depth::before {
+    content: '';
+    position: absolute;
+    left: 1.25rem;
+    top: -0.5rem;
+    bottom: 50%;
+    width: 2px;
+    border-left: 2px dashed var(--color-border, rgba(200, 182, 255, 0.15));
+}
+
+.tree-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    background: #ffffff;
+    border: 1px solid var(--color-border, rgba(200, 182, 255, 0.12));
+    border-radius: 6px;
+    box-shadow: var(--shadow-sm);
+}
+
+.tree-item-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.875rem;
+    color: #1f2937;
+}
+
+.item-type-badge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    background-color: var(--color-bg-dark, #12152b);
+    color: var(--color-primary, #c8b6ff);
+    border-radius: 4px;
+    border: 1px solid var(--color-border, rgba(200, 182, 255, 0.12));
+}
+
+/* Controles de Movimento */
+.tree-item-controls {
+    display: flex;
+    gap: 4px;
+}
+
+.tree-item-controls button {
+    background: none;
+    border: 1px solid var(--color-border, rgba(200, 182, 255, 0.12));
+    border-radius: 4px;
+    padding: 4px;
+    cursor: pointer;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tree-item-controls button:hover:not(:disabled) {
+    background-color: #f3f4f6;
+    color: #1f2937;
+}
+
+.tree-item-controls button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.tree-item-controls .control-btn-delete {
+    color: #ef4444;
+}
+.tree-item-controls .control-btn-delete:hover {
+    background-color: #fee2e2 !important;
+    color: #dc2626 !important;
+}
+
+/* Configurações do item de menu */
+.tree-item-settings {
+    background: #f9fafb;
+    border: 1px solid var(--color-border, rgba(200, 182, 255, 0.12));
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    padding: 12px;
+    margin-top: -4px;
+    animation: slideDownSettings 0.15s ease-out;
+}
+
+@keyframes slideDownSettings {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 992px) {
+    .menu-builder-container {
+        flex-direction: column;
+    }
+    .sources-column {
+        width: 100%;
+        flex: auto;
+    }
+}

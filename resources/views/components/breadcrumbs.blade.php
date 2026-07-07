@@ -15,9 +15,9 @@
     $currentPost = $post ?? view()->shared('post');
 
     // Carrega as configurações de bases dos permalinks
-    $pagesBase = setting('permalinks.pages_base', 'page');
-    $postsBase = setting('permalinks.posts_base', 'post');
-    $blogBase = setting('permalinks.blog_base', 'blog');
+    $pagesBase = setting('navigation.pages_base', 'page');
+    $postsBase = setting('navigation.posts_base', 'post');
+    $blogBase = setting('navigation.blog_base', 'blog');
 
     // 2. Auto-resolução por rota para evitar o fallback de segmentos em páginas dinâmicas
     if (!$currentPage && !$currentPost) {

@@ -13,10 +13,6 @@ class SeoResolver
     {
         $route = Route::current();
 
-
-
-        \Log::info('rsolve', ["route" => $route?->getName()]);
-
         return match ($route?->getName()) {
             'home' => $this->fromHome(),
             'public.page', 'public.widget.page' => $this->fromPage($route),
@@ -81,14 +77,6 @@ class SeoResolver
             $post->thumbnail?->url,
             $this->settingsImageUrl(setting('site_thumbnail'))
         );
-
-        \Log::info('fromPost', [
-            'title' => $post->title,
-            'description' => $this->stringOr($post->excerpt, setting('site_description')),
-            'image' => $image,
-            'url' => $post->url,
-            'type' => 'article',
-        ]);
 
         return [
             'title' => $post->title,

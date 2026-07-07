@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Support\DynamicRoutes;
 use App\Http\Controllers\Public\PublicPageController;
 use App\Http\Controllers\Public\PublicPostController;
-use App\Models\Taxonomy;
+// use App\Models\Taxonomy;
 use App\Models\Page;
 
 class RouteOrchestratorController extends Controller
@@ -18,7 +18,7 @@ class RouteOrchestratorController extends Controller
      */
     public function handleOneSegment(Request $request, $base)
     {
-        $blogBase = setting('permalinks.blog_base', 'blog');
+        $blogBase = setting('navigation.blog_base', 'blog');
 
         if ($base === $blogBase) {
             return app(PublicPostController::class)->index($request);
@@ -42,15 +42,14 @@ class RouteOrchestratorController extends Controller
 
     /**
      * 2 segmentos:
-     * ex: /pagina/sobre-nos       -> Página individual
-     * ex: /blog/meu-primeiro-post -> Post individual
-     * ex: /blog/categoria         -> Listagem de Posts filtrada por Taxonomia (Sem termo específico)
+     * ex: /pagina/sobre-nos         -> Página individual
+     * ex: /institucional/sobre-nos  -> Página individual
+     * ex: /blog/meu-primeiro-post   -> Post individual
      */
     public function handleTwoSegments($base, $slug)
     {
-        $pagesBase = setting('permalinks.pages_base', 'page');
-        $postsBase = setting('permalinks.posts_base', 'post');
-            // \Log::info('handleTwoSegments', ["namespace" => $base, "slug" => $slug, "pagesBase" => $pagesBase, "postsBase" => $postsBase]);
+        $pagesBase = setting('navigation.pages_base', 'page');
+        $postsBase = setting('navigation.posts_base', 'post');
 
         // === CASO 1: É uma Página com base fixa (/pagina/sobre-nos) ===
         if ($base === $pagesBase) {
@@ -65,7 +64,6 @@ class RouteOrchestratorController extends Controller
         // === CASO 3: Página com namespace sem base (/institucional/missao) ===
         // $base pode ser um namespace, $slug é a página dentro dele
         if ($pagesBase === null) {
-            // \Log::info('sem base', ["namespace" => $base, "slug" => $slug]);
             $page = Page::where('slug', $slug)
                 ->where('namespace', $base)
                 ->where('status', 'published')
@@ -90,8 +88,8 @@ class RouteOrchestratorController extends Controller
      */
     public function handleThreeSegments($base, $namespace, $slug)
     {
-        $pagesBase = setting('permalinks.pages_base', 'page');
-        $blogBase = setting('permalinks.blog_base', 'post');
+        $pagesBase = setting('navigation.pages_base', 'page');
+        $blogBase = setting('navigation.blog_base', 'post');
 
         // Se for página de 3 segmentos (Ex: /pagina/institucional/missao)
         if ($base === $pagesBase) {

@@ -7,7 +7,7 @@
 
     <x-seo-meta />
 
-    @if(setting('legal.cookies_consent'))
+    @if(setting('general.cookies_consent'))
     <x-cookie.scripts />
     @endif
 
@@ -36,7 +36,7 @@
 
     @include('public.partials.footer')
 
-    @if(setting('legal.cookies_consent'))
+    @if(setting('general.cookies_consent'))
     <x-cookie.banner />
     @endif
 

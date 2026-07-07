@@ -65,7 +65,7 @@ class SiteComposer
 
     protected function getTermsAndPrivacyPages(): array
     {
-        $ids = [setting('legal.privacy_page_id'), setting('legal.terms_page_id')];
+        $ids = [setting('general.privacy_page_id'), setting('general.terms_page_id')];
         $pages = Page::published()
             ->whereNull('namespace')
             ->whereIn('id', $ids)

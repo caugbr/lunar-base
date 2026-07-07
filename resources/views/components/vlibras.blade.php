@@ -5,7 +5,7 @@
 ])
 
 @php
-if (str_starts_with(setting('accessibility.position'), 'left')) {
+if (str_starts_with(setting('reading.position'), 'left')) {
     $position = 'L';
 }
 @endphp

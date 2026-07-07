@@ -21,7 +21,7 @@ class MaintenanceServiceProvider extends ServiceProvider
         Settings::addGroup('maintenance', [
             'title'       => 'Manutenção',
             'description' => 'Configurações de bloqueio do site público.',
-            'icon'        => 'wrench',
+            'icon'        => 'construction',
         ]);
 
         // 3. Injeta as chaves funcionais sob o novo grupo

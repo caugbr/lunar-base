@@ -62,7 +62,7 @@
     border: 2px dashed #ccc;
     border-radius: 8px;
     transition: all 0.3s ease;
-    background-color: #efefef;
+    background-color: var(--input-bg-color, #efefef);
     gap: 1rem;
 }
 
@@ -103,6 +103,7 @@
     font-size: 1rem;
     color: #555;
     margin-bottom: 10px;
+    color: var(--input-color, #333333);
 }
 
 .upload-area .value-message {
@@ -111,6 +112,7 @@
     font-weight: bold;
     margin-top: 5px;
     min-height: 1.2rem;
+    color: var(--input-color, #333333);
 }
 </style>
 @endpush

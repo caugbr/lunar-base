@@ -105,6 +105,7 @@ class ShareServiceProvider extends ServiceProvider
         // Adiciona um divisor visual sob o menu "Redes sociais"
         Settings::add([
             'type' => 'subtitle',
+            'icon' => 'share-2',
             'label' => 'Compartilhamento de Posts',
         ], 'social');
 

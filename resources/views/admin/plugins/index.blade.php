@@ -7,6 +7,7 @@
 <div class="admin-card">
     <div class="admin-card-header">
         <h2><x-lucide-puzzle class="lucid-icon" /> Plugins instalados</h2>
+        <a class="admin-btn admin-btn-secondary" href="/tutorials/plugins.html" target="_blank">Como criar um plugin</a>
     </div>
     <div class="table-wrap">
         <table class="admin-table">
@@ -17,7 +18,23 @@
                     <th>Versão</th>
                     <th>Pasta</th>
                     <th>Status</th>
-                    <th>Ações</th>
+                    <th style="display: flex; justify-content: space-between;">
+                        Ações
+                        <div class="check-all">
+                            <form method="POST" action="{{ route('admin.plugins.toggle_all', 1) }}" style="display: inline;">
+                                @csrf
+                                <button type="submit" class="transparent-btn status-all" title="Ativar todos os plugins">
+                                    <x-lucide-check-check class="lucid-icon" />
+                                </button>
+                            </form>
+                            <form method="POST" action="{{ route('admin.plugins.toggle_all', 0) }}" style="display: inline;">
+                                @csrf
+                                <button type="submit" class="transparent-btn status-all" title="Desativar todos os plugins">
+                                    <x-lucide-minus class="lucid-icon" />
+                                </button>
+                            </form>
+                        </div>
+                    </th>
                 </tr>
             </thead>
             <tbody>
@@ -84,6 +101,22 @@
 
 @push('styles')
 <link rel="stylesheet" href="{{ asset('css/admin/pages/plugin-help.css') }}">
+<style>
+    .status-all {
+        width: 24px;
+        height: 24px;
+        border: 1px solid var(--color-border);
+        border-radius: 4px;
+        margin: 0 4px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .status-all:hover {
+        background-color: #3b82f6;
+        color: #ffffff;
+    }
+</style>
 @endpush
 @push('scripts')
 {{-- Alpine CDN --}}

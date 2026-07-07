@@ -56,6 +56,10 @@
     /* ===== BORDAS ===== */
     --color-border-strong: #d1d5db;
     --color-bg-disabled: #e5e7eb;
+
+    /* ===== FORM ===== */
+    --input-bg-color: #666666;
+    --input-color: #e9e9e9;
 }
 
 [data-theme="light"] {
@@ -72,6 +76,10 @@
     --color-text:         #2D2A3E;
     --color-text-muted:   #6B6880;
     --color-text-dim:     #9A97B0;
+
+    /* ===== FORM ===== */
+    --input-bg-color: #ffffff;
+    --input-color: #333333;
 
     /* Utilities */
     --color-border:       rgba(123, 95, 199, 0.15);

@@ -33,6 +33,9 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     // Plugins
     Route::get('plugins', [PluginController::class, 'index'])->name('plugins.index');
     Route::post('plugins/{plugin}/toggle', [PluginController::class, 'toggle'])->name('plugins.toggle');
+    Route::post('plugins/toggle-all/{status}', [PluginController::class, 'toggleAll'])
+        ->name('plugins.toggle_all')
+        ->where('status', '0|1');
 
     // Temas
     Route::get('themes', [ThemeController::class, 'index'])->name('themes.index');
@@ -42,6 +45,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     // Dashboard (ambos veem)
     Route::get('/dashboard', [AdminDashboard::class, 'index'])->name('dashboard');
+
 
 });
 

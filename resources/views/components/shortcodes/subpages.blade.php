@@ -13,8 +13,8 @@
     $slugParam = $route?->parameter('slug');
 
     // Carrega a configuração da base de páginas do banco
-    $pagesBase = setting('permalinks.pages_base', 'page');
-    $blogBase = setting('permalinks.blog_base', 'blog');
+    $pagesBase = setting('navigation.pages_base', 'page');
+    $blogBase = setting('navigation.blog_base', 'blog');
 
     // 2. A página atual pode vir da prop, do compartilhamento ou resolvida pela rota
     $currentPage = $page ?? view()->shared('page');

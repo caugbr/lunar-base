@@ -21,7 +21,6 @@ class ContentHelper
             // \Log::warning("The shortcode [{$tag}] is already registered");
             return false;
         }
-        // \Log::info('registerShortcode', ["tag" => $tag]);
         self::$registeredShortcodes[$tag] = $callback;
         return true;
     }
@@ -83,7 +82,6 @@ class ContentHelper
     private static function renderShortcode($tag, $attributes, $content = null)
     {
         $tag = strtolower($tag);
-        \Log::info('renderShortcode', ["tag" => $tag, "all" => self::$registeredShortcodes]);
 
         // 1. Verifica se existe um shortcode registrado por um plugin
         if (isset(self::$registeredShortcodes[$tag])) {
@@ -104,7 +102,6 @@ class ContentHelper
 
         $viewPath = "components.shortcodes." . $tag;
         if (view()->exists($viewPath)) {
-            // \Log::info('renderShortcode', ["path" => $viewPath]);
             return view($viewPath, [
                 ...$attributes,
                 'attr' => $attributes,

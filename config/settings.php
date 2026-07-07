@@ -258,16 +258,15 @@ return [
                     'default' => 'light',
                     'options' => ['light' => 'Claro', 'dark' => 'Escuro'],
                 ],
-            ],
-        ],
-
-        // ========== LEGAL ==========
-        'legal' => [
-            'tab' => 'Legal',
-            'title' => 'Obrigações legais',
-            'description' => 'Detalhes exigidos por lei para o seu site',
-            'icon' => 'scale',
-            'fields' => [
+                [
+                    'type' => 'subtitle',
+                    'label' => 'Obrigações legais',
+                    'icon' => 'scale',
+                ],
+                [
+                    'type' => 'paragraph',
+                    'text' => 'Detalhes exigidos por lei para o seu site',
+                ],
                 [
                     'key' => 'cookies_consent',
                     'type' => 'switch',
@@ -294,6 +293,39 @@ return [
             ],
         ],
 
+        // ========== LEGAL ==========
+        // 'legal' => [
+        //     'tab' => 'Legal',
+        //     'title' => 'Obrigações legais',
+        //     'description' => 'Detalhes exigidos por lei para o seu site',
+        //     'icon' => 'scale',
+        //     'fields' => [
+        //         [
+        //             'key' => 'cookies_consent',
+        //             'type' => 'switch',
+        //             'label' => 'Consentimento para cookies',
+        //             'description' => 'Janela de consentimento de cookies. É preciso configurar os scripts que instalam cookies no navegador em <code>config/scripts.php</code>.',
+        //             'default' => true,
+        //             'active' => 'Usar',
+        //             'inactive' => 'Não usar',
+        //         ],
+        //         [
+        //             'key' => 'privacy_page_id',
+        //             'type' => 'page',
+        //             'label' => 'Política de privacidade',
+        //             'description' => 'Selecione a página usada para a política de privacidade do site',
+        //             'default' => 'Lunar Base',
+        //         ],
+        //         [
+        //             'key' => 'terms_page_id',
+        //             'type' => 'page',
+        //             'label' => 'Termos de uso',
+        //             'description' => 'Selecione a página usada para os termos de uso do site',
+        //             'default' => 'Lunar Base',
+        //         ],
+        //     ],
+        // ],
+
         // ========== NAVIGATION ==========
         'navigation' => [
             'tab' => 'Navegação',
@@ -303,7 +335,12 @@ return [
             'fields' => [
                 [
                     'type' => 'subtitle',
+                    'icon' => 'lock',
                     'label' => 'Administração'
+                ],
+                [
+                    'type' => 'paragraph',
+                    'text' => 'Detalhes da navegação na área administrativa'
                 ],
                 [
                     'key' => 'save_search_params',
@@ -325,7 +362,12 @@ return [
                 ],
                 [
                     'type' => 'subtitle',
+                    'icon' => 'lock-open',
                     'label' => 'Frontend'
+                ],
+                [
+                    'type' => 'paragraph',
+                    'text' => 'Navegação no site'
                 ],
                 [
                     'key' => 'breadcrumbs',
@@ -342,6 +384,35 @@ return [
                     'label' => '',
                     'description' => 'Ícone exibido no menu de trilha.',
                     'default' => '',
+                ],
+                [
+                    'type' => 'subtitle',
+                    'icon' => 'link',
+                    'label' => 'Montagem dos links dinâmicos'
+                ],
+                [
+                    'key' => 'pages_base',
+                    'type' => 'text',
+                    'label' => 'Namespace para páginas',
+                    'description' => 'Prefixo de URL padrão para o carregamento das páginas públicas.',
+                    'default' => '',
+                    'warn_on_change' => 'Ao mudar este valor, as URLs de todas as páginas irão mudar e se algum de seus usuários favoritou, seus links deixarão de funcionar. Tem certeza?'
+                ],
+                [
+                    'key' => 'posts_base',
+                    'type' => 'text',
+                    'label' => 'Namespace para posts',
+                    'description' => 'Prefixo de URL padrão para o carregamento dos posts do blog.',
+                    'default' => 'post',
+                    'warn_on_change' => 'Ao mudar este valor, as URLs de todos os posts irão mudar e se algum de seus usuários favoritou, seus links deixarão de funcionar. Tem certeza?'
+                ],
+                [
+                    'key' => 'blog_base',
+                    'type' => 'text',
+                    'label' => 'Namespace para o blog',
+                    'description' => 'Prefixo de URL padrão para o carregamento do blog.',
+                    'default' => 'blog',
+                    'warn_on_change' => 'Ao mudar este valor, a URL do blog vai mudar e se algum de seus usuários favoritou, seu link deixará de funcionar. Tem certeza?'
                 ],
             ],
         ],
@@ -477,38 +548,38 @@ return [
         ],
 
         // ========== PERMALINKS ==========
-        'permalinks' => [
-            'tab' => 'Permalinks',
-            'title' => 'Montagem dos links',
-            'description' => 'Configurações para a montagem das URLs',
-            'icon' => 'link',
-            'fields' => [
-                [
-                    'key' => 'pages_base',
-                    'type' => 'text',
-                    'label' => 'Namespace para páginas',
-                    'description' => 'Prefixo de URL padrão para o carregamento das páginas públicas.',
-                    'default' => '',
-                    'warn_on_change' => 'Ao mudar este valor, as URLs de todas as páginas irão mudar e se algum de seus usuários favoritou, seus links deixarão de funcionar. Tem certeza?'
-                ],
-                [
-                    'key' => 'posts_base',
-                    'type' => 'text',
-                    'label' => 'Namespace para posts',
-                    'description' => 'Prefixo de URL padrão para o carregamento dos posts do blog.',
-                    'default' => 'post',
-                    'warn_on_change' => 'Ao mudar este valor, as URLs de todos os posts irão mudar e se algum de seus usuários favoritou, seus links deixarão de funcionar. Tem certeza?'
-                ],
-                [
-                    'key' => 'blog_base',
-                    'type' => 'text',
-                    'label' => 'Namespace para o blog',
-                    'description' => 'Prefixo de URL padrão para o carregamento do blog.',
-                    'default' => 'blog',
-                    'warn_on_change' => 'Ao mudar este valor, a URL do blog vai mudar e se algum de seus usuários favoritou, seu link deixará de funcionar. Tem certeza?'
-                ],
-            ],
-        ],
+        // 'permalinks' => [
+        //     'tab' => 'Permalinks',
+        //     'title' => 'Montagem dos links',
+        //     'description' => 'Configurações para a montagem das URLs',
+        //     'icon' => 'link',
+        //     'fields' => [
+        //         [
+        //             'key' => 'pages_base',
+        //             'type' => 'text',
+        //             'label' => 'Namespace para páginas',
+        //             'description' => 'Prefixo de URL padrão para o carregamento das páginas públicas.',
+        //             'default' => '',
+        //             'warn_on_change' => 'Ao mudar este valor, as URLs de todas as páginas irão mudar e se algum de seus usuários favoritou, seus links deixarão de funcionar. Tem certeza?'
+        //         ],
+        //         [
+        //             'key' => 'posts_base',
+        //             'type' => 'text',
+        //             'label' => 'Namespace para posts',
+        //             'description' => 'Prefixo de URL padrão para o carregamento dos posts do blog.',
+        //             'default' => 'post',
+        //             'warn_on_change' => 'Ao mudar este valor, as URLs de todos os posts irão mudar e se algum de seus usuários favoritou, seus links deixarão de funcionar. Tem certeza?'
+        //         ],
+        //         [
+        //             'key' => 'blog_base',
+        //             'type' => 'text',
+        //             'label' => 'Namespace para o blog',
+        //             'description' => 'Prefixo de URL padrão para o carregamento do blog.',
+        //             'default' => 'blog',
+        //             'warn_on_change' => 'Ao mudar este valor, a URL do blog vai mudar e se algum de seus usuários favoritou, seu link deixará de funcionar. Tem certeza?'
+        //         ],
+        //     ],
+        // ],
 
         // ========== LEITURA ==========
         'reading' => [
@@ -556,16 +627,15 @@ return [
                     'default' => 15,
                     'attributes' => ['min' => 5, 'max' => 50],
                 ],
-            ],
-        ],
-
-// ========== ACCESSIBILITY ==========
-        'accessibility' => [
-            'tab' => 'Acessibilidade',
-            'title' => 'Acessibilidade',
-            'description' => 'Ajuste o elemento que mostra o bloco de acessibilidade',
-            'icon' => 'accessibility',
-            'fields' => [
+                [
+                    'type' => 'subtitle',
+                    'icon' => 'accessibility',
+                    'label' => 'Acessibilidade'
+                ],
+                [
+                    'type' => 'paragraph',
+                    'text' => 'Ajuste o elemento que mostra o bloco de acessibilidade'
+                ],
                 [
                     'key' => 'position',
                     'type' => 'select',
@@ -644,6 +714,92 @@ return [
                 ],
             ],
         ],
+
+        // ========== ACCESSIBILITY ==========
+        // 'accessibility' => [
+        //     'tab' => 'Acessibilidade',
+        //     'title' => 'Acessibilidade',
+        //     'description' => 'Ajuste o elemento que mostra o bloco de acessibilidade',
+        //     'icon' => 'accessibility',
+        //     'fields' => [
+        //         [
+        //             'key' => 'position',
+        //             'type' => 'select',
+        //             'label' => 'Posição do elemento',
+        //             'description' => 'Local para exibir o bloco de acessibilidade.',
+        //             'default' => 'right-middle',
+        //             'options' => [
+        //                 'right-middle' => 'No meio da tela, à direita',
+        //                 'right-top' => 'No topo da tela, à direita',
+        //                 'right-bottom' => 'No fundo da tela, à direita',
+        //                 'left-middle' => 'No meio da tela, à esquerda',
+        //                 'left-top' => 'No topo da tela, à esquerda',
+        //                 'left-bottom' => 'No fundo da tela, à esquerda',
+        //             ]
+        //         ],
+        //         [
+        //             'key' => 'switch_themes',
+        //             'type' => 'switch',
+        //             'label' => 'Seletor de temas',
+        //             'description' => 'Exibir seletor para o usuário decidir pelo tema claro ou o escuro.',
+        //             'default' => false,
+        //             'active' => 'Mostrar',
+        //             'inactive' => 'Não mostrar',
+        //         ],
+        //         [
+        //             'key' => 'vlibras',
+        //             'type' => 'switch',
+        //             'label' => 'VLibras',
+        //             'description' => 'Plugin para ler textos em linguagem de sinais (Vlibras).',
+        //             'default' => false,
+        //             'active' => 'Ativar',
+        //             'inactive' => 'Não ativar',
+        //         ],
+        //         [
+        //             'key' => 'increase_text_size',
+        //             'type' => 'switch',
+        //             'label' => 'Aumentar tamanho do texto',
+        //             'description' => 'Exibir links para aumentar o tamanho do texto.',
+        //             'default' => false,
+        //             'active' => 'Ativar',
+        //             'inactive' => 'Não ativar',
+        //         ],
+        //         [
+        //             'key' => 'text_size_steps',
+        //             'type' => 'number',
+        //             'label' => 'Quantidade de passos (Variações)',
+        //             'description' => 'Quantidade máxima de cliques para aumentar o texto antes de retornar ao tamanho original.',
+        //             'default' => 2,
+        //             'attributes' => [
+        //                 'min' => 1,
+        //                 'max' => 5,
+        //                 'step' => 1,
+        //             ],
+        //             'depends_on' => [
+        //                 'field' => 'increase_text_size',
+        //                 'operator' => '===',
+        //                 'value' => true,
+        //             ]
+        //         ],
+        //         [
+        //             'key' => 'text_size_step_value',
+        //             'type' => 'number',
+        //             'label' => 'Valor de cada passo (Pixels)',
+        //             'description' => 'Quantidade de pixels (px) adicionada ao tamanho do texto a cada clique.',
+        //             'default' => 4,
+        //             'attributes' => [
+        //                 'min' => 1,
+        //                 'max' => 12,
+        //                 'step' => 1,
+        //             ],
+        //             'depends_on' => [
+        //                 'field' => 'increase_text_size',
+        //                 'operator' => '===',
+        //                 'value' => true,
+        //             ]
+        //         ],
+        //     ],
+        // ],
 
         // ========== MÍDIA ==========
         'media' => [
@@ -726,7 +882,7 @@ return [
             'tab' => 'Redes sociais',
             'title' => 'Redes Sociais',
             'description' => 'Links e comportamento de compartilhamento',
-            'icon' => 'share-2',
+            'icon' => 'messages-square',
             'fields' => [
                 [
                     'key' => 'facebook_url',
@@ -761,9 +917,9 @@ return [
 
         // ========== E-MAIL ==========
         'mail' => [
-            'tab' => 'E-mail',
+            'tab' => 'SMTP',
             'title' => 'Configurações de E-mail',
-            'description' => 'Remetente e envio de notificações',
+            'description' => 'Remetente e configurações para envio de emails via SMTP',
             'icon' => 'mail',
             'fields' => [
                 [

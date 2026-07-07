@@ -184,7 +184,7 @@ class Post extends Model
      */
     public function getUrlAttribute(): string
     {
-        $postBase = setting('permalinks.posts_base', 'post');
+        $postBase = setting('navigation.posts_base', 'post');
         return url("/{$postBase}/" . $this->slug);
     }
 
@@ -193,7 +193,7 @@ class Post extends Model
      */
     public function getTermUrlAttribute(): ?string
     {
-        $blogBase = setting('permalinks.blog_base', 'blog');
+        $blogBase = setting('navigation.blog_base', 'blog');
 
         $firstTerm = $this->terms->first();
         if (!$firstTerm || !$firstTerm->taxonomy) {

@@ -1,5 +1,5 @@
 @php
-    $privacyPage = \App\Models\Page::find(setting('legal.privacy_page_id', 0));
+    $privacyPage = \App\Models\Page::find(setting('general.privacy_page_id', 0));
     $linkHref = $privacyPage ? " href='{$privacyPage->url}'" : '';
 @endphp
 

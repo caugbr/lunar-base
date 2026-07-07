@@ -57,7 +57,8 @@ class ReactionsServiceProvider extends ServiceProvider
     {
         Settings::add([
             'type' => 'subtitle',
-            'label' => 'Plugin: Reactions',
+            'icon' => 'thumbs-up',
+            'label' => 'Reactions',
         ], 'reading');
 
         Settings::add([

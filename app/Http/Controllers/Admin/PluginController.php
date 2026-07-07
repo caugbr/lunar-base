@@ -36,6 +36,28 @@ class PluginController extends Controller
     }
 
     /**
+     * Toggle the active state of all installed plugins (activate or deactivate all).
+     */
+    public function toggleAll($status)
+    {
+        // 1. Converte o parâmetro de texto para booleano puro do PHP (0 vira false, 1 vira true)
+        $isActive = (bool) $status;
+
+        // 2. Sincroniza a pasta física primeiro
+        $this->syncPlugins();
+
+        // 3. Atualiza todos os registros de uma só vez de forma otimizada
+        Plugin::query()->update(['is_active' => $isActive]);
+
+        $message = $isActive
+            ? 'Todos os plugins instalados foram ativados com sucesso!'
+            : 'Todos os plugins instalados foram desativados com sucesso!';
+
+        return back()->with('success', $message);
+    }
+
+
+    /**
      * Scan the plugins directory and sync with the database.
      */
     protected function syncPlugins(): void

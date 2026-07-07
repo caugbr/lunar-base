@@ -1,0 +1,56 @@
+/* --- Menu de Navegação Horizontal Dinâmico --- */
+.menus-list {
+    display: flex;
+    list-style: none;
+    gap: 1.5rem;
+    margin: 0;
+    padding: 0;
+    align-items: center;
+}
+
+.menu-item {
+    position: relative; /* Base de posicionamento absoluto dos filhos */
+}
+
+.menu-link {
+    text-decoration: none;
+    color: inherit;
+    font-weight: 500;
+    transition: color var(--transition-fast, 0.2s) ease;
+}
+
+/* --- Dropdown Sub-menu (Oculto por padrão) --- */
+.sub-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: var(--color-bg-card, #ffffff);
+    border: 1px solid var(--color-border, #e5e7eb);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    list-style: none;
+    padding: 0.5rem 0;
+    min-width: 200px;
+    z-index: 999;
+    border-radius: 8px;
+    margin-top: 0.5rem; /* Espaço para não colar no topo */
+}
+
+.sub-menu .menu-item {
+    width: 100%;
+}
+
+.sub-menu .menu-link {
+    display: block;
+    padding: 0.5rem 1rem;
+    color: var(--color-text, #333333);
+}
+
+.sub-menu .menu-link:hover {
+    background-color: var(--color-bg-dark, #f3f4f6);
+}
+
+/* --- Revelação dos Sub-menus ao Passar o Mouse --- */
+.menu-item:hover > .sub-menu {
+    display: block;
+}

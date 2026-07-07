@@ -6,7 +6,7 @@
                 <p>{{ setting('site_description', 'Laravel admin starter kit') }}</p>
             </div>
 
-            @if(setting('legal.cookies_consent') || $termsAndPrivacy['terms'] || $termsAndPrivacy['privacy'])
+            @if(setting('general.cookies_consent') || $termsAndPrivacy['terms'] || $termsAndPrivacy['privacy'])
             <div class="footer-links footer-column">
                 <h4>Legal</h4>
                 <ul class="footer-links-list">
@@ -20,7 +20,7 @@
                         <a href="{{ $termsAndPrivacy['privacy']->url }}">{{ $termsAndPrivacy['privacy']->title }}</a>
                     </li>
                     @endif
-                    @if(setting('legal.cookies_consent'))
+                    @if(setting('general.cookies_consent'))
                     <li>
                         <a href="#" id="open-cookie-preferences-link">Preferências de Cookies</a>
                     </li>
@@ -35,7 +35,7 @@
             $socials = array_filter($socials);
             @endphp
 
-            @if($showSocial && count($socials))
+            @if($showSocial)
             <div class="footer-links footer-column">
                 <h4>Social</h4>
                 <ul class="footer-links-list">
@@ -63,12 +63,12 @@
     </div>
 </footer>
 @php
-$useSwitchThemes = setting('accessibility.switch_themes');
-$useTextSize = setting('accessibility.increase_text_size');
-$useVlibras = setting('accessibility.vlibras');
-$positionClass = setting('accessibility.position', 'right-middle');
-$textSizeSteps = setting('accessibility.text_size_steps', 2);
-$textSizeStepValue = setting('accessibility.text_size_step_value', 4);
+$useSwitchThemes = setting('reading.switch_themes');
+$useTextSize = setting('reading.increase_text_size');
+$useVlibras = setting('reading.vlibras');
+$positionClass = setting('reading.position', 'right-middle');
+$textSizeSteps = setting('reading.text_size_steps', 2);
+$textSizeStepValue = setting('reading.text_size_step_value', 4);
 @endphp
 @if($useSwitchThemes || $useTextSize || $useVlibras)
 <div class="accessibility {{ $positionClass }}">

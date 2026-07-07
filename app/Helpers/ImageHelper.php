@@ -122,3 +122,21 @@ if (!function_exists('uploadImage')) {
         return $result;
     }
 }
+
+/**
+ * Remove fisicamente uma imagem e todas as suas variações em cache
+ */
+if (!function_exists('deleteImage')) {
+    function deleteImage($path, $folder = 'images', $disk = 'public')
+    {
+        // 1. Remove o arquivo original físico no disco correspondente (padrão 'public')
+        if (Storage::disk($disk)->exists($path)) {
+            Storage::disk($disk)->delete($path);
+        }
+
+        // 2. Aciona o limpador do ImageProcessor para apagar as variações em cache (_thumb, _large, etc.)
+        if (function_exists('deleteMediaVariants')) {
+            deleteMediaVariants($path, $folder);
+        }
+    }
+}

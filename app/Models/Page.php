@@ -99,7 +99,7 @@ class Page extends Model
      */
     public function getUrlAttribute(): string
     {
-        $base = setting('permalinks.pages_base', '');
+        $base = setting('navigation.pages_base', '');
         $prefix = $base ? '/' . ltrim($base, '/') : '';
 
         if ($this->namespace) {
