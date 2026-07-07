@@ -21,7 +21,7 @@
 
     if (!$currentPage) {
         if ($slugParam) {
-            // 💡 Caso 1: 3 segmentos (Ex: /page/tutorial-x/item-a)
+            // Caso 1: 3 segmentos (Ex: /page/tutorial-x/item-a)
             if ($namespaceParam) {
                 if ($baseParam === $pagesBase) {
                     $currentPage = \App\Models\Page::where('slug', $slugParam)
@@ -30,7 +30,7 @@
                         ->first();
                 }
             } else {
-                // 💡 Caso 2: 2 segmentos
+                // Caso 2: 2 segmentos
                 if ($baseParam === $pagesBase) {
                     // Ex: /page/sobre-nos (Sem namespace)
                     $currentPage = \App\Models\Page::where('slug', $slugParam)
@@ -47,7 +47,7 @@
                 }
             }
         } elseif ($baseParam) {
-            // 💡 Caso 3: 1 segmento
+            // Caso 3: 1 segmento
             // Ex: /sobre-nos (Página sem base e sem namespace)
             // Primeiro certificamos que não é o blog (caso o blog_base seja o mesmo do baseParam)
             if ($baseParam !== $blogBase) {

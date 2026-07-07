@@ -13,7 +13,7 @@
 {{-- Card de Propriedades do Menu --}}
 <div class="admin-card" style="margin-bottom: 1.5rem;">
     <div class="admin-card-header">
-        <h2><x-lucide-settings class="lucid-icon" /> Propriedades do Menu</h2>
+        <h2><x-lucide-square-pen class="lucid-icon" /> Propriedades do Menu</h2>
     </div>
     <form method="POST" action="{{ route('admin.menus.update', $menu->id) }}">
         @csrf
@@ -218,6 +218,9 @@
                 <button type="button" @click="saveMenuStructure()" :disabled="saving" class="admin-btn admin-btn-primary">
                     <template x-if="saving">
                         <x-lucide-loader class="lucid-icon animate-spin" />
+                    </template>
+                    <template x-if="!saving">
+                        <x-lucide-save class="lucid-icon" />
                     </template>
                     <span x-text="saving ? 'Salvando...' : 'Salvar Estrutura'"></span>
                 </button>

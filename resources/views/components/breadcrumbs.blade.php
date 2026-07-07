@@ -38,7 +38,7 @@
         }
     }
 
-    // 💡 DETECÇÃO DE ROTA DE TAXONOMIA:
+    // DETECÇÃO DE ROTA DE TAXONOMIA:
     // Verifica se estamos na rota de listagem de posts por termo de taxonomia (ex: /blog/categoria/sem-categoria)
     $isTaxonomyTermRoute = false;
     $currentTaxonomy = null;
