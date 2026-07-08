@@ -7,7 +7,10 @@
 <div class="admin-card">
     <div class="admin-card-header">
         <h2><x-lucide-palette class="lucid-icon" /> Temas Instalados</h2>
-        <a class="admin-btn admin-btn-secondary" href="/tutorials/themes.html" target="_blank">Como criar um tema</a>
+        <a class="admin-btn admin-btn-secondary" href="/tutorials/themes.html" target="_blank">
+            <x-lucide-external-link class="lucid-icon" />
+            Como criar um tema
+        </a>
     </div>
 
     <p>
