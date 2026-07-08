@@ -167,7 +167,7 @@
 
                         <div class="form-group">
                             <label>
-                                <x-switch name="featured" checked="{{ old('featured', $post->featured) }}" active="" inactive="" />
+                                <x-switch name="featured" checked="{{ old('featured') }}" active="" inactive="" />
                                 <span>Destacar na home</span>
                             </label>
                             <small>Exibe este post em destaque na página inicial</small>
@@ -175,7 +175,7 @@
 
                         <div class="form-group">
                             <label>
-                                <x-switch name="sticky" checked="{{ old('sticky', $post->sticky) }}" active="" inactive="" />
+                                <x-switch name="sticky" checked="{{ old('sticky') }}" active="" inactive="" />
                                 <span>Fixar no topo</span>
                             </label>
                             <small>Mantém este post sempre no topo da listagem</small>

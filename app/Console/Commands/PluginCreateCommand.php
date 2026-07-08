@@ -74,6 +74,7 @@ class PluginCreateCommand extends Command
             $dirs[] = $path . '/database/migrations';
         }
         if ($views) $dirs[] = $path . '/resources/views';
+        $dirs[] = $path . '/resources/help-views';
 
         $dirs[] = $path . '/resources/assets/css';
         $dirs[] = $path . '/resources/assets/js';
@@ -249,5 +250,23 @@ class PluginCreateCommand extends Command
             "</div>\n";
 
         File::put($path . "/resources/views/index.blade.php", $content);
+
+        $help = '
+<div class="plugin-help-content">
+    <header>
+        <h3>
+            <x-lucide-puzzle class="lucid-icon" />
+            ' . $headlineName . '
+        </h3>
+        <p>
+            Breve descrição sobre o plugin.
+        </p>
+    </header>
+
+    <h4>Sobre como o plugin funciona</h4>
+    <p>Instruções para usar o plugin</p>
+</div>';
+
+        File::put($path . "/resources/help-views/help.blade.php", $help);
     }
 }

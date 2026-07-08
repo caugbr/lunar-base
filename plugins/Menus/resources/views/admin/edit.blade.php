@@ -135,7 +135,7 @@
     <div class="builder-column">
         <div class="admin-card" style="margin-bottom: 0;">
             <div class="admin-card-header">
-                <h2><x-lucide-menu class="lucid-icon" /> Itens de Link do Menu</h2>
+                <h2><x-lucide-menu class="lucid-icon" /> Itens do menu {{ old('name', $menu->name) }}</h2>
                 <a href="{{ route('admin.menus.index') }}" class="admin-btn admin-btn-secondary">
                     <x-lucide-arrow-left class="lucid-icon" /> Voltar
                 </a>

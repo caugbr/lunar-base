@@ -1,0 +1,6 @@
+{
+    "name": "Maps",
+    "description": "Crie mapas OpenStreetMap e defina pontos no mapa.",
+    "version": "1.0.0",
+    "provider": "Plugins\\Maps\\MapsServiceProvider"
+}

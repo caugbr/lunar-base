@@ -40,20 +40,16 @@
             <tbody>
                 @forelse($plugins as $plugin)
                 @php
-                    $namespaceLower = strtolower($plugin->folder_name);
-
+                    $kebabName = Str::kebab($plugin->name);
                     $helpView = null;
-                    if (view()->exists("{$namespaceLower}::help")) {
-                        $helpView = "{$namespaceLower}::help"; // Ex: comments::help
-                    } elseif (view()->exists("{$namespaceLower}::admin.help")) {
-                        $helpView = "{$namespaceLower}::admin.help"; // Fallback caso queira organizar em subpastas
+                    if (view()->exists("{$kebabName}-help::help")) {
+                        $helpView = "{$kebabName}-help::help";
                     }
                 @endphp
-                <tr>
+                <tr class="{{ $plugin->is_active ? 'active' : 'inactive' }}">
                     <td>
                         <strong>{{ $plugin->name }}</strong>
                         @if($helpView)
-                        {{-- @click="$dispatch('modal-open', { id: 'help-{{ $plugin->id }}' })" --}}
                         <button type="button"
                             onclick="window.dispatchEvent(new CustomEvent('modal-open', { detail: { id: 'help-{{ $plugin->id }}' } }))"
                             class="transparent-btn"
@@ -115,6 +111,9 @@
     .status-all:hover {
         background-color: #3b82f6;
         color: #ffffff;
+    }
+    tr.inactive {
+        background-color: #f5f5f5;
     }
 </style>
 @endpush
