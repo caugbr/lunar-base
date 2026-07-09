@@ -11,10 +11,6 @@ class Setting extends Model
         'group', 'key', 'value', 'type', 'description', 'order'
     ];
 
-    protected $casts = [
-        //'value' => 'json',
-    ];
-
     /**
      * Retorna o valor no tipo correto e trata criptografia
      */
@@ -28,6 +24,22 @@ class Setting extends Model
             'password' => $this->decryptPassword($this->value),
             default => $this->value,
         };
+    }
+
+    public function scopeOptions($query)
+    {
+        return $query->where('group', '_system_options');
+    }
+
+    public function scopePrefixedOptions($query, $prefix)
+    {
+        return $query->where('group', '_system_options')
+                    ->where('key', 'LIKE', "{$prefix}%");
+    }
+
+    public function scopeSettings($query)
+    {
+        return $query->where('group', '!=', '_system_options');
     }
 
     /**

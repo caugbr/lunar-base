@@ -24,7 +24,7 @@ class SettingController extends Controller
                     continue;
                 }
                 $key = $field['key'];
-                $saved = Setting::where('key', $key)->first();
+                $saved = Setting::settings()->where('key', $key)->first();
                 $value = $saved ? $saved->typed_value : ($field['default'] ?? null);
 
                 if (($field['type'] ?? '') === 'image' && $value) {
@@ -112,7 +112,7 @@ class SettingController extends Controller
 
                     // 2. Se o campo veio vazio, mantém o valor existente
                     if (blank($input)) {
-                        $existing = Setting::where('key', $key)->value('value');
+                        $existing = Setting::settings()->where('key', $key)->value('value');
                         if ($existing) {
                             Setting::set($key, $existing, $groupKey, $type);
                         }
@@ -130,7 +130,7 @@ class SettingController extends Controller
                     $shouldRemove = $request->boolean("remove_settings.{$key}");
 
                     if ($shouldRemove) {
-                        $oldSetting = Setting::where('key', $key)->first();
+                        $oldSetting = Setting::settings()->where('key', $key)->first();
                         if ($oldSetting && $oldSetting->value) {
                             deleteImage($oldSetting->value, 'settings');
                         }
@@ -150,7 +150,7 @@ class SettingController extends Controller
 
                         $value = $result['original'];
 
-                        $oldSetting = Setting::where('key', $key)->first();
+                        $oldSetting = Setting::settings()->where('key', $key)->first();
                         if ($oldSetting && $oldSetting->value) {
                             deleteImage($oldSetting->value, 'settings');
                         }

@@ -40,6 +40,7 @@
             "app/Helpers/ImageHelper.php",
             "app/Helpers/ImageProcessor.php",
             "app/Helpers/LogHelper.php",
+            "app/Helpers/OptionHelper.php",
             "app/Helpers/RolePermissionHelper.php"
         ]
     },

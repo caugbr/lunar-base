@@ -1,0 +1,122 @@
+/* ==========================================================================
+   Estilos Administrativos para o Plugin FAQ (Lunar Base)
+   ========================================================================== */
+
+/* 1. Formulário de Criação Rápida (Index) */
+.faq-quick-create {
+    margin-bottom: 2rem;
+    background: var(--color-bg-dark);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--color-border);
+}
+
+.faq-quick-create h3 {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+.faq-quick-create .btn-form-group {
+    align-self: flex-end;
+    flex: 0;
+}
+
+.faq-quick-create .btn-submit {
+    white-space: nowrap;
+    height: 38px;
+}
+
+/* 2. Listagem de Tabela (Index) */
+.faq-code-slug {
+    color: var(--color-primary);
+}
+
+.faq-table-actions {
+    padding: 4px 12px;
+}
+
+.faq-table-empty {
+    padding: 30px;
+}
+
+/* 3. Formulário de Edição Principal (Edit) */
+.faq-readonly-input {
+    background-color: var(--color-bg-disabled);
+    cursor: not-allowed;
+}
+
+.faq-sections-divider {
+    border-top: 1px solid var(--color-border);
+    padding-top: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.faq-sections-divider h3 {
+    font-size: 1.1rem;
+    color: var(--color-text);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* 4. Lista de Perguntas (Edit) */
+.faq-items-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.faq-item-card {
+    background: var(--color-bg-dark);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 1.25rem;
+    position: relative;
+}
+
+.faq-item-remove-btn {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: none;
+    border: none;
+    color: var(--color-text-dim);
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.faq-item-remove-btn:hover {
+    opacity: 0.8;
+}
+
+.faq-item-index {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--color-primary);
+    margin-bottom: 0.75rem;
+}
+
+.faq-item-form-group {
+    margin-bottom: 1rem;
+}
+
+.faq-item-form-group-last {
+    margin-bottom: 0;
+}
+
+.faq-items-empty {
+    text-align: center;
+    color: var(--color-text-dim);
+    padding: 2rem 0;
+    margin: 0;
+}
+
+.faq-add-item-action {
+    margin-top: 1.5rem;
+}
+
+.faq-action-buttons {
+    margin-top: 2rem;
+}

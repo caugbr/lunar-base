@@ -1,0 +1,6 @@
+{
+    "name": "FAQ",
+    "description": "Crie blocos de perguntas e respostas de forma organizada.",
+    "version": "1.0.0",
+    "provider": "Plugins\\FAQ\\FAQServiceProvider"
+}

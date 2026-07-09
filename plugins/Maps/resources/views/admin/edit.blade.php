@@ -404,7 +404,7 @@
                                 </div>
 
                                 {{-- Parameters (key=value) --}}
-                                <div class="params-editor">
+                                {{-- <div class="params-editor">
                                     <div class="params-head">
                                         <span>Parâmetros extras</span>
                                         <span class="counter" x-text="paramCount(selectedIdx)"></span>
@@ -424,7 +424,7 @@
                                                 @click="addParam()"
                                                 :disabled="!newParam.key || !newParam.value">＋</button>
                                     </div>
-                                </div>
+                                </div> --}}
                             </div>
                         </template>
                     </article>
