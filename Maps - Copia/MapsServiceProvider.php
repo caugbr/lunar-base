@@ -27,20 +27,9 @@ class MapsServiceProvider extends ServiceProvider
         // Registra o shortcode [map id="1"]
         ContentHelper::registerShortcode('map', function ($attributes) {
             $id = $attributes['id'] ?? null;
-            $slug = null;
-            if (!$id) {
-                $slug = $attributes['slug'] ?? null;
-                if (!$slug) {
-                    return '<!-- [map] shortcode: atributo identificador ("id" ou "slug") é obrigatório -->';
-                }
-            }
+            if (!$id) return '<!-- [map] shortcode: atributo "id" obrigatório -->';
 
-            if ($slug) {
-                $map = Map::where('slug', $slug)->first();
-            } else {
-                $map = Map::with('markers')->find($id);
-            }
-
+            $map = Map::with('markers')->find($id);
             if (!$map) return '<!-- [map] shortcode: mapa não encontrado -->';
 
             return view('maps::public.map', compact('map'))->render();
@@ -64,13 +53,8 @@ class MapsServiceProvider extends ServiceProvider
         // Adiciona subtítulo no grupo "general"
         Settings::add([
             'type' => 'subtitle',
-            'label' => 'Mapas (OpenStreetMap)',
-            'icon' => 'map',
-        ], 'general');
-
-        Settings::add([
-            'type' => 'paragraph',
-            'text' => 'Configurações do plugin de mapas interativos',
+            'label' => '🗺️ Mapas (OpenStreetMap)',
+            'description' => 'Configurações do plugin de mapas interativos',
         ], 'general');
 
         // Coordenadas padrão (usadas no formulário de criação)

@@ -7,36 +7,25 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class MapMarker extends Model
 {
-    protected $table = 'map_markers';
-
     protected $fillable = [
         'map_id',
-        'uid',
         'title',
-        'content',
         'lat',
         'lng',
+        'content',
         'color',
         'icon',
-        'parameters',
+        'sort_order',
     ];
 
     protected $casts = [
-        'lat'        => 'float',
-        'lng'        => 'float',
-        'parameters' => 'array',
+        'lat' => 'float',
+        'lng' => 'float',
+        'sort_order' => 'integer',
     ];
 
     public function map(): BelongsTo
     {
         return $this->belongsTo(Map::class);
-    }
-
-    /**
-     * Gera um UID curto (compatível com o WP: 'uid_' + 6 chars base36).
-     */
-    public static function generateUid(): string
-    {
-        return 'uid_' . substr(base_convert((string) mt_rand(), 10, 36), 0, 6);
     }
 }

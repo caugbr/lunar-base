@@ -1,0 +1,338 @@
+/* ═══════════════════════════════════════════════════════════════
+   Maps Plugin — Admin editor styles
+   Usa tokens do admin (--color-*, --gradient-primary, --shadow-*)
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Título grande estilo Posts */
+.map-title-row input {
+    font-size: 1.4rem;
+    font-weight: 600;
+    padding: 12px 14px;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    color: var(--color-text);
+    width: 100%;
+    margin-bottom: 1.5rem;
+}
+.map-title-row input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--color-primary) 20%, transparent);
+}
+
+/* Grid 2/3 + 1/3 */
+.map-editor-layout {
+    /* display: grid;
+    grid-template-columns: 2fr 1fr;
+    align-items: start;
+    gap: 1.5rem; */
+    display: flex;
+    flex-direction: row;
+    gap: 1.5rem;
+}
+.map-editor-left { min-width: 0; display: flex; flex-direction: column; gap: 1rem; flex: 1; }
+.map-editor-right {
+    /* display: flex; flex-direction: column; gap: 1rem; */
+    /* position: sticky; top: 76px; respeita o header sticky do admin */
+    /* max-height: calc(100vh - 96px); */
+    /* overflow-y: auto; */
+    flex: 0 0 360px;
+    padding-right: 4px;
+}
+.map-editor-right::-webkit-scrollbar { width: 8px; }
+.map-editor-right::-webkit-scrollbar-thumb {
+    background: var(--color-border); border-radius: 4px;
+}
+
+@media (max-width: 1100px) {
+    .map-editor-layout { grid-template-columns: 1fr; }
+    .map-editor-right { position: static; max-height: none; overflow: visible; }
+}
+
+/* ── Header dos edit-boxes ──────────────────────────────────── */
+.edit-box header {
+    display: flex; align-items: center; gap: 8px;
+    flex-wrap: wrap;
+}
+.edit-box header .lucid-icon { width: 18px; height: 18px; }
+.edit-box header .counter {
+    background: var(--color-primary);
+    color: var(--color-bg-dark);
+    font-size: 0.7rem; font-weight: 700;
+    padding: 2px 8px; border-radius: 999px;
+}
+
+/* ── Cartão do mapa ─────────────────────────────────────────── */
+.map-preview-box article { padding: 0 !important; }
+
+.coord-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 10px;
+    background: var(--color-bg-dark);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+}
+.coord-badge code {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.75rem;
+    color: var(--color-text);
+    background: none;
+}
+.coord-badge .lucid-icon { width: 14px; height: 14px; opacity: 0.7; }
+.coord-badge .zoom-pill {
+    background: var(--gradient-primary);
+    color: white;
+    padding: 1px 8px; border-radius: 999px;
+    font-weight: 600; font-size: 0.7rem;
+    margin-left: 4px;
+}
+
+/* Toolbar de busca acima do mapa */
+.map-toolbar {
+    padding: 10px 14px;
+    background: var(--color-bg-dark);
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+    position: relative;
+}
+.search-wrap {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 4px 4px 4px 10px;
+}
+.search-wrap > .lucid-icon { width: 16px; height: 16px; color: var(--color-text-muted); flex-shrink: 0; }
+.search-wrap input {
+    flex: 1; border: 0 !important; background: transparent !important;
+    color: var(--color-text); outline: none; padding: 6px 4px !important;
+    min-width: 0;
+}
+.search-wrap input:focus { box-shadow: none !important; }
+
+.search-results {
+    position: absolute; left: 14px; right: 14px; top: calc(100% - 4px);
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    box-shadow: var(--shadow-md);
+    z-index: 500;
+    max-height: 260px; overflow-y: auto;
+}
+.search-result {
+    display: flex; gap: 8px; align-items: flex-start;
+    padding: 10px 12px; cursor: pointer;
+    border-bottom: 1px solid var(--color-border);
+    font-size: 0.85rem; color: var(--color-text);
+    transition: background 0.15s;
+}
+.search-result:last-child { border-bottom: 0; }
+.search-result:hover { background: var(--color-bg-card-hover); }
+.search-result .lucid-icon { width: 14px; height: 14px; color: var(--color-primary); margin-top: 2px; flex-shrink: 0; }
+
+/* Canvas do mapa */
+.map-canvas-wrap { position: relative; }
+.map-canvas {
+    width: 100%; height: 560px;
+    background: var(--color-bg-dark);
+    border-radius: 0 0 8px 8px;
+}
+.map-hint {
+    position: absolute; bottom: 12px; left: 12px;
+    background: color-mix(in oklch, var(--color-bg-card) 92%, transparent);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-muted);
+    font-size: 0.75rem;
+    padding: 6px 10px; border-radius: 6px;
+    display: flex; align-items: center; gap: 6px;
+    pointer-events: none;
+    z-index: 400;
+}
+.map-hint .lucid-icon { width: 14px; height: 14px; }
+
+/* ── Chips de marcadores ─────────────────────────────────────── */
+.markers-chips {
+    display: flex; flex-wrap: wrap; gap: 8px;
+}
+.marker-chip {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 12px 6px 10px;
+    border-radius: 999px;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    max-width: 100%;
+}
+.marker-chip:hover {
+    background: var(--color-bg-card-hover);
+    border-color: var(--color-primary);
+}
+.marker-chip.is-selected {
+    background: var(--gradient-primary);
+    color: white;
+    border-color: transparent;
+}
+.marker-chip .dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--pin-color, #e74c3c);
+    border: 2px solid white;
+    box-shadow: 0 0 0 1px var(--color-border);
+    flex-shrink: 0;
+}
+.marker-chip span:not(.dot) {
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    max-width: 200px;
+}
+
+.empty-hint {
+    padding: 1rem 0;
+    color: var(--color-text-muted);
+    font-size: 0.85rem; text-align: center;
+    margin: 0;
+}
+.empty-hint a { color: var(--color-primary); }
+
+/* ── Shortcode ──────────────────────────────────────────────── */
+.shortcode-row {
+    display: flex; gap: 8px; margin-bottom: 8px;
+}
+.shortcode-input {
+    flex: 1; font-family: 'JetBrains Mono', ui-monospace, monospace;
+    background: var(--color-bg-dark) !important;
+    color: var(--color-primary) !important;
+    font-weight: 600;
+}
+
+/* ── Coluna direita: form rows ──────────────────────────────── */
+.admin-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+.admin-form-row .form-group { margin: 0; }
+
+.checkbox-inline {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 0.85rem; cursor: pointer;
+    padding: 6px 0;
+    color: var(--color-text);
+}
+.checkbox-inline .lucid-icon { width: 16px; height: 16px; color: var(--color-text-muted); }
+
+.switch-stack {
+    display: flex; flex-direction: column; gap: 4px;
+    padding-top: 6px;
+    border-top: 1px dashed var(--color-border);
+    margin-top: 6px;
+}
+
+/* ── Marker sidebox ─────────────────────────────────────────── */
+.marker-sidebox.is-editing header {
+    background: color-mix(in oklch, var(--color-primary) 8%, var(--color-bg-card));
+}
+.marker-editor .params-editor {
+    margin-top: 12px; padding-top: 10px;
+    border-top: 1px dashed var(--color-border);
+}
+.params-head {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 0.8rem; color: var(--color-text-muted);
+    margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em;
+}
+.param-row {
+    display: grid; grid-template-columns: auto 1fr auto; gap: 8px;
+    align-items: center; padding: 4px 0;
+    font-size: 0.8rem;
+    border-bottom: 1px dashed var(--color-border);
+}
+.param-row code {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    color: var(--color-accent);
+    font-size: 0.75rem;
+}
+.param-remove {
+    background: none; border: 0; cursor: pointer;
+    color: var(--color-text-muted);
+    font-size: 1rem; line-height: 1;
+    padding: 0 4px;
+}
+.param-remove:hover { color: var(--color-danger); }
+.param-add {
+    display: grid; grid-template-columns: 1fr 1fr auto; gap: 4px;
+    margin-top: 6px;
+}
+.param-add input { font-size: 0.8rem; padding: 4px 8px; }
+
+/* ── GeoJSON finder ─────────────────────────────────────────── */
+.geojson-finder {
+    background: var(--color-bg-dark);
+    border: 1px dashed var(--color-border);
+    border-radius: 6px;
+    padding: 10px;
+    margin: 8px 0;
+}
+.finder-results { margin-top: 8px; display: flex; flex-direction: column; gap: 6px; }
+.finder-result {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    padding: 8px;
+    font-size: 0.8rem;
+}
+.finder-result strong { display: block; color: var(--color-text); }
+.finder-result small { display: block; color: var(--color-text-muted); font-size: 0.7rem; margin: 2px 0 6px; }
+.finder-save { display: flex; gap: 4px; }
+.finder-save input { flex: 1; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; }
+
+.geojson-style {
+    margin-top: 8px; padding: 8px 10px;
+    background: var(--color-bg-dark);
+    border-radius: 6px;
+}
+.geojson-style summary {
+    cursor: pointer; font-size: 0.85rem; font-weight: 600;
+    color: var(--color-text-muted); padding: 4px 0;
+}
+.geojson-style[open] summary { color: var(--color-text); margin-bottom: 8px; }
+
+/* ── Buttons ────────────────────────────────────────────────── */
+.buttons.vertical { display: flex; flex-direction: column; gap: 8px; }
+.admin-btn.btn-sm { padding: 4px 10px; font-size: 0.8rem; }
+.admin-btn .lucid-icon { width: 14px; height: 14px; }
+
+/* ── Marker pin (Leaflet divIcon) ───────────────────────────── */
+.custom-marker, .custom-marker-public {
+    background: transparent !important;
+    border: 0 !important;
+}
+.custom-pin-admin {
+    width: 28px; height: 28px;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    border: 2px solid white;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 200ms ease;
+}
+.custom-pin-admin span {
+    transform: rotate(45deg);
+    color: white; font-size: 11px; font-weight: 700;
+}
+.custom-marker.is-selected .custom-pin-admin {
+    transform: rotate(-45deg) scale(1.15);
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--color-primary) 60%, transparent),
+                0 4px 10px rgba(0,0,0,0.4);
+}
+
+/* Ícones no header do edit-box */
+.edit-box header > .lucid-icon:first-child { color: var(--color-primary); }
+
+/* Alerta de erro pequeno */
+small.error { color: var(--color-danger); font-size: 0.75rem; display: block; margin-top: 4px; }

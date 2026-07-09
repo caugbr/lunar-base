@@ -1,24 +1,24 @@
 @extends('admin.layout')
 
 @section('header_title', $map->exists ? 'Editar Mapa' : 'Novo Mapa')
-@section('header_subtitle', $map->exists ? 'Modifique as configurações do mapa' : 'Crie um novo mapa interativo')
+@section('header_subtitle', $map->exists ? 'Modifique o mapa, marcadores e áreas destacadas' : 'Crie um novo mapa interativo')
+
+@push('styles')
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="{{ asset('plugins/maps/css/maps-admin.css') }}">
+@endpush
 
 @section('content')
-@once
-@push('styles')
-    <link rel="stylesheet" href="{{ asset('plugins/maps/css/maps.css') }}">
-@endpush
-@endonce
-
 <div class="admin-card">
     <div class="admin-card-header">
-        <h2><x-lucide-map-pin class="lucid-icon" /> {{ $map->exists ? 'Editar: ' . $map->title : 'Novo Mapa' }}</h2>
+        <h2>
+            <x-lucide-map-pin class="lucid-icon" />
+            {{ $map->exists ? 'Editar: ' . $map->title : 'Novo Mapa' }}
+        </h2>
         <div class="top-buttons">
-            @if($map->exists)
-                <a href="{{ route('admin.maps.index') }}" class="admin-btn admin-btn-secondary">
-                    <x-lucide-arrow-left class="lucid-icon" /> <span>Voltar</span>
-                </a>
-            @endif
+            <a href="{{ route('admin.maps.index') }}" class="admin-btn admin-btn-secondary">
+                <x-lucide-arrow-left class="lucid-icon" /> <span>Voltar</span>
+            </a>
         </div>
     </div>
 
@@ -28,433 +28,485 @@
         </div>
     @endif
 
-    <form action="{{ $map->exists ? route('admin.maps.update', $map->id) : route('admin.maps.store') }}" method="POST" x-data="mapEditor()" x-init="init()">
+    <form method="POST"
+          action="{{ $map->exists ? route('admin.maps.update', $map->id) : route('admin.maps.store') }}"
+          enctype="multipart/form-data"
+          id="map_edit_form"
+          x-data="mapEditor()"
+          x-init="init()">
         @csrf
         @if($map->exists) @method('PUT') @endif
 
-        {{-- ═══════════════════════════════════════════════════════
-             LAYOUT DUAS COLUNAS: Esquerda (maior) + Direita (menor)
-             ═══════════════════════════════════════════════════════ --}}
+        {{-- ═════════ Título (largura total) ═════════ --}}
+        <div class="form-group map-title-row">
+            <input type="text" name="title" x-model="form.title" placeholder="Título do mapa" required>
+            @error('title') <small class="error">{{ $message }}</small> @enderror
+        </div>
+
+        {{-- ═════════ Layout 2/3 + 1/3 ═════════ --}}
         <div class="map-editor-layout">
 
-            {{-- ═══════════════════════════════════════════════════
-                 COLUNA ESQUERDA (maior) - Mapa + Descrição
-                 ═══════════════════════════════════════════════════ --}}
+            {{-- ────────── COLUNA ESQUERDA (2/3) ────────── --}}
             <div class="map-editor-left">
 
-                {{-- Título (igual ao campo "Título do post") --}}
-                <div class="form-group" style="margin-bottom: 1.5rem;">
-                    <input type="text" name="title" x-model="form.title" class="form-input" required
-                           placeholder="Título do mapa" style="font-size: 1.1rem; font-weight: 600;">
-                    @error('title') <small class="error">{{ $message }}</small> @enderror
+                {{-- Cartão do mapa com toolbar embutida --}}
+                <div class="edit-box map-preview-box">
+                    <header>
+                        <x-lucide-map class="lucid-icon" />
+                        <span>Mapa</span>
+
+                        {{-- Coordenadas ao vivo --}}
+                        <span class="coord-badge" title="Centro atual do mapa">
+                            <x-lucide-crosshair class="lucid-icon" />
+                            <code x-text="format(form.center_lat) + ', ' + format(form.center_lng)"></code>
+                            <span class="zoom-pill">z <span x-text="form.zoom"></span></span>
+                        </span>
+
+                        <button type="button" class="admin-btn admin-btn-secondary btn-sm" @click="fitMarkers()"
+                                :disabled="markers.length === 0" title="Ajustar aos marcadores">
+                            <x-lucide-scan class="lucid-icon" />
+                        </button>
+                    </header>
+
+                    {{-- Barra de busca (Nominatim) --}}
+                    <div class="map-toolbar">
+                        <div class="search-wrap">
+                            <x-lucide-search class="lucid-icon" />
+                            <input type="text" x-model="searchQuery" @keydown.enter.prevent="searchAddress()"
+                                   placeholder="Buscar endereço ou lugar…">
+                            <button type="button" class="admin-btn admin-btn-primary btn-sm"
+                                    @click="searchAddress()" :disabled="searching || searchQuery.length < 3">
+                                <span x-show="!searching">Buscar</span>
+                                <span x-show="searching">…</span>
+                            </button>
+                        </div>
+                        <div class="search-results" x-show="searchResults.length > 0" @click.outside="searchResults = []">
+                            <template x-for="(r, i) in searchResults" :key="i">
+                                <div class="search-result" @click="selectAddress(r)">
+                                    <x-lucide-map-pin class="lucid-icon" />
+                                    <span x-text="r.display_name"></span>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+
+                    <article class="map-canvas-wrap">
+                        <div id="map-preview" class="map-canvas"></div>
+                        <div class="map-hint">
+                            <x-lucide-mouse-pointer-click class="lucid-icon" />
+                            Clique no mapa para adicionar um marcador
+                        </div>
+                    </article>
                 </div>
 
-                {{-- MAPA (ocupa o lugar do editor TinyMCE) --}}
+                {{-- Descrição --}}
+                <div class="edit-box">
+                    <header><x-lucide-align-left class="lucid-icon" /> Descrição</header>
+                    <article>
+                        <div class="form-group">
+                            <textarea name="description" x-model="form.description" rows="3"
+                                      placeholder="Breve descrição do mapa (opcional)"></textarea>
+                        </div>
+                    </article>
+                </div>
+
+                {{-- Lista de marcadores como chips clicáveis --}}
                 <div class="edit-box">
                     <header>
-                        <x-lucide-map class="lucid-icon" /> Preview do Mapa
-                        <div style="margin-left: auto; display: flex; gap: 8px;">
-                            <button type="button" class="admin-btn admin-btn-secondary btn-sm" @click="updateMapPreview()">
-                                <x-lucide-refresh-cw class="lucid-icon" /> Atualizar
+                        <x-lucide-list class="lucid-icon" /> Marcadores
+                        <span class="counter" x-text="markers.length"></span>
+                        <div style="margin-left: auto; display: flex; gap: 6px;">
+                            <button type="button" class="admin-btn admin-btn-secondary btn-sm"
+                                    @click="deleteAll()" :disabled="markers.length === 0">
+                                <x-lucide-trash class="lucid-icon" /> Limpar
                             </button>
                         </div>
                     </header>
-                    <article style="padding: 0;">
-                        <div id="map-preview" style="width: 100%; height: 500px; border-radius: 0 0 8px 8px;"></div>
+                    <article>
+                        <div class="markers-chips" x-show="markers.length > 0">
+                            <template x-for="(m, i) in sortedMarkerIndexes()" :key="markers[m].uid || i">
+                                <button type="button" class="marker-chip"
+                                        :class="{ 'is-selected': selectedIdx === m }"
+                                        @click="selectMarker(m)"
+                                        :style="'--pin-color:' + (markers[m].color || '#e74c3c')">
+                                    <span class="dot"></span>
+                                    <span x-text="markers[m].title || 'Sem título'"></span>
+                                </button>
+                            </template>
+                        </div>
+                        <p class="empty-hint" x-show="markers.length === 0">
+                            Nenhum marcador ainda. Clique no mapa ou use o painel à direita.
+                        </p>
                     </article>
                 </div>
-
-                {{-- Descrição curta --}}
+                {{-- ═ Área destacada (GeoJSON) ═ --}}
                 <div class="edit-box">
-                    <header>Descrição</header>
+                    <header><x-lucide-shapes class="lucid-icon" /> Área destacada</header>
                     <article>
                         <div class="form-group">
-                            <textarea name="description" x-model="form.description" class="form-input" rows="4"
-                                      placeholder="Breve descrição do mapa (opcional)"></textarea>
-                            <small>Descrição exibida abaixo do mapa na página pública</small>
+                            <label>Lugar pré-cadastrado</label>
+                            <select name="geojson_place" x-model="form.geojson_place" @change="loadPlaceGeoJson()">
+                                <option value="">— Nenhum —</option>
+                                <template x-for="p in places" :key="p.pid">
+                                    <option :value="p.pid" x-text="p.name + ' (' + (p.type || '') + ')'"></option>
+                                </template>
+                            </select>
+                            <small>
+                                <a href="#" @click.prevent="showFinder = !showFinder">
+                                    <x-lucide-plus class="lucid-icon" /> Buscar novo lugar
+                                </a>
+                            </small>
                         </div>
+
+                        {{-- Buscador de novos GeoJSON --}}
+                        <div class="geojson-finder" x-show="showFinder" x-transition>
+                            <div class="admin-form-row">
+                                <input type="text" x-model="finder.country" placeholder="País">
+                                <input type="text" x-model="finder.state" placeholder="Estado">
+                            </div>
+                            <div class="admin-form-row">
+                                <input type="text" x-model="finder.city" placeholder="Cidade">
+                                <input type="text" x-model="finder.neighborhood" placeholder="Bairro">
+                            </div>
+                            <button type="button" class="admin-btn admin-btn-secondary btn-sm"
+                                    @click="findPlace()" :disabled="finding || !finderHasQuery()">
+                                <x-lucide-search class="lucid-icon" />
+                                <span x-text="finding ? 'Buscando…' : 'Procurar'"></span>
+                            </button>
+
+                            <div class="finder-results" x-show="finder.results.length > 0">
+                                <template x-for="(r, i) in finder.results" :key="i">
+                                    <div class="finder-result">
+                                        <div>
+                                            <strong x-text="r.name"></strong>
+                                            <small x-text="r.display_name"></small>
+                                        </div>
+                                        <div class="finder-save">
+                                            <input type="text" x-model="r._pid"
+                                                   :placeholder="suggestPid(r.name)" size="14">
+                                            <button type="button" class="admin-btn admin-btn-primary btn-sm"
+                                                    @click="savePlace(r)"
+                                                    :disabled="savingPlace">Salvar</button>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+
+                        {{-- GeoJSON inline (colado) --}}
+                        <div class="form-group">
+                            <label>Ou cole um GeoJSON</label>
+                            <textarea name="geojson_inline_raw" x-model="form.geojson_inline_raw"
+                                      rows="4" placeholder='{"type":"FeatureCollection","features":[…]}'
+                                      @change="applyInlineGeoJson()"></textarea>
+                            <small x-show="geojsonError" class="error" x-text="geojsonError"></small>
+                        </div>
+
+                        {{-- Estilo --}}
+                        <details class="geojson-style">
+                            <summary>Estilo da área</summary>
+                            <div class="admin-form-row">
+                                <div class="form-group">
+                                    <label>Linha</label>
+                                    <input type="color" name="geojson_color" x-model="form.geojson_color"
+                                           @input="restyleGeoJson()">
+                                </div>
+                                <div class="form-group">
+                                    <label>Preenchimento</label>
+                                    <input type="color" name="geojson_fill_color" x-model="form.geojson_fill_color"
+                                           @input="restyleGeoJson()">
+                                </div>
+                            </div>
+                            <div class="admin-form-row">
+                                <div class="form-group">
+                                    <label>Espessura (0–10)</label>
+                                    <input type="number" min="0" max="10" step="1"
+                                           name="geojson_weight" x-model.number="form.geojson_weight"
+                                           @input="restyleGeoJson()">
+                                </div>
+                                <div class="form-group">
+                                    <label>Opacidade linha</label>
+                                    <input type="number" min="0" max="1" step="0.1"
+                                           name="geojson_opacity" x-model.number="form.geojson_opacity"
+                                           @input="restyleGeoJson()">
+                                </div>
+                                <div class="form-group">
+                                    <label>Opacidade preench.</label>
+                                    <input type="number" min="0" max="1" step="0.1"
+                                           name="geojson_fill_opacity" x-model.number="form.geojson_fill_opacity"
+                                           @input="restyleGeoJson()">
+                                </div>
+                            </div>
+                        </details>
                     </article>
                 </div>
 
-                {{-- Slug (aparece só na edição, igual ao Posts) --}}
+                {{-- Shortcode --}}
                 @if($map->exists)
                 <div class="edit-box">
-                    <header>Shortcode</header>
+                    <header><x-lucide-code class="lucid-icon" /> Shortcode</header>
                     <article>
-                        <div class="form-group">
-                            <div style="display: flex; gap: 8px;">
-                                <input type="text" readonly value='[map id="{{ $map->id }}"]' class="form-input"
-                                       style="font-family: monospace; background: var(--color-bg-dark); flex: 1;">
-                                <button type="button" class="admin-btn admin-btn-secondary"
-                                        @click="navigator.clipboard.writeText('[map id=&quot;{{ $map->id }}&quot;]')">
-                                    <x-lucide-copy class="lucid-icon" />
-                                </button>
-                            </div>
-                            <small>Cole este shortcode em qualquer post ou página para exibir o mapa</small>
+                        <div class="shortcode-row">
+                            <input type="text" readonly value='[map id="{{ $map->id }}"]'
+                                   onfocus="this.select()" class="shortcode-input">
+                            <button type="button" class="admin-btn admin-btn-secondary"
+                                    @click="copyShortcode('[map id=&quot;{{ $map->id }}&quot;]')">
+                                <x-lucide-copy class="lucid-icon" /> Copiar
+                            </button>
                         </div>
+                        <small>Cole em qualquer post ou página para exibir este mapa.</small>
                     </article>
                 </div>
                 @endif
             </div>
 
-            {{-- ═══════════════════════════════════════════════════
-                 COLUNA DIREITA (menor) - Boxes empilhados
-                 ═══════════════════════════════════════════════════ --}}
+            {{-- ────────── COLUNA DIREITA (1/3) ────────── --}}
             <div class="map-editor-right">
 
-                {{-- Box 1: Configurações do Mapa --}}
+                {{-- ═ Configurações do mapa ═ --}}
                 <div class="edit-box">
                     <header><x-lucide-settings class="lucid-icon" /> Configurações</header>
                     <article>
                         <div class="admin-form-row">
                             <div class="form-group">
-                                <label for="center_lat">Latitude *</label>
-                                <input type="number" step="0.0000001" name="center_lat" id="center_lat"
-                                       x-model="form.center_lat" class="form-input" required>
-                                @error('center_lat') <small class="error">{{ $message }}</small> @enderror
+                                <label>Latitude</label>
+                                <input type="number" step="0.0000001" name="center_lat"
+                                       x-model.number="form.center_lat" @change="applyFormToMap()" required>
                             </div>
                             <div class="form-group">
-                                <label for="center_lng">Longitude *</label>
-                                <input type="number" step="0.0000001" name="center_lng" id="center_lng"
-                                       x-model="form.center_lng" class="form-input" required>
-                                @error('center_lng') <small class="error">{{ $message }}</small> @enderror
+                                <label>Longitude</label>
+                                <input type="number" step="0.0000001" name="center_lng"
+                                       x-model.number="form.center_lng" @change="applyFormToMap()" required>
                             </div>
                         </div>
 
                         <div class="admin-form-row">
                             <div class="form-group">
-                                <label for="zoom">Zoom (1-18) *</label>
-                                <input type="number" min="1" max="18" name="zoom" id="zoom"
-                                       x-model="form.zoom" class="form-input" required>
+                                <label>Zoom (1–19)</label>
+                                <input type="number" min="1" max="19" name="zoom"
+                                       x-model.number="form.zoom" @change="applyFormToMap()" required>
                             </div>
                             <div class="form-group">
-                                <label for="height">Altura (px) *</label>
-                                <input type="number" min="100" max="1200" name="height" id="height"
-                                       x-model="form.height" class="form-input" required>
+                                <label>Altura (px)</label>
+                                <input type="number" min="100" max="1600" name="height"
+                                       x-model.number="form.height" @change="applyFormToMap()" required>
                             </div>
                         </div>
 
-                        <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
-                            <label style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; cursor: pointer;">
-                                <input type="checkbox" name="show_zoom_controls" x-model="form.show_zoom_controls" value="1">
-                                <x-lucide-zoom-in class="lucid-icon" style="width: 16px; height: 16px;" />
-                                Controles de zoom
+                        <div class="admin-form-row">
+                            <div class="form-group">
+                                <label>Largura (px)</label>
+                                <input type="number" min="100" max="2400" name="width"
+                                       x-model.number="form.width" :disabled="form.fullwidth"
+                                       @change="applyFormToMap()">
+                            </div>
+                            <div class="form-group" style="align-self: end;">
+                                <label class="checkbox-inline">
+                                    <input type="hidden" name="fullwidth" value="0">
+                                    <input type="checkbox" name="fullwidth" value="1"
+                                           x-model="form.fullwidth" @change="applyFormToMap()">
+                                    <span>Largura 100%</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="switch-stack">
+                            <label class="checkbox-inline">
+                                <input type="hidden" name="show_zoom_controls" value="0">
+                                <input type="checkbox" name="show_zoom_controls" value="1"
+                                       x-model="form.show_zoom_controls" @change="applyFormToMap()">
+                                <x-lucide-zoom-in class="lucid-icon" /> Controles de zoom
                             </label>
-                            <label style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; cursor: pointer;">
-                                <input type="checkbox" name="allow_drag" x-model="form.allow_drag" value="1">
-                                <x-lucide-move class="lucid-icon" style="width: 16px; height: 16px;" />
-                                Permitir arrastar
+                            <label class="checkbox-inline">
+                                <input type="hidden" name="allow_drag" value="0">
+                                <input type="checkbox" name="allow_drag" value="1"
+                                       x-model="form.allow_drag" @change="applyFormToMap()">
+                                <x-lucide-move class="lucid-icon" /> Permitir arrastar
                             </label>
-                            <label style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; cursor: pointer;">
-                                <input type="checkbox" name="allow_scroll_zoom" x-model="form.allow_scroll_zoom" value="1">
-                                <x-lucide-scroll class="lucid-icon" style="width: 16px; height: 16px;" />
-                                Zoom com scroll
+                            <label class="checkbox-inline">
+                                <input type="hidden" name="allow_scroll_zoom" value="0">
+                                <input type="checkbox" name="allow_scroll_zoom" value="1"
+                                       x-model="form.allow_scroll_zoom" @change="applyFormToMap()">
+                                <x-lucide-scan-search class="lucid-icon" /> Zoom com scroll
                             </label>
+                        </div>
+                        <div class="buttons">
+                            <button type="submit" class="admin-btn admin-btn-primary" style="width: 100%;">
+                                <x-lucide-save class="lucid-icon" />
+                                {{ $map->exists ? 'Salvar alterações' : 'Criar mapa' }}
+                            </button>
                         </div>
                     </article>
                 </div>
 
-                {{-- Box 2: Busca de Endereço --}}
-                <div class="edit-box">
-                    <header><x-lucide-search class="lucid-icon" /> Buscar Endereço</header>
-                    <article>
-                        <div class="form-group">
-                            <div style="display: flex; gap: 8px;">
-                                <input type="text" x-model="searchQuery" @keydown.enter.prevent="searchAddress()"
-                                       class="form-input" placeholder="Digite um endereço...">
-                                <button type="button" class="admin-btn admin-btn-secondary" @click="searchAddress()" :disabled="searching">
-                                    <x-lucide-search class="lucid-icon" />
-                                </button>
-                            </div>
-                            <small>Use a API Nominatim (OpenStreetMap) para encontrar coordenadas</small>
-                        </div>
-
-                        <div x-show="searchResults.length > 0" style="margin-top: 8px; border: 1px solid var(--color-border); border-radius: 6px; overflow: hidden;">
-                            <template x-for="(result, idx) in searchResults" :key="idx">
-                                <div @click="selectAddress(result)"
-                                     style="padding: 8px 12px; cursor: pointer; font-size: 0.8rem; border-bottom: 1px solid var(--color-border);"
-                                     onmouseover="this.style.background='var(--color-bg-dark)'"
-                                     onmouseout="this.style.background='transparent'">
-                                    <span x-text="result.display_name"></span>
-                                </div>
-                            </template>
-                        </div>
-                    </article>
-                </div>
-
-                {{-- Box 3: Marcadores --}}
-                <div class="edit-box">
-                    <header style="display: flex; justify-content: space-between; align-items: center;">
-                        <span>
-                            <x-lucide-map-pin class="lucid-icon" /> Marcadores
-                            <span x-text="'(' + markers.length + ')'" style="font-size: 0.8rem; color: var(--color-text-muted);"></span>
-                        </span>
-                        <button type="button" class="admin-btn admin-btn-primary btn-sm" @click="addMarker()">
-                            <x-lucide-plus class="lucid-icon" /> Adicionar
+                {{-- ═ Marker sidebox (estados: idle / previewing / editing) ═ --}}
+                <div class="edit-box marker-sidebox" :class="markerBoxClass()">
+                    <header>
+                        <x-lucide-map-pin class="lucid-icon" />
+                        <span x-text="selectedIdx === null ? 'Marcador' : ('Marcador #' + (selectedIdx + 1))"></span>
+                        <button type="button" class="admin-btn admin-btn-secondary btn-sm"
+                                @click="newMarkerAtCenter()" style="margin-left: auto;"
+                                title="Novo marcador no centro">
+                            <x-lucide-plus class="lucid-icon" />
                         </button>
                     </header>
                     <article>
-                        <div x-show="markers.length === 0" style="padding: 1.5rem; text-align: center; color: var(--color-text-muted); font-size: 0.85rem;">
-                            <x-lucide-map-pin class="lucid-icon" style="width: 32px; height: 32px; opacity: 0.3; margin-bottom: 8px;" />
-                            <p>Nenhum marcador ainda.</p>
-                            <small>Clique em "Adicionar" ou clique diretamente no mapa</small>
-                        </div>
+                        <template x-if="selectedIdx === null">
+                            <p class="empty-hint">
+                                Clique em um pino no mapa ou em um chip da lista para editar.
+                                Ou <a href="#" @click.prevent="newMarkerAtCenter()">crie um novo</a>.
+                            </p>
+                        </template>
 
-                        <template x-for="(marker, index) in markers" :key="index">
-                            <div style="border: 1px solid var(--color-border); border-radius: 6px; padding: 10px; margin-bottom: 8px; background: var(--color-bg-dark);">
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                                    <span style="font-weight: 600; font-size: 0.8rem;" x-text="'#' + (index + 1) + ' - ' + (marker.title || 'Sem título')"></span>
-                                    <div style="display: flex; gap: 4px;">
-                                        <button type="button" @click="focusMarker(index)" class="admin-btn admin-btn-secondary btn-sm" title="Centralizar">
-                                            <x-lucide-crosshair class="lucid-icon" />
-                                        </button>
-                                        <button type="button" @click="removeMarker(index)" class="admin-btn admin-btn-danger btn-sm" title="Remover">
-                                            <x-lucide-x class="lucid-icon" />
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <div class="form-group" style="margin-bottom: 6px;">
-                                    <input type="hidden" :name="'markers[' + index + '][id]'" :value="marker.id || ''">
-                                    <input type="text" :name="'markers[' + index + '][title]'" x-model="marker.title"
-                                           class="form-input" placeholder="Título *" style="width: 100%;">
-                                </div>
-
-                                <div class="admin-form-row" style="margin-bottom: 6px;">
+                        <template x-if="selectedIdx !== null">
+                            <div class="marker-editor">
+                                <div class="admin-form-row">
                                     <div class="form-group">
-                                        <input type="number" step="0.0000001" :name="'markers[' + index + '][lat]'"
-                                               x-model="marker.lat" class="form-input" placeholder="Lat" required style="width: 100%;">
+                                        <label>Latitude</label>
+                                        <input type="number" step="0.0000001"
+                                               x-model.number="markers[selectedIdx].lat"
+                                               @change="refreshMarker(selectedIdx)">
                                     </div>
                                     <div class="form-group">
-                                        <input type="number" step="0.0000001" :name="'markers[' + index + '][lng]'"
-                                               x-model="marker.lng" class="form-input" placeholder="Lng" required style="width: 100%;">
+                                        <label>Longitude</label>
+                                        <input type="number" step="0.0000001"
+                                               x-model.number="markers[selectedIdx].lng"
+                                               @change="refreshMarker(selectedIdx)">
                                     </div>
                                 </div>
 
-                                <div class="form-group" style="margin-bottom: 6px;">
-                                    <textarea :name="'markers[' + index + '][content]'" x-model="marker.content"
-                                              class="form-input" rows="2" placeholder="Conteúdo do popup (HTML)" style="width: 100%;"></textarea>
+                                <div class="form-group">
+                                    <label>Título</label>
+                                    <input type="text" x-model="markers[selectedIdx].title"
+                                           @input="refreshMarker(selectedIdx)" placeholder="Título do marcador">
                                 </div>
 
-                                <div style="display: flex; align-items: center; gap: 8px;">
-                                    <label style="font-size: 0.75rem;">Cor:</label>
-                                    <input type="color" :name="'markers[' + index + '][color]'" x-model="marker.color"
-                                           style="width: 32px; height: 26px; border: none; cursor: pointer; border-radius: 4px;">
-                                    <input type="hidden" :name="'markers[' + index + '][icon]'" value="map-pin">
+                                <div class="form-group">
+                                    <label>Balão (conteúdo do popup)</label>
+                                    <textarea x-model="markers[selectedIdx].content" rows="3"
+                                              @input="refreshMarker(selectedIdx)"
+                                              placeholder="Texto ou HTML curto"></textarea>
+                                </div>
+
+                                <div class="admin-form-row">
+                                    <div class="form-group">
+                                        <label>Cor</label>
+                                        <input type="color" x-model="markers[selectedIdx].color"
+                                               @input="refreshMarker(selectedIdx)"
+                                               style="height: 34px; padding: 2px; width: 100%;">
+                                    </div>
+                                    <div class="form-group" style="align-self: end;">
+                                        <button type="button" class="admin-btn admin-btn-danger" style="width: 100%;"
+                                                @click="removeSelected()">
+                                            <x-lucide-trash-2 class="lucid-icon" /> Remover
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {{-- Parameters (key=value) --}}
+                                <div class="params-editor">
+                                    <div class="params-head">
+                                        <span>Parâmetros extras</span>
+                                        <span class="counter" x-text="paramCount(selectedIdx)"></span>
+                                    </div>
+                                    <template x-for="(v, k) in getParams(selectedIdx)" :key="k">
+                                        <div class="param-row">
+                                            <code x-text="k"></code>
+                                            <span x-text="v"></span>
+                                            <button type="button" class="param-remove"
+                                                    @click="removeParam(selectedIdx, k)" title="Remover">×</button>
+                                        </div>
+                                    </template>
+                                    <div class="param-add">
+                                        <input type="text" x-model="newParam.key" placeholder="nome">
+                                        <input type="text" x-model="newParam.value" placeholder="valor">
+                                        <button type="button" class="admin-btn admin-btn-secondary btn-sm"
+                                                @click="addParam()"
+                                                :disabled="!newParam.key || !newParam.value">＋</button>
+                                    </div>
                                 </div>
                             </div>
                         </template>
                     </article>
                 </div>
 
-                {{-- Box 4: Ações (Salvar) --}}
+
+                {{-- ═ Import via JSON ═ --}}
                 <div class="edit-box">
-                    <header><x-lucide-save class="lucid-icon" /> Ações</header>
+                    <header><x-lucide-upload class="lucid-icon" /> Importar marcadores</header>
                     <article>
-                        <div class="buttons" style="display: flex; flex-direction: column; gap: 8px;">
-                            <button type="submit" class="admin-btn admin-btn-primary" style="width: 100%;">
-                                <x-lucide-save class="lucid-icon" />
-                                {{ $map->exists ? 'Salvar Alterações' : 'Criar Mapa' }}
-                            </button>
-                            <a href="{{ route('admin.maps.index') }}" class="admin-btn admin-btn-secondary" style="width: 100%; text-align: center;">
-                                Cancelar
-                            </a>
+                        <div class="form-group">
+                            {{-- <input type="file" name="markers_json" accept=".json,application/json"> --}}
+                            <x-upload-area name="markers_json" accept=".json,application/json" buttonLabel="Escolher arquivo" message="Solte um arquivo aqui para atualizar" />
+                            <small>
+                                Formato: array JSON com objetos <code>{ lat, lng, title, content, color }</code>.
+                                Marcadores com <code>uid</code> já existente são ignorados.
+                            </small>
                         </div>
                     </article>
                 </div>
 
+                {{-- ═ Ações ═ --}}
+                {{-- <div class="edit-box">
+                    <header><x-lucide-save class="lucid-icon" /> Ações</header>
+                    <article>
+                        <div class="buttons vertical">
+                            <button type="submit" class="admin-btn admin-btn-primary" style="width: 100%;">
+                                <x-lucide-save class="lucid-icon" />
+                                {{ $map->exists ? 'Salvar alterações' : 'Criar mapa' }}
+                            </button>
+                            <a href="{{ route('admin.maps.index') }}"
+                               class="admin-btn admin-btn-secondary" style="width: 100%; text-align: center;">
+                                Cancelar
+                            </a>
+                        </div>
+                    </article>
+                </div> --}}
             </div>
         </div>
+
+        {{-- Campos ocultos dos marcadores (renderizados pelo Alpine para postar) --}}
+        <template x-for="(m, i) in markers" :key="'hf-' + i">
+            <div style="display: none;">
+                <input type="hidden" :name="'markers[' + i + '][id]'"    :value="m.id || ''">
+                <input type="hidden" :name="'markers[' + i + '][uid]'"   :value="m.uid || ''">
+                <input type="hidden" :name="'markers[' + i + '][title]'" :value="m.title || ''">
+                <input type="hidden" :name="'markers[' + i + '][content]'" :value="m.content || ''">
+                <input type="hidden" :name="'markers[' + i + '][lat]'"   :value="m.lat">
+                <input type="hidden" :name="'markers[' + i + '][lng]'"   :value="m.lng">
+                <input type="hidden" :name="'markers[' + i + '][color]'" :value="m.color || '#e74c3c'">
+                <input type="hidden" :name="'markers[' + i + '][icon]'"  :value="m.icon || 'map-pin'">
+                <input type="hidden" :name="'markers[' + i + '][parameters]'" :value="serializeParams(m.parameters)">
+            </div>
+        </template>
     </form>
 </div>
+@endsection
 
 @push('scripts')
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-function mapEditor() {
-    return {
-        map: null,
-        leafletMarkers: [],
-        searching: false,
-        searchQuery: '',
-        searchResults: [],
-
-        form: {
-            title: @json($map->title ?? ''),
-            slug: @json($map->slug ?? ''),
-            description: @json($map->description ?? ''),
-            center_lat: @json($map->center_lat ?? setting('maps_default_lat', '-23.5505')),
-            center_lng: @json($map->center_lng ?? setting('maps_default_lng', '-46.6333')),
-            zoom: @json($map->zoom ?? setting('maps_default_zoom', 13)),
-            height: @json($map->height ?? 500),
-            show_zoom_controls: @json($map->show_zoom_controls ?? true),
-            allow_drag: @json($map->allow_drag ?? true),
-            allow_scroll_zoom: @json($map->allow_scroll_zoom ?? true),
+    window.mapEditorData = {
+        map: {!! json_encode($map->only([
+            'id','title','description','center_lat','center_lng','zoom','width','height',
+            'fullwidth','show_zoom_controls','allow_drag','allow_scroll_zoom',
+            'geojson_place','geojson_inline',
+            'geojson_color','geojson_weight','geojson_opacity',
+            'geojson_fill_color','geojson_fill_opacity',
+        ])) !!},
+        markers: {!! json_encode($map->exists ? $map->markers->toArray() : []) !!},
+        tileUrl: {!! json_encode(setting('maps_tile_url', 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')) !!},
+        attribution: {!! json_encode(setting('maps_attribution', '&copy; OpenStreetMap')) !!},
+        routes: {
+            geocode:     {!! json_encode(route('api.maps.geocode')) !!},
+            geojsonList: {!! json_encode(route('api.maps.geojson.index')) !!},
+            geojsonShow: {!! json_encode(url('api/maps/geojson')) !!} + '/',
+            geojsonFind: {!! json_encode(route('api.maps.geojson.find')) !!},
+            geojsonSave: {!! json_encode(route('api.maps.geojson.save')) !!}
         },
-
-        markers: @json($map->exists ? $map->markers->toArray() : []),
-
-        init() {
-            this.$nextTick(() => this.initMap());
-        },
-
-        initMap() {
-            if (this.map) this.map.remove();
-
-            this.map = L.map('map-preview', {
-                center: [parseFloat(this.form.center_lat), parseFloat(this.form.center_lng)],
-                zoom: parseInt(this.form.zoom),
-                zoomControl: this.form.show_zoom_controls,
-                dragging: this.form.allow_drag,
-                scrollWheelZoom: this.form.allow_scroll_zoom,
-            });
-
-            L.tileLayer(@json(setting('maps_tile_url', 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')), {
-                attribution: @json(setting('maps_attribution', '&copy; OpenStreetMap')),
-                maxZoom: 19,
-            }).addTo(this.map);
-
-            this.map.on('click', (e) => this.addMarkerAt(e.latlng.lat, e.latlng.lng));
-            this.renderMarkers();
-        },
-
-        renderMarkers() {
-            this.leafletMarkers.forEach(m => this.map.removeLayer(m));
-            this.leafletMarkers = [];
-
-            this.markers.forEach((marker, index) => {
-                if (!marker.lat || !marker.lng) return;
-
-                const icon = L.divIcon({
-                    className: 'custom-marker',
-                    html: `<div style="background:${marker.color || '#e74c3c'};width:28px;height:28px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;"><span style="transform:rotate(45deg);color:white;font-size:12px;font-weight:bold;">${index + 1}</span></div>`,
-                    iconSize: [28, 28],
-                    iconAnchor: [14, 28],
-                    popupAnchor: [0, -28],
-                });
-
-                const leafletMarker = L.marker([marker.lat, marker.lng], { icon, draggable: true }).addTo(this.map);
-
-                if (marker.title || marker.content) {
-                    leafletMarker.bindPopup(`<strong>${marker.title || 'Marcador'}</strong>${marker.content ? '<br>' + marker.content : ''}`);
-                }
-
-                leafletMarker.on('dragend', (e) => {
-                    const pos = e.target.getLatLng();
-                    this.markers[index].lat = pos.lat;
-                    this.markers[index].lng = pos.lng;
-                });
-
-                this.leafletMarkers.push(leafletMarker);
-            });
-        },
-
-        addMarker() {
-            this.markers.push({ id: null, title: '', lat: parseFloat(this.form.center_lat), lng: parseFloat(this.form.center_lng), content: '', color: '#e74c3c', icon: 'map-pin' });
-            this.$nextTick(() => this.renderMarkers());
-        },
-
-        addMarkerAt(lat, lng) {
-            this.markers.push({ id: null, title: '', lat, lng, content: '', color: '#e74c3c', icon: 'map-pin' });
-            this.$nextTick(() => this.renderMarkers());
-        },
-
-        removeMarker(index) {
-            this.markers.splice(index, 1);
-            this.renderMarkers();
-        },
-
-        focusMarker(index) {
-            const marker = this.markers[index];
-            if (marker.lat && marker.lng) {
-                this.map.setView([marker.lat, marker.lng], Math.max(this.map.getZoom(), 15));
-                if (this.leafletMarkers[index]) this.leafletMarkers[index].openPopup();
-            }
-        },
-
-        updateMapPreview() {
-            this.map.setView([parseFloat(this.form.center_lat), parseFloat(this.form.center_lng)], parseInt(this.form.zoom));
-            this.renderMarkers();
-        },
-
-        async searchAddress() {
-            if (!this.searchQuery || this.searchQuery.length < 3) return;
-            this.searching = true;
-            this.searchResults = [];
-
-            try {
-                const response = await fetch(`/api/maps/geocode?q=${encodeURIComponent(this.searchQuery)}`);
-                const data = await response.json();
-                this.searchResults = data.results || [];
-            } catch (error) {
-                console.error('Erro na busca:', error);
-            } finally {
-                this.searching = false;
-            }
-        },
-
-        selectAddress(result) {
-            this.form.center_lat = result.lat;
-            this.form.center_lng = result.lng;
-            this.searchQuery = '';
-            this.searchResults = [];
-            this.updateMapPreview();
-        }
-    }
-}
+        csrf: "{{ csrf_token() }}"
+    };
 </script>
+<script src="{{ asset('plugins/maps/js/admin-map.js') }}"></script>
 @endpush
-
-@push('styles')
-<style>
-    /* ═══ Layout duas colunas (igual ao Posts) ══ */
-    .map-editor-layout {
-        display: grid;
-        grid-template-columns: 1fr 340px;
-        gap: 1.5rem;
-        align-items: start;
-    }
-
-    .map-editor-left {
-        min-width: 0;
-    }
-
-    .map-editor-right {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-    }
-
-    /* Ajuste do header do edit-box para alinhar ícone + texto + botão */
-    .edit-box header {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        position: relative;
-        z-index: 9999;
-    }
-
-    .edit-box header .lucid-icon {
-        width: 18px;
-        height: 18px;
-    }
-
-    /* Responsivo: empilha em telas menores */
-    @media (max-width: 1024px) {
-        .map-editor-layout {
-            grid-template-columns: 1fr;
-        }
-        .map-editor-right {
-            order: -1;
-        }
-    }
-
-    /* Custom marker no admin */
-    .custom-marker {
-        background: transparent !important;
-        border: none !important;
-    }
-</style>
-@endpush
-@endsection

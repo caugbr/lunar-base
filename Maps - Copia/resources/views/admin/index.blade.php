@@ -70,7 +70,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="6" class="admin-text-center admin-text-muted" style="padding: 40px 0; text-align: center;">
+                    <td colspan="6" class="admin-text-center admin-text-muted" style="padding: 40px 0;">
                         <x-lucide-map class="lucid-icon" style="width: 48px; height: 48px; margin-bottom: 12px; opacity: 0.3;" />
                         <p>Nenhum mapa cadastrado ainda.</p>
                         <a href="{{ route('admin.maps.create') }}" class="admin-btn admin-btn-primary" style="margin-top: 12px;">
