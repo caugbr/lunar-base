@@ -1,0 +1,79 @@
+/* Container de ajuda genérico */
+.admin-help {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    z-index: 1;
+}
+.admin-help > button {
+    position: absolute;
+    right: 10px;
+    bottom: -22px;
+}
+.admin-help .stage {
+    background: #ffffff;
+    padding: 0 24px;
+    margin-bottom: 20px;
+}
+
+.help-content .help-header {
+    margin-bottom: 16px;
+    border-bottom: 1px solid #edf2f7;
+    padding-bottom: 12px;
+}
+
+.help-content .help-header h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #1e3a8a;
+    font-size: 1.2rem;
+    margin: 0 0 4px 0;
+}
+
+.help-content .help-header p {
+    font-size: 0.9rem;
+    color: #6b7280;
+}
+
+.help-content .help-list {
+    list-style: none;
+    padding: 0;
+}
+
+.help-content .help-list li {
+    position: relative;
+    padding-left: 16px;
+    margin-bottom: 12px;
+    font-size: 0.9rem;
+    color: #4b5563;
+    line-height: 1.5;
+}
+
+/* Marcador discreto para os itens da lista */
+.help-content .help-list li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: #1e3a8a;
+    font-weight: bold;
+}
+
+.help-content .help-list li strong {
+    color: #1f2937;
+}
+
+.help-content .help-footer {
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px dashed #e2e8f0;
+    font-size: 0.85rem;
+    color: #4b5563;
+}
+
+.help-content .help-footer p {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}

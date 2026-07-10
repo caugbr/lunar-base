@@ -111,6 +111,7 @@
                         </button>
                     </form>
                 </div>
+                <x-admin-help />
             </div>
 
             <div class="admin-content">

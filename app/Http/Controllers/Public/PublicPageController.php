@@ -54,7 +54,7 @@ class PublicPageController extends Controller
         $page->load(['children' => fn($q) => $q->published()]);
 
         $templateName = $page->template ?? config('pageTemplates.default');
-        $template = 'public.templates.' . $templateName;
+        $template = 'public.page-templates.' . $templateName;
 
         return view($template, compact('page'));
     }
