@@ -79,6 +79,11 @@ nav.toc ul {
     columns: 2;
 }
 
+nav.toc.one-col ul {
+    list-style: none;
+    columns: 1;
+}
+
 nav.toc li {
     margin: 8px 0;
     break-inside: avoid;
@@ -107,7 +112,7 @@ section {
 h2 {
     color: var(--primary-color);
     font-size: 2em;
-    margin: 30px 0 20px;
+    margin: 0px 0 20px;
     padding-bottom: 10px;
     border-bottom: 3px solid var(--primary-color);
 }
@@ -204,6 +209,7 @@ pre code {
     font-weight: bold;
 }
 
+ol.features, ol.steps,
 ul.features, ul.steps {
     margin: 15px 0 15px 30px;
 }

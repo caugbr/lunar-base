@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guia de Configuração - Lunar Base CMS</title>
+    <link rel="stylesheet" href="tutorials.css">
+</head>
+
+<body>
+
+    <header>
+        <h1>Guia de Configuração</h1>
+        <p>Lunar Base CMS — Referência completa dos arquivos em /config</p>
+    </header>
+
+    <div class="container">
+
+        <nav class="toc">
+            <h2>Sumário</h2>
+            <ul>
+                <li><a href="#intro">Introdução</a></li>
+                <li><a href="#admin">1. admin.php (Menu e Skin da Admin)</a></li>
+                <li><a href="#default-users">2. defaultUsers.php (Usuários Padrão)</a></li>
+                <li><a href="#image-sizes">3. imageSizes.php (Tamanhos de Imagem)</a></li>
+                <li><a href="#page-templates">4. pageTemplates.php (Templates de Páginas)</a></li>
+                <li><a href="#post-templates">5. postTemplates.php (Templates de Posts)</a></li>
+                <li><a href="#rbac">6. rolesPermissions.php (Permissões e Perfis)</a></li>
+                <li><a href="#settings">7. settings.php (Configurações do Sistema)</a></li>
+                <li><a href="#site">8. site.php (Configurações do Frontend)</a></li>
+                <li><a href="#best-practices">Boas Práticas</a></li>
+            </ul>
+        </nav>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="intro">
+            <h2>Introdução</h2>
+
+            <div class="intro">
+                <p>A pasta <code>/config</code> do Lunar Base CMS contém os arquivos que definem o comportamento central
+                    do sistema. Diferente dos plugins (que são modulares e podem ser ativados/desativados), estes
+                    arquivos são <strong>parte do core</strong> e devem ser editados com cuidado.</p>
+            </div>
+
+            <h3>Quando editar cada arquivo</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Arquivo</th>
+                        <th>Frequência de Edição</th>
+                        <th>Risco</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>admin.php</code></td>
+                        <td>Baixa (apenas na customização inicial)</td>
+                        <td>Baixo</td>
+                    </tr>
+                    <tr>
+                        <td><code>defaultUsers.php</code></td>
+                        <td><strong>Nunca</strong> (gerado automaticamente)</td>
+                        <td>—</td>
+                    </tr>
+                    <tr>
+                        <td><code>imageSizes.php</code></td>
+                        <td>Média (conforme necessidade de layouts)</td>
+                        <td>Baixo</td>
+                    </tr>
+                    <tr>
+                        <td><code>pageTemplates.php</code></td>
+                        <td>Baixa (ao criar novos templates)</td>
+                        <td>Baixo</td>
+                    </tr>
+                    <tr>
+                        <td><code>postTemplates.php</code></td>
+                        <td>Baixa (ao criar novos templates)</td>
+                        <td>Baixo</td>
+                    </tr>
+                    <tr>
+                        <td><code>rolesPermissions.php</code></td>
+                        <td>Muito baixa (apenas para criar novos perfis)</td>
+                        <td>Alto</td>
+                    </tr>
+                    <tr>
+                        <td><code>settings.php</code></td>
+                        <td>Média (ao adicionar novas configurações)</td>
+                        <td>Médio</td>
+                    </tr>
+                    <tr>
+                        <td><code>site.php</code></td>
+                        <td>Baixa (se não usar o plugin Menus)</td>
+                        <td>Baixo</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="warning">
+                <strong>Importante:</strong> Sempre faça backup dos arquivos antes de editar. Um erro de sintaxe PHP
+                pode deixar o sistema inacessível.
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="admin">
+            <h2>1. admin.php (Menu e Skin da Admin)</h2>
+
+            <div class="intro">
+                <p>Define a estrutura do menu lateral da área administrativa e o tema visual (skin) usado no painel.</p>
+            </div>
+
+            <h3>Estrutura do Menu</h3>
+            <p>O menu é organizado em <strong>seções</strong>, cada uma contendo <strong>itens</strong> de navegação:
+            </p>
+
+            <div class="example-box">
+                <h4>Exemplo de item do menu</h4>
+                <pre><code>[
+    'label'      => 'Páginas',
+    'icon'       => 'file',
+    'route'      => 'admin.pages.index',
+    'active'     => 'admin.pages.*',
+    'permission' => 'manage-pages',
+]</code></pre>
+            </div>
+
+            <h3>Parâmetros de cada item</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Parâmetro</th>
+                        <th>Obrigatório</th>
+                        <th>Descrição</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>label</code></td>
+                        <td>Sim</td>
+                        <td>Texto exibido no menu</td>
+                    </tr>
+                    <tr>
+                        <td><code>icon</code></td>
+                        <td>Sim</td>
+                        <td>Nome do ícone Lucide (ex: <code>file</code>, <code>users</code>)</td>
+                    </tr>
+                    <tr>
+                        <td><code>route</code></td>
+                        <td>Sim</td>
+                        <td>Rota Laravel ao clicar</td>
+                    </tr>
+                    <tr>
+                        <td><code>active</code></td>
+                        <td>Sim</td>
+                        <td>Padrão que marca o item como ativo (use <code>*</code> como wildcard)</td>
+                    </tr>
+                    <tr>
+                        <td><code>permission</code></td>
+                        <td>Não</td>
+                        <td>Exibe apenas se o usuário tiver essa permissão</td>
+                    </tr>
+                    <tr>
+                        <td><code>role</code></td>
+                        <td>Não</td>
+                        <td>Exibe apenas se o usuário tiver esse perfil (ex: <code>admin</code>)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Ícones Disponíveis</h3>
+            <p>Use nomes do <a href="https://lucide.dev/icons/" target="_blank">Lucide Icons</a>. Exemplos comuns:</p>
+            <pre><code>layout-dashboard, file, files, image, tags, form,
+users, user-pen, user-key, settings, list-checks, puzzle, palette</code></pre>
+
+            <h3>Skin da Admin</h3>
+            <p>A chave <code>skin</code> define qual arquivo CSS será carregado de <code>public/css/admin/skins/</code>:
+            </p>
+
+            <div class="example-box">
+                <h4>Exemplo</h4>
+                <pre><code>"skin" => "default"</code></pre>
+            </div>
+
+            <p>Se o valor for <code>"default"</code>, o sistema carrega <code>css/admin/vars.css</code>. Qualquer outro
+                valor (ex: <code>"dark"</code>) carrega <code>css/admin/skins/vars-dark.css</code>.</p>
+
+            <div class="tip">
+                <strong>Dica:</strong> Para criar um novo skin, duplique o arquivo <code>public/css/admin/vars.css</code> e salve em
+                <code>public/css/admin/skins/</code>, com o nome <code>vars-skin-name.css</code> personalize as variáveis CSS e adicione o nome no
+                <code>admin.php</code>. O nome deve ser a string entre 'vars-' e '.css'.
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="default-users">
+            <h2>2. defaultUsers.php (Usuários Padrão)</h2>
+
+            <div class="intro">
+                <p>Este arquivo <strong>não deve ser editado manualmente</strong>. Ele trabalha em conjunto com o script
+                    <code>install.sh</code> para gerar os usuários iniciais do sistema durante a instalação.</p>
+            </div>
+
+            <div class="warning">
+                <strong>Atenção:</strong> Este arquivo é gerado automaticamente a partir do
+                <code>rolesPermissions.php</code>. Qualquer alteração manual será sobrescrita na próxima instalação.
+            </div>
+
+            <h3>Como funciona</h3>
+            <ol class="steps">
+                <li>O script <code>install.sh</code> lê o <code>rolesPermissions.php</code> para identificar os perfis
+                    existentes.</li>
+                <li>Gera um usuário para cada perfil (admin, editor, author, subscriber).</li>
+                <li>Salva os dados em <code>storage/app/.install/default_users_data.json</code>.</li>
+                <li>O seeder usa esse JSON para popular o banco na instalação.</li>
+            </ol>
+
+            <h3>Senhas padrão</h3>
+            <p>Todos os usuários gerados têm a senha: <code>Pass#1029</code></p>
+
+            <div class="tip">
+                <strong>Recomendação:</strong> Após a instalação, altere as senhas imediatamente pelo painel
+                administrativo.
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="image-sizes">
+            <h2>3. imageSizes.php (Tamanhos de Imagem)</h2>
+
+            <div class="intro">
+                <p>Define tamanhos extras de imagem que serão gerados automaticamente ao fazer upload. O sistema já cria
+                    dois tamanhos padrão independentemente deste arquivo:</p>
+            </div>
+
+            <ul class="features">
+                <li><strong>Thumbnail:</strong> definido nas configurações do sistema (Admin → Configurações → Mídia)
+                </li>
+                <li><strong>Large:</strong> 1200px de largura, usado para SEO e compartilhamento social</li>
+            </ul>
+
+            <h3>Estrutura de definição</h3>
+            <div class="example-box">
+                <h4>Exemplo de tamanho personalizado</h4>
+                <pre><code>"medium" => [
+    'width' => 600,
+    'height' => null,      // null = proporcional
+    'crop' => false,       // false = redimensiona mantendo proporção
+    'position' => null,    // só usado se crop = true
+]</code></pre>
+            </div>
+
+            <h3>Parâmetros disponíveis</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Parâmetro</th>
+                        <th>Tipo</th>
+                        <th>Descrição</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>width</code></td>
+                        <td>int</td>
+                        <td>Largura em pixels (obrigatório)</td>
+                    </tr>
+                    <tr>
+                        <td><code>height</code></td>
+                        <td>int|null</td>
+                        <td>Altura em pixels (null = proporcional)</td>
+                    </tr>
+                    <tr>
+                        <td><code>crop</code></td>
+                        <td>bool</td>
+                        <td>Se true, corta a imagem; se false, redimensiona</td>
+                    </tr>
+                    <tr>
+                        <td><code>position</code></td>
+                        <td>string</td>
+                        <td>Posição do corte: <code>center</code>, <code>top</code>, <code>bottom</code> (só se crop =
+                            true)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Exemplos práticos</h3>
+            <div class="example-box">
+                <h4>Tamanhos comuns</h4>
+                <pre><code>return [
+    // Banner largo (proporcional)
+    "banner" => [
+        'width' => 1920,
+        'height' => null,
+        'crop' => false,
+    ],
+
+    // Card quadrado (corte centralizado)
+    "card-square" => [
+        'width' => 400,
+        'height' => 400,
+        'crop' => true,
+        'position' => 'center',
+    ],
+
+    // Thumbnail vertical (corte no topo)
+    "portrait" => [
+        'width' => 300,
+        'height' => 450,
+        'crop' => true,
+        'position' => 'top',
+    ],
+];</code></pre>
+            </div>
+
+            <div class="tip">
+                <strong>Como usar:</strong> Após definir um tamanho, ele estará disponível via
+                <code>$media->getUrl('card-square')</code> nas views.
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="page-templates">
+            <h2>4. pageTemplates.php (Templates de Páginas)</h2>
+
+            <div class="intro">
+                <p>Define quais templates estarão disponíveis no dropdown ao criar/editar uma página pública.</p>
+            </div>
+
+            <h3>Estrutura</h3>
+            <div class="example-box">
+                <h4>Formato do array</h4>
+                <pre><code>return [
+    'templates' => [
+        'default' => 'Site page',
+        'page' => 'Default',
+        'fullwidth' => 'Fullwidth',
+        'left-sidebar' => 'Left Sidebar'
+    ],
+    'default' => 'default',
+];</code></pre>
+            </div>
+
+            <h3>Parâmetros</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Chave</th>
+                        <th>Descrição</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>templates</code></td>
+                        <td>Array de <code>nome_do_arquivo => Rótulo visível</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>default</code></td>
+                        <td>Template padrão (usado se nenhum for selecionado)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Local dos arquivos de template</h3>
+            <p>Os templates devem estar em <code>resources/views/public/page-templates/</code>:</p>
+            <pre><code>resources/views/public/page-templates/
+    ├── default.blade.php
+    ├── page.blade.php
+    ├── fullwidth.blade.php
+    └── left-sidebar.blade.php</code></pre>
+
+            <h3>Criando um novo template</h3>
+            <div class="step">
+                <h4><span class="step-number">1</span>Crie o arquivo Blade</h4>
+                <p>Em <code>resources/views/public/page-templates/meu-template.blade.php</code></p>
+            </div>
+
+            <div class="step">
+                <h4><span class="step-number">2</span>Registre no config</h4>
+                <pre><code>'templates' => [
+    'default' => 'Site page',
+    'meu-template' => 'Meu Template Personalizado',
+],</code></pre>
+            </div>
+
+            <div class="step">
+                <h4><span class="step-number">3</span>Use no template</h4>
+                <p>O conteúdo da página estará disponível na variável <code>$page</code>:</p>
+                <pre><code>@extends('public.site-layout')
+
+@section('content')
+&lt;article class="page"&gt;
+    &lt;h1&gt;{{ $page->title }}&lt;/h1&gt;
+    &lt;div class="page-content"&gt;
+        {!! $page->content !!}
+    &lt;/div&gt;
+&lt;/article&gt;
+@endsection</code></pre>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="post-templates">
+            <h2>5. postTemplates.php (Templates de Posts)</h2>
+
+            <div class="intro">
+                <p>Funciona exatamente como o <code>pageTemplates.php</code>, mas para posts do blog.</p>
+            </div>
+
+            <h3>Estrutura padrão</h3>
+            <div class="example-box">
+                <pre><code>return [
+    'templates' => [
+        'default' => 'Post padrão',
+    ],
+    'default' => 'default',
+];</code></pre>
+            </div>
+
+            <h3>Local dos arquivos</h3>
+            <pre><code>resources/views/public/post-templates/
+└── default.blade.php</code></pre>
+
+            <h3>Exemplo de template de post</h3>
+            <div class="example-box">
+                <pre><code>@extends('public.site-layout')
+
+@section('content')
+&lt;article class="post"&gt;
+    &lt;header&gt;
+        &lt;h1&gt;{{ $post->title }}&lt;/h1&gt;
+        &lt;time&gt;{{ $post->published_at->format('d/m/Y') }}&lt;/time&gt;
+    &lt;/header&gt;
+
+    &lt;div class="post-content"&gt;
+        {!! $post->content !!}
+    &lt;/div&gt;
+
+    @if($post->tags->count())
+    &lt;div class="post-tags"&gt;
+        @foreach($post->tags as $tag)
+        &lt;span class="tag"&gt;{{ $tag->name }}&lt;/span&gt;
+        @endforeach
+    &lt;/div&gt;
+    @endif
+&lt;/article&gt;
+@endsection</code></pre>
+            </div>
+
+            <div class="tip">
+                <strong>Variáveis disponíveis:</strong> <code>$post</code> (model completo), <code>$comments</code> (se
+                plugin ativo), hooks automáticos como <code>post.after_content</code>.
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="rbac">
+            <h2>6. rolesPermissions.php (Permissões e Perfis)</h2>
+
+            <div class="intro">
+                <p>Este é o arquivo mais crítico do sistema. Define <strong>quem pode fazer o quê</strong> através de
+                    perfis (roles) e permissões (permissions). É a <strong>fonte da verdade</strong> do controle de
+                    acesso.</p>
+            </div>
+
+            <div class="warning">
+                <strong>Cuidado:</strong> Erros neste arquivo podem travar o acesso administrativo ou expor
+                funcionalidades sensíveis. Teste sempre em ambiente de desenvolvimento primeiro.
+            </div>
+
+            <h3>Estrutura do arquivo</h3>
+            <p>O arquivo tem três seções principais:</p>
+
+            <div class="example-box">
+                <h4>Visão geral</h4>
+                <pre><code>return [
+    'roles' => [...],              // 1. Define os perfis
+    'permissionsByRole' => [...],  // 2. Mapeia permissões por perfil
+    'permissionGroups' => [...],   // 3. Agrupa permissões para a UI
+];</code></pre>
+            </div>
+
+            <h3>1. Roles (Perfis)</h3>
+            <p>Cada perfil tem um <code>slug</code> (chave única), <code>name</code> (exibido) e
+                <code>description</code>:</p>
+
+            <div class="example-box">
+                <h4>Perfis padrão</h4>
+                <pre><code>'roles' => [
+    'admin' => [
+        'name' => 'Administrador',
+        'description' => 'Acesso total ao sistema.',
+    ],
+    'editor' => [
+        'name' => 'Editor',
+        'description' => 'Gerencia publicações.',
+    ],
+    'author' => [
+        'name' => 'Autor',
+        'description' => 'Gerencia próprias publicações.',
+    ],
+    'subscriber' => [
+        'name' => 'Assinante',
+        'description' => 'Acesso mínimo.',
+    ],
+],</code></pre>
+            </div>
+
+            <h3>2. Permissions by Role</h3>
+            <p>Define quais permissões cada perfil possui. O <code>admin</code> deve ter <strong>todas</strong> as
+                permissões:</p>
+
+            <div class="example-box">
+                <h4>Exemplo</h4>
+                <pre><code>'permissionsByRole' => [
+    'admin' => [
+        'view-dashboard',
+        'manage-users',
+        'manage-pages',
+        'manage-posts',
+        'manage-settings',
+        // ... todas as permissões
+    ],
+    'editor' => [
+        'view-dashboard',
+        'manage-pages',
+        'manage-posts',
+    ],
+    'author' => [
+        'view-dashboard',
+        'manage-own-pages',
+        'manage-own-posts',
+    ],
+],</code></pre>
+            </div>
+
+            <div class="warning">
+                <strong>Regra crítica:</strong> O perfil <code>admin</code> DEVE conter todas as permissões listadas em
+                <code>permissionGroups</code>. Caso contrário, o administrador perderá acesso a funcionalidades.
+            </div>
+
+            <h3>3. Permission Groups</h3>
+            <p>Agrupa permissões por área para exibição na interface de gerenciamento:</p>
+
+            <div class="example-box">
+                <h4>Exemplo</h4>
+                <pre><code>'permissionGroups' => [
+    'dashboard' => [
+        'view-dashboard' => 'Ver painel de controle',
+    ],
+    'users' => [
+        'manage-users' => 'Gerenciar usuários',
+    ],
+    'publications' => [
+        'manage-pages' => 'Criar e editar todas as páginas',
+        'manage-posts' => 'Criar e editar todos os posts',
+        'manage-own-pages' => 'Criar e editar suas próprias páginas',
+        'manage-own-posts' => 'Criar e editar seus próprios posts',
+    ],
+],</code></pre>
+            </div>
+
+            <h3>Permissões disponíveis</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Permissão</th>
+                        <th>Descrição</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>view-dashboard</code></td>
+                        <td>Acessar o painel principal</td>
+                    </tr>
+                    <tr>
+                        <td><code>manage-users</code></td>
+                        <td>Criar, editar, excluir qualquer usuário</td>
+                    </tr>
+                    <tr>
+                        <td><code>view-reports</code></td>
+                        <td>Ver relatórios e estatísticas</td>
+                    </tr>
+                    <tr>
+                        <td><code>edit-profile</code></td>
+                        <td>Alterar dados do próprio perfil</td>
+                    </tr>
+                    <tr>
+                        <td><code>manage-settings</code></td>
+                        <td>Modificar configurações globais</td>
+                    </tr>
+                    <tr>
+                        <td><code>manage-pages</code></td>
+                        <td>Criar e editar páginas de qualquer autor</td>
+                    </tr>
+                    <tr>
+                        <td><code>manage-posts</code></td>
+                        <td>Criar e editar posts de qualquer autor</td>
+                    </tr>
+                    <tr>
+                        <td><code>manage-own-pages</code></td>
+                        <td>Criar e editar apenas páginas próprias</td>
+                    </tr>
+                    <tr>
+                        <td><code>manage-own-posts</code></td>
+                        <td>Criar e editar apenas posts próprios</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Criando um novo perfil</h3>
+            <div class="step">
+                <h4><span class="step-number">1</span>Adicione o role</h4>
+                <pre><code>'roles' => [
+    // ... perfis existentes
+    'moderator' => [
+        'name' => 'Moderador',
+        'description' => 'Aprova comentários e gerencia conteúdo.',
+    ],
+],</code></pre>
+            </div>
+
+            <div class="step">
+                <h4><span class="step-number">2</span>Defina as permissões</h4>
+                <pre><code>'permissionsByRole' => [
+    // ... outros perfis
+    'moderator' => [
+        'view-dashboard',
+        'edit-profile',
+        'view-reports',
+    ],
+],</code></pre>
+            </div>
+
+            <div class="step">
+                <h4><span class="step-number">3</span>Execute o seeder</h4>
+                <pre><code>php artisan db:seed --class=RolePermissionSeeder</code></pre>
+            </div>
+
+            <h3>Usando no código</h3>
+            <div class="example-box">
+                <h4>Verificando permissão</h4>
+                <pre><code>// No controller
+if (auth()->user()->permission('manage-pages')) {
+    // permite ação...
+}
+
+// Na view Blade
+@if(auth()->user()->permission('manage-users'))
+    &lt;a href="/admin/users"&gt;Usuários&lt;/a&gt;
+@endif</code></pre>
+            </div>
+
+            <div class="example-box">
+                <h4>Protegendo rotas</h4>
+                <pre><code>// Por permissão
+Route::middleware('permission:manage-users')->group(function () {
+    // rotas protegidas...
+});
+
+// Por role
+Route::middleware('role:admin')->group(function () {
+    // rotas protegidas...
+});</code></pre>
+            </div>
+        </section>
+
+        <!-- ══════════════════════════════════════════════════════════════ -->
+        <section id="settings">
+            <h2>7. settings.php (Configurações do Sistema)</h2>
+
+            <div class="intro">
+                <p>Define as configurações administráveis que aparecem em <strong>Admin → Configurações</strong>. Cada
+                    grupo vira uma seção ou aba na interface.</p>
+            </div>
+
+            <h3>Estrutura de um grupo</h3>
+            <div class="example-box">
+                <h4>Formato básico</h4>
+                <pre><code>'general' => [
+    'tab' => 'Geral',                    // Opcional: nome da aba
+    'title' => 'Configurações Gerais',   // Obrigatório
+    'description' => 'Descrição...',     // Opcional
+    'icon' => 'settings',                // Opcional: ícone Lucide
+    'fields' => [
+        // ... campos aqui
+    ],
+],</code></pre>
+            </div>
+
+            <h3>Tipos de campo disponíveis</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tipo</th>
+                        <th>Uso</th>
+                        <th>Exemplo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>subtitle</code></td>
+                        <td>Título de subseção (H3)</td>
+                        <td>Organização visual</td>
+                    </tr>
+                    <tr>
+                        <td><code>paragraph</code></td>
+                        <td>Texto explicativo</td>
+                        <td>Instruções ao usuário</td>
+                    </tr>
+                    <tr>
+                        <td><code>text</code></td>
+                        <td>Campo de texto simples</td>
+                        <td>Nome do site</td>
+                    </tr>
+                    <tr>
+                        <td><code>textarea</code></td>
+                        <td>Texto longo</td>
+                        <td>Descrição do site</td>
+                    </tr>
+                    <tr>
+                        <td><code>number</code></td>
+                        <td>Número com min/max</td>
+                        <td>Itens por página</td>
+                    </tr>
+                    <tr>
+                        <td><code>email</code></td>
+                        <td>E-mail validado</td>
+                        <td>E-mail de contato</td>
+                    </tr>
+                    <tr>
+                        <td><code>url</code></td>
+                        <td>URL validada</td>
+                        <td>Link do Facebook</td>
+                    </tr>
+                    <tr>
+                        <td><code>password</code></td>
+                        <td>Senha (mascarada)</td>
+                        <td>Senha SMTP</td>
+                    </tr>
+                    <tr>
+                        <td><code>image</code></td>
+                        <td>Upload de imagem</td>
+                        <td>Logo do site</td>
+                    </tr>
+                    <tr>
+                        <td><code>switch</code></td>
+                        <td>Ligar/desligar</td>
+                        <td>Ativar CAPTCHA</td>
+                    </tr>
+                    <tr>
+                        <td><code>select</code></td>
+                        <td>Dropdown</td>
+                        <td>Tema padrão</td>
+                    </tr>
+                    <tr>
+                        <td><code>radio</code></td>
+                        <td>Opções exclusivas</td>
+                        <td>Formato de imagem</td>
+                    </tr>
+                    <tr>
+                        <td><code>checkbox</code></td>
+                        <td>Múltipla escolha</td>
+                        <td>Categorias</td>
+                    </tr>
+                    <tr>
+                        <td><code>icon</code></td>
+                        <td>Seletor de ícone Lucide</td>
+                        <td>Ícone de menu</td>
+                    </tr>
+                    <tr>
+                        <td><code>page</code></td>
+                        <td>Seletor de página</td>
+                        <td>Página de privacidade</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Configurações avançadas por campo</h3>
+
+            <div class="example-box">
+                <h4>depends_on (condicional)</h4>
+                <pre><code>[
+    'key' => 'turnstile_site_key',
+    'type' => 'text',
+    'label' => 'Turnstile Site Key',
+    'depends_on' => [
+        'field' => 'use_captcha',
+        'operator' => '===',
+        'value' => true,
+    ],
+]</code></pre>
+                <p>O campo só aparece se <code>use_captcha</code> estiver ativado.</p>
+            </div>
+
+            <div class="example-box">
+                <h4>warn_on_change (aviso)</h4>
+                <pre><code>[
+    'key' => 'pages_base',
+    'type' => 'text',
+    'label' => 'Namespace para páginas',
+    'warn_on_change' => 'Ao mudar este valor, as URLs de todas as páginas irão mudar.',
+]</code></pre>
+                <p>Exibe modal de confirmação ao alterar o valor.</p>
+            </div>
+
+            <h3>Usando as settings no código</h3>
+            <div class="example-box">
+                <h4>No PHP</h4>
+                <pre><code>$siteName = setting('general.site_name', 'Lunar Base');
+$useCaptcha = setting('auth.use_captcha', false);</code></pre>
+            </div>
+
+            <div class="example-box">
+                <h4>No Blade</h4>
+                <pre><code>&lt;h1&gt;{{ setting('general.site_name') }}&lt;/h1&gt;
+
+@if(setting('auth.use_captcha'))
+    @include('partials.captcha')
+@endif</code></pre>
+            </div>
+
+            <h3>Grupos padrão do sistema</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Grupo</th>
+                        <th>Descrição</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>general</code></td>
+                        <td>Nome, descrição, tema, obrigações legais</td>
+                    </tr>
+                    <tr>
+                        <td><code>navigation</code></td>
+                        <td>Breadcrumbs, namespaces de URL</td>
+                    </tr>
+                    <tr>
+                        <td><code>auth</code></td>
+                        <td>CAPTCHA, 2FA</td>
+                    </tr>
+                    <tr>
+                        <td><code>reading</code></td>
+                        <td>Tamanho de resumo, paginação, acessibilidade</td>
+                    </tr>
+                    <tr>
+                        <td><code>media</code></td>
+                        <td>Thumbnails, qualidade, compressão</td>
+                    </tr>
+                    <tr>
+                        <td><code>social</code></td>
+                        <td>Links de redes sociais</td>
+                    </tr>
+                    <tr>
+                        <td><code>mail</code></td>
+                        <td>Configurações SMTP</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="tip">
+                <strong>Dica:</strong> Plugins também podem injetar configurações dinamicamente via
+                <code>Settings::add()</code> no Service Provider.
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="site">
+            <h2>8. site.php (Configurações do Frontend)</h2>
+
+            <div class="intro">
+                <p>Define configurações específicas do site público. No momento, contém apenas a definição do
+                    <strong>menu principal padrão</strong>.</p>
+            </div>
+
+            <div class="tip">
+                <strong>Nota:</strong> Você pode usar o plugin <strong>Menus</strong> para criar um menu para substituir as definições, neste case o array nesse arquivo é ignorado. O plugin Menus permite criar menus dinâmicos via painel administrativo.
+            </div>
+
+            <h3>Estrutura do menu</h3>
+            <div class="example-box">
+                <h4>Formato padrão</h4>
+                <pre><code>return [
+    "mainMenu" => [
+        [
+            "label" => "Início",
+            "route" => 'home'
+        ],
+        [
+            "label" => "Blog",
+            "path" => "blog"
+        ],
+        [
+            "label" => "Sobre",
+            "slug" => "sobre-nos"
+        ],
+    ]
+];</code></pre>
+            </div>
+
+            <h3>Três formas de definir o destino</h3>
+
+            <div class="example-box">
+                <h4>1. Rota Laravel</h4>
+                <pre><code>[
+    "label" => "Início",
+    "route" => "home"  // Rota nomeada do Laravel
+]</code></pre>
+                <p>Use para páginas estáticas do sistema (home, blog.index, etc.)</p>
+            </div>
+
+            <div class="example-box">
+                <h4>2. Slug (página ou post dinâmico)</h4>
+                <pre><code>[
+    "label" => "Sobre Nós",
+    "slug" => "sobre-nos"
+]</code></pre>
+                <p>Para páginas/posts criados na administração. O sistema resolve a URL automaticamente.</p>
+            </div>
+
+            <div class="example-box">
+                <h4>3. URL livre</h4>
+                <pre><code>[
+    "label" => "Google",
+    "path" => "https://google.com"
+]</code></pre>
+                <p>Para links externos ou caminhos customizados.</p>
+            </div>
+
+            <h3>Parâmetro namespace (opcional)</h3>
+            <p>Para páginas, você pode usar <code>namespace</code> para desambiguizar páginas com o mesmo slug:</p>
+
+            <div class="example-box">
+                <pre><code>[
+    "label" => "Contato",
+    "slug" => "contato",
+    "namespace" => "institucional"  // Só para páginas
+]</code></pre>
+            </div>
+
+            <h3>Regras importantes</h3>
+            <ul class="features">
+                <li>Cada item deve ter <strong>apenas uma</strong> forma de destino (<code>route</code>,
+                    <code>slug</code> ou <code>path</code>)</li>
+                <li><code>namespace</code> só funciona com <code>slug</code> e apenas para páginas (não posts)</li>
+                <li>A ordem no array define a ordem de exibição no menu</li>
+            </ul>
+
+            <h3>Quando usar este arquivo vs Plugin Menus</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Cenário</th>
+                        <th>Solução Recomendada</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Menu simples e estático</td>
+                        <td>Editar <code>site.php</code></td>
+                    </tr>
+                    <tr>
+                        <td>Menu que muda frequentemente</td>
+                        <td>Plugin Menus</td>
+                    </tr>
+                    <tr>
+                        <td>Sub-menus e dropdowns</td>
+                        <td>Plugin Menus</td>
+                    </tr>
+                    <tr>
+                        <td>Menus diferentes por página</td>
+                        <td>Plugin Menus</td>
+                    </tr>
+                    <tr>
+                        <td>Links dinâmicos (anti-404)</td>
+                        <td>Plugin Menus</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="best-practices">
+            <h2>Boas Práticas</h2>
+
+            <h3>1. Versionamento</h3>
+            <p>Mantenha os arquivos de config no versionamento (Git), mas nunca commit dados sensíveis como senhas SMTP.
+                Use variáveis de ambiente (<code>.env</code>) para isso.</p>
+
+            <h3>2. Backup antes de editar</h3>
+            <div class="example-box">
+                <pre><code># Faça backup antes de alterar
+cp config/rolesPermissions.php config/rolesPermissions.php.backup
+
+# Em caso de erro, restaure
+cp config/rolesPermissions.php.backup config/rolesPermissions.php</code></pre>
+            </div>
+
+            <h3>3. Teste em desenvolvimento</h3>
+            <p>Sempre teste alterações em ambiente local antes de aplicar em produção. Um erro de sintaxe pode deixar o
+                site inacessível.</p>
+
+            <h3>4. Documente mudanças</h3>
+            <p>Adicione comentários nos arquivos explicando o motivo de customizações:</p>
+
+            <div class="example-box">
+                <pre><code>// Adicionado em 2026-01-15 por João
+// Novo perfil para moderadores de comentários
+'moderator' => [
+    'name' => 'Moderador',
+    'description' => 'Aprova comentários.',
+],</code></pre>
+            </div>
+
+            <h3>5. Use o sistema de permissões</h3>
+            <p>Não hardcode verificações de role no código. Use as permissões definidas no
+                <code>rolesPermissions.php</code>:</p>
+
+            <div class="example-box">
+                <h4>✅ Correto</h4>
+                <pre><code>@if(auth()->user()->permission('manage-pages'))
+    &lt;a href="/admin/pages"&gt;Páginas&lt;/a&gt;
+@endif</code></pre>
+            </div>
+
+            <div class="example-box">
+                <h4>❌ Evite</h4>
+                <pre><code>@if(auth()->user()->role === 'admin')
+    &lt;a href="/admin/pages"&gt;Páginas&lt;/a&gt;
+@endif</code></pre>
+            </div>
+
+            <h3>6. Mantenha o admin.php sincronizado</h3>
+            <p>Se criar uma nova permissão, atualize também o menu admin para que os usuários vejam o link:</p>
+
+            <div class="example-box">
+                <pre><code>// Em rolesPermissions.php
+'permissionGroups' => [
+    'reports' => [
+        'view-analytics' => 'Ver analytics',
+    ],
+],
+
+// Em admin.php
+'items' => [
+    [
+        'label' => 'Analytics',
+        'icon' => 'bar-chart',
+        'route' => 'admin.analytics',
+        'active' => 'admin.analytics.*',
+        'permission' => 'view-analytics',  // Mesma permissão!
+    ],
+]</code></pre>
+            </div>
+
+            <h3>7. Cache de configurações</h3>
+            <p>Em produção, use cache de config para performance:</p>
+
+            <div class="example-box">
+                <pre><code># Gerar cache (deploy)
+php artisan config:cache
+
+# Limpar cache (desenvolvimento)
+php artisan config:clear</code></pre>
+            </div>
+
+            <div class="warning">
+                <strong>Atenção:</strong> Com cache ativo, mudanças nos arquivos de config só terão efeito após limpar o
+                cache.
+            </div>
+        </section>
+
+        <footer>
+            <p><strong>Guia de Configuração — Lunar Base CMS</strong></p>
+            <p>Versão 1.0 | Última atualização: Julho de 2026</p>
+        </footer>
+
+    </div>
+
+</body>
+
+</html>

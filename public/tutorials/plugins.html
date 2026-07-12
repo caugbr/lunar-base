@@ -22,8 +22,11 @@
                 <li><a href="#criar">Criando seu Primeiro Plugin</a></li>
                 <li><a href="#admin-menu">Adicionando Itens ao Menu Admin</a></li>
                 <li><a href="#settings">Configurações Dinâmicas (Settings)</a></li>
+                <li><a href="#options">Opções Dinâmicas para plugins</a></li>
                 <li><a href="#shortcodes">Registrando Shortcodes</a></li>
                 <li><a href="#hooks">Sistema de Hooks</a></li>
+                <li><a href="#existent-hooks">Hooks Disponíveis</a></li>
+                <li><a href="#hook-discovery">Hooks - helpers para plugins</a></li>
                 <li><a href="#rotas">Rotas Dinâmicas</a></li>
                 <li><a href="#models">Models e Relacionamentos</a></li>
                 <li><a href="#views">Views e Assets</a></li>
@@ -318,6 +321,37 @@ Settings::add($campoArray, 'nome_do_grupo', 'RótuloReferência');</pre>
             </div>
         </section>
 
+        <section id="options">
+            <h2>Options</h2>
+
+            <div class="intro">
+                <p>Options são uma outra forma de usar a tabela settings, mas sem adicionar nada na interface de configurações. Apenas um jeito de um plugin salvar e recuperar dados diretamente, sem precisar criar uma tabela para isso.</p>
+            </div>
+
+            <h4>Métodos globais disponíveis:</h4>
+            <pre><code class="code-label">PHP</code>
+// Use setOption() para criar registros
+setOption('myplugin_var1', 'valor da variável', 'string');
+setOption('myplugin_var2', 43, 'integer');
+setOption('myplugin_var3', 'uma senha', 'password'); // é guardado com Crypt()
+setOption('myplugin_var4', [1, 2, 3']); // type default - 'json'
+
+// Use getOption para recuperar um valor
+$value = getOption('myplugin_var1'); // retorna 'valor da variável'
+
+// Use getPrefixedOptios para recuperar o set inteiro de uma vez
+$arr = getPrefixedOptios("myplugin_");
+/* Retorna:
+    [
+        "var1" => "valor da variável",
+        "var2" => 43,
+        "var3" => "uma senha",
+        "var4" => [1, 2, 3']
+    ]
+*/
+</pre>
+        </section>
+
         <section id="shortcodes">
             <h2>Registrando Shortcodes</h2>
 
@@ -454,6 +488,275 @@ HookManager::register('post.footer_end', function($params) {
 
             <div class="tip">
                 <strong>Dica:</strong> Em modo debug (<code>APP_DEBUG=true</code>), o sistema adiciona comentários HTML mostrando qual plugin injetou cada hook, facilitando o debugging.
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="existent-hooks">
+            <h2>Hooks Disponíveis</h2>
+
+            <div class="intro">
+                <p>Hooks são pontos de injeção onde plugins inserem conteúdo automaticamente. Use o componente
+                    <code>&lt;x-hook&gt;</code> no seu tema.</p>
+            </div>
+
+            <h3>Sintaxe</h3>
+            <div class="example-box">
+                <h4>Hook action (auto-fechado)</h4>
+                <pre><code>&lt;x-hook name="post.footer_end" :params="['post' =&gt; $post]" /&gt;</code></pre>
+            </div>
+
+            <div class="example-box">
+                <h4>Hook filter (com fallback)</h4>
+                <pre><code>&lt;x-hook name="public.main_menu" desc="Menu principal"&gt;
+    &lt;!-- Menu padrão se nenhum plugin injetar --&gt;
+    @foreach($menu as $item)
+        &lt;a href="{{ $item['href'] }}"&gt;{{ $item['label'] }}&lt;/a&gt;
+    @endforeach
+&lt;/x-hook&gt;</code></pre>
+            </div>
+
+            <h3>Hooks de Admin</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Hook</th>
+                        <th>Arquivo</th>
+                        <th>Plugin</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>admin.header_user_avatar</code></td>
+                        <td>layout.blade.php</td>
+                        <td>Avatars</td>
+                    </tr>
+                    <tr>
+                        <td><code>profile.after_card</code></td>
+                        <td>profile.blade.php</td>
+                        <td>Avatars</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Hooks Públicos Gerais</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Hook</th>
+                        <th>Arquivo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>main.head</code></td>
+                        <td>site-layout.blade.php</td>
+                    </tr>
+                    <tr>
+                        <td><code>main.before_content</code></td>
+                        <td>site-layout.blade.php</td>
+                    </tr>
+                    <tr>
+                        <td><code>main.after_content</code></td>
+                        <td>site-layout.blade.php</td>
+                    </tr>
+                    <tr>
+                        <td><code>public.main_menu</code></td>
+                        <td>header.blade.php</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Hooks de Páginas</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Hook</th>
+                        <th>Arquivo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>page.before_content</code></td>
+                        <td>default.blade.php</td>
+                    </tr>
+                    <tr>
+                        <td><code>page.after_content</code></td>
+                        <td>default.blade.php</td>
+                    </tr>
+                    <tr>
+                        <td><code>page.after_footer</code></td>
+                        <td>default.blade.php</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Hooks de Posts</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Hook</th>
+                        <th>Arquivo</th>
+                        <th>Plugin</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>post.meta_end</code></td>
+                        <td>default.blade.php</td>
+                        <td>Reactions</td>
+                    </tr>
+                    <tr>
+                        <td><code>post.before_content</code></td>
+                        <td>default.blade.php</td>
+                        <td>—</td>
+                    </tr>
+                    <tr>
+                        <td><code>post.after_content</code></td>
+                        <td>default.blade.php</td>
+                        <td>Share</td>
+                    </tr>
+                    <tr>
+                        <td><code>post.footer_end</code></td>
+                        <td>default.blade.php</td>
+                        <td>Comments</td>
+                    </tr>
+                    <tr>
+                        <td><code>post.after_footer</code></td>
+                        <td>default.blade.php</td>
+                        <td>—</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="hook-discovery">
+            <h2>Descoberta Automática de Hooks</h2>
+
+            <div class="intro">
+                <p>O Lunar Base CMS possui um sistema inteligente que <strong>varre automaticamente</strong> todos os
+                    arquivos Blade do tema, plugins e core em busca de declarações <code>&lt;x-hook&gt;</code>, criando
+                    um registro centralizado de todos os pontos de injeção disponíveis.</p>
+            </div>
+
+            <h3>Como Funciona</h3>
+            <p>A classe <code>HookDiscoverer</code> realiza uma busca recursiva em três setores:</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Setor</th>
+                        <th>Diretório</th>
+                        <th>Prioridade</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Tema</strong></td>
+                        <td><code>themes/</code></td>
+                        <td>1ª (Recomendado)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Plugins</strong></td>
+                        <td><code>plugins/</code></td>
+                        <td>2ª</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Sistema</strong></td>
+                        <td><code>resources/views/</code></td>
+                        <td>3ª (Core)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Tipos de Hooks Detectados</h3>
+            <p>O sistema identifica automaticamente o tipo de hook baseado na estrutura:</p>
+
+            <div class="example-box">
+                <h4>Hook Action (auto-fechado)</h4>
+                <pre><code>&lt;x-hook name="post.footer_end" :params="['post' =&gt; $post]" /&gt;
+
+// Tipo detectado: <strong>action</strong> (sem conteúdo interno)</code></pre>
+            </div>
+
+            <div class="example-box">
+                <h4>Hook Filter (com fallback)</h4>
+                <pre><code>&lt;x-hook name="public.main_menu" desc="Menu principal"&gt;
+    &lt;!-- Menu padrão como fallback --&gt;
+    @foreach($menu as $item)
+        &lt;a href="{{ $item['href'] }}"&gt;{{ $item['label'] }}&lt;/a&gt;
+    @endforeach
+&lt;/x-hook&gt;
+
+// Tipo detectado: <strong>filter</strong> (com conteúdo de fallback)</code></pre>
+            </div>
+
+            <h3>Funções Helper Disponíveis</h3>
+
+            <div class="example-box">
+                <h4>Listar todos os hooks descobertos</h4>
+                <pre><code>// Retorna array com todos os hooks
+$hooks = get_discovered_hooks();
+
+// Filtrar por setor
+$themeHooks = get_discovered_hooks('theme');
+$pluginHooks = get_discovered_hooks('plugin');</code></pre>
+            </div>
+
+            <div class="example-box">
+                <h4>Gerar dropdown de seleção (Admin)</h4>
+                <pre><code>// No painel administrativo, ao criar um menu:
+{!! render_hooks_select([
+    'name'        =&gt; 'hook',
+    'id'          =&gt; 'menu_hook',
+    'selected'    =&gt; $menu-&gt;hook ?? null,
+    'placeholder' =&gt; '-- Selecione um ponto de exibição --'
+]) !!}
+
+// Gera um &lt;select&gt; agrupado por setor com:
+// - [filtro] ou [ação] indicando o tipo
+// - Descrição do hook (se existir)
+// - Data-params com os parâmetros disponíveis</code></pre>
+            </div>
+
+            <h3>Estrutura dos Dados</h3>
+            <p>Cada hook descoberto retorna as seguintes informações:</p>
+
+            <pre><code>[
+    'name'   =&gt; 'post.footer_end',
+    'desc'   =&gt; 'Final do rodapé do post',
+    'params' =&gt; "['post' =&gt; $post]",
+    'type'   =&gt; 'action', // ou 'filter'
+    'sector' =&gt; 'theme',  // ou 'plugin', 'system'
+    'file'   =&gt; '/themes/meu-tema/default.blade.php'
+]</code></pre>
+
+            <h3>Cache e Performance</h3>
+            <div class="tip">
+                <strong>Cache automático:</strong> A varredura é cacheada indefinidamente para performance. O cache é
+                limpo automaticamente quando um tema ou plugin é ativado/desativado.
+            </div>
+
+            <p>Para forçar a atualização manual (útil em desenvolvimento):</p>
+
+            <div class="example-box">
+                <pre><code>// Limpar cache de hooks descobertos
+\HookDiscoverer::clearCache();
+
+// Forçar refresh na próxima chamada
+$hooks = get_discovered_hooks('all', true);</code></pre>
+            </div>
+
+            <h3>Integração com o Plugin Menus</h3>
+            <p>O plugin <strong>Menus</strong> utiliza o <code>render_hooks_select()</code> para permitir que o
+                administrador associe um menu a qualquer hook descoberto no sistema. Quando um menu é associado a um
+                hook, ele é automaticamente injetado naquele ponto durante o carregamento da página.</p>
+
+            <div class="warning">
+                <strong>Limitação atual:</strong> Ainda não existe uma página administrativa dedicada para visualizar
+                todos os hooks descobertos. Use <code>get_discovered_hooks()</code> no tinker ou crie uma rota
+                temporária para inspecionar durante o desenvolvimento do tema.
             </div>
         </section>
 

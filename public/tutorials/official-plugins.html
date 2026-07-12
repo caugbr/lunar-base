@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual de Plugins Oficiais - Lunar Base CMS</title>
+    <link rel="stylesheet" href="tutorials.css">
+</head>
+
+<body>
+
+    <header>
+        <h1>Manual de Plugins Oficiais</h1>
+        <p>Lunar Base CMS — Guia de uso e integração dos módulos nativos</p>
+    </header>
+
+    <div class="container">
+
+        <nav class="toc">
+            <h2>Sumário</h2>
+            <ul>
+                <li><a href="#intro">Introdução</a></li>
+                <li><a href="#avatars">1. Avatars (Imagens de Perfil)</a></li>
+                <li><a href="#comments">2. Comments (Comentários Aninhados)</a></li>
+                <li><a href="#faq">3. FAQ (Perguntas Frequentes)</a></li>
+                <li><a href="#forms">4. Forms (Construtor de Formulários)</a></li>
+                <li><a href="#maintenance">5. Maintenance (Modo de Manutenção)</a></li>
+                <li><a href="#maps">6. Maps (Mapas Interativos)</a></li>
+                <li><a href="#menus">7. Menus (Construtor de Menus)</a></li>
+                <li><a href="#reactions">8. Reactions (Curtidas e Engajamento)</a></li>
+                <li><a href="#share">9. Share (Compartilhamento Social)</a></li>
+                <!-- <li><a href="#hooks">Hooks Disponíveis</a></li> -->
+                <!-- <li><a href="#shortcodes">Shortcodes</a></li> -->
+                <li><a href="#best-practices">Boas Práticas</a></li>
+            </ul>
+        </nav>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="intro">
+            <h2>Introdução</h2>
+
+            <div class="intro">
+                <p>Os plugins oficiais do <strong>Lunar Base CMS</strong> são módulos nativos que estendem o
+                    funcionamento do seu site. Eles já vêm instalados e, na maioria dos casos, funcionam de forma
+                    <strong>automática</strong> assim que ativados.</p>
+            </div>
+
+            <p>Este manual é voltado para quem vai <strong>utilizar</strong> os plugins: administradores, editores de
+                conteúdo e desenvolvedores de tema.</p>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>Plug-and-Play</h4>
+                    <p>Ative o plugin e ele já começa a funcionar automaticamente nos locais apropriados.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Configurável</h4>
+                    <p>Cada plugin expõe opções no painel administrativo para personalizar comportamento.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Integrável</h4>
+                    <p>Hooks e shortcodes permitem incorporar os recursos em qualquer lugar do tema.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="avatars">
+            <h2>1. Avatars (Imagens de Perfil)</h2>
+
+            <div class="intro">
+                <p>Permite que usuários façam upload de fotos de perfil personalizadas. A imagem é automaticamente
+                    recortada em 150×150px, convertida para WebP e exibida em todo o site.</p>
+            </div>
+
+            <h3>Como funciona</h3>
+            <ul class="features">
+                <li>Upload de imagens de até 5MB</li>
+                <li>Recorte automático em formato quadrado</li>
+                <li>Conversão para WebP (qualidade 90)</li>
+                <li>Fallback automático para Gravatar se não houver foto</li>
+                <li>Exclusão automática ao remover o usuário</li>
+            </ul>
+
+            <h3>Onde aparece</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Local</th>
+                        <th>Comportamento</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Header do admin</td>
+                        <td>Miniatura circular do usuário logado</td>
+                    </tr>
+                    <tr>
+                        <td>Página de Perfil</td>
+                        <td>Card com upload e preview</td>
+                    </tr>
+                    <tr>
+                        <td>Comentários</td>
+                        <td>Avatar do autor (se Comments ativo)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Como usar no tema</h3>
+            <div class="example-box">
+                <h4>Exibindo avatar</h4>
+                <pre><code>&lt;img src="{{ \Plugins\Avatars\Helpers\AvatarHelper::getUrl($user) }}"
+     alt="Avatar"
+     class="avatar-circle-sm"&gt;</code></pre>
+            </div>
+
+            <div class="tip">
+                <strong>Dica:</strong> o helper aceita tanto um objeto <code>User</code> quanto uma string de e-mail
+                (útil para visitantes).
+            </div>
+
+            <h3>Hooks utilizados</h3>
+            <ul>
+                <li><code>admin.header_user_avatar</code> — Header do painel</li>
+                <li><code>profile.after_card</code> — Página de perfil</li>
+            </ul>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="comments">
+            <h2>2. Comments (Comentários Aninhados)</h2>
+
+            <div class="intro">
+                <p>Sistema completo de comentários com respostas aninhadas, moderação de spam e integração com avatares.
+                </p>
+            </div>
+
+            <h3>Como funciona</h3>
+            <ul class="features">
+                <li>Aparece <strong>automaticamente</strong> ao final de cada post</li>
+                <li>Visitantes comentam com nome e e-mail; usuários logados com um clique</li>
+                <li>Respostas aninhadas ilimitadas</li>
+                <li>Moderação automática de palavras suspeitas</li>
+            </ul>
+
+            <h3>Como usar</h3>
+            <div class="tip">
+                <strong>Não precisa fazer nada!</strong> O plugin se conecta automaticamente ao hook
+                <code>post.footer_end</code>.
+            </div>
+
+            <h3>Moderação</h3>
+            <p>Comentários com estas palavras vão para moderação:</p>
+            <pre><code>buy, viagra, free casino, spam, cryptocurrency, click here</code></pre>
+
+            <h3>Hook utilizado</h3>
+            <pre><code>post.footer_end</code></pre>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="faq">
+            <h2>3. FAQ (Perguntas Frequentes)</h2>
+
+            <div class="intro">
+                <p>Crie blocos de perguntas e respostas em formato de acordeão, usando elementos nativos HTML5.</p>
+            </div>
+
+            <h3>Como criar</h3>
+            <div class="step">
+                <h4><span class="step-number">1</span>Acesse Admin → Temas → FAQ</h4>
+            </div>
+            <div class="step">
+                <h4><span class="step-number">2</span>Clique em "Novo FAQ"</h4>
+                <p>Preencha Título e Slug (ex: <code>duvidas-gerais</code>)</p>
+            </div>
+            <div class="step">
+                <h4><span class="step-number">3</span>Adicione perguntas</h4>
+                <p>Clique em "Adicionar Pergunta" e preencha enunciado e resposta</p>
+            </div>
+            <div class="step">
+                <h4><span class="step-number">4</span>Copie o shortcode</h4>
+            </div>
+
+            <h3>Como exibir</h3>
+            <div class="example-box">
+                <h4>Shortcode</h4>
+                <pre><code>[faq slug="duvidas-gerais"]</code></pre>
+            </div>
+
+            <div class="tip">
+                <strong>Acessibilidade:</strong> usa <code>&lt;details&gt;</code> e <code>&lt;summary&gt;</code> do
+                HTML5 — funciona sem JavaScript!
+            </div>
+        </section>
+
+        <!-- ══════════════════════════════════════════════════════════════ -->
+        <section id="forms">
+            <h2>4. Forms (Construtor de Formulários)</h2>
+
+            <div class="intro">
+                <p>Crie formulários personalizados para capturar leads e mensagens. Cada envio pode ser notificado por
+                    e-mail.</p>
+            </div>
+
+            <h3>Como criar</h3>
+            <div class="step">
+                <h4><span class="step-number">1</span>Admin → Formulários → Novo Formulário</h4>
+            </div>
+            <div class="step">
+                <h4><span class="step-number">2</span>Dados básicos</h4>
+                <ul>
+                    <li><strong>Slug:</strong> identificador (ex: <code>contato</code>)</li>
+                    <li><strong>Título:</strong> cabeçalho do formulário</li>
+                    <li><strong>E-mail de destino:</strong> para notificações</li>
+                </ul>
+            </div>
+            <div class="step">
+                <h4><span class="step-number">3</span>Construa os campos</h4>
+                <p>Adicione campos com tipo, label, regras de validação, etc.</p>
+            </div>
+
+            <h3>Tipos de campos</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tipo</th>
+                        <th>Uso</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>text</code></td>
+                        <td>Texto curto</td>
+                    </tr>
+                    <tr>
+                        <td><code>textarea</code></td>
+                        <td>Texto longo</td>
+                    </tr>
+                    <tr>
+                        <td><code>email</code></td>
+                        <td>E-mail validado</td>
+                    </tr>
+                    <tr>
+                        <td><code>number</code></td>
+                        <td>Número</td>
+                    </tr>
+                    <tr>
+                        <td><code>select</code></td>
+                        <td>Dropdown</td>
+                    </tr>
+                    <tr>
+                        <td><code>radio</code></td>
+                        <td>Múltipla escolha (radio)</td>
+                    </tr>
+                    <tr>
+                        <td><code>checkbox</code></td>
+                        <td>Múltipla escolha (checkbox)</td>
+                    </tr>
+                    <tr>
+                        <td><code>switch</code></td>
+                        <td>Toggle Sim/Não</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Como exibir</h3>
+            <div class="example-box">
+                <h4>Shortcode</h4>
+                <pre><code>[form slug="contato"]</code></pre>
+            </div>
+
+            <div class="warning">
+                <strong>Atenção:</strong> para receber e-mails, configure SMTP em Admin → Configurações → E-mail.
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="maintenance">
+            <h2>5. Maintenance (Modo de Manutenção)</h2>
+
+            <div class="intro">
+                <p>Bloqueia o acesso público ao site exibindo uma página de "em manutenção".</p>
+            </div>
+
+            <h3>Como ativar</h3>
+            <div class="step">
+                <h4><span class="step-number">1</span>Admin → Configurações → Manutenção</h4>
+            </div>
+            <div class="step">
+                <h4><span class="step-number">2</span>Marque "Ativar modo de manutenção"</h4>
+            </div>
+            <div class="step">
+                <h4><span class="step-number">3</span>Personalize a página</h4>
+                <p>Ícone, título, mensagem, footer</p>
+            </div>
+
+            <h3>Quem acessa durante manutenção</h3>
+            <ul class="features">
+                <li><strong>Admin e editores:</strong> navegam normalmente</li>
+                <li><strong>Rotas /admin, /login:</strong> continuam funcionando</li>
+                <li><strong>Visitantes:</strong> veem apenas a página de manutenção</li>
+            </ul>
+
+            <div class="tip">
+                <strong>SEO:</strong> retorna status HTTP 503 — o Google não indexa a página de manutenção.
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="maps">
+            <h2>6. Maps (Mapas Interativos)</h2>
+
+            <div class="intro">
+                <p>Crie mapas OpenStreetMap com marcadores personalizados e áreas destacadas.</p>
+            </div>
+
+            <h3>Como criar</h3>
+            <div class="step">
+                <h4><span class="step-number">1</span>Admin → Mapas → Novo Mapa</h4>
+            </div>
+            <div class="step">
+                <h4><span class="step-number">2</span>Configure o centro</h4>
+                <p>Busque endereço ou ajuste lat/lng manualmente</p>
+            </div>
+            <div class="step">
+                <h4><span class="step-number">3</span>Adicione marcadores</h4>
+                <p>Clique no mapa ou use "Novo marcador no centro"</p>
+            </div>
+
+            <h3>Como exibir</h3>
+            <div class="example-box">
+                <h4>Exibir mapa</h4>
+                <pre><code>[map id="1"]
+[map slug="meu-mapa"]</code></pre>
+            </div>
+
+            <div class="example-box">
+                <h4>Listar locais como cards</h4>
+                <pre><code>[list-locations id="1"]</code></pre>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="menus">
+            <h2>7. Menus (Construtor de Menus)</h2>
+
+            <div class="intro">
+                <p>Crie menus de navegação hierárquicos com sub-menus (dropdowns).</p>
+            </div>
+
+            <h3>Como criar</h3>
+            <div class="step">
+                <h4><span class="step-number">1</span>Admin → Menus → Criar Novo Menu</h4>
+                <p>Preencha nome, slug e (opcional) hook de exibição</p>
+            </div>
+            <div class="step">
+                <h4><span class="step-number">2</span>Adicione links</h4>
+                <ul>
+                    <li>Páginas dinâmicas</li>
+                    <li>Posts do blog</li>
+                    <li>Links personalizados</li>
+                </ul>
+            </div>
+            <div class="step">
+                <h4><span class="step-number">3</span>Organize hierarquia</h4>
+                <p>Use setas para: ↑↓ mover, → aninhar, ← recuar</p>
+            </div>
+            <div class="step">
+                <h4><span class="step-number">4</span>Salve Estrutura</h4>
+            </div>
+
+            <h3>Como exibir</h3>
+            <div class="example-box">
+                <h4>Via hook (se configurado)</h4>
+                <pre><code>&lt;x-hook name="public.main_menu" desc="Menu principal" /&gt;</code></pre>
+            </div>
+
+            <div class="tip">
+                <strong>Links inteligentes:</strong> se vincular a uma página, o menu atualiza automaticamente se o slug
+                mudar!
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="reactions">
+            <h2>8. Reactions (Curtidas)</h2>
+
+            <div class="intro">
+                <p>Adiciona botões de reação (curtir/não curtir) ao final dos posts.</p>
+            </div>
+
+            <h3>Como funciona</h3>
+            <ul class="features">
+                <li>Aparece automaticamente via hook <code>post.meta_end</code></li>
+                <li>Visitantes reagem sem login</li>
+                <li>Contadores atualizados via AJAX</li>
+                <li>1 voto por IP (evita spam)</li>
+            </ul>
+
+            <h3>Configurações</h3>
+            <p>Admin → Configurações → Leitura → Reactions:</p>
+            <ul>
+                <li>Ativar/desativar reações</li>
+                <li>Tipo: 👍 Legal, ❤️ Coração, ⭐ Estrela</li>
+                <li>Permitir reação negativa</li>
+                <li>Reação única por visitante</li>
+            </ul>
+
+            <h3>Hook utilizado</h3>
+            <pre><code>post.meta_end</code></pre>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="share">
+            <h2>9. Share (Compartilhamento)</h2>
+
+            <div class="intro">
+                <p>Botões de compartilhamento nas redes sociais ao final dos posts.</p>
+            </div>
+
+            <h3>Redes suportadas</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Rede</th>
+                        <th>Comportamento</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>WhatsApp</td>
+                        <td>Compartilhamento direto</td>
+                    </tr>
+                    <tr>
+                        <td>Facebook</td>
+                        <td>Dialog de compartilhamento</td>
+                    </tr>
+                    <tr>
+                        <td>X (Twitter)</td>
+                        <td>Composer com título+URL</td>
+                    </tr>
+                    <tr>
+                        <td>LinkedIn</td>
+                        <td>Compartilhamento profissional</td>
+                    </tr>
+                    <tr>
+                        <td>E-mail</td>
+                        <td>Abre cliente de e-mail</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Como funciona</h3>
+            <ul class="features">
+                <li>Aparece automaticamente via hook <code>post.after_content</code></li>
+                <li>SVGs inline (sem bibliotecas externas)</li>
+                <li>Cores de marca no hover</li>
+            </ul>
+
+            <h3>Configurações</h3>
+            <p>Admin → Configurações → Redes Sociais → Compartilhamento de Posts</p>
+
+            <h3>Hook utilizado</h3>
+            <pre><code>post.after_content</code></pre>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!-- <section id="hooks">
+            <h2>Hooks Disponíveis</h2>
+
+            <div class="intro">
+                <p>Hooks são pontos de injeção onde plugins inserem conteúdo automaticamente. Use o componente
+                    <code>&lt;x-hook&gt;</code> no seu tema.</p>
+            </div>
+
+            <h3>Sintaxe</h3>
+            <div class="example-box">
+                <h4>Hook action (auto-fechado)</h4>
+                <pre><code>&lt;x-hook name="post.footer_end" :params="['post' =&gt; $post]" /&gt;</code></pre>
+            </div>
+
+            <div class="example-box">
+                <h4>Hook filter (com fallback)</h4>
+                <pre><code>&lt;x-hook name="public.main_menu" desc="Menu principal"&gt;
+    &lt;!-- Menu padrão se nenhum plugin injetar --&gt;
+    @foreach($menu as $item)
+        &lt;a href="{{ $item['href'] }}"&gt;{{ $item['label'] }}&lt;/a&gt;
+    @endforeach
+&lt;/x-hook&gt;</code></pre>
+            </div>
+
+            <h3>Hooks de Admin</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Hook</th>
+                        <th>Arquivo</th>
+                        <th>Plugin</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>admin.header_user_avatar</code></td>
+                        <td>layout.blade.php</td>
+                        <td>Avatars</td>
+                    </tr>
+                    <tr>
+                        <td><code>profile.after_card</code></td>
+                        <td>profile.blade.php</td>
+                        <td>Avatars</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Hooks Públicos Gerais</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Hook</th>
+                        <th>Arquivo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>main.head</code></td>
+                        <td>site-layout.blade.php</td>
+                    </tr>
+                    <tr>
+                        <td><code>main.before_content</code></td>
+                        <td>site-layout.blade.php</td>
+                    </tr>
+                    <tr>
+                        <td><code>main.after_content</code></td>
+                        <td>site-layout.blade.php</td>
+                    </tr>
+                    <tr>
+                        <td><code>public.main_menu</code></td>
+                        <td>header.blade.php</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Hooks de Páginas</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Hook</th>
+                        <th>Arquivo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>page.before_content</code></td>
+                        <td>default.blade.php</td>
+                    </tr>
+                    <tr>
+                        <td><code>page.after_content</code></td>
+                        <td>default.blade.php</td>
+                    </tr>
+                    <tr>
+                        <td><code>page.after_footer</code></td>
+                        <td>default.blade.php</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Hooks de Posts</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Hook</th>
+                        <th>Arquivo</th>
+                        <th>Plugin</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>post.meta_end</code></td>
+                        <td>default.blade.php</td>
+                        <td>Reactions</td>
+                    </tr>
+                    <tr>
+                        <td><code>post.before_content</code></td>
+                        <td>default.blade.php</td>
+                        <td>—</td>
+                    </tr>
+                    <tr>
+                        <td><code>post.after_content</code></td>
+                        <td>default.blade.php</td>
+                        <td>Share</td>
+                    </tr>
+                    <tr>
+                        <td><code>post.footer_end</code></td>
+                        <td>default.blade.php</td>
+                        <td>Comments</td>
+                    </tr>
+                    <tr>
+                        <td><code>post.after_footer</code></td>
+                        <td>default.blade.php</td>
+                        <td>—</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="warning">
+                <strong>Nota:</strong> o sistema ainda não possui uma listagem automática de hooks disponíveis. Esta é
+                uma limitação conhecida.
+            </div>
+        </section>
+
+        < !-- ═══════════════════════════════════════════════════════════════ -- >
+        <section id="hook-discovery">
+            <h2>Descoberta Automática de Hooks</h2>
+
+            <div class="intro">
+                <p>O Lunar Base CMS possui um sistema inteligente que <strong>varre automaticamente</strong> todos os
+                    arquivos Blade do tema, plugins e core em busca de declarações <code>&lt;x-hook&gt;</code>, criando
+                    um registro centralizado de todos os pontos de injeção disponíveis.</p>
+            </div>
+
+            <h3>Como Funciona</h3>
+            <p>A classe <code>HookDiscoverer</code> realiza uma busca recursiva em três setores:</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Setor</th>
+                        <th>Diretório</th>
+                        <th>Prioridade</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Tema</strong></td>
+                        <td><code>themes/</code></td>
+                        <td>1ª (Recomendado)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Plugins</strong></td>
+                        <td><code>plugins/</code></td>
+                        <td>2ª</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Sistema</strong></td>
+                        <td><code>resources/views/</code></td>
+                        <td>3ª (Core)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Tipos de Hooks Detectados</h3>
+            <p>O sistema identifica automaticamente o tipo de hook baseado na estrutura:</p>
+
+            <div class="example-box">
+                <h4>Hook Action (auto-fechado)</h4>
+                <pre><code>&lt;x-hook name="post.footer_end" :params="['post' =&gt; $post]" /&gt;
+
+// Tipo detectado: <strong>action</strong> (sem conteúdo interno)</code></pre>
+            </div>
+
+            <div class="example-box">
+                <h4>Hook Filter (com fallback)</h4>
+                <pre><code>&lt;x-hook name="public.main_menu" desc="Menu principal"&gt;
+    &lt;!-- Menu padrão como fallback --&gt;
+    @foreach($menu as $item)
+        &lt;a href="{{ $item['href'] }}"&gt;{{ $item['label'] }}&lt;/a&gt;
+    @endforeach
+&lt;/x-hook&gt;
+
+// Tipo detectado: <strong>filter</strong> (com conteúdo de fallback)</code></pre>
+            </div>
+
+            <h3>Funções Helper Disponíveis</h3>
+
+            <div class="example-box">
+                <h4>Listar todos os hooks descobertos</h4>
+                <pre><code>// Retorna array com todos os hooks
+$hooks = get_discovered_hooks();
+
+// Filtrar por setor
+$themeHooks = get_discovered_hooks('theme');
+$pluginHooks = get_discovered_hooks('plugin');</code></pre>
+            </div>
+
+            <div class="example-box">
+                <h4>Gerar dropdown de seleção (Admin)</h4>
+                <pre><code>// No painel administrativo, ao criar um menu:
+{!! render_hooks_select([
+    'name'        =&gt; 'hook',
+    'id'          =&gt; 'menu_hook',
+    'selected'    =&gt; $menu-&gt;hook ?? null,
+    'placeholder' =&gt; '-- Selecione um ponto de exibição --'
+]) !!}
+
+// Gera um &lt;select&gt; agrupado por setor com:
+// - [filtro] ou [ação] indicando o tipo
+// - Descrição do hook (se existir)
+// - Data-params com os parâmetros disponíveis</code></pre>
+            </div>
+
+            <h3>Estrutura dos Dados</h3>
+            <p>Cada hook descoberto retorna as seguintes informações:</p>
+
+            <pre><code>[
+    'name'   =&gt; 'post.footer_end',
+    'desc'   =&gt; 'Final do rodapé do post',
+    'params' =&gt; "['post' =&gt; $post]",
+    'type'   =&gt; 'action', // ou 'filter'
+    'sector' =&gt; 'theme',  // ou 'plugin', 'system'
+    'file'   =&gt; '/themes/meu-tema/default.blade.php'
+]</code></pre>
+
+            <h3>Cache e Performance</h3>
+            <div class="tip">
+                <strong>Cache automático:</strong> A varredura é cacheada indefinidamente para performance. O cache é
+                limpo automaticamente quando um tema ou plugin é ativado/desativado.
+            </div>
+
+            <p>Para forçar a atualização manual (útil em desenvolvimento):</p>
+
+            <div class="example-box">
+                <pre><code>// Limpar cache de hooks descobertos
+\HookDiscoverer::clearCache();
+
+// Forçar refresh na próxima chamada
+$hooks = get_discovered_hooks('all', true);</code></pre>
+            </div>
+
+            <h3>Integração com o Plugin Menus</h3>
+            <p>O plugin <strong>Menus</strong> utiliza o <code>render_hooks_select()</code> para permitir que o
+                administrador associe um menu a qualquer hook descoberto no sistema. Quando um menu é associado a um
+                hook, ele é automaticamente injetado naquele ponto durante o carregamento da página.</p>
+
+            <div class="warning">
+                <strong>Limitação atual:</strong> Ainda não existe uma página administrativa dedicada para visualizar
+                todos os hooks descobertos. Use <code>get_discovered_hooks()</code> no tinker ou crie uma rota
+                temporária para inspecionar durante o desenvolvimento do tema.
+            </div>
+        </section> -->
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!-- <section id="shortcodes">
+            <h2>Shortcodes</h2>
+
+            <div class="intro">
+                <p>Tags que você cola no conteúdo de posts/páginas para exibir recursos dinâmicos.</p>
+            </div>
+
+            <h3>Lista completa</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Shortcode</th>
+                        <th>Plugin</th>
+                        <th>Descrição</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>[faq slug="..."]</code></td>
+                        <td>FAQ</td>
+                        <td>Bloco de perguntas frequentes</td>
+                    </tr>
+                    <tr>
+                        <td><code>[form slug="..."]</code></td>
+                        <td>Forms</td>
+                        <td>Formulário de contato</td>
+                    </tr>
+                    <tr>
+                        <td><code>[map id="..."]</code></td>
+                        <td>Maps</td>
+                        <td>Mapa interativo</td>
+                    </tr>
+                    <tr>
+                        <td><code>[map slug="..."]</code></td>
+                        <td>Maps</td>
+                        <td>Mapa por slug</td>
+                    </tr>
+                    <tr>
+                        <td><code>[list-locations id="..."]</code></td>
+                        <td>Maps</td>
+                        <td>Lista de locais como cards</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Exemplos</h3>
+            <div class="example-box">
+                <pre><code>[faq slug="duvidas-gerais"]
+[form slug="contato"]
+[map id="1"]
+[list-locations id="1"]</code></pre>
+            </div>
+        </section> -->
+
+        <!-- ══════════════════════════════════════════════════════════════ -->
+        <section id="best-practices">
+            <h2>Boas Práticas</h2>
+
+            <h3>Referenciando assets</h3>
+            <div class="example-box">
+                <h4>CSS/JS de plugins</h4>
+                <pre><code>&lt;link rel="stylesheet" href="{{ asset('plugins/comments/css/comments.css') }}"&gt;
+&lt;script src="{{ asset('plugins/comments/js/comments.js') }}"&gt;&lt;/script&gt;</code></pre>
+            </div>
+
+            <h3>Verificando se plugin está ativo</h3>
+            <div class="example-box">
+                <h4>Verificando view</h4>
+                <pre><code>@if(view()-&gt;exists('comments::comments-area'))
+  {!! view('comments::comments-area', ['post' =&gt; $post])-&gt;render() !!}
+@endif</code></pre>
+            </div>
+
+            <div class="example-box">
+                <h4>Verificando classe</h4>
+                <pre><code>@if(class_exists('\Plugins\Avatars\Helpers\AvatarHelper'))
+  &lt;img src="{{ \Plugins\Avatars\Helpers\AvatarHelper::getUrl($user) }}"&gt;
+@endif</code></pre>
+            </div>
+
+            <h3>Preferindo hooks</h3>
+            <div class="tip">
+                <strong>Recomendado:</strong> use hooks para integração automática. Se o plugin for desativado, o hook
+                não renderiza nada — sem quebrar o tema.
+            </div>
+        </section>
+
+        <footer>
+            <p><strong>Manual de Plugins Oficiais — Lunar Base CMS</strong></p>
+            <p>Versão 2.0 | Última atualização: Julho de 2026</p>
+        </footer>
+
+    </div>
+
+</body>
+
+</html>

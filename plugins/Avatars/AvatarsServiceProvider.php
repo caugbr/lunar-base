@@ -23,7 +23,7 @@ class AvatarsServiceProvider extends ServiceProvider
         // Carrega as views do plugin
         $this->loadViewsFrom(__DIR__ . '/resources/views', 'avatars');
 
-        // Hook 1: Substitui o ícone do header pela foto circular (com as mesmas dimensões)
+        // Hook 1: Substitui o ícone do header pela foto circular
         HookManager::register('admin.header_user_avatar', function($params) {
             $user = $params['user'] ?? null;
             if (!$user) return '';

@@ -20,7 +20,7 @@ class Setting extends Model
             'integer' => (int) $this->value,
             'boolean' => (bool) $this->value,
             'json' => json_decode($this->value, true),
-            // 🔥 Se o tipo for password, descriptografa automaticamente
+            // Se o tipo for password, descriptografa automaticamente
             'password' => $this->decryptPassword($this->value),
             default => $this->value,
         };

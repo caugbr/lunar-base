@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual de Componentes Globais - Lunar Base CMS</title>
+    <!-- Link para o arquivo CSS centralizado -->
+    <link rel="stylesheet" href="tutorials.css">
+</head>
+<body>
+    <header>
+        <h1>Manual de Componentes Globais</h1>
+        <p>Lunar Base CMS - Guia de Blade Components do Sistema</p>
+    </header>
+
+    <div class="container">
+        <nav class="toc">
+            <h2>Sumário</h2>
+            <ul>
+                <li><a href="#intro">Introdução</a></li>
+                <li><a href="#admin-alert">Alertas do Sistema (admin-alert)</a></li>
+                <li><a href="#admin-help">Ajuda Contextual (admin-help)</a></li>
+                <li><a href="#lost-changes">Aviso de Perda de Dados (lost-changes-warn)</a></li>
+                <li><a href="#breadcrumbs">Trilha de Navegação (breadcrumbs)</a></li>
+                <li><a href="#inputs">Componentes de Formulário & Dados</a></li>
+                <li><a href="#modal">Janelas Modais (modal)</a></li>
+                <li><a href="#utilidades">Componentes de Utilidade & UI</a></li>
+                <li><a href="#acessibilidade">Acessibilidade, SEO & Tema</a></li>
+            </ul>
+        </nav>
+
+        <section id="intro">
+            <h2>Introdução</h2>
+            <div class="intro">
+                <p>O Lunar Base CMS possui uma biblioteca de <strong>Blade Components</strong> reutilizáveis na raiz da pasta <code>resources/views/components</code>. Esses componentes encapsulam regras de negócio, marcações semânticas de acessibilidade, estilizações isoladas e scripts reativos para acelerar o desenvolvimento de novas telas no painel administrativo e no site público.</p>
+            </div>
+            <p>Os componentes gerais estão divididos em categorias funcionais detalhadas a seguir, permitindo chamadas limpas usando a diretiva do Laravel: <code>&lt;x-nome-do-componente /&gt;</code>.</p>
+        </section>
+
+        <section id="admin-alert">
+            <h2>Alertas do Sistema (admin-alert)</h2>
+            <div class="intro">
+                <p>O componente <code>&lt;x-admin-alert /&gt;</code> gerencia a renderização de caixas de alerta (sucesso, aviso, informação e erro). Ele lê automaticamente as variáveis de sessão flash do Laravel ou aceita mensagens injetadas de forma explícita pelas propriedades.</p>
+            </div>
+
+            <h4>Características Especiais:</h4>
+            <ul class="steps">
+                <li><strong>Detecção de Links:</strong> Se a mensagem contiver uma tag de link (<code>&lt;a href="..."&gt;</code>), o componente injeta um ícone de seta de encaminhamento automaticamente.</li>
+                <li><strong>Leitura Automática de Sessão:</strong> Se nenhuma propriedade for passada, o componente busca por <code>session('success')</code>, <code>session('warning')</code>, <code>session('info')</code>, <code>session('error')</code> ou pelos erros globais de validação do formulário (<code>$errors</code>).</li>
+            </ul>
+
+            <h4>Sintaxe e Uso:</h4>
+            <pre><code class="code-label">BLADE</code>{{-- Exemplo 1: Captura automática de mensagens flash da Controller --}}
+&lt;x-admin-alert /&gt;
+
+{{-- Exemplo 2: Mensagem definida de forma explícita no template --}}
+&lt;x-admin-alert type="warning" message="Esta ação não poderá ser desfeita!" /&gt;</pre>
+        </section>
+
+        <section id="admin-help">
+            <h2>Ajuda Contextual (admin-help)</h2>
+            <div class="intro">
+                <p>O componente <code>&lt;x-admin-help /&gt;</code> implementa um botão de boia salva-vidas flutuante que, ao ser clicado, exibe uma janela modal com o manual de instruções específico para a tela em que o usuário se encontra.</p>
+            </div>
+
+            <h4>Mapeamento Automático:</h4>
+            <p>O componente utiliza a classe <code>Route::currentRouteName()</code> do Laravel para identificar a rota ativa do painel e busca um arquivo de view correspondente dentro do diretório <code>resources/views/admin/help/</code> convertendo pontos em traços.</p>
+            <p>Se o usuário estiver na rota <code>admin.pages.create</code>, o componente verifica de forma segura se o arquivo físico <code>admin-pages-create.blade.php</code> existe na pasta de ajuda antes de desenhar o botão na interface.</p>
+
+            <h4>Sintaxe e Uso:</h4>
+            <p>Insira o componente na estrutura do seu layout administrativo (geralmente próximo ao cabeçalho principal):</p>
+            <pre><code class="code-label">BLADE</code>&lt;x-admin-help /&gt;</pre>
+        </section>
+
+        <section id="lost-changes">
+            <h2>Aviso de Perda de Dados (lost-changes-warn)</h2>
+            <div class="intro">
+                <p>O componente <code>&lt;x-lost-changes-warn /&gt;</code> monitora alterações feitas em formulários e editores ricos para alertar o usuário caso ele tente sair ou fechar a página sem salvar as alterações feitas.</p>
+            </div>
+
+            <h4>Características Técnicas:</h4>
+            <ul class="steps">
+                <li><strong>Monitoramento nativo:</strong> Escuta eventos de <code>input</code> e <code>change</code> do formulário indicado.</li>
+                <li><strong>Integração com TinyMCE:</strong> Detecta automaticamente o carregamento de editores ricos de texto TinyMCE e analisa se o editor está no estado <em>dirty</em> (modificado).</li>
+                <li><strong>Proteção no Unload:</strong> Dispara o evento de navegador <code>beforeunload</code> para impedir saídas acidentais.</li>
+            </ul>
+
+            <h4>Sintaxe e Uso:</h4>
+            <pre><code class="code-label">BLADE</code>{{-- Monitorando o formulário com o seletor ID correspondente --}}
+&lt;x-lost-changes-warn selector="#create_form" /&gt;</pre>
+        </section>
+
+        <section id="breadcrumbs">
+            <h2>Trilha de Navegação (breadcrumbs)</h2>
+            <div class="intro">
+                <p>O componente <code>&lt;x-breadcrumbs /&gt;</code> gera caminhos de navegação (breadcrumbs) semânticos e otimizados para SEO. Ele resolve estruturas de forma dinâmica, adaptando-se a páginas institucionais com hierarquias de páginas-mãe, listagens por termos de taxonomias e posts de blog de forma transparente.</p>
+            </div>
+
+            <h4>Sintaxe e Uso:</h4>
+            <pre><code class="code-label">BLADE</code>{{-- Injeção simples (o componente resolve os modelos compartilhados de forma automática) --}}
+&lt;x-breadcrumbs icon="milestone" /&gt;
+
+{{-- Forçando a renderização para uma página ou post específico --}}
+&lt;x-breadcrumbs :page="$page" icon="file-text" /&gt;</pre>
+
+            <h4>Parâmetros Aceitos:</h4>
+            <table>
+                <tr>
+                    <th>Parâmetro</th>
+                    <th>Tipo</th>
+                    <th>Descrição</th>
+                </tr>
+                <tr>
+                    <td><code>page</code></td>
+                    <td><code>Page</code> (Model)</td>
+                    <td>Instância de página (opcional, tenta auto-resolver)</td>
+                </tr>
+                <tr>
+                    <td><code>post</code></td>
+                    <td><code>Post</code> (Model)</td>
+                    <td>Instância de post de blog (opcional, tenta auto-resolver)</td>
+                </tr>
+                <tr>
+                    <td><code>icon</code></td>
+                    <td><code>string</code></td>
+                    <td>Nome do ícone Lucide a ser exibido à esquerda da trilha (ex: 'home')</td>
+                </tr>
+            </table>
+        </section>
+
+        <section id="inputs">
+            <h2>Componentes de Formulário & Dados</h2>
+            <p>O sistema disponibiliza um conjunto de campos para capturar dados complexos e simplificar o desenvolvimento de formulários interativos.</p>
+
+            <!-- select-input -->
+            <h3>1. Campo de Seleção Estendida (&lt;x-select-input&gt;)</h3>
+            <p>Estende um campo de seleção <code>&lt;select&gt;</code> comum, adicionando uma opção de <strong>"Inserir novo..."</strong>. Quando selecionada, ela transforma visualmente o campo em um campo de texto, permitindo cadastrar uma nova opção em tempo de execução sem sair da tela.</p>
+            <pre><code class="code-label">BLADE</code>&lt;x-select-input
+    name="namespace"
+    label="Namespace opcional"
+    :options="$namespaces"
+    :value="old('namespace')"
+    placeholder="-- Nenhum (página geral) --"
+    :allowInsert="true"
+    insertLabel="Inserir novo..."
+    insertPlaceholder="Digite o novo namespace"
+    help="Defina um escopo ou namespace opcional"
+/&gt;</pre>
+
+            <!-- page-picker -->
+            <h3>2. Seletor de Páginas (&lt;x-page-picker&gt;)</h3>
+            <p>Gera um menu de seleção que lista todas as páginas registradas na aplicação, mostrando o namespace correspondente ao lado de cada uma para facilitar o mapeamento de estruturas e heranças (páginas-mãe).</p>
+            <pre><code class="code-label">BLADE</code>&lt;x-page-picker
+    name="parent_id"
+    id="parent_id"
+    :selected="old('parent_id')"
+    placeholder="-- Selecione a página mãe --"
+/&gt;</pre>
+
+            <!-- icon-selector -->
+            <h3>3. Seletor de Ícones (&lt;x-icon-selector&gt;)</h3>
+            <p>Um componente robusto para escolher ícones da biblioteca Lucide. Ele abre um popup interativo com barra de pesquisa em tempo real, renderização dinâmica no navegador e permite limpar ou escolher novas opções visuais instantaneamente.</p>
+            <pre><code class="code-label">BLADE</code>&lt;x-icon-selector
+    name="icon"
+    :value="old('icon', $menu->icon)"
+    label="Ícone do Menu"
+    :can_clear="true"
+/&gt;</pre>
+
+            <!-- password-field -->
+            <h3>4. Campo de Senhas com Força (&lt;x-password-field&gt;)</h3>
+            <p>Renderiza campos protegidos de senha contra autocompletes indesejados, adicionando botões para revelar ou ocultar a visualização da senha e um validador em tempo real da força de segurança da senha.</p>
+            <pre><code class="code-label">BLADE</code>&lt;x-password-field
+    name="password"
+    label="Nova Senha"
+    id="user_password"
+    :required="true"
+    :confirm="true" {{-- Cria automaticamente o campo de confirmação pareado --}}
+/&gt;</pre>
+
+            <!-- upload-area -->
+            <h3>5. Área de Upload por Arraste (&lt;x-upload-area&gt;)</h3>
+            <p>Área interativa de upload que suporta o arraste direto de arquivos sobre a interface com mudança visual de destaque, limite de tipos de arquivos aceitos e botões rápidos para limpar a seleção.</p>
+            <pre><code class="code-label">BLADE</code>&lt;x-upload-area
+    name="documento_pdf"
+    id="documento_pdf"
+    label="Documento de Apoio"
+    buttonLabel="Selecionar PDF"
+    message="Arraste o arquivo PDF aqui"
+    valueMessage="PDF selecionado: %s"
+    accept="application/pdf"
+/&gt;</pre>
+
+            <!-- meta-editor -->
+            <h3>6. Editor de Chaves de Metadados (&lt;x-meta-editor&gt;)</h3>
+            <p>Editor dinâmico de metadados estruturado em chaves e valores. Ideal para registrar configurações dinâmicas de posts e páginas, permitindo adicionar, preencher e excluir pares de metadados de forma ilimitada com reindexação em lote automática via JavaScript.</p>
+            <pre><code class="code-label">BLADE</code>&lt;x-meta-editor
+    name="meta"
+    :existingKeys="['key_layout', 'key_sidebar', 'key_color']"
+    :values="$post->meta"
+/&gt;</pre>
+
+            <!-- switch -->
+            <h3>7. Interruptor Deslizante (&lt;x-switch&gt;)</h3>
+            <p>Substitui caixas de seleção (checkboxes) quadradas padrão do navegador por interruptores deslizantes elegantes, com suporte a rótulos ativos e inativos customizáveis.</p>
+            <pre><code class="code-label">BLADE</code>&lt;x-switch
+    name="is_active"
+    id="is_active"
+    :checked="$item->is_active"
+    active="Habilitado"
+    inactive="Desativado"
+/&gt;</pre>
+        </section>
+
+        <section id="modal">
+            <h2>Janelas Modais (modal)</h2>
+            <div class="intro">
+                <p>O componente <code>&lt;x-modal /&gt;</code> cria caixas de diálogo modais otimizadas. Ele é construído em cima do AlpineJS, entregando transições suaves de opacidade (*fade*) e escala sem depender de classes externas pesadas.</p>
+            </div>
+
+            <h4>Características Principais:</h4>
+            <ul class="steps">
+                <li><strong>Responsivo e Acessível:</strong> Possui atributos semânticos de acessibilidade e fecha automaticamente ao pressionar a tecla <code>Escape</code> ou ao clicar fora da caixa.</li>
+                <li><strong>Dimensionamento Flexível:</strong> Suporta cinco tamanhos padrão que se adaptam aos limites do monitor.</li>
+                <li><strong>Modo Foco:</strong> Transfere automaticamente o foco do cursor para o primeiro elemento interativo dentro da janela assim que o modal se abre.</li>
+            </ul>
+
+            <h4>Sintaxe de Exemplo:</h4>
+            <pre><code class="code-label">BLADE</code>&lt;x-modal id="galeriaModal" title="Visualizar Galeria" size="lg" :showFooter="true"&gt;
+    &lt;div class="conteudo-galeria"&gt;
+        &lt;!-- Conteúdo do corpo do modal --&gt;
+        &lt;p&gt;Selecione as mídias desejadas abaixo:&lt;/p&gt;
+    &lt;/div&gt;
+
+    &lt;x-slot name="footer"&gt;
+        &lt;button type="button" class="admin-btn admin-btn-primary"&gt;Confirmar Seleção&lt;/button&gt;
+    &lt;/x-slot&gt;
+&lt;/x-modal&gt;</pre>
+
+            <h4>Como abrir e fechar via JavaScript (AlpineJS):</h4>
+            <pre><code class="code-label">JS</code>// Para abrir o modal em qualquer lugar do sistema
+window.dispatchEvent(new CustomEvent('modal-open', { detail: { id: 'galeriaModal' } }));
+
+// Para fechar o modal programaticamente
+window.dispatchEvent(new CustomEvent('modal-close', { detail: { id: 'galeriaModal' } }));</pre>
+        </section>
+
+        <section id="utilidades">
+            <h2>Componentes de Utilidade & UI</h2>
+            <p>Componentes focados em feedback visual, segurança e apresentação de dados no sistema.</p>
+
+            <!-- moon-loader -->
+            <h3>1. Spinner de Carregamento (&lt;x-moon-loader&gt;)</h3>
+            <p>Gera um indicador circular de carregamento altamente customizável via CSS variables.</p>
+            <pre><code class="code-label">BLADE</code>&lt;x-moon-loader
+    size="40px"
+    glow="rgba(100, 100, 255, 0.2)"
+    dark="var(--color-bg-deep)"
+    duration="1.2s"
+/&gt;</pre>
+
+            <!-- qr-code -->
+            <h3>2. Renderizador de QR Code (&lt;x-qr-code&gt;)</h3>
+            <p>Recebe e renderiza uma marcação SVG pura contendo um código QR de forma segura, garantindo que o desenho se ajuste às dimensões do bloco de destino.</p>
+            <pre><code class="code-label">BLADE</code>&lt;x-qr-code :svg="$qrCodeSvg" /&gt;</pre>
+        </section>
+
+        <section id="acessibilidade">
+            <h2>Acessibilidade, SEO & Tema</h2>
+            <p>Componentes globais desenvolvidos para gerenciar a indexação de busca, preferências do usuário e recursos de acessibilidade universal.</p>
+
+            <!-- seo-meta -->
+            <h3>1. Metadados de SEO (&lt;x-seo-meta&gt;)</h3>
+            <p>Injeta meta tags completas e otimizadas no cabeçalho <code>&lt;head&gt;</code> do site, cobrindo o título, a descrição de busca, protocolos de Open Graph (para compartilhamentos elegantes no Facebook e WhatsApp) e cartões do Twitter.</p>
+            <pre><code class="code-label">BLADE</code>{{-- Coloque na tag &lt;head&gt; do seu layout principal --}}
+&lt;x-seo-meta :seo="$seoArray" /&gt;</pre>
+
+            <!-- vlibras -->
+            <h3>2. Acessibilidade em Libras (&lt;x-vlibras&gt;)</h3>
+            <p>Integra o widget oficial do VLibras (Língua Brasileira de Sinais). O componente lê as preferências do site para definir a posição do botão e permite parametrizar o avatar do tradutor virtual e a opacidade da ferramenta.</p>
+            <pre><code class="code-label">BLADE</code>&lt;x-vlibras position="R" avatar="hosana" opacity="0.9" /&gt;</pre>
+
+            <!-- text-size -->
+            <h3>3. Resizer de Fonte (&lt;x-text-size&gt;)</h3>
+            <p>Botão interativo para alterar o tamanho das fontes em blocos de texto do site (acessibilidade). Ele lê os tamanhos originais de cada elemento na tela e opera em um ciclo contínuo de passos antes de reiniciar para o tamanho inicial padrão.</p>
+            <pre><code class="code-label">BLADE</code>&lt;x-text-size selector=".post-content, .pagina-conteudo" :variation="2" :step="4" /&gt;</pre>
+
+            <!-- switch-theme -->
+            <h3>4. Alternador de Tema Escuro/Claro (&lt;x-switch-theme&gt;)</h3>
+            <p>Disponibiliza botões para alternar as cores do site entre modo claro e escuro. O componente cuida de persistir a escolha no navegador usando <code>localStorage</code>, alterando a propriedade <code>data-theme</code> do elemento <code>&lt;body&gt;</code> do site e os dados internos de widgets ativos em tempo real.</p>
+            <pre><code class="code-label">BLADE</code>&lt;x-switch-theme style="horizontal" /&gt;</pre>
+        </section>
+
+        <section id="boas-praticas">
+            <h2>Boas Práticas</h2>
+            <h4>1. Carregamento de Recursos Únicos:</h4>
+            <p>Muitos desses componentes fazem uso de scripts externos ou folhas de estilos específicas. O sistema utiliza as diretivas <code>@once</code> e <code>@push('styles')</code> ou <code>@push('scripts')</code> internamente. Garanta que o seu layout global possua as pilhas correspondentes no final do arquivo de layout:</p>
+            <pre><code class="code-label">BLADE</code>&lt;!-- No fim da view principal de layout do seu site/admin --&gt;
+@stack('styles')
+@stack('scripts')</pre>
+
+            <h4>2. Sanitização de Mensagens em Alertas:</h4>
+            <p>O componente <code>&lt;x-admin-alert&gt;</code> renderiza mensagens usando <code>{!! $message !!}</code> para que você possa formatar links ou negritos no texto de aviso enviado pela Controller. Por motivos de segurança, <strong>nunca passe conteúdo inserido diretamente por usuários sem antes sanitizá-lo</strong> na sua controller usando ferramentas como <code>strip_tags()</code>.</p>
+        </section>
+
+        <footer>
+            <p>Manual de Componentes Globais - Lunar Base CMS</p>
+            <p>Versão 1.0 | Última atualização: 2026</p>
+        </footer>
+    </div>
+</body>
+</html>

@@ -6,7 +6,7 @@
  *     'width' => 1200,
  *     'height' => 630, // opcional
  *     'crop' => true, // cortar?
- *     'position' => 'center', // 'center | 'top' | 'bottom'
+ *     'position' => 'center', // posição do corte - 'center | 'top' | 'bottom'
  * ]
  *
  */

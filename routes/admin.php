@@ -44,7 +44,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('themes/{theme}/screenshot', [ThemeController::class, 'screenshot'])->name('themes.screenshot');
 
     // Dashboard (ambos veem)
-    Route::get('/dashboard', [AdminDashboard::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [AdminDashboard::class, 'index'])->name('dashboard.index');
 
 
 });

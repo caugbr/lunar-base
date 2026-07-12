@@ -88,8 +88,8 @@ return [
                 [
                     'label' => 'Dashboard',
                     'icon' => 'layout-dashboard',
-                    'route' => 'admin.dashboard',
-                    'active' => 'admin.dashboard',
+                    'route' => 'admin.dashboard.index',
+                    'active' => 'admin.dashboard.index',
                 ],
                 [
                     'label' => 'Páginas',
