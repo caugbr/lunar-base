@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual de Desenvolvimento de Plugins - Lunar Base</title>
+    <link rel="stylesheet" href="tutorials.css">
+</head>
+<body>
+    <header>
+        <h1>Desenvolvimento de Plugins</h1>
+        <p>Lunar Base - Estrutura Base e Ciclo de Vida do Provedor</p>
+    </header>
+
+    <div class="container">
+        <nav class="toc">
+            <h2>Sumário</h2>
+            <ul>
+                <li><a href="#intro">Introdução</a></li>
+                <li><a href="#estrutura">Estrutura de Pastas</a></li>
+                <li><a href="#manifesto">O Manifesto (plugin.json)</a></li>
+                <li><a href="#provedor">Ciclo de Vida (ServiceProvider)</a></li>
+                <li><a href="#db">Banco de Dados (Migrations & Models)</a></li>
+                <li><a href="#boas-praticas">Boas Práticas de Organização</a></li>
+            </ul>
+        </nav>
+
+        <section id="intro">
+            <h2>Introdução</h2>
+            <div class="intro">
+                <p>O sistema de plugins do Lunar Base permite estender as funcionalidades do sistema de forma modular. Cada plugin funciona como uma aplicação isolada, possuindo suas próprias rotas, controladores, visões, modelos e migrações.</p>
+            </div>
+        </section>
+
+        <section id="estrutura">
+            <h2>Estrutura de Pastas</h2>
+            <p>Os plugins residem na pasta <code>/plugins</code> na raiz do projeto. A estrutura padrão de um plugin chamado "MeuPlugin" é:</p>
+            <pre><code>plugins/
+└── MeuPlugin/
+    ├── Http/
+    │   └── Controllers/
+    │       └── MeuController.php
+    ├── Models/
+    │   └── MeuModel.php
+    ├── database/
+    │   └── migrations/
+    │       └── 2026_01_01_000000_create_meu_plugin_table.php
+    ├── resources/
+    │   ├── views/
+    │   │   ├── admin/
+    │   │   └── public/
+    │   └── assets/
+    │       ├── css/
+    │       └── js/
+    ├── plugin.json
+    ├── MeuPluginServiceProvider.php
+    └── routes.php</code></pre>
+        </section>
+
+        <section id="manifesto">
+            <h2>O Manifesto (plugin.json)</h2>
+            <p>O arquivo <code>plugin.json</code> armazena os metadados necessários para que o painel do administrador reconheça o plugin:</p>
+            <pre><code class="code-label">JSON</code>{
+    "name": "MeuPlugin",
+    "description": "Adiciona funcionalidades personalizadas ao sistema.",
+    "version": "1.0.0",
+    "provider": "Plugins\\MeuPlugin\\MeuPluginServiceProvider"
+}</pre>
+        </section>
+
+        <section id="provedor">
+            <h2>Ciclo de Vida (ServiceProvider)</h2>
+            <p>A classe ServiceProvider é a porta de entrada do plugin no ciclo de inicialização do Laravel. Ela determina o que é registrado (bindings) e o que é carregado (assets, views, rotas) em cada requisição.</p>
+            <pre><code class="code-label">PHP</code><?php
+
+namespace Plugins\MeuPlugin;
+
+use Illuminate\Support\ServiceProvider;
+
+class MeuPluginServiceProvider extends ServiceProvider
+{
+    /**
+     * Registro de dependências na memória. Executado antes das views carregarem.
+     */
+    public function register(): void
+    {
+        $routesFile = __DIR__ . '/routes.php';
+        if (file_exists($routesFile)) {
+            require $routesFile;
+        }
+    }
+
+    /**
+     * Inicialização e carregamento de arquivos físicos.
+     */
+    public function boot(): void
+    {
+        // Carrega as migrations do plugin de forma automática
+        $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
+
+        // Carrega as views associando o namespace "meuplugin"
+        $this->loadViewsFrom(__DIR__ . '/resources/views', 'meuplugin');
+    }
+}</pre>
+        </section>
+
+        <section id="db">
+            <h2>Banco de Dados (Migrations & Models)</h2>
+            <p>Se o seu plugin requer tabelas no banco de dados, utilize migrations convencionais do Laravel localizadas dentro da pasta <code>database/migrations</code> do plugin.</p>
+
+            <h4>Exemplo de Migration do Plugin:</h4>
+            <pre><code class="code-label">PHP</code><?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration {
+    public function up(): void
+    {
+        Schema::create('meu_plugin_items', function (Blueprint $table) {
+            $table->id();
+            $table->string('titulo');
+            $table->text('descricao')->nullable();
+            $table->timestamps();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('meu_plugin_items');
+    }
+};</pre>
+
+            <h4>Exemplo de Model correspondente:</h4>
+            <pre><code class="code-label">PHP</code><?php
+
+namespace Plugins\MeuPlugin\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class MeuModel extends Model
+{
+    protected $table = 'meu_plugin_items';
+    protected $fillable = ['titulo', 'descricao'];
+}</pre>
+        </section>
+
+        <section id="boas-praticas">
+            <h2>Boas Práticas de Organização</h2>
+            <ul class="steps">
+                <li><strong>Nomenclatura:</strong> Use sempre PascalCase para pastas e namespaces (ex: <code>Plugins\MeuPlugin</code>).</li>
+                <li><strong>Namespaces de Views:</strong> Sempre carregue suas views com um identificador de namespace exclusivo (como <code>meuplugin</code>) no seu ServiceProvider para evitar colisões com outros módulos.</li>
+                <li><strong>Sanitização:</strong> Ao processar dados enviados por usuários no frontend, utilize funções de higienização do PHP (como <code>strip_tags</code>) para evitar falhas de segurança.</li>
+            </ul>
+        </section>
+
+        <footer>
+            <p>Manual de Desenvolvimento de Plugins - Lunar Base</p>
+            <p>Versão 1.0 | Última atualização: 2026</p>
+        </footer>
+    </div>
+</body>
+</html>

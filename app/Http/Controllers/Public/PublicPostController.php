@@ -52,7 +52,7 @@ class PublicPostController extends Controller
      */
     public function byTerm(string $taxonomySlug, string $termSlug)
     {
-        // 💡 Identifica que é uma listagem de blog por termo
+        // Identifica que é uma listagem de blog por termo
         request()->route()->setParameter('resolved_entity', 'blog');
 
         $term = Term::whereHas('taxonomy', fn($q) => $q->where('slug', $taxonomySlug))

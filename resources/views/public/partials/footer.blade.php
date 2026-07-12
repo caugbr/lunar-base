@@ -31,8 +31,10 @@
 
             @php
             $socials = settingsGroup('social');
+            $socials = array_filter($socials, function($key, $val) {
+                return !empty($val) && str_ends_with($key, '_url');
+            }, ARRAY_FILTER_USE_BOTH);
             $showSocial = !!count($socials);
-            $socials = array_filter($socials);
             @endphp
 
             @if($showSocial)

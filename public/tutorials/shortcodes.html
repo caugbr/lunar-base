@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrando Shortcodes - Lunar Base</title>
+    <link rel="stylesheet" href="tutorials.css">
+</head>
+<body>
+    <header>
+        <h1>Registrando Shortcodes</h1>
+        <p>Lunar Base - Processamento de Componentes Dinâmicos em Textos</p>
+    </header>
+
+    <div class="container">
+        <nav class="toc">
+            <h2>Sumário</h2>
+            <ul>
+                <li><a href="#intro">O que são Shortcodes</a></li>
+                <li><a href="#registro">Registrando um Shortcode</a></li>
+                <li><a href="#sintaxe">Sintaxe de Uso no Painel</a></li>
+                <li><a href="#exemplo">Exemplo Prático (FAQ)</a></li>
+                <li><a href="#boas-praticas">Remoção de Tags de Parágrafo</a></li>
+            </ul>
+        </nav>
+
+        <section id="intro">
+            <h2>O que são Shortcodes</h2>
+            <div class="intro">
+                <p>Shortcodes são códigos curtos envoltos em colchetes (ex: <code>[meu-shortcode]</code>) que o administrador de conteúdo digita em blocos de texto no editor de postagens ou páginas. No carregamento da página pública, o sistema intercepta esses códigos e os substitui por blocos complexos de HTML dinâmico de forma automática.</p>
+            </div>
+        </section>
+
+        <section id="registro">
+            <h2>Registrando um Shortcode</h2>
+            <p>Utilize a classe helper <code>ContentHelper::registerShortcode()</code> dentro do método <code>boot()</code> do Service Provider do seu plugin para cadastrar a tag:</p>
+            <pre><code class="code-label">PHP</code>use App\Helpers\ContentHelper;
+
+// Cadastro da tag [video id="X"]
+ContentHelper::registerShortcode('video', function($attributes, $content) {
+    // $attributes: Array com os atributos passados (ex: ['id' => '123'])
+    // $content: String com o texto contido entre as tags de abertura e fechamento (se houver)
+
+    $id = $attributes['id'] ?? null;
+
+    if (!$id) {
+        return '&lt;!-- Erro: [video] requer atributo "id" --&gt;';
+    }
+
+    return view('video::player', ['id' => $id])->render();
+});</pre>
+        </section>
+
+        <section id="sintaxe">
+            <h2>Sintaxe de Uso no Painel</h2>
+            <p>As tags de shortcode cadastradas podem ser escritas pelos editores de conteúdo de três formas distintas:</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Estrutura</th>
+                        <th>Sintaxe de Exemplo</th>
+                        <th>Utilidade</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Simples</strong></td>
+                        <td><code>[meu-componente]</code></td>
+                        <td>Inserção de widgets estáticos globais (ex: formulário de newsletter).</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Com Atributos</strong></td>
+                        <td><code>[meu-componente id="42" estilo="dark"]</code></td>
+                        <td>Carrega um modelo específico do banco parametrizado (ex: mapa de ID 42).</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Com Conteúdo</strong></td>
+                        <td><code>[meu-componente]Conteúdo Interno[/meu-componente]</code></td>
+                        <td>Aplica formatação ou envoltórios especiais ao redor do texto digitado.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="exemplo">
+            <h2>Exemplo Prático (FAQ)</h2>
+            <p>Este exemplo prático mostra como o plugin de FAQ registra seu shortcode para carregar conjuntos de perguntas e respostas serializados nas Options do banco de dados:</p>
+            <pre><code class="code-label">PHP</code>use App\Helpers\ContentHelper;
+
+ContentHelper::registerShortcode('faq', function($attributes, $content) {
+    $slug = $attributes['slug'] ?? null;
+
+    if (!$slug) return '';
+
+    // Busca os dados serializados da tabela options
+    $optionData = getOption("faq_{$slug}");
+    if (!$optionData) return '';
+
+    // Deserializa e renderiza a view correspondente
+    $faq = is_string($optionData) ? json_decode($optionData, true) : $optionData;
+
+    if (empty($faq) || empty($faq['items'])) return '';
+
+    return view('faq::public.show', compact('faq'))->render();
+});</pre>
+        </section>
+
+        <section id="boas-praticas">
+            <h2>Remoção de Tags de Parágrafo</h2>
+            <div class="tip">
+                <strong>Comportamento Automatizado:</strong> Editores ricos (como o TinyMCE) frequentemente envolvem os shortcodes escritos em tags de parágrafo durante a digitação (ex: <code>&lt;p&gt;[meu-shortcode]&lt;/p&gt;</code>). O renderizador de conteúdo do Lunar Base limpa e remove essas tags automaticamente em segundo plano para que as visões HTML injetadas não tenham margens ou estruturas quebras de layout desnecessárias.
+            </div>
+        </section>
+    </div>
+</body>
+</html>

@@ -3,14 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Admin\DashboardWidgetsController;
 use App\Support\Dashboard;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        // Registra boxes do core (se houver)
-        $this->registerSystemBoxes();
+        // Registra boxes do core
+        DashboardWidgetsController::registerBoxes();
 
         // Coleta todos os boxes registrados
         $allBoxes = collect(Dashboard::getAll())
@@ -19,26 +20,11 @@ class DashboardController extends Controller
             ->values();
 
         // Carrega config do dashboard
-        $config = config('dashboard');
+        $config = config('admin.dashboard');
 
         return view('admin.dashboard.index', [
             'boxes'  => $allBoxes,
             'config' => $config,
-        ]);
-    }
-
-    /**
-     * Registra boxes nativos do sistema (core).
-     * Pode ser movido para um ServiceProvider no futuro.
-     */
-    protected function registerSystemBoxes(): void
-    {
-        Dashboard::add('system-welcome', [
-            'title'      => 'Bem-vindo',
-            'icon'       => 'moon',
-            'controller' => 'App\Http\Controllers\Admin\DashboardController@welcome',
-            'span'       => 2,
-            'priority'   => 1,
         ]);
     }
 
@@ -49,10 +35,5 @@ class DashboardController extends Controller
         }
 
         return auth()->user()?->permission($box['permission']) ?? false;
-    }
-
-    public function welcome()
-    {
-        return view('admin.dashboard.boxes.welcome');
     }
 }

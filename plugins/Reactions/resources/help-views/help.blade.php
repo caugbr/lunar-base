@@ -25,6 +25,6 @@
 
     <h4>Arquitetura Modular e Desacoplada (Plug-and-Play)</h4>
     <p>
-        Graças à classe <code>ReactionsHelper</code>, este plugin <strong>não exige nenhuma alteração de código ou inclusão de traits nos seus arquivos de Model do Core</strong>. Qualquer modelo que implemente suporte a metadados no seu Lunar Base CMS passa a ser reativo de forma instantânea e transparente!
+        Graças à classe <code>ReactionsHelper</code>, este plugin <strong>não exige nenhuma alteração de código ou inclusão de traits nos seus arquivos de Model do Core</strong>. Qualquer modelo que implemente suporte a metadados no seu Lunar Base passa a ser reativo de forma instantânea e transparente!
     </p>
 </div>

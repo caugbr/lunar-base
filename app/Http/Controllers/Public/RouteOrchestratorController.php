@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use App\Support\DynamicRoutes;
 use App\Http\Controllers\Public\PublicPageController;
 use App\Http\Controllers\Public\PublicPostController;
-// use App\Models\Taxonomy;
 use App\Models\Page;
 
 class RouteOrchestratorController extends Controller
@@ -89,14 +88,14 @@ class RouteOrchestratorController extends Controller
     public function handleThreeSegments($base, $namespace, $slug)
     {
         $pagesBase = setting('navigation.pages_base', 'page');
-        $blogBase = setting('navigation.blog_base', 'post');
+        $blogBase = setting('navigation.blog_base', 'blog');
 
         // Se for página de 3 segmentos (Ex: /pagina/institucional/missao)
         if ($base === $pagesBase) {
             return app(PublicPageController::class)->showNamespaced($namespace, $slug);
         }
 
-        // Se for página de 3 segmentos (Ex: /pagina/institucional/missao)
+        // Se for taxonomia (Ex: /blog/categoria/sem-categoria/)
         if ($base === $blogBase) {
             return app(PublicPostController::class)->byTerm($namespace, $slug);
         }

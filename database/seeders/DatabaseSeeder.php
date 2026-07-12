@@ -17,7 +17,8 @@ class DatabaseSeeder extends Seeder
     {
 
         $this->call([
-            AdminUsersSeeder::class
+            AdminUsersSeeder::class,
+            SettingsSeeder::class,
         ]);
 
         $this->command->info('Database populada com sucesso!');

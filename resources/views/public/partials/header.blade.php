@@ -16,7 +16,7 @@
 
             <span class="header-links">
             @auth
-                <a href="{{ route('admin.dashboard') }}" class="login" title="Admin">
+                <a href="{{ route('admin.dashboard.index') }}" class="login" title="Admin">
                     <x-lucide-settings class="lucid-icon" />
                 </a>
             @else

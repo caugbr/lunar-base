@@ -32,7 +32,7 @@
 
         <p>
             @if($isAdmin)
-            <a class="button" href="{{ route('admin.dashboard') }}">
+            <a class="button" href="{{ route('admin.dashboard.index') }}">
                 <x-lucide-layout-dashboard class="lucid-icon" />
                 Dashboard
             </a>

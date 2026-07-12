@@ -37,6 +37,8 @@ class HookDiscoverer
             return $allHooks;
         }
 
+        // \Log::info('hooks', ["allHooks" => $allHooks]);
+
         // Filtra por setor específico (system, plugin ou theme)
         return array_filter($allHooks, function ($hook) use ($sector) {
             return $hook['sector'] === $sector;
@@ -78,26 +80,59 @@ class HookDiscoverer
     /**
      * Analisa o código do arquivo Blade usando Busca Dupla estável por Regex
      */
+    // protected static function scanFile(string $filePath, string $sector, array &$hooks): void
+    // {
+    //     // \Log::info('scanFile', ["file" => $filePath, "section" => $sector]);
+    //     $content = file_get_contents($filePath);
+
+    //     // 💡 VIA 1: Busca ganchos fechados com tags </x-hook> (Podem ser Filtros ou Ações dependendo do miolo)
+    //     preg_match_all('/<x-hook\s+([^>]*?)>(.*?)<\/x-hook>/is', $content, $matchesClosed, PREG_SET_ORDER);
+
+    //     foreach ($matchesClosed as $match) {
+    //         $attributesString = $match[1];
+    //         $innerContent = $match[2];
+
+    //         self::parseAndRegisterHook($attributesString, $innerContent, $sector, $filePath, $hooks);
+    //     }
+
+    //     // 💡 VIA 2: Busca ganchos auto-fechados do tipo <x-hook ... /> (Sempre são Ações)
+    //     preg_match_all('/<x-hook\s+([^>]*?)\/>/is', $content, $matchesSelf, PREG_SET_ORDER);
+
+    //     foreach ($matchesSelf as $match) {
+    //         $attributesString = $match[1];
+
+    //         self::parseAndRegisterHook($attributesString, '', $sector, $filePath, $hooks);
+    //     }
+    // }
     protected static function scanFile(string $filePath, string $sector, array &$hooks): void
     {
         $content = file_get_contents($filePath);
 
-        // 💡 VIA 1: Busca ganchos fechados com tags </x-hook> (Podem ser Filtros ou Ações dependendo do miolo)
-        preg_match_all('/<x-hook\s+([^>]*?)>(.*?)<\/x-hook>/is', $content, $matchesClosed, PREG_SET_ORDER);
+        // 💡 VIA 1: Busca ganchos fechados com tags </x-hook>
+        // Regex melhorado: captura atributos respeitando strings entre aspas
+        preg_match_all(
+            '/<x-hook\s+((?:[^>"\']|"[^"]*"|\'[^\']*\')*)>(.*?)<\/x-hook>/is',
+            $content,
+            $matchesClosed,
+            PREG_SET_ORDER
+        );
 
         foreach ($matchesClosed as $match) {
             $attributesString = $match[1];
             $innerContent = $match[2];
-
             self::parseAndRegisterHook($attributesString, $innerContent, $sector, $filePath, $hooks);
         }
 
-        // 💡 VIA 2: Busca ganchos auto-fechados do tipo <x-hook ... /> (Sempre são Ações)
-        preg_match_all('/<x-hook\s+([^>]*?)\/>/is', $content, $matchesSelf, PREG_SET_ORDER);
+        // 💡 VIA 2: Busca ganchos auto-fechados <x-hook ... />
+        preg_match_all(
+            '/<x-hook\s+((?:[^>"\']|"[^"]*"|\'[^\']*\')*)\/>/is',
+            $content,
+            $matchesSelf,
+            PREG_SET_ORDER
+        );
 
         foreach ($matchesSelf as $match) {
             $attributesString = $match[1];
-
             self::parseAndRegisterHook($attributesString, '', $sector, $filePath, $hooks);
         }
     }
@@ -156,7 +191,7 @@ class HookDiscoverer
     {
         $name        = $options['name'] ?? 'hook_name';
         $id          = $options['id'] ?? $name;
-        $placeholder = $options['placeholder'] ?? '-- Selecione um ponto de exibição --';
+        $placeholder = $options['placeholder'] ?? '-- Selecione --';
         $selected    = $options['selected'] ?? null;
         $sector      = $options['sector'] ?? 'all';
         $class       = $options['class'] ?? 'form-input';

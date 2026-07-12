@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Hooks e Descoberta - Lunar Base</title>
+    <link rel="stylesheet" href="tutorials.css">
+</head>
+<body>
+    <header>
+        <h1>Sistema de Hooks</h1>
+        <p>Lunar Base - Injeção Dinâmica, Extensibilidade e Autodescoberta</p>
+    </header>
+
+    <div class="container">
+        <nav class="toc">
+            <h2>Sumário</h2>
+            <ul>
+                <li><a href="#intro">Como Funcionam os Hooks</a></li>
+                <li><a href="#declaracao">Declarando Ganchos (Temas)</a></li>
+                <li><a href="#registro">Registrando Listeners (Plugins)</a></li>
+                <li><a href="#discovery">Varredura & Autodescoberta</a></li>
+                <li><a href="#lista-hooks">Ganchos Nativos Disponíveis</a></li>
+            </ul>
+        </nav>
+
+        <section id="intro">
+            <h2>Como Funcionam os Hooks</h2>
+            <div class="intro">
+                <p>Hooks são pontos de ancoragem (ganchos) posicionados nos arquivos de visão (Blade) do tema público ou do painel administrativo. Eles permitem que plugins injetem marcações HTML, estilos CSS, scripts Javascript ou alterem variáveis de forma transparente e desacoplada.</p>
+            </div>
+        </section>
+
+        <section id="declaracao">
+            <h2>Declarando Ganchos (Temas)</h2>
+            <p>Utilize o componente Blade <code>&lt;x-hook /&gt;</code> para disponibilizar um ponto de extensão. Os ganchos podem funcionar de duas maneiras:</p>
+
+            <div class="example-box">
+                <h4>1. Hook de Ação (Action - Sem conteúdo padrão)</h4>
+                <p>Apenas reserva o espaço físico para que os plugins insiram marcação extra. É auto-fechado:</p>
+                <pre><code>&lt;x-hook name="post.footer_end" :params="['post' =&gt; $post]" /&gt;</code></pre>
+            </div>
+
+            <div class="example-box">
+                <h4>2. Hook de Filtro (Filter - Com conteúdo de fallback)</h4>
+                <p>Renderiza um bloco de conteúdo padrão caso nenhum plugin ou menu dinâmico esteja atrelado àquele ponto:</p>
+                <pre><code>&lt;x-hook name="public.main_menu" desc="Menu Principal"&gt;
+    &lt;!-- Fallback visual se nenhum plugin injetar conteúdo --&gt;
+    @foreach($menu as $item)
+        &lt;a href="{{ $item['href'] }}"&gt;{{ $item['label'] }}&lt;/a&gt;
+    @endforeach
+&lt;/x-hook&gt;</code></pre>
+            </div>
+        </section>
+
+        <section id="registro">
+            <h2>Registrando Listeners (Plugins)</h2>
+            <p>No método <code>boot()</code> do Service Provider do seu plugin, registre um escutador para o gancho que deseja alimentar usando a classe <code>HookManager</code>:</p>
+            <pre><code class="code-label">PHP</code>use App\Support\HookManager;
+
+// Registra a injeção ao final do conteúdo dos posts
+HookManager::register('post.footer_end', function($params) {
+    // $params recebe as variáveis injetadas na tag do hook
+    $post = $params['post'] ?? null;
+
+    if (!$post) return '';
+
+    return view('meuplugin::area-comentarios', ['post' => $post])->render();
+}, 'MeuPlugin'); // Rótulo identificador usado para depuração</pre>
+        </section>
+
+        <section id="discovery">
+            <h2>Varredura & Autodescoberta</h2>
+            <div class="intro">
+                <p>O Lunar Base possui um mecanismo inteligente que <strong>varre automaticamente</strong> os arquivos Blade do sistema em busca de tags <code>&lt;x-hook&gt;</code>, catalogando todos os ganchos físicos existentes.</p>
+            </div>
+
+            <h4>Como a varredura funciona:</h4>
+            <p>A classe <code>HookDiscoverer</code> realiza buscas recursivas nas pastas de <code>themes/</code> (prioridade máxima), <code>plugins/</code> e <code>resources/views/</code> (core do sistema). Ela identifica se o gancho é um filtro ou ação, quais parâmetros ele disponibiliza e mapeia o arquivo físico onde ele reside.</p>
+
+            <h4>Helper Útil para Painéis (Admin):</h4>
+            <p>Você pode renderizar um dropdown unificado listando todos os ganchos descobertos para que o administrador escolha onde injetar um menu de navegação, por exemplo:</p>
+            <pre><code class="code-label">PHP</code>{!! render_hooks_select([
+    'name'        => 'hook',
+    'id'          => 'menu_hook',
+    'selected'    => $menu->hook ?? null,
+    'placeholder' => '-- Selecione o local de exibição --'
+]) !!}</pre>
+        </section>
+
+        <section id="lista-hooks">
+            <h2>Ganchos Nativos Disponíveis</h2>
+            <p>Alguns dos ganchos já descobertos e utilizados pelos plugins oficiais:</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome do Hook</th>
+                        <th>Setor</th>
+                        <th>Utilizado por</th>
+                        <th>Descrição</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>admin.header_user_avatar</code></td>
+                        <td>Admin</td>
+                        <td>Avatars</td>
+                        <td>Substitui o ícone do header administrativo pelo avatar circular do usuário.</td>
+                    </tr>
+                    <tr>
+                        <td><code>profile.after_card</code></td>
+                        <td>Admin</td>
+                        <td>Avatars</td>
+                        <td>Injeta formulários abaixo do card de perfil do usuário.</td>
+                    </tr>
+                    <tr>
+                        <td><code>main.head</code></td>
+                        <td>Público</td>
+                        <td>Temas / Core</td>
+                        <td>Injeta metadados, scripts ou estilos dentro da tag <code>&lt;head&gt;</code> global.</td>
+                    </tr>
+                    <tr>
+                        <td><code>public.main_menu</code></td>
+                        <td>Público</td>
+                        <td>Menus</td>
+                        <td>Injeta o menu de navegação horizontal no cabeçalho.</td>
+                    </tr>
+                    <tr>
+                        <td><code>post.meta_end</code></td>
+                        <td>Público (Post)</td>
+                        <td>Reactions</td>
+                        <td>Injeta elementos de engajamento logo abaixo da área de metadados do artigo.</td>
+                    </tr>
+                    <tr>
+                        <td><code>post.after_content</code></td>
+                        <td>Público (Post)</td>
+                        <td>Share</td>
+                        <td>Injeta botões ao final do corpo de texto dos artigos do blog.</td>
+                    </tr>
+                    <tr>
+                        <td><code>post.footer_end</code></td>
+                        <td>Público (Post)</td>
+                        <td>Comments</td>
+                        <td>Injeta a área de discussões e comentários no rodapé do artigo.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </div>
+</body>
+</html>

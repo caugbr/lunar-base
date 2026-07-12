@@ -56,7 +56,7 @@
                         <button type="button"
                             onclick="window.dispatchEvent(new CustomEvent('modal-open', { detail: { id: 'help-{{ $plugin->id }}' } }))"
                             class="transparent-btn"
-                            title="Ver documentação">
+                            title="Mais detalhes">
                             <x-lucide-help-circle class="lucid-icon" />
                         </button>
                         <x-modal id="help-{{ $plugin->id }}" title="Ajuda: {{ $plugin->name }}" size="lg">

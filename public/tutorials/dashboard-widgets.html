@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Como Registrar Boxes no Dashboard - Lunar Base</title>
+    <link rel="stylesheet" href="tutorials.css">
+</head>
+
+<body>
+
+    <header>
+        <h1>Como Registrar Boxes no Dashboard</h1>
+        <p>Lunar Base — Guia para criar widgets extensíveis na tela inicial</p>
+    </header>
+
+    <div class="container">
+
+        <nav class="toc">
+            <h2>Sumário</h2>
+            <ul>
+                <li><a href="#intro">Introdução</a></li>
+                <li><a href="#arquitetura">Arquitetura do Sistema</a></li>
+                <li><a href="#passo-1">Passo 1: Criar o Controller</a></li>
+                <li><a href="#passo-2">Passo 2: Criar a View</a></li>
+                <li><a href="#passo-3">Passo 3: Registrar o Box</a></li>
+                <li><a href="#opcoes">Opções de Configuração</a></li>
+                <li><a href="#layout">Layout e CSS</a></li>
+                <li><a href="#avancado">Gerenciamento Avançado</a></li>
+            </ul>
+        </nav>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="intro">
+            <h2>Introdução</h2>
+
+            <div class="intro">
+                <p>O Dashboard do Lunar Base não é uma página estática. Ele foi desenhado para ser
+                    <strong>extensível</strong>, permitindo que plugins e temas injetem seus próprios "boxes" (widgets)
+                    na tela inicial do administrador.</p>
+            </div>
+
+            <p>Este tutorial ensina como criar e registrar um box personalizado no Dashboard, desde a lógica
+                (Controller) até a apresentação (View) e o registro no sistema.</p>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="arquitetura">
+            <h2>Arquitetura do Sistema</h2>
+
+            <p>Diferente de sistemas que pedem apenas "dados" para um widget, o Lunar Base utiliza uma abordagem baseada
+                em <strong>Controllers e Views</strong>. Isso mantém a separação de responsabilidades (MVC) e permite
+                que cada box tenha sua própria lógica de negócio.</p>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>1. Configuração</h4>
+                    <p>O arquivo <code>/config/dashboard.php</code> define o layout global (quantidade de colunas) e a
+                        view "moldura" padrão.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>2. Classe Estática</h4>
+                    <p>A classe <code>App\Support\Dashboard</code> gerencia o registro, filtragem por permissão e
+                        renderização dos boxes.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>3. Controllers</h4>
+                    <p>Cada box é servido por um método de controller que retorna uma View Blade já populada com dados.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="passo-1">
+            <h2>Passo 1: Criar o Controller</h2>
+
+            <p>O controller é responsável por buscar os dados e retornar a view do conteúdo do box. Ele não precisa
+                estender nada especial, apenas o Controller padrão do Laravel.</p>
+
+            <div class="example-box">
+                <h4>Exemplo: Controller de Estatísticas</h4>
+                <pre><code>&lt;?php
+
+namespace App\Http\Controllers\Dashboard;
+
+use App\Http\Controllers\Controller;
+use App\Models\Post;
+use App\Models\User;
+
+class StatsController extends Controller
+{
+    public function index()
+    {
+        $totalPosts = Post::count();
+        $totalUsers = User::count();
+
+        // Retorna a view específica do conteúdo do box
+        return view('admin.dashboard.boxes.stats', [
+            'totalPosts' => $totalPosts,
+            'totalUsers' => $totalUsers,
+        ]);
+    }
+}</code></pre>
+            </div>
+
+            <div class="tip">
+                <strong>Dica:</strong> O método pode ter qualquer nome (ex: <code>index</code>, <code>show</code>,
+                <code>render</code>), desde que você aponte corretamente no registro.
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="passo-2">
+            <h2>Passo 2: Criar a View</h2>
+
+            <p>Crie a view que será injetada dentro da moldura do box. Esta view deve conter apenas o <strong>conteúdo
+                    interno</strong> (gráficos, listas, textos), sem o cabeçalho ou bordas do box.</p>
+
+            <div class="example-box">
+                <h4>Exemplo: <code>resources/views/admin/dashboard/boxes/stats.blade.php</code></h4>
+                <pre><code>&lt;div class="stats-grid"&gt;
+    &lt;div class="stat-card"&gt;
+        &lt;span class="stat-value"&gt;{{ $totalPosts }}&lt;/span&gt;
+        &lt;span class="stat-label"&gt;Posts&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;div class="stat-card"&gt;
+        &lt;span class="stat-value"&gt;{{ $totalUsers }}&lt;/span&gt;
+        &lt;span class="stat-label"&gt;Usuários&lt;/span&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="passo-3">
+            <h2>Passo 3: Registrar o Box</h2>
+
+            <p>O registro é feito chamando o método estático <code>Dashboard::add()</code>. O melhor lugar para fazer
+                isso é no método <code>boot()</code> do ServiceProvider do seu plugin ou tema.</p>
+
+            <div class="example-box">
+                <h4>Exemplo: No ServiceProvider</h4>
+                <pre><code>namespace Plugins\MeuPlugin;
+
+use Illuminate\Support\ServiceProvider;
+use App\Support\Dashboard;
+
+class MeuPluginServiceProvider extends ServiceProvider
+{
+    public function boot(): void
+    {
+        // Registra o box no Dashboard
+        Dashboard::add('meu-plugin-stats', [
+            'title'      => 'Estatísticas Rápidas',
+            'icon'       => 'bar-chart',
+            'controller' => 'App\Http\Controllers\Dashboard\StatsController@index',
+            'span'       => 2,
+            'priority'   => 10,
+            'permission' => 'view-dashboard',
+        ]);
+    }
+}</code></pre>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="opcoes">
+            <h2>Opções de Configuração</h2>
+
+            <p>Ao chamar <code>Dashboard::add('id', $config)</code>, você pode passar os seguintes parâmetros no array
+                de configuração:</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Parâmetro</th>
+                        <th>Tipo</th>
+                        <th>Padrão</th>
+                        <th>Descrição</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>title</code></td>
+                        <td>string</td>
+                        <td>—</td>
+                        <td>Título exibido no cabeçalho do box.</td>
+                    </tr>
+                    <tr>
+                        <td><code>icon</code></td>
+                        <td>string</td>
+                        <td><code>null</code></td>
+                        <td>Nome de um ícone Lucide (ex: <code>bar-chart</code>, <code>users</code>). Opcional.</td>
+                    </tr>
+                    <tr>
+                        <td><code>controller</code></td>
+                        <td>string</td>
+                        <td>—</td>
+                        <td>Classe e método no formato <code>App\...\Controller@method</code>.</td>
+                    </tr>
+                    <tr>
+                        <td><code>span</code></td>
+                        <td>int</td>
+                        <td><code>1</code></td>
+                        <td>Quantas colunas o box ocupa no grid (1, 2, 3...).</td>
+                    </tr>
+                    <tr>
+                        <td><code>priority</code></td>
+                        <td>int</td>
+                        <td><code>100</code></td>
+                        <td>Ordem de exibição. Menor número = maior prioridade (aparece primeiro).</td>
+                    </tr>
+                    <tr>
+                        <td><code>permission</code></td>
+                        <td>string</td>
+                        <td><code>null</code></td>
+                        <td>Se definido, o box só aparece para usuários com essa permissão (RBAC).</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="layout">
+            <h2>Layout e CSS</h2>
+
+            <p>O Dashboard utiliza <strong>CSS Grid</strong> para organizar os boxes. O número de colunas é definido em
+                <code>/config/dashboard.php</code> (padrão: 3).</p>
+
+            <h3>Como o <code>span</code> funciona</h3>
+            <p>Se o seu grid tem 3 colunas e você define <code>'span' => 2</code>, o box ocupará 2/3 da largura da
+                linha. O CSS Grid usa <code>auto-flow: dense</code>, o que significa que boxes menores podem preencher
+                automaticamente os espaços vazios deixados por boxes maiores.</p>
+
+            <h3>Altura dos Boxes</h3>
+            <p>Os boxes possuem <code>align-self: start</code>. Isso significa que eles <strong>não esticam</strong>
+                verticalmente para igualar a altura do box vizinho. Se um box é mais alto que o outro, o espaço vazio
+                fica <em>abaixo</em> do box menor, e não dentro dele.</p>
+
+            <div class="tip">
+                <strong>Dica de CSS:</strong> Para que seu conteúdo interno ocupe bem o espaço, use
+                <code>height: 100%</code> ou Flexbox dentro da sua view específica, mas evite definir alturas fixas
+                rígidas.
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="avancado">
+            <h2>Gerenciamento Avançado</h2>
+
+            <p>A classe <code>App\Support\Dashboard</code> oferece outros métodos úteis para gerenciar boxes
+                dinamicamente.</p>
+
+            <h3>Remover um Box</h3>
+            <p>Se você quiser ocultar um box registrado pelo core ou por outro plugin:</p>
+            <div class="example-box">
+                <pre><code>Dashboard::remove('system-welcome');</code></pre>
+            </div>
+
+            <h3>Modificar um Box Existente</h3>
+            <p>Você pode alterar propriedades de um box já registrado (como o <code>span</code> ou a
+                <code>priority</code>) sem precisar reescrevê-lo:</p>
+            <div class="example-box">
+                <pre><code>Dashboard::modify('system-welcome', function(array &$box) {
+    $box['span'] = 3; // Faz o box de boas-vindas ocupar a linha toda
+    $box['priority'] = 1; // Garante que ele seja o primeiro
+});</code></pre>
+            </div>
+
+            <h3>Verificar se um Box Existe</h3>
+            <div class="example-box">
+                <pre><code>if (Dashboard::has('meu-plugin-stats')) {
+    // O box está registrado
+}</code></pre>
+            </div>
+
+        </section>
+
+        <footer>
+            <p><strong>Como Registrar Boxes no Dashboard — Lunar Base</strong></p>
+            <p>Versão 1.0 | Última atualização: Julho de 2026</p>
+        </footer>
+
+    </div>
+
+</body>
+
+</html>

@@ -19,7 +19,7 @@
         </h3>
 
         <p class="welcome-text">
-            Bem-vindo ao painel de controle do <strong>Lunar Base</strong>.<br>
+            Bem-vindo ao painel de controle do <strong>{{ config('app.name') }}</strong>.<br>
             Aqui você gerencia todo o conteúdo do seu site de forma simples e eficiente.
         </p>
     </div>
@@ -30,7 +30,7 @@
             <x-lucide-code-2 class="lucid-icon" />
             <div>
                 <span class="info-label">Sistema</span>
-                <span class="info-value">Lunar Base</span>
+                <span class="info-value">{{ config('app.name') }}</span>
             </div>
         </div>
 
@@ -46,7 +46,7 @@
             <x-lucide-user class="lucid-icon" />
             <div>
                 <span class="info-label">Desenvolvido por</span>
-                <span class="info-value">Cau Guanabara</span>
+                <span class="info-value">{{ config('app.author') }}</span>
             </div>
         </div>
 

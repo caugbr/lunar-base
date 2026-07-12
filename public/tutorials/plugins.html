@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manual de Desenvolvimento de Plugins - Lunar Base CMS</title>
+    <title>Manual de Desenvolvimento de Plugins - Lunar Base</title>
     <!-- Link para o arquivo CSS centralizado -->
     <link rel="stylesheet" href="tutorials.css">
 </head>
 <body>
     <header>
         <h1>Manual de Desenvolvimento de Plugins</h1>
-        <p>Lunar Base CMS - Guia Completo para plugins</p>
+        <p>Lunar Base - Guia Completo para plugins</p>
     </header>
 
     <div class="container">
@@ -40,7 +40,7 @@
         <section id="intro">
             <h2>Introdução</h2>
             <div class="intro">
-                <p>O sistema de plugins do Lunar Base CMS permite estender funcionalidades de forma modular e organizada. Cada plugin é autocontido e pode adicionar controllers, models, views, rotas, shortcodes, hooks e muito mais.</p>
+                <p>O sistema de plugins do Lunar Base permite estender funcionalidades de forma modular e organizada. Cada plugin é autocontido e pode adicionar controllers, models, views, rotas, shortcodes, hooks e muito mais.</p>
             </div>
 
             <div class="feature-grid">
@@ -635,7 +635,7 @@ HookManager::register('post.footer_end', function($params) {
             <h2>Descoberta Automática de Hooks</h2>
 
             <div class="intro">
-                <p>O Lunar Base CMS possui um sistema inteligente que <strong>varre automaticamente</strong> todos os
+                <p>O Lunar Base possui um sistema inteligente que <strong>varre automaticamente</strong> todos os
                     arquivos Blade do tema, plugins e core em busca de declarações <code>&lt;x-hook&gt;</code>, criando
                     um registro centralizado de todos os pontos de injeção disponíveis.</p>
             </div>
@@ -1379,7 +1379,7 @@ class CommentsServiceProvider extends ServiceProvider
             </ul>
 
             <div class="warning">
-                <strong>Importante:</strong> Sempre teste seu plugin em um ambiente de desenvolvimento antes de publicar. Verifique compatibilidade com a versão do Laravel e do Lunar Base CMS.
+                <strong>Importante:</strong> Sempre teste seu plugin em um ambiente de desenvolvimento antes de publicar. Verifique compatibilidade com a versão do Laravel e do Lunar Base.
             </div>
 
             <h4>Checklist antes de Publicar:</h4>
@@ -1424,7 +1424,7 @@ class CommentsServiceProvider extends ServiceProvider
         </section>
 
         <footer>
-            <p>Manual de Desenvolvimento de Plugins - Lunar Base CMS</p>
+            <p>Manual de Desenvolvimento de Plugins - Lunar Base</p>
             <p>Versão 1.0 | Última atualização: 2026</p>
         </footer>
     </div>

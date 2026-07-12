@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guia de Configuração - Lunar Base CMS</title>
+    <title>Guia de Configuração - Lunar Base</title>
     <link rel="stylesheet" href="tutorials.css">
 </head>
 
@@ -12,7 +12,7 @@
 
     <header>
         <h1>Guia de Configuração</h1>
-        <p>Lunar Base CMS — Referência completa dos arquivos em /config</p>
+        <p>Lunar Base — Referência completa dos arquivos em /config</p>
     </header>
 
     <div class="container">
@@ -21,14 +21,15 @@
             <h2>Sumário</h2>
             <ul>
                 <li><a href="#intro">Introdução</a></li>
-                <li><a href="#admin">1. admin.php (Menu e Skin da Admin)</a></li>
-                <li><a href="#default-users">2. defaultUsers.php (Usuários Padrão)</a></li>
-                <li><a href="#image-sizes">3. imageSizes.php (Tamanhos de Imagem)</a></li>
-                <li><a href="#page-templates">4. pageTemplates.php (Templates de Páginas)</a></li>
-                <li><a href="#post-templates">5. postTemplates.php (Templates de Posts)</a></li>
-                <li><a href="#rbac">6. rolesPermissions.php (Permissões e Perfis)</a></li>
-                <li><a href="#settings">7. settings.php (Configurações do Sistema)</a></li>
-                <li><a href="#site">8. site.php (Configurações do Frontend)</a></li>
+                <li><a href="#admin">admin.php (Menu e Skin da Admin)</a></li>
+                <li><a href="#dashboard">dashboard.php (Apresentação do dashboard)</a></li>
+                <li><a href="#default-users">defaultUsers.php (Usuários Padrão)</a></li>
+                <li><a href="#image-sizes">imageSizes.php (Tamanhos de Imagem)</a></li>
+                <li><a href="#page-templates">pageTemplates.php (Templates de Páginas)</a></li>
+                <li><a href="#post-templates">postTemplates.php (Templates de Posts)</a></li>
+                <li><a href="#rbac">rolesPermissions.php (Permissões e Perfis)</a></li>
+                <li><a href="#settings">settings.php (Configurações do Sistema)</a></li>
+                <li><a href="#site">site.php (Configurações do Frontend)</a></li>
                 <li><a href="#best-practices">Boas Práticas</a></li>
             </ul>
         </nav>
@@ -38,7 +39,7 @@
             <h2>Introdução</h2>
 
             <div class="intro">
-                <p>A pasta <code>/config</code> do Lunar Base CMS contém os arquivos que definem o comportamento central
+                <p>A pasta <code>/config</code> do Lunar Base contém os arquivos que definem o comportamento central
                     do sistema. Diferente dos plugins (que são modulares e podem ser ativados/desativados), estes
                     arquivos são <strong>parte do core</strong> e devem ser editados com cuidado.</p>
             </div>
@@ -104,7 +105,7 @@
 
         <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="admin">
-            <h2>1. admin.php (Menu e Skin da Admin)</h2>
+            <h2>admin.php (Menu e Skin da Admin)</h2>
 
             <div class="intro">
                 <p>Define a estrutura do menu lateral da área administrativa e o tema visual (skin) usado no painel.</p>
@@ -168,6 +169,58 @@
                 </tbody>
             </table>
 
+            <h3>Dashboard</h3>
+
+            <p>Array que define a estrutura da apresentação do dashboard</p>
+
+            <div class="example-box">
+                <h4>Configuração padrão</h4>
+                <pre><code>"dashboard" =>  [
+    "title" => "Dashboard",
+    "subtitle" => "Visão geral do sistema",
+    "icon" => "layout-dashboard",
+    "cardTitle" => "Visão geral",
+    "columns" => 4,
+    "boxView" => "admin.dashboard.box"
+]</code></pre>
+            </div>
+
+            <h3>Parâmetros</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Parâmetro</th>
+                        <th>Descrição</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>title</code></td>
+                        <td>Título no header da página</td>
+                    </tr>
+                    <tr>
+                        <td><code>subtitle</code></td>
+                        <td>Texto abaixo do título no header</td>
+                    </tr>
+                    <tr>
+                        <td><code>icon</code></td>
+                        <td>Ícone no título do card</td>
+                    </tr>
+                    <tr>
+                        <td><code>cardTitle</code></td>
+                        <td>Título dentro do card</td>
+                    </tr>
+                    <tr>
+                        <td><code>columns</code></td>
+                        <td>Quantidade de colunas para os dashboard widgets</td>
+                    </tr>
+                    <tr>
+                        <td><code>boxView</code></td>
+                        <td>View a ser usada para renderizar os widgets</td>
+                    </tr>
+                </tbody>
+            </table>
+
             <h3>Ícones Disponíveis</h3>
             <p>Use nomes do <a href="https://lucide.dev/icons/" target="_blank">Lucide Icons</a>. Exemplos comuns:</p>
             <pre><code>layout-dashboard, file, files, image, tags, form,
@@ -188,22 +241,17 @@ users, user-pen, user-key, settings, list-checks, puzzle, palette</code></pre>
             <div class="tip">
                 <strong>Dica:</strong> Para criar um novo skin, duplique o arquivo <code>public/css/admin/vars.css</code> e salve em
                 <code>public/css/admin/skins/</code>, com o nome <code>vars-skin-name.css</code> personalize as variáveis CSS e adicione o nome no
-                <code>admin.php</code>. O nome deve ser a string entre 'vars-' e '.css'.
+                <code>admin.php</code>. O nome deve ser a string entre 'vars-' e '.css' ('skin-name').
             </div>
         </section>
 
         <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="default-users">
-            <h2>2. defaultUsers.php (Usuários Padrão)</h2>
+            <h2>defaultUsers.php (Usuários Padrão)</h2>
 
             <div class="intro">
                 <p>Este arquivo <strong>não deve ser editado manualmente</strong>. Ele trabalha em conjunto com o script
                     <code>install.sh</code> para gerar os usuários iniciais do sistema durante a instalação.</p>
-            </div>
-
-            <div class="warning">
-                <strong>Atenção:</strong> Este arquivo é gerado automaticamente a partir do
-                <code>rolesPermissions.php</code>. Qualquer alteração manual será sobrescrita na próxima instalação.
             </div>
 
             <h3>Como funciona</h3>
@@ -226,7 +274,7 @@ users, user-pen, user-key, settings, list-checks, puzzle, palette</code></pre>
 
         <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="image-sizes">
-            <h2>3. imageSizes.php (Tamanhos de Imagem)</h2>
+            <h2>imageSizes.php (Tamanhos de Imagem)</h2>
 
             <div class="intro">
                 <p>Define tamanhos extras de imagem que serão gerados automaticamente ao fazer upload. O sistema já cria
@@ -321,7 +369,7 @@ users, user-pen, user-key, settings, list-checks, puzzle, palette</code></pre>
 
         <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="page-templates">
-            <h2>4. pageTemplates.php (Templates de Páginas)</h2>
+            <h2>pageTemplates.php (Templates de Páginas)</h2>
 
             <div class="intro">
                 <p>Define quais templates estarão disponíveis no dropdown ao criar/editar uma página pública.</p>
@@ -401,7 +449,7 @@ users, user-pen, user-key, settings, list-checks, puzzle, palette</code></pre>
 
         <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="post-templates">
-            <h2>5. postTemplates.php (Templates de Posts)</h2>
+            <h2>postTemplates.php (Templates de Posts)</h2>
 
             <div class="intro">
                 <p>Funciona exatamente como o <code>pageTemplates.php</code>, mas para posts do blog.</p>
@@ -455,7 +503,7 @@ users, user-pen, user-key, settings, list-checks, puzzle, palette</code></pre>
 
         <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="rbac">
-            <h2>6. rolesPermissions.php (Permissões e Perfis)</h2>
+            <h2>rolesPermissions.php (Permissões e Perfis)</h2>
 
             <div class="intro">
                 <p>Este é o arquivo mais crítico do sistema. Define <strong>quem pode fazer o quê</strong> através de
@@ -667,7 +715,7 @@ Route::middleware('role:admin')->group(function () {
 
         <!-- ══════════════════════════════════════════════════════════════ -->
         <section id="settings">
-            <h2>7. settings.php (Configurações do Sistema)</h2>
+            <h2>settings.php (Configurações do Sistema)</h2>
 
             <div class="intro">
                 <p>Define as configurações administráveis que aparecem em <strong>Admin → Configurações</strong>. Cada
@@ -868,7 +916,7 @@ $useCaptcha = setting('auth.use_captcha', false);</code></pre>
 
         <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="site">
-            <h2>8. site.php (Configurações do Frontend)</h2>
+            <h2>site.php (Configurações do Frontend)</h2>
 
             <div class="intro">
                 <p>Define configurações específicas do site público. No momento, contém apenas a definição do
@@ -1073,7 +1121,7 @@ php artisan config:clear</code></pre>
         </section>
 
         <footer>
-            <p><strong>Guia de Configuração — Lunar Base CMS</strong></p>
+            <p><strong>Guia de Configuração — Lunar Base</strong></p>
             <p>Versão 1.0 | Última atualização: Julho de 2026</p>
         </footer>
 

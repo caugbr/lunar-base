@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurações e Opções Dinâmicas - Lunar Base</title>
+    <link rel="stylesheet" href="tutorials.css">
+</head>
+<body>
+    <header>
+        <h1>Settings & Options</h1>
+        <p>Lunar Base - Persistência Leve e Formulários Declarativos</p>
+    </header>
+
+    <div class="container">
+        <nav class="toc">
+            <h2>Sumário</h2>
+            <ul>
+                <li><a href="#intro">Introdução</a></li>
+                <li><a href="#settings">Settings (Painel Admin)</a></li>
+                <li><a href="#settings-fields">Campos Suportados em Settings</a></li>
+                <li><a href="#options">Options (Uso Interno)</a></li>
+                <li><a href="#diferencas">Tabela Comparativa</a></li>
+            </ul>
+        </nav>
+
+        <section id="intro">
+            <h2>Introdução</h2>
+            <div class="intro">
+                <p>O Lunar Base possui dois caminhos de persistência leve de informações sem a necessidade de criar tabelas dedicadas: a API de <strong>Settings</strong> (voltada para formulários administrativos) e a API de <strong>Options</strong> (voltada para chaves de dados internas).</p>
+            </div>
+        </section>
+
+        <section id="settings">
+            <h2>Settings (Painel Admin)</h2>
+            <p>A classe <code>Settings</code> permite injetar de forma declarativa novos campos na tela de configurações gerais do site no painel administrativo.</p>
+
+            <h4>1. Criando um Novo Grupo (Aba):</h4>
+            <pre><code class="code-label">PHP</code>use App\Support\Settings;
+
+Settings::addGroup('meu_grupo', [
+    'title'       => 'Meu Módulo',
+    'description' => 'Configurações de integração e comportamento',
+    'icon'        => 'cpu', // Ícone Lucide
+]);</pre>
+
+            <h4>2. Injetando Campos no Grupo:</h4>
+            <pre><code class="code-label">PHP</code>Settings::add([
+    'key'         => 'meu_modulo_ativo',
+    'type'        => 'switch',
+    'active'      => 'Ativado',
+    'inactive'    => 'Desativado',
+    'label'       => 'Habilitar Módulo',
+    'description' => 'Ativa ou desativa as integrações do módulo.',
+    'default'     => true,
+], 'meu_grupo');</pre>
+
+            <h4>3. Recuperando os Valores no Front-end:</h4>
+            <pre><code class="code-label">BLADE</code>@if(setting('meu_grupo.meu_modulo_ativo', true))
+    &lt;div&gt;O módulo está ativo!&lt;/div&gt;
+@endif</pre>
+        </section>
+
+        <section id="settings-fields">
+            <h2>Campos Suportados em Settings</h2>
+            <p>A API de Settings aceita uma variedade de tipos de inputs que o núcleo renderiza automaticamente com validação nativa:</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tipo (type)</th>
+                        <th>Parâmetros Extras</th>
+                        <th>Descrição</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>'text'</code></td>
+                        <td>—</td>
+                        <td>Input de texto convencional de linha única.</td>
+                    </tr>
+                    <tr>
+                        <td><code>'textarea'</code></td>
+                        <td>—</td>
+                        <td>Área de texto de múltiplas linhas para descrições.</td>
+                    </tr>
+                    <tr>
+                        <td><code>'number'</code></td>
+                        <td><code>'attributes' => ['min' => 1, 'max' => 10]</code></td>
+                        <td>Input numérico controlado por limites.</td>
+                    </tr>
+                    <tr>
+                        <td><code>'switch'</code></td>
+                        <td><code>'active'</code>, <code>'inactive'</code></td>
+                        <td>Interruptor liga/desliga deslizante estético.</td>
+                    </tr>
+                    <tr>
+                        <td><code>'icon'</code></td>
+                        <td><code>'can_clear' => true</code></td>
+                        <td>Seletor de ícones Lucide interativo com busca.</td>
+                    </tr>
+                    <tr>
+                        <td><code>'select'</code></td>
+                        <td><code>'options' => ['k' => 'v']</code></td>
+                        <td>Dropdown para seleção de opções cadastradas.</td>
+                    </tr>
+                    <tr>
+                        <td><code>'subtitle'</code></td>
+                        <td>—</td>
+                        <td>Separador estético visual para agrupar campos.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="options">
+            <h2>Options (Uso Interno)</h2>
+            <div class="intro">
+                <p>A API de <strong>Options</strong> é ideal para gravar dados estruturados (como arrays, senhas criptografadas ou estruturas JSON) de forma direta no banco de dados, sem precisar expô-los em páginas de configurações.</p>
+            </div>
+
+            <h4>Métodos Globais de Controle:</h4>
+            <pre><code class="code-label">PHP</code>// 1. Criando ou atualizando um registro (converte arrays em JSON automaticamente)
+setOption('faq_geral_dados', ['titulo' => 'FAQ Geral', 'itens' => []]);
+
+// 2. Recuperando o valor convertido de volta de forma tipada
+$faq = getOption('faq_geral_dados'); // Retorna o array PHP
+
+// 3. Salvando dados criptografados (senhas de API, chaves privadas)
+setOption('api_token', 'chave-super-secreta', 'password'); // Encripta no banco via Crypt()
+$token = getOption('api_token'); // Retorna a chave descriptografada automaticamente
+
+// 4. Buscando coleções por prefixo (Reduz queries)
+$faqs = getPrefixedOptions('faq_'); // Retorna todas as chaves que começam com "faq_"</pre>
+        </section>
+
+        <section id="diferencas">
+            <h2>Tabela Comparativa</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Característica</th>
+                        <th>Settings</th>
+                        <th>Options</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Formulário Automático</strong></td>
+                        <td>✅ Sim (Gerado declarativamente)</td>
+                        <td>❌ Não</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Validação de Input</strong></td>
+                        <td>✅ Sim (Nativa do controlador)</td>
+                        <td>❌ Não (Validar manualmente se necessário)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Criptografia em chaves</strong></td>
+                        <td>❌ Não</td>
+                        <td>✅ Sim (Usando o tipo 'password')</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Armazena Objetos/Arrays</strong></td>
+                        <td>❌ Apenas chaves escalares simples</td>
+                        <td>✅ Sim (Casting automático para JSON)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </div>
+</body>
+</html>

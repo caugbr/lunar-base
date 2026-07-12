@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rotas Dinâmicas para Plugins - Lunar Base</title>
+    <link rel="stylesheet" href="tutorials.css">
+</head>
+<body>
+    <header>
+        <h1>Rotas Dinâmicas</h1>
+        <p>Lunar Base - Registro e Resolução de URLs em Tempo de Execução</p>
+    </header>
+
+    <div class="container">
+        <nav class="toc">
+            <h2>Sumário</h2>
+            <ul>
+                <li><a href="#intro">O que são Rotas Dinâmicas</a></li>
+                <li><a href="#registro">Como Registrar</a></li>
+                <li><a href="#funcionamento">Como o Core Resolve as URLs</a></li>
+                <li><a href="#exemplos">Exemplos de Registro</a></li>
+                <li><a href="#regras">Regras de Precedência</a></li>
+            </ul>
+        </nav>
+
+        <section id="intro">
+            <h2>O que são Rotas Dinâmicas</h2>
+            <div class="intro">
+                <p>No desenvolvimento de plugins, registrar rotas fixas no arquivo <code>routes.php</code> do Laravel é ideal para o painel administrativo. Porém, no site público, muitas vezes precisamos criar caminhos amigáveis e estruturados que são gerenciados de forma dinâmica de acordo com os cadastros efetuados (como caminhos de portfólios, links de formulários ou termos do blog).</p>
+            </div>
+        </section>
+
+        <section id="registro">
+            <h2>Como Registrar</h2>
+            <p>Utilize a classe helper <code>DynamicRoutes::register()</code> dentro do método <code>boot()</code> do seu Service Provider de plugin para cadastrar o mapeamento:</p>
+            <pre><code class="code-label">PHP</code>use App\Support\DynamicRoutes;
+
+// Registro da rota dinâmica /portfolio/{slug}
+DynamicRoutes::register('GET', 'portfolio/{slug}', function($slug) {
+    // Busca os dados e devolve uma resposta visual
+    $item = \Plugins\Portfolio\Models\Portfolio::where('slug', $slug)->firstOrFail();
+
+    return view('portfolio::public.show', compact('item'));
+});</pre>
+        </section>
+
+        <section id="funcionamento">
+            <h2>Como o Core Resolve as URLs</h2>
+            <p>Ao receber uma requisição no site público, o motor do Laravel tenta encontrar uma rota estática convencional cadastrada no sistema. Se nenhuma rota física corresponder ao endereço acessado, o roteamento global do Lunar Base direciona a requisição para o <code>RouteOrchestratorController</code>:</p>
+            <ul class="steps">
+                <li><strong>1. Captura da URL:</strong> O controlador analisa o caminho requisitado pelo visitante.</li>
+                <li><strong>2. Varredura Dinâmica:</strong> O orquestrador compara a URL com a coleção de caminhos dinâmicos registrados pelos plugins ativos em memória através de regex.</li>
+                <li><strong>3. Execução do Callback:</strong> Assim que encontra uma correspondência, ele executa o callback passando as variáveis de url associadas (ex: <code>$slug</code>) e renderiza a resposta de forma transparente, sem redirecionamentos perceptíveis para o navegador do visitante.</li>
+            </ul>
+        </section>
+
+        <section id="exemplos">
+            <h2>Exemplos de Registro</h2>
+
+            <div class="example-box">
+                <h4>Exemplo 1: Rota Simples sem Parâmetros</h4>
+                <pre><code class="code-label">PHP</code>DynamicRoutes::register('GET', 'vagas-trabalho', function() {
+    return view('vagas::public.lista');
+});</pre>
+                <p>Acessível em: <code>https://seusite.com/vagas-trabalho</code></p>
+            </div>
+
+            <div class="example-box">
+                <h4>Exemplo 2: Rota Dinâmica com Múltiplos Parâmetros</h4>
+                <pre><code class="code-label">PHP</code>DynamicRoutes::register('GET', 'loja/{categoria}/{produto_slug}', function($categoria, $slug) {
+    $produto = \Plugins\Loja\Models\Produto::where('slug', $slug)->firstOrFail();
+    return view('loja::public.produto', compact('produto'));
+});</pre>
+                <p>Acessível em: <code>https://seusite.com/loja/eletronicos/celular-smartphone</code></p>
+            </div>
+        </section>
+
+        <section id="regras">
+            <h2>Regras de Precedência</h2>
+            <div class="warning">
+                <strong>Importante sobre Conflitos:</strong> Como as rotas dinâmicas são resolvidas de forma preguiçosa (fallback) no fim da pilha de carregamento do framework, qualquer rota estática de roteamento fixo convencional do Laravel terá prioridade. Se houver um arquivo de visão física padrão ou rota fixa com o mesmo nome exato da rota dinâmica, o Laravel resolverá a rota estática primeiro.
+            </div>
+        </section>
+    </div>
+</body>
+</html>

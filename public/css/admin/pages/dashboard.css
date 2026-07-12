@@ -14,6 +14,7 @@
     border-radius: 8px;
     overflow: hidden; /* Importante para o header arredondar corretamente */
     padding: 0; /* Remove padding do wrapper */
+    align-self: start;
 }
 
 /* Header do box */
