@@ -2,7 +2,6 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\DocsController;
-use App\Http\Controllers\Public\ReactionController;
 
 require __DIR__.'/admin.php';
 
@@ -31,3 +30,7 @@ Route::get('/{base}/{slug}', [App\Http\Controllers\Public\RouteOrchestratorContr
 // Casos com 1 segmento (Listagem principal do Blog)
 Route::get('/{base}', [App\Http\Controllers\Public\RouteOrchestratorController::class, 'handleOneSegment'])
     ->name('dynamic.one.segment');
+
+Route::get('/{any}', [App\Http\Controllers\Public\RouteOrchestratorController::class, 'handleCatchAll'])
+    ->where('any', '.*')
+    ->name('dynamic.catch.all');

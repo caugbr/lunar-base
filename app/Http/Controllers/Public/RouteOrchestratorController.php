@@ -106,4 +106,15 @@ class RouteOrchestratorController extends Controller
 
         abort(404);
     }
+
+    public function handleCatchAll(Request $request, $any)
+    {
+        $url = trim($any, '/');
+
+        if ($view = DynamicRoutes::resolve($url)) {
+            return $view;
+        }
+
+        abort(404);
+    }
 }

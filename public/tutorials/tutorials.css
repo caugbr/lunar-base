@@ -27,6 +27,8 @@
     box-sizing: border-box;
 }
 
+ul, ol { margin-left: 30px; }
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;

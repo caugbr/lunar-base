@@ -110,6 +110,7 @@
 .stat-icon .lucid-icon {
     width: 20px;
     height: 20px;
+    color: var(--color-text, #333333);
 }
 
 .stat-content {

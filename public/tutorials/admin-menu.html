@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Administrativo - Lunar Base</title>
+    <link rel="stylesheet" href="tutorials.css">
+</head>
+<body>
+    <header>
+        <h1>Menu Administrativo</h1>
+        <p>Lunar Base — Adicionando Itens ao Menu Admin via Plugin</p>
+    </header>
+
+    <div class="container">
+        <nav class="toc">
+            <h2>Sumário</h2>
+            <ul>
+                <li><a href="#intro">Introdução</a></li>
+                <li><a href="#sintaxe">Sintaxe Básica</a></li>
+                <li><a href="#parametros">Parâmetros</a></li>
+                <li><a href="#exemplo">Exemplo Completo</a></li>
+                <li><a href="#posicao">Posicionamento</a></li>
+                <li><a href="#boas-praticas">Boas Práticas</a></li>
+            </ul>
+        </nav>
+
+        <section id="intro">
+            <h2>Introdução</h2>
+            <div class="intro">
+                <p>Use o <code>AdminMenu::add()</code> no método <code>boot()</code> do seu ServiceProvider para injetar itens no menu administrativo do Lunar Base. O menu é renderizado automaticamente no layout admin, respeitando permissões e roles.</p>
+            </div>
+        </section>
+
+        <section id="sintaxe">
+            <h2>Sintaxe Básica</h2>
+            <pre><code class="code-label">PHP</code>use App\Support\AdminMenu;
+
+AdminMenu::add([
+    'label'      => 'Meu Plugin',
+    'icon'       => 'puzzle',           // Ícone Lucide
+    'route'      => 'admin.meuplugin',  // Rota nomeada
+    'active'     => 'admin.meuplugin.*',// Padrão de ativação
+    'permission' => 'manage-pages',     // Permissão (opcional)
+    'role'       => 'admin',            // Role (opcional)
+], 'Taxonomias'); // Posição: após qual item?</code></pre>
+        </section>
+
+        <section id="parametros">
+            <h2>Parâmetros</h2>
+            <table>
+                <tr>
+                    <th>Parâmetro</th>
+                    <th>Obrigatório</th>
+                    <th>Descrição</th>
+                </tr>
+                <tr>
+                    <td><code>label</code></td>
+                    <td>Sim</td>
+                    <td>Texto exibido no menu</td>
+                </tr>
+                <tr>
+                    <td><code>icon</code></td>
+                    <td>Sim</td>
+                    <td>Ícone Lucide (ex: 'settings', 'users', 'file')</td>
+                </tr>
+                <tr>
+                    <td><code>route</code></td>
+                    <td>Sim</td>
+                    <td>Nome da rota Laravel</td>
+                </tr>
+                <tr>
+                    <td><code>active</code></td>
+                    <td>Sim</td>
+                    <td>Padrão para destacar item ativo (use * como wildcard)</td>
+                </tr>
+                <tr>
+                    <td><code>permission</code></td>
+                    <td>Não</td>
+                    <td>Só aparece se usuário tiver esta permissão</td>
+                </tr>
+                <tr>
+                    <td><code>role</code></td>
+                    <td>Não</td>
+                    <td>Só aparece se usuário tiver este role (admin, editor, etc)</td>
+                </tr>
+            </table>
+
+            <div class="tip">
+                <strong>Ícones Disponíveis:</strong> Visite <a href="https://lucide.dev/icons/" target="_blank">Lucide Icons</a> para ver todos os ícones disponíveis.
+            </div>
+        </section>
+
+        <section id="exemplo">
+            <h2>Exemplo Completo</h2>
+            <div class="example-box">
+                <h4>No ServiceProvider do plugin</h4>
+                <pre><code class="code-label">PHP</code>// No método boot() do seu ServiceProvider
+public function boot(): void
+{
+    $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
+    $this->loadViewsFrom(__DIR__ . '/resources/views', 'meuplugin');
+
+    // Adiciona ao menu após "Taxonomias"
+    \App\Support\AdminMenu::add([
+        'label'      => 'Formulários',
+        'icon'       => 'form',
+        'route'      => 'admin.forms.index',
+        'active'     => 'admin.forms.*',
+        'permission' => 'manage-pages',
+    ], 'Taxonomias');
+}</code></pre>
+            </div>
+        </section>
+
+        <section id="posicao">
+            <h2>Posicionamento</h2>
+            <p>O segundo parâmetro do <code>AdminMenu::add()</code> define o item de referência para posicionamento. O novo item será inserido <strong>após</strong> o item especificado.</p>
+
+            <div class="example-box">
+                <h4>Itens do menu core (referência)</h4>
+                <pre><code>Dashboard
+Páginas
+Posts
+Taxonomias
+Mídia
+Usuários
+Configurações</code></pre>
+            </div>
+
+            <div class="tip">
+                <strong>Dica:</strong> Se o item de referência não existir, o novo item será adicionado no final do menu.
+            </div>
+        </section>
+
+        <section id="boas-praticas">
+            <h2>Boas Práticas</h2>
+            <ul class="steps">
+                <li><strong>Use permissões:</strong> Sempre defina <code>permission</code> para não expor funcionalidades a usuários não autorizados.</li>
+                <li><strong>Ícones consistentes:</strong> Use ícones Lucide que façam sentido semântico para a funcionalidade.</li>
+                <li><strong>Rotas nomeadas:</strong> Sempre use rotas nomeadas no <code>route</code> para evitar quebras se URLs mudarem.</li>
+                <li><strong>Wildcard no active:</strong> Use <code>admin.meuplugin.*</code> para que o item fique ativo em todas as sub-rotas.</li>
+            </ul>
+        </section>
+    </div>
+</body>
+</html>
