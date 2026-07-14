@@ -1,0 +1,461 @@
+/* ============================================
+   LUNAR BASE - Content Typography
+   Estilos básicos para .page-content e .post-content
+   Tema: Light (padrão)
+   ============================================ */
+
+/* ----- Base ----- */
+.page-content,
+.post-content {
+    font-family: var(--font-body);
+    font-size: var(--font-size-base);
+    line-height: 1.7;
+    color: var(--color-text);
+}
+
+/* ----- Parágrafos ----- */
+.page-content p,
+.post-content p {
+    margin: 0 0 var(--space-md) 0;
+}
+
+.page-content p:last-child,
+.post-content p:last-child {
+    margin-bottom: 0;
+}
+
+/* ----- Headers ----- */
+.page-content h2,
+.post-content h2,
+.page-content h3,
+.post-content h3,
+.page-content h4,
+.post-content h4 {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--color-text);
+    margin: var(--space-xl) 0 var(--space-sm) 0;
+}
+
+.page-content h2,
+.post-content h2 {
+    font-size: var(--font-size-4xl);
+    margin-top: var(--space-2xl);
+}
+
+.page-content h3,
+.post-content h3 {
+    font-size: var(--font-size-2xl);
+}
+
+.page-content h4,
+.post-content h4 {
+    font-size: var(--font-size-lg);
+}
+
+/* Primeiro header sem margin-top extra */
+.page-content>h2:first-child,
+.post-content>h2:first-child,
+.page-content>h3:first-child,
+.post-content>h3:first-child,
+.page-content>h4:first-child,
+.post-content>h4:first-child {
+    margin-top: 0;
+}
+
+/* ----- Links ----- */
+.page-content a,
+.post-content a {
+    color: var(--color-link);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color var(--transition-fast);
+}
+
+.page-content a:hover,
+.post-content a:hover {
+    color: var(--color-primary-dark);
+}
+
+/* ----- Listas ----- */
+.page-content ul,
+.post-content ul,
+.page-content ol,
+.post-content ol {
+    margin: 0 0 var(--space-md) 0;
+    padding-left: var(--space-lg);
+}
+
+.page-content li,
+.post-content li {
+    margin-bottom: var(--space-xs);
+}
+
+.page-content li:last-child,
+.post-content li:last-child {
+    margin-bottom: 0;
+}
+
+/* ----- Citações ----- */
+.page-content blockquote,
+.post-content blockquote {
+    margin: var(--space-lg) 0;
+    padding: var(--space-md) var(--space-lg);
+    border-left: 3px solid var(--color-primary);
+    background: var(--color-bg-dark);
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+}
+
+.page-content blockquote p,
+.post-content blockquote p {
+    margin: 0;
+    font-style: italic;
+    color: var(--color-text-muted);
+}
+
+/* ----- Tabelas ----- */
+.page-content table,
+.post-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: var(--space-lg) 0;
+    font-size: var(--font-size-sm);
+}
+
+.page-content th,
+.post-content th,
+.page-content td,
+.post-content td {
+    padding: var(--space-sm) var(--space-md);
+    border: 1px solid var(--color-border);
+    text-align: left;
+    vertical-align: top;
+}
+
+.page-content th,
+.post-content th {
+    background: var(--color-bg-dark);
+    font-weight: 600;
+    color: var(--color-text);
+}
+
+.page-content tr:nth-child(even),
+.post-content tr:nth-child(even) {
+    background: var(--color-bg-dark);
+}
+
+/* ----- Código inline ----- */
+.page-content code,
+.post-content code {
+    font-family: 'Courier New', 'Monaco', monospace;
+    font-size: 0.9em;
+    padding: 2px 6px;
+    background: var(--color-bg-dark);
+    border-radius: var(--radius-sm);
+    color: var(--color-primary-dark);
+}
+
+/* ----- Blocos de código ----- */
+.page-content pre,
+.post-content pre {
+    margin: var(--space-lg) 0;
+    padding: var(--space-md);
+    background: var(--color-bg-deep);
+    border-radius: var(--radius-md);
+    overflow-x: auto;
+}
+
+.page-content pre code,
+.post-content pre code {
+    background: none;
+    padding: 0;
+    color: var(--color-text);
+    font-size: var(--font-size-sm);
+    line-height: 1.5;
+}
+
+/* ----- Elementos inline ----- */
+.page-content strong,
+.post-content strong {
+    font-weight: 600;
+    color: var(--color-text);
+}
+
+.page-content em,
+.post-content em {
+    font-style: italic;
+}
+
+/* ----- Separadores (se houver) ----- */
+.page-content hr,
+.post-content hr {
+    border: none;
+    border-top: 1px solid var(--color-border);
+    margin: var(--space-xl) 0;
+}
+
+/* ----- Imagens ----- */
+.page-content img,
+.post-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--radius-md);
+    display: block;
+    margin: var(--space-lg) 0;
+}
+
+/* ---------- Figures ---------- */
+.post-content figure,
+.page-content figure {
+    max-width: 100%;
+    margin: 0 0 var(--space-xs) 0;
+}
+
+.page-content figcaption,
+.post-content figcaption {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    text-align: center;
+    margin-top: var(--space-xs);
+}
+
+.post-content figure img,
+.page-content figure img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Block: image left */
+.post-content figure.align-left img,
+.page-content figure.align-left img {
+    margin-right: auto;
+    margin-left: 0;
+}
+
+/* Block: image centered */
+.post-content figure.align-center img,
+.page-content figure.align-center img {
+    margin-right: auto;
+    margin-left: auto;
+}
+
+/* Block: image right */
+.post-content figure.align-right img,
+.page-content figure.align-right img {
+    margin-right: 0;
+    margin-left: auto;
+}
+
+/* Inline: float left, text wraps */
+.page-content figure.align-float-left {
+    float: left;
+    margin: 0 var(--space-xs) var(--space-sm) 0;
+    max-width: 50%;
+}
+
+/* Inline: float right, text wraps */
+.page-content figure.align-float-right {
+    float: right;
+    margin: 0 0 var(--space-sm) var(--space-xs);
+    max-width: 50%;
+}
+
+/* ----- Definições (dl/dt/dd) ----- */
+.page-content dl,
+.post-content dl {
+    margin: 0 0 var(--space-md) 0;
+}
+
+.page-content dt,
+.post-content dt {
+    font-weight: 600;
+    color: var(--color-text);
+    margin-top: var(--space-sm);
+}
+
+.page-content dd,
+.post-content dd {
+    margin-left: var(--space-lg);
+    color: var(--color-text-muted);
+}
+
+.page-content dt:first-child,
+.post-content dt:first-child {
+    margin-top: 0;
+}
+
+/* ----- Abreviações ----- */
+.page-content abbr,
+.post-content abbr {
+    text-decoration: underline dotted;
+    cursor: help;
+    border-bottom: none;
+}
+
+.page-content abbr[title],
+.post-content abbr[title] {
+    text-decoration: underline dotted;
+}
+
+/* ----- Marcação / highlight ----- */
+.page-content mark,
+.post-content mark {
+    background: var(--color-accent);
+    color: var(--color-bg-deep);
+    padding: 2px 4px;
+    border-radius: 2px;
+}
+
+/* ----- Teclas (kbd) ----- */
+.page-content kbd,
+.post-content kbd {
+    font-family: 'Courier New', 'Monaco', monospace;
+    font-size: 0.85em;
+    padding: 2px 6px;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    box-shadow: 0 1px 0 var(--color-border);
+}
+
+/* ----- Saída de programa (samp) ----- */
+.page-content samp,
+.post-content samp {
+    font-family: 'Courier New', 'Monaco', monospace;
+    font-size: 0.9em;
+    color: var(--color-primary-dark);
+}
+
+/* ----- Texto pequeno ----- */
+.page-content small,
+.post-content small {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+}
+
+/* ----- Subscrito / Sobrescrito ----- */
+.page-content sub,
+.post-content sub,
+.page-content sup,
+.post-content sup {
+    font-size: 0.75em;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+}
+
+.page-content sup,
+.post-content sup {
+    top: -0.5em;
+}
+
+.page-content sub,
+.post-content sub {
+    bottom: -0.25em;
+}
+
+/* ----- Endereço ----- */
+.page-content address,
+.post-content address {
+    font-style: normal;
+    margin: 0 0 var(--space-md) 0;
+    padding: var(--space-md);
+    background: var(--color-bg-dark);
+    border-radius: var(--radius-md);
+    border-left: 3px solid var(--color-secondary);
+    color: var(--color-text-muted);
+}
+
+/* ----- Citação inline (cite) ----- */
+.page-content cite,
+.post-content cite {
+    font-style: italic;
+    color: var(--color-text-muted);
+}
+
+/* ----- Removido / Inserido ----- */
+.page-content del,
+.post-content del {
+    text-decoration: line-through;
+    color: var(--color-text-dim);
+}
+
+.page-content ins,
+.post-content ins {
+    text-decoration: underline;
+    text-decoration-color: var(--color-accent);
+    text-underline-offset: 2px;
+}
+
+/* ----- Definição de termo (dfn) ----- */
+.page-content dfn,
+.post-content dfn {
+    font-style: italic;
+    color: var(--color-primary-dark);
+}
+
+/* ----- Citação inline (q) ----- */
+.page-content q,
+.post-content q {
+    quotes: "\201C""\201D""\2018""\2019";
+    color: var(--color-text-muted);
+}
+
+.page-content q::before,
+.post-content q::before {
+    content: open-quote;
+}
+
+.page-content q::after,
+.post-content q::after {
+    content: close-quote;
+}
+
+/* ----- Detalhes / Sumário (details/summary) ----- */
+.page-content details,
+.post-content details {
+    margin: 0 0 var(--space-md) 0;
+    padding: var(--space-md);
+    background: var(--color-bg-dark);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+}
+
+.page-content summary,
+.post-content summary {
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--color-text);
+    outline: none;
+}
+
+.page-content summary:hover,
+.post-content summary:hover {
+    color: var(--color-primary);
+}
+
+/* ----- Progresso / Medidor (progress/meter) ----- */
+.page-content progress,
+.post-content progress,
+.page-content meter,
+.post-content meter {
+    width: 100%;
+    height: 8px;
+    margin: var(--space-sm) 0;
+}
+
+/* ----- Time ----- */
+.page-content time,
+.post-content time {
+    font-variant-numeric: tabular-nums;
+    color: var(--color-text-muted);
+}
+
+/* ----- Var ----- */
+.page-content var,
+.post-content var {
+    font-style: italic;
+    color: var(--color-primary-dark);
+}

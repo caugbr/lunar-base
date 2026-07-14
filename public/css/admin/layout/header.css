@@ -25,12 +25,13 @@
 .admin-header-user {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 8px;
 }
 
 .admin-header-user a {
     color: var(--color-text-muted);
     text-decoration: none;
+    margin-right: 10px;
 }
 
 .admin-header .logout-btn {

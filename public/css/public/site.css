@@ -29,6 +29,7 @@
 
 /* Pages */
 @import url("pages/pages.css");
+@import url("pages/user-content.css");
 
 /* Utilities (sempre por último) */
 @import url("utilities.css");

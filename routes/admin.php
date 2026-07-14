@@ -10,8 +10,6 @@ use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\TaxonomyController;
 use App\Http\Controllers\Admin\TermController;
 use App\Http\Controllers\Admin\AdminLogController;
-// use App\Http\Controllers\Admin\FormController;
-// use App\Http\Controllers\Admin\FormSubmissionController;
 use App\Http\Controllers\Admin\RolesPermissionsController;
 use App\Http\Controllers\Admin\PluginController;
 use App\Http\Controllers\Admin\ThemeController;
@@ -25,7 +23,6 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // ========== ROTAS PROTEGIDAS ==========
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
-
     // Perfil (ambos editam seu próprio perfil)
     Route::get('/profile', [EditorProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [EditorProfileController::class, 'update'])->name('profile.update');
@@ -45,8 +42,6 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     // Dashboard (ambos veem)
     Route::get('/dashboard', [AdminDashboard::class, 'index'])->name('dashboard.index');
-
-
 });
 
 // ========== ROTAS PROTEGIDAS (ADMIN + EDITOR) ==========
@@ -73,12 +68,6 @@ Route::middleware(['auth', 'role:admin,editor'])->prefix('admin')->name('admin.'
 
     // Logs
     Route::get('logs', [AdminLogController::class, 'index'])->name('logs.index');
-
-    // // Formulários
-    // Route::resource('forms', FormController::class);
-    // // Respostas
-    // Route::resource('forms.submissions', FormSubmissionController::class)->only(['index', 'show', 'destroy']);
-
 });
 
 // ========== ROTAS ADMIN APENAS ==========

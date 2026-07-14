@@ -1,16 +1,9 @@
 /* Container de ajuda genérico */
-.admin-help {
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    z-index: 1;
+.admin-help > button svg {
+    width: 17px;
+    height: 17px;
 }
-.admin-help > button {
-    position: absolute;
-    right: 10px;
-    bottom: -22px;
-}
+
 .admin-help .stage {
     background: #ffffff;
     padding: 0 24px;

@@ -110,8 +110,8 @@
                             <x-lucide-log-out class="lucid-icon" /> Sair
                         </button>
                     </form>
+                    <x-admin-help />
                 </div>
-                <x-admin-help />
             </div>
 
             <div class="admin-content">

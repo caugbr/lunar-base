@@ -1,7 +1,6 @@
 <?php
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\DocsController;
 
 require __DIR__.'/admin.php';
 
@@ -11,9 +10,6 @@ if (setting('auth.2fa_enabled', false)) {
 
 // home
 Route::get('/', [HomeController::class, 'index'])->name('home');
-
-//Docs
-Route::get('/docs', [DocsController::class, 'index'])->name('docs');
 
 // =========================================================================
 // ORQUESTRADOR DE CONFIGURAÇÃO DE PERMALINKS

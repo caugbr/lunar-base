@@ -88,12 +88,8 @@ return [
             "path" => "blog"
         ],
         [
-            "label" => "Teste",
-            "slug" => "test-page-2"
-        ],
-        [
-            "label" => "Documentação",
-            "route" => "docs"
+            "label" => "Bem vindo",
+            "slug" => "bem-vindo"
         ],
     ]
 ];

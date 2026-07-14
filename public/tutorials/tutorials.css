@@ -60,8 +60,42 @@ header p {
     opacity: 0.9;
 }
 
+/* Back link */
+.back-index {
+    position: absolute;
+    top: 40px;
+    right: 40px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px; /* Espaço entre a seta e o texto */
+    text-decoration: none;
+    color: #0073aa; /* Altere para a cor que preferir */
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+/* O ícone herdará automaticamente qualquer mudança de cor, como no hover */
+.back-index:hover {
+    color: #005177;
+}
+
+.back-index::before {
+    content: "";
+    display: inline-block;
+    width: 1.2em;
+    height: 1.2em;
+
+    /* Define a cor do ícone com base na cor do texto atual do link */
+    background-color: currentColor;
+
+    /* Máscara com o SVG inline da seta (com pontas e junções arredondadas) */
+    -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><line x1='19' y1='12' x2='5' y2='12'></line><polyline points='12 19 5 12 12 5'></polyline></svg>") no-repeat center / contain;
+    mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><line x1='19' y1='12' x2='5' y2='12'></line><polyline points='12 19 5 12 12 5'></polyline></svg>") no-repeat center / contain;
+}
+
 /* Sumário / TOC */
 nav.toc {
+    position: relative;
     background: var(--white);
     padding: 30px;
     border-radius: 8px;
