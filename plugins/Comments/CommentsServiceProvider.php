@@ -46,7 +46,7 @@ class CommentsServiceProvider extends ServiceProvider
 
         // Inject settings group and moderation field
         \App\Support\Settings::addGroup('comments', [
-            'tab'         => 'Conteúdo',
+            'tab'         => 'Comentários',
             'title'       => 'Comentários',
             'description' => 'Configurações do sistema de comentários',
             'icon'        => 'message-square',

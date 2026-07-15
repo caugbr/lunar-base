@@ -306,7 +306,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const input = wrapper.querySelector('input[type="text"]');
         const preview = wrapper.querySelector('.icon-preview-box');
         const chooseBtn = wrapper.querySelector('.choose-btn');
-        const clearBtn = wrapper.querySelector('.clear-btn');
         const modal = wrapper.querySelector('.modal-overlay');
         const backdrop = wrapper.querySelector('.modal-backdrop');
         const closeBtn = wrapper.querySelector('.modal-close');
@@ -325,10 +324,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     setTimeout(() => searchInput.focus(), 80);
                 }
             });
-            clearBtn.addEventListener('click', () => {
-                input.value = '';
-                preview.innerHTML = '';
-            });
+
+            const clearBtn = wrapper.querySelector('.clear-btn');
+            if (clearBtn) {
+                clearBtn.addEventListener('click', () => {
+                    input.value = '';
+                    preview.innerHTML = '';
+                });
+            }
         }
 
         // 2. Fechar o Modal

@@ -1,0 +1,6 @@
+{
+    "name": "Banners",
+    "description": "Sistema de gerenciamento de banners com estatísticas de cliques, hooks dinâmicos e shortcodes.",
+    "version": "1.0.0",
+    "provider": "Plugins\Banners\BannersServiceProvider"
+}

@@ -1,0 +1,55 @@
+/* --- Estilos Publicos do Banner (Lunar Base) --- */
+
+.banner-wrapper {
+    display: inline-block;
+    max-width: 100%;
+}
+
+.banner-link {
+    display: block;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+}
+
+.banner-link:hover {
+    opacity: 0.9;
+}
+
+.banner-image {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border-radius: 0;
+}
+
+/* Variantes comuns que o admin pode aplicar via classe */
+.banner-wrapper.rounded .banner-image {
+    border-radius: 8px;
+}
+
+.banner-wrapper.rounded-lg .banner-image {
+    border-radius: 12px;
+}
+
+.banner-wrapper.shadow .banner-image {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.banner-wrapper.shadow-lg .banner-image {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.banner-wrapper.border .banner-image {
+    border: 1px solid var(--color-border, #e5e7eb);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .banner-wrapper {
+        width: 100%;
+    }
+
+    .banner-image {
+        width: 100%;
+    }
+}
