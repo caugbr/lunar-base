@@ -34,7 +34,7 @@ class ThemeCreateCommand extends Command
             $themePath . '/resources/assets/images',
             $themePath . '/resources/assets/css',
             $themePath . '/resources/assets/js',
-            $themePath . '/resources/views/public/templates',
+            $themePath . '/resources/views/public/page-templates',
             $themePath . '/resources/views/public/post-templates'
         ];
 

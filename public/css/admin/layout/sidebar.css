@@ -56,6 +56,10 @@
     color: var(--sidebar-text-muted);
 }
 
+/* ============================================
+   ITENS DO MENU (links e toggles)
+   ============================================ */
+
 .admin-nav-item {
     display: flex;
     align-items: center;
@@ -66,6 +70,13 @@
     border-radius: 8px;
     margin-bottom: 4px;
     transition: all 0.2s;
+    background: none;
+    border: none;
+    width: 100%;
+    cursor: pointer;
+    font-size: 1rem;
+    font-family: inherit;
+    text-align: left;
 }
 
 .admin-nav-item:hover {
@@ -81,6 +92,106 @@
 .admin-nav-item i {
     width: 20px;
     text-align: center;
+}
+
+/* ============================================
+   SUBMENU
+   ============================================ */
+
+.admin-nav-dropdown {
+    position: relative;
+}
+
+.admin-nav-parent {
+    justify-content: flex-start;
+}
+
+.admin-nav-parent .dropdown-arrow {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+}
+
+.admin-nav-parent .dropdown-arrow .lucid-icon {
+    width: 16px;
+    height: 16px;
+    transition: transform 0.2s ease;
+    opacity: 0.7;
+}
+
+.admin-nav-dropdown.open .dropdown-arrow .lucid-icon {
+    transform: rotate(180deg);
+}
+
+.admin-nav-submenu {
+    display: flex;
+    flex-direction: column;
+    padding-left: 12px;
+    margin-bottom: 4px;
+
+    /* Animação de altura */
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.3s ease, opacity 0.25s ease;
+}
+
+.admin-nav-subitem {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    color: var(--sidebar-text);
+    text-decoration: none;
+    border-radius: 8px;
+    margin-bottom: 2px;
+    transition: all 0.2s;
+    font-size: 0.95rem;
+}
+
+.admin-nav-subitem:hover {
+    background: var(--sidebar-hover-bg);
+    color: white;
+}
+
+.admin-nav-subitem.active {
+    background: var(--sidebar-hover-bg);
+    color: white;
+    font-weight: 500;
+}
+
+/* ============================================
+   DESKTOP: dropdown no hover com animação
+   ============================================ */
+
+@media (min-width: 1024px) {
+    .admin-nav-dropdown:hover .admin-nav-submenu,
+    .admin-nav-dropdown.open .admin-nav-submenu {
+        max-height: calc(var(--submenu-items, 1) * 50px);
+        opacity: 1;
+    }
+
+    /* Quando o dropdown está aberto por hover, a seta aponta pra cima */
+    .admin-nav-dropdown:hover .dropdown-arrow .lucid-icon,
+    .admin-nav-dropdown.open .dropdown-arrow .lucid-icon {
+        transform: rotate(180deg);
+    }
+}
+
+/* ============================================
+   MOBILE: submenu sempre visível, sem animação
+   ============================================ */
+
+@media (max-width: 1023px) {
+    .admin-nav-submenu {
+        max-height: none !important;
+        opacity: 1 !important;
+        overflow: visible;
+    }
+
+    .admin-nav-parent .dropdown-arrow {
+        display: none;
+    }
 }
 
 .system-assign {

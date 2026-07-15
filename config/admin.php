@@ -32,6 +32,30 @@ return [
      *                                              // Use '*' como wildcard (ex: 'admin.pages.*').
      *     'permission' => 'nome-da-permissao',    // Opcional. Exibe apenas se usuário tiver permissão.
      *     'role'       => 'nome-do-role',         // Opcional. Exibe apenas se usuário tiver role.
+     *     'items'      => [...],                  // Opcional. Array de sub-itens (submenu).
+     * ],
+     *
+     * SUBMENUS:
+     * ---------
+     *
+     * Um item pode conter um array 'items' com sub-itens. No desktop, o submenu
+     * aparece ao passar o mouse (hover) sobre o item pai. No mobile, os sub-itens
+     * são sempre visíveis abaixo do item pai.
+     *
+     * Exemplo de item com submenu:
+     * [
+     *     'label'  => 'Páginas',
+     *     'icon'   => 'file',
+     *     'route'  => 'admin.pages.index',
+     *     'active' => 'admin.pages.*',
+     *     'items'  => [
+     *         [
+     *             'label'  => 'Nova página',
+     *             'icon'   => 'file-plus',
+     *             'route'  => 'admin.pages.create',
+     *             'active' => 'admin.pages.create',
+     *         ],
+     *     ],
      * ],
      *
      * CONTROLE DE ACESSO:
@@ -78,6 +102,7 @@ return [
      * - Ordene os itens na ordem desejada de exibição no menu.
      * - Agrupe logicamente por seções ('title') para organização visual.
      * - Use 'role' => 'admin' para itens restritos ao administrador.
+     * - Submenus são úteis para ações rápidas (ex: "Nova página" dentro de "Páginas").
      *
      * =============================================================================
      */
@@ -96,12 +121,28 @@ return [
                     'icon' => 'file',
                     'route' => 'admin.pages.index',
                     'active' => 'admin.pages.*',
+                    'items' => [
+                        [
+                            'label' => 'Nova página',
+                            'icon' => 'file-plus',
+                            'route' => 'admin.pages.create',
+                            'active' => 'admin.pages.create',
+                        ]
+                    ]
                 ],
                 [
                     'label' => 'Posts',
                     'icon' => 'files',
                     'route' => 'admin.posts.index',
                     'active' => 'admin.posts.*',
+                    'items' => [
+                        [
+                            'label' => 'Novo post',
+                            'icon' => 'file-plus',
+                            'route' => 'admin.posts.create',
+                            'active' => 'admin.posts.create',
+                        ]
+                    ]
                 ],
                 [
                     'label' => 'Mídia',

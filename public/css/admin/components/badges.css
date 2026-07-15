@@ -71,3 +71,27 @@
     border-radius: 4px;
     font-size: 0.7rem;
 }
+
+/* ============================================
+   BADGES DE STATUS (comentários / moderação)
+   ============================================ */
+
+.admin-badge-approved {
+    background: var(--color-success-bg);
+    color: var(--color-success-text);
+}
+
+.admin-badge-pending {
+    background: var(--color-warning-bg);
+    color: var(--color-warning-text);
+}
+
+.admin-badge-spam {
+    background: var(--color-danger-bg);
+    color: var(--color-danger-text);
+}
+
+.admin-badge-rejected {
+    background: var(--color-bg-disabled);
+    color: var(--color-text-muted);
+}

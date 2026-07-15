@@ -14,10 +14,7 @@
         {{-- <h1 class="lunar-doc-title">Lunar Base</h1> --}}
         <p class="lunar-doc-lead">
             <strong>Lunar Base</strong> é um Starter Kit para Laravel, com
-            características de CMS.
-        </p>
-        <p>
-            <a href="{{ route('docs') }}" class="btn btn-primary">Saiba mais</a>
+            jeito de CMS.
         </p>
     </header>
 

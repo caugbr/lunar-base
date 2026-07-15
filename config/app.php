@@ -14,7 +14,7 @@ return [
     */
 
     'name' => env('APP_NAME', 'Lunar Base'),
-    'version' => '2.1.2',
+    'version' => '1.0.0',
     'author' => 'Cau Guanabara',
 
     /*

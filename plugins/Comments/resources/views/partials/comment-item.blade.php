@@ -19,9 +19,11 @@
         </p>
 
         <!-- Reply Button -->
-        <button type="button" onclick="setReply({{ $comment->id }}, '{{ $comment->author_name }}')" class="btn comment-reply-btn">
-            Responder
-        </button>
+        <div class="buttons">
+            <button type="button" onclick="setReply({{ $comment->id }}, '{{ $comment->author_name }}')" class="btn comment-reply-btn">
+                Responder
+            </button>
+        </div>
 
         <!-- Recursive Nested Replies -->
         @if($comment->replies->count() > 0)

@@ -1,6 +1,6 @@
 <?php
 
-namespace Plugins\Comments\Http\Controllers; // <--- Certifique-se de que o namespace está correto
+namespace Plugins\Comments\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -35,14 +35,21 @@ class CommentController extends Controller
         $authorName = $userId ? Auth::user()->name : $validated['author_name'];
         $authorEmail = $userId ? Auth::user()->email : $validated['author_email'];
 
-        // Simple spam keyword moderation
+        // 4. Define o status inicial
         $status = 'approved';
-        $spamKeywords = ['buy', 'viagra', 'free casino', 'spam', 'cryptocurrency', 'click here'];
 
-        foreach ($spamKeywords as $keyword) {
-            if (stripos($validated['content'], $keyword) !== false) {
-                $status = 'pending';
-                break;
+        // Moderação obrigatória: tudo entra como pendente
+        if (setting('comments.comments_require_moderation', false)) {
+            $status = 'pending';
+        } else {
+            // Spam check como fallback quando moderação está desativada
+            $spamKeywords = ['buy', 'viagra', 'free casino', 'spam', 'cryptocurrency', 'click here'];
+
+            foreach ($spamKeywords as $keyword) {
+                if (stripos($validated['content'], $keyword) !== false) {
+                    $status = 'pending';
+                    break;
+                }
             }
         }
 

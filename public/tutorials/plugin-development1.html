@@ -18,7 +18,6 @@
             <h2>Sumário</h2>
             <ul>
                 <li><a href="#intro">Introdução</a></li>
-                <li><a href="#comando">Comando de Geração Rápida</a></li>
                 <li><a href="#estrutura">Estrutura de Pastas</a></li>
                 <li><a href="#manifesto">O Manifesto (plugin.json)</a></li>
                 <li><a href="#provedor">Ciclo de Vida (ServiceProvider)</a></li>
@@ -31,40 +30,6 @@
             <h2>Introdução</h2>
             <div class="intro">
                 <p>O sistema de plugins do Lunar Base permite estender as funcionalidades do sistema de forma modular. Cada plugin funciona como uma aplicação isolada, possuindo suas próprias rotas, controladores, visões, modelos e migrações.</p>
-            </div>
-        </section>
-
-        <section id="comando">
-            <h2>Comando de Geração Rápida</h2>
-            <p>O Lunar Base oferece um comando Artisan que gera a estrutura completa de um plugin automaticamente, incluindo diretórios, arquivos base, manifesto e link simbólico para assets públicos.</p>
-
-            <h4>Uso Básico:</h4>
-            <pre><code class="code-label">BASH</code>php artisan plugin:create "NomeDoPlugin" "Descrição opcional do plugin"</pre>
-
-            <h4>Opções Interativas:</h4>
-            <p>Durante a execução, o comando fará três perguntas interativas:</p>
-            <ul class="steps">
-                <li><strong>Requer banco de dados?</strong> — Cria a pasta <code>Models/</code> e <code>database/migrations/</code>, além de gerar um modelo e uma migration em branco.</li>
-                <li><strong>Requer Controller e Rotas?</strong> — Cria a pasta <code>Http/Controllers/</code>, gera um controller base e o arquivo <code>routes.php</code> com middleware <code>web</code> e <code>auth</code>.</li>
-                <li><strong>Requer Views?</strong> — Cria a pasta <code>resources/views/</code> e <code>resources/help-views/</code>, gerando uma view de exemplo e uma view de ajuda para o painel administrativo.</li>
-            </ul>
-
-            <h4>O que é gerado automaticamente:</h4>
-            <pre><code>plugins/
-└── NomeDoPlugin/
-    ├── Http/Controllers/NomeDoPluginController.php  (se confirmado)
-    ├── Models/NomeDoPlugin.php                      (se confirmado)
-    ├── database/migrations/2026_..._create_nome_do_plugin_table.php  (se confirmado)
-    ├── resources/views/index.blade.php              (se confirmado)
-    ├── resources/help-views/help.blade.php          (sempre)
-    ├── resources/assets/css/                      (sempre)
-    ├── resources/assets/js/                       (sempre)
-    ├── plugin.json
-    ├── NomeDoPluginServiceProvider.php
-    └── routes.php                                   (se confirmado)</code></pre>
-
-            <div class="tip">
-                <strong>Dica:</strong> O comando também cria automaticamente um link simbólico (ou junction no Windows) em <code>public/plugins/nome-do-plugin</code> apontando para <code>plugins/NomeDoPlugin/resources/assets</code>, permitindo que você referencie assets públicos sem configuração manual.
             </div>
         </section>
 
@@ -100,7 +65,7 @@
     "name": "MeuPlugin",
     "description": "Adiciona funcionalidades personalizadas ao sistema.",
     "version": "1.0.0",
-    "provider": "Plugins\MeuPlugin\MeuPluginServiceProvider"
+    "provider": "Plugins\\MeuPlugin\\MeuPluginServiceProvider"
 }</pre>
         </section>
 

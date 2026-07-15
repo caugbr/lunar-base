@@ -12,9 +12,12 @@ if (! function_exists('getSettingsDefinitions')) {
      *   2. Mescla grupos novos registrados via Settings::addGroup()
      *   3. Injeta campos nos grupos via Settings::add()
      */
-    function getSettingsDefinitions(): array
+    function getSettingsDefinitions($includeInjected = true): array
     {
         $definitions   = config('settings.definitions', []);
+        if (!$includeInjected) {
+            return $definitions;
+        }
         $injectedGroups = \App\Support\Settings::getInjectedGroups();
         $injectedItems  = \App\Support\Settings::getInjectedItems();
 
@@ -119,25 +122,24 @@ if (! function_exists('setting')) {
 }
 
 if (! function_exists('settingsGroup')) {
-    /**
-     * Obtém todas as configurações de um grupo.
-     * Preenche campos não salvos no banco com seus defaults (config + plugins).
-     */
-    function settingsGroup($group)
+    function settingsGroup($group, $includeInjected = true)
     {
-        $definitions = getSettingsDefinitions();
+        $definitions = getSettingsDefinitions($includeInjected);
         $fields      = $definitions[$group]['fields'] ?? [];
 
-        // Monta array de defaults
+        // Monta array de defaults E coleta as chaves válidas
         $defaults = [];
+        $validKeys = [];
         foreach ($fields as $field) {
             if (isset($field['key'])) {
                 $defaults[$field['key']] = $field['default'] ?? null;
+                $validKeys[] = $field['key'];
             }
         }
 
-        // Busca valores do banco
+        // Busca valores do banco, mas só das chaves que existem nas definições
         $dbSettings = Setting::where('group', $group)
+            ->whereIn('key', $validKeys)
             ->get()
             ->pluck('value', 'key')
             ->toArray();
@@ -151,20 +153,24 @@ if (! function_exists('settingsAll')) {
      * Obtém todas as configurações de todos os grupos.
      * Preenche campos não salvos no banco com seus defaults (config + plugins).
      */
-    function settingsAll()
+    function settingsAll(bool $includeInjected = true)
     {
-        $definitions = getSettingsDefinitions();
+        $definitions = getSettingsDefinitions($includeInjected);
 
         $defaults = [];
+        $validKeys = [];
         foreach ($definitions as $group) {
             foreach ($group['fields'] ?? [] as $field) {
                 if (isset($field['key'])) {
                     $defaults[$field['key']] = $field['default'] ?? null;
+                    $validKeys[] = $field['key'];
                 }
             }
         }
 
-        $dbSettings = Setting::pluck('value', 'key')->toArray();
+        $dbSettings = Setting::whereIn('key', $validKeys)
+            ->pluck('value', 'key')
+            ->toArray();
 
         return array_merge($defaults, $dbSettings);
     }

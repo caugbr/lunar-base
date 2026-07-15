@@ -36,7 +36,8 @@
                 <p>Painel Administrativo</p>
             </div>
 
-            <nav class="admin-nav">
+            @include('admin.menu')
+            {{-- <nav class="admin-nav">
                 @php
                     $menuGroups = config('admin.menu', []);
                     $injectedItems = \App\Support\AdminMenu::getInjectedItems();
@@ -64,14 +65,14 @@
 
 
                 @foreach($menuGroups as $group)
-                    {{-- Título da seção --}}
+                    {{-- Título da seção -- }}
                     @if(isset($group['title']))
                         <div class="admin-nav-section">
                             <span class="section-title">{{ $group['title'] }}</span>
                         </div>
                     @endif
 
-                    {{-- Itens da seção --}}
+                    {{-- Itens da seção -- }}
                     @foreach($group['items'] ?? [] as $item)
                         @php
                             $isActive = request()->routeIs($item['active']);
@@ -83,7 +84,7 @@
                         </a>
                     @endforeach
                 @endforeach
-            </nav>
+            </nav> --}}
             <div class="system-assign">
                 {{ config('app.name') }}
                 {{ config('app.version') }}

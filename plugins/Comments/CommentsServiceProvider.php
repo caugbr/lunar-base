@@ -13,7 +13,10 @@ class CommentsServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $routesFile = __DIR__ . '/routes.php';
+        if (file_exists($routesFile)) {
+            require $routesFile;
+        }
     }
 
     /**
@@ -31,8 +34,42 @@ class CommentsServiceProvider extends ServiceProvider
 
         // Load plugin resources
         $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
-        $this->loadRoutesFrom(__DIR__ . '/routes.php');
         $this->loadViewsFrom(__DIR__ . '/resources/views', 'comments');
+
+        // Inject admin menu sub-item under Posts
+        \App\Support\AdminMenu::addSubItem('Posts', [
+            'label'  => 'Comentários',
+            'icon'   => 'message-square',
+            'route'  => 'admin.comments.index',
+            'active' => 'admin.comments.*',
+        ]);
+
+        // Inject settings group and moderation field
+        \App\Support\Settings::addGroup('comments', [
+            'tab'         => 'Conteúdo',
+            'title'       => 'Comentários',
+            'description' => 'Configurações do sistema de comentários',
+            'icon'        => 'message-square',
+        ]);
+
+        \App\Support\Settings::add([
+            'key'         => 'comments_require_moderation',
+            'type'        => 'switch',
+            'label'       => 'Moderação obrigatória',
+            'description' => 'Todos os comentários novos precisam ser aprovados manualmente antes de aparecerem no site.',
+            'default'     => false,
+            'active'      => 'Moderação ativa',
+            'inactive'    => 'Sem moderação',
+        ], 'comments');
+
+        \App\Support\Settings::add([
+            'key'         => 'pagination_items',
+            'type'        => 'number',
+            'label'       => 'Itens por página (moderação)',
+            'description' => 'Quantidade de comentários exibidos por página na tela de moderação.',
+            'default'     => 20,
+            'attributes'  => ['min' => 5, 'max' => 100, 'step' => 5],
+        ], 'comments');
 
         \App\Support\HookManager::register('post.footer_end', function($params) {
             $post = $params['post'];

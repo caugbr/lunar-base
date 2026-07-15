@@ -7,10 +7,10 @@
 <div class="admin-card">
     <div class="admin-card-header">
         <h2><x-lucide-puzzle class="lucid-icon" /> Plugins instalados</h2>
-        <a class="admin-btn admin-btn-secondary" href="/tutorials/plugins.html" target="_blank">
+        {{-- <a class="admin-btn admin-btn-secondary" href="/tutorials/plugins.html" target="_blank">
             <x-lucide-external-link class="lucid-icon" />
             Como criar um plugin
-        </a>
+        </a> --}}
     </div>
     <div class="table-wrap">
         <table class="admin-table">

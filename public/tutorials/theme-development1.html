@@ -18,7 +18,6 @@
             <h2>Sumário</h2>
             <ul>
                 <li><a href="#intro">Introdução</a></li>
-                <li><a href="#comando">Comando de Geração Rápida</a></li>
                 <li><a href="#estrutura">Estrutura do Tema</a></li>
                 <li><a href="#manifesto">O Manifesto (theme.json)</a></li>
                 <li><a href="#overrides">Sobrescrita de Views (Overrides)</a></li>
@@ -31,42 +30,6 @@
             <h2>Introdução</h2>
             <div class="intro">
                 <p>O sistema de temas do Lunar Base permite transformar completamente a identidade visual do site público. Os temas herdam a lógica do core por padrão, mas dão total liberdade para que qualquer arquivo visual seja substituído de forma transparente.</p>
-            </div>
-        </section>
-
-        <section id="comando">
-            <h2>Comando de Geração Rápida</h2>
-            <p>O Lunar Base oferece um comando Artisan que gera a estrutura base de um novo tema automaticamente, incluindo diretórios, manifesto, template de exemplo e link simbólico para assets públicos.</p>
-
-            <h4>Uso Básico:</h4>
-            <pre><code class="code-label">BASH</code>php artisan theme:create "NomeDoTema" "Descrição opcional do tema"</pre>
-
-            <h4>O que é gerado automaticamente:</h4>
-            <pre><code>themes/
-└── NomeDoTema/
-    ├── resources/
-    │   ├── views/
-    │   │   └── public/
-    │   │       ├── page-templates/
-    │   │       └── post-templates/
-    │   └── assets/
-    │       ├── css/
-    │       ├── js/
-    │       └── images/
-    │           └── screenshot.png  (referenciado no manifesto)
-    ├── theme.json
-    └── resources/views/public/templates/default.blade.php</code></pre>
-
-            <p>O comando cria automaticamente:</p>
-            <ul class="steps">
-                <li>O arquivo <code>theme.json</code> com os metadados do tema (nome, descrição, versão, autor e screenshot).</li>
-                <li>Um template padrão <code>default.blade.php</code> estendendo <code>public.site-layout</code> com a estrutura básica de exibição de páginas.</li>
-                <li>Pastas para assets (CSS, JS, imagens) e templates de página/post.</li>
-                <li>Um link simbólico (ou junction no Windows) em <code>public/themes/nome-do-tema</code> apontando para <code>themes/NomeDoTema/resources/assets</code>.</li>
-            </ul>
-
-            <div class="tip">
-                <strong>Dica:</strong> Após criar o tema, basta ativá-lo no painel administrativo em <strong>Aparência → Temas</strong>. O sistema passará a priorizar automaticamente as views do seu tema sobre as views padrão do core.
             </div>
         </section>
 

@@ -43,7 +43,6 @@
 }
 
 .admin-btn-danger:hover {
-    background: var(--color-danger);
     opacity: 0.9;
 }
 
@@ -71,28 +70,50 @@
     border: none;
     padding: 0;
     margin: 0;
-    color: var(--color-primary, #3b82f6); /* Herda a cor de destaque do seu tema */
+    color: var(--color-primary, #3b82f6);
     font-family: inherit;
-    font-size: 0.875rem; /* Ajustável para o contexto (ex: 14px) */
+    font-size: 0.875rem;
     font-weight: 500;
     cursor: pointer;
     text-decoration: none;
     display: inline-flex;
     align-items: center;
-    gap: 0.35rem; /* Espaço entre o ícone e o texto */
+    gap: 0.35rem;
     transition: color var(--transition-fast, 0.2s) ease;
 }
 
 .transparent-btn:hover {
-    color: var(--color-primary-dark, #1d4ed8); /* Tom sutilmente mais escuro no hover */
-    text-decoration: none; /* Garante que permaneça sem o sublinhado de link comum */
+    color: var(--color-primary-dark, #1d4ed8);
+    text-decoration: none;
 }
 
 .transparent-btn:focus {
-    outline: none; /* Remove o contorno padrão do navegador */
+    outline: none;
 }
 
 .transparent-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+}
+
+/* ============================================
+   VARIANTES SEMÂNTICAS
+   ============================================ */
+
+.admin-btn-success {
+    background: var(--color-success);
+    color: white;
+}
+
+.admin-btn-success:hover {
+    opacity: 0.9;
+}
+
+.admin-btn-warning {
+    background: var(--color-warning);
+    color: white;
+}
+
+.admin-btn-warning:hover {
+    opacity: 0.9;
 }
