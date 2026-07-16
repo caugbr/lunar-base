@@ -80,30 +80,6 @@ class HookDiscoverer
     /**
      * Analisa o código do arquivo Blade usando Busca Dupla estável por Regex
      */
-    // protected static function scanFile(string $filePath, string $sector, array &$hooks): void
-    // {
-    //     // \Log::info('scanFile', ["file" => $filePath, "section" => $sector]);
-    //     $content = file_get_contents($filePath);
-
-    //     // 💡 VIA 1: Busca ganchos fechados com tags </x-hook> (Podem ser Filtros ou Ações dependendo do miolo)
-    //     preg_match_all('/<x-hook\s+([^>]*?)>(.*?)<\/x-hook>/is', $content, $matchesClosed, PREG_SET_ORDER);
-
-    //     foreach ($matchesClosed as $match) {
-    //         $attributesString = $match[1];
-    //         $innerContent = $match[2];
-
-    //         self::parseAndRegisterHook($attributesString, $innerContent, $sector, $filePath, $hooks);
-    //     }
-
-    //     // 💡 VIA 2: Busca ganchos auto-fechados do tipo <x-hook ... /> (Sempre são Ações)
-    //     preg_match_all('/<x-hook\s+([^>]*?)\/>/is', $content, $matchesSelf, PREG_SET_ORDER);
-
-    //     foreach ($matchesSelf as $match) {
-    //         $attributesString = $match[1];
-
-    //         self::parseAndRegisterHook($attributesString, '', $sector, $filePath, $hooks);
-    //     }
-    // }
     protected static function scanFile(string $filePath, string $sector, array &$hooks): void
     {
         $content = file_get_contents($filePath);
@@ -146,7 +122,8 @@ class HookDiscoverer
         $attributesStringNormalized = str_replace(["\r", "\n"], ' ', $attributesString);
 
         // Captura os pares de chave="valor" (ex: name="menu" ou :params="['id' => 1]")
-        preg_match_all('/([\w:]+)\s*=\s*["\']([^"\']*)["\']/i', $attributesStringNormalized, $attrMatches, PREG_SET_ORDER);
+        // preg_match_all('/([\w:]+)\s*=\s*["\']([^"\']*)["\']/i', $attributesStringNormalized, $attrMatches, PREG_SET_ORDER);
+        preg_match_all('/([\w:]+)\s*=\s*("(?:[^"\\\\]|\\\\.)*"|\'(?:[^\'\\\\]|\\\\.)*\')/', $attributesStringNormalized, $attrMatches, PREG_SET_ORDER);
 
         $attrs = [];
         foreach ($attrMatches as $match) {

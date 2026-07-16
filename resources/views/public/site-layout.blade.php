@@ -11,7 +11,7 @@
     <x-cookie.scripts />
     @endif
 
-    <x-hook name="main.head" />
+    <x-hook name="main.head" desc="Ponto de inserção no elemento HEAD do site" />
 
     <link rel="stylesheet" href="{{ asset('css/public/site.css') }}">
     <script src="{{ asset('js/site.js') }}"></script>
@@ -21,7 +21,7 @@
 <body{!! $theme !!}>
     @include('public.partials.header')
 
-    <x-hook name="main.before_content" />
+    <x-hook name="main.before_content" desc="Ponto de inserção antes do conteúdo principal do site" />
 
     <main class="site-content">
         <div class="container">
@@ -30,12 +30,12 @@
             @endif
         </div>
 
-        <x-hook name="main.after_breadcrumbs" />
+        <x-hook name="main.after_breadcrumbs" desc="Ponto de inserção abaixo do menu breadcrumbs" />
 
         @yield('content')
     </main>
 
-    <x-hook name="main.after_content" />
+    <x-hook name="main.after_content" desc="Ponto de inserção abaixo do conteúdo principal do site" />
 
     @include('public.partials.footer')
 

@@ -36,55 +36,8 @@
                 <p>Painel Administrativo</p>
             </div>
 
-            @include('admin.menu')
-            {{-- <nav class="admin-nav">
-                @php
-                    $menuGroups = config('admin.menu', []);
-                    $injectedItems = \App\Support\AdminMenu::getInjectedItems();
+            @include('admin.partials.menu')
 
-                    foreach ($injectedItems as $injection) {
-                        foreach ($menuGroups as &$group) {
-                            $afterLabel = $injection['after'];
-                            $newItem = $injection['item'];
-
-                            // Busca pelo label (case-insensitive para não ter erro de digitação)
-                            $index = collect($group['items'])->search(function($item) use ($afterLabel) {
-                                return strtolower($item['label']) === strtolower($afterLabel);
-                            });
-
-                            if ($index !== false) {
-                                // Insere logo após o item encontrado
-                                array_splice($group['items'], $index + 1, 0, [$newItem]);
-                            } else {
-                                // Se não achar o label, joga no final do grupo
-                                $group['items'][] = $newItem;
-                            }
-                        }
-                    }
-                @endphp
-
-
-                @foreach($menuGroups as $group)
-                    {{-- Título da seção -- }}
-                    @if(isset($group['title']))
-                        <div class="admin-nav-section">
-                            <span class="section-title">{{ $group['title'] }}</span>
-                        </div>
-                    @endif
-
-                    {{-- Itens da seção -- }}
-                    @foreach($group['items'] ?? [] as $item)
-                        @php
-                            $isActive = request()->routeIs($item['active']);
-                        @endphp
-                        <a href="{{ route($item['route']) }}"
-                        class="admin-nav-item {{ $isActive ? 'active' : '' }}">
-                            <x-dynamic-component :component="'lucide-' . $item['icon']" class="lucid-icon" />
-                            <span>{{ $item['label'] }}</span>
-                        </a>
-                    @endforeach
-                @endforeach
-            </nav> --}}
             <div class="system-assign">
                 {{ config('app.name') }}
                 {{ config('app.version') }}
@@ -100,7 +53,7 @@
                 </div>
                 <div class="admin-header-user">
                     <a href="{{ route('admin.profile.edit') }}">
-                        <x-hook name="admin.header_user_avatar" :params="['user' => auth()->user()]">
+                        <x-hook name="admin.header_user_avatar" :params="['user' => auth()->user()]" desc="Substitui o avatar do usuário">
                             <x-lucide-user-pen class="lucid-icon" style="vertical-align: baseline" />
                         </x-hook>
                         {{ auth()->user()->name }}

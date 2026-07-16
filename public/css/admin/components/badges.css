@@ -5,6 +5,12 @@
     font-size: 0.8rem;
     font-weight: 500;
     gap: 5px;
+    align-items: center;
+}
+
+.admin-badge-info {
+    background: var(--color-info-bg);
+    color: var(--color-info);
 }
 
 .admin-badge-active {

@@ -169,6 +169,15 @@ return [
                     'icon' => 'puzzle',
                     'route' => 'admin.plugins.index',
                     'active' => 'admin.plugins.*',
+                    'items' => [
+                        [
+                            'label'  => 'Hooks',
+                            'icon'   => 'fishing-hook',
+                            'route'  => 'admin.hooks',
+                            'active' => 'admin.hooks',
+                            'role'   => 'admin',
+                        ]
+                    ]
                 ],
                 [
                     'label' => 'Temas',

@@ -1,0 +1,137 @@
+/* --- Interface de Hooks do Sistema (Admin) --- */
+
+.hooks-explanation {
+    background: var(--color-bg-dark, #12152b);
+    border: 1px solid var(--color-border, rgba(200, 182, 255, 0.12));
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-top: 1rem;
+}
+
+.hooks-explanation h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.1rem;
+    color: var(--color-text, #e8e6f0);
+    margin: 0 0 1rem;
+}
+
+.hooks-explanation h3 .lucid-icon {
+    width: 20px;
+    height: 20px;
+    color: var(--color-primary, #c8b6ff);
+}
+
+.hooks-explanation p {
+    color: var(--color-text-muted, #9ca3af);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.hooks-explanation h4 {
+    font-size: 0.95rem;
+    color: var(--color-text, #e8e6f0);
+    margin: 1.25rem 0 0.75rem;
+}
+
+.hooks-usage-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.usage-card {
+    background: rgba(200, 182, 255, 0.03);
+    border: 1px solid var(--color-border, rgba(200, 182, 255, 0.1));
+    border-radius: 6px;
+    padding: 1rem;
+}
+
+.usage-card h5 {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    color: var(--color-primary, #c8b6ff);
+    margin-bottom: 0.5rem;
+}
+
+.usage-card h5 .lucid-icon {
+    width: 16px;
+    height: 16px;
+}
+
+.usage-card p {
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+    color: var(--color-text-muted, #9ca3af);
+}
+
+.usage-card code {
+    display: block;
+    background: rgba(0, 0, 0, 0.1);
+    padding: 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    color: var(--color-text-muted, #9ca3af);
+    word-break: break-all;
+}
+
+.hooks-tip {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    background: rgba(200, 182, 255, 0.05);
+    border-left: 3px solid var(--color-primary, #c8b6ff);
+    padding: 0.75rem 1rem;
+    border-radius: 0 6px 6px 0;
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    color: var(--color-text-muted, #9ca3af);
+}
+
+.hooks-tip .lucid-icon {
+    width: 18px;
+    height: 18px;
+    color: var(--color-primary, #c8b6ff);
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+/* Tabela de hooks */
+.hook-name {
+    background: rgba(200, 182, 255, 0.1);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    color: var(--color-primary, #c8b6ff);
+}
+
+.hook-description {
+    color: var(--color-text-muted, #9ca3af);
+    font-size: 0.875rem;
+}
+
+.hook-description small {
+    display: block;
+    margin-top: 4px;
+    font-size: 0.75rem;
+}
+
+.params-code {
+    background: rgba(200, 182, 255, 0.06);
+    border: 1px solid var(--color-border, rgba(200, 182, 255, 0.1));
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    color: var(--color-primary, #c8b6ff);
+    word-break: break-all;
+}
+
+@media (max-width: 768px) {
+    .hooks-usage-grid {
+        grid-template-columns: 1fr;
+    }
+}

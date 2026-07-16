@@ -56,6 +56,31 @@ class PluginController extends Controller
         return back()->with('success', $message);
     }
 
+    /**
+     * Lista todos os hooks descobertos no sistema (readonly)
+     */
+    public function hooks()
+    {
+        $hooks = [];
+
+        if (class_exists('App\Support\HookDiscoverer')) {
+            $discovered = \App\Support\HookDiscoverer::all();
+
+            foreach ($discovered as $hook) {
+                $hooks[] = [
+                    'name'        => $hook['name'] ?? 'N/A',
+                    'type'        => $hook['type'] ?? 'action',
+                    'params'      => $hook['params'] ?? '',
+                    'description' => $hook['desc'] ?? 'Sem descricao',
+                    'file'        => str_replace('\\', '/', $hook['file']),
+                ];
+            }
+        }
+
+        usort($hooks, fn($a, $b) => strcmp($a['name'], $b['name']));
+
+        return view('admin.plugins.hooks', compact('hooks'));
+    }
 
     /**
      * Scan the plugins directory and sync with the database.

@@ -25,6 +25,15 @@ class PluginServiceProvider extends ServiceProvider
 
         // Service providers, hooks, shortcodes (só plugins ativos)
         $this->registerActivePlugins();
+
+        // Listar os hooks
+        // \App\Support\AdminMenu::add([
+        //     'label'  => 'Hooks',
+        //     'icon'   => 'plug',
+        //     'route'  => 'admin.hooks.index',
+        //     'active' => 'admin.hooks.*',
+        //     'role'   => 'admin',
+        // ], 'Configuracoes');
     }
 
     /**

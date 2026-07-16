@@ -29,18 +29,18 @@
                         <x-lucide-clock class="lucid-icon" />
                         {{ $post->reading_time }} min de leitura
                     </span>
-                    <x-hook name="post.meta_end" :params="['post' => $post]" />
+                    <x-hook name="post.meta_end" :params="['post' => $post]" desc="Ponto de inserção ao final da seção de meta dados do post" />
                 </div>
             </div>
         </header>
 
-        <x-hook name="post.before_content" :params="['post' => $post]" />
+        <x-hook name="post.before_content" :params="['post' => $post]" desc="Ponto de inserção antes do conteúdo da post" />
 
         <div class="post-content">
             {!! $post->content !!}
         </div>
 
-        <x-hook name="post.after_content" :params="['post' => $post]" />
+        <x-hook name="post.after_content" :params="['post' => $post]" desc="Ponto de inserção depois do conteúdo da post" />
 
         <footer class="post-footer">
             @if($post->terms->count())
@@ -54,7 +54,7 @@
                 </div>
             @endif
 
-            <x-hook name="post.footer_end" :params="['post' => $post]" />
+            <x-hook name="post.footer_end" :params="['post' => $post]" desc="Ponto de inserção ao final do footer do post" />
 
             <div class="post-nav">
                 <a href="{{ url('/blog') }}" class="back-to-blog">
@@ -64,7 +64,7 @@
             </div>
         </footer>
 
-        <x-hook name="post.after_footer" :params="['post' => $post]" />
+        <x-hook name="post.after_footer" :params="['post' => $post]" desc="Ponto de inserção depois do footer do post" />
     </div>
 </article>
 @endsection

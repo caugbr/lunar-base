@@ -33,6 +33,13 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::post('plugins/toggle-all/{status}', [PluginController::class, 'toggleAll'])
         ->name('plugins.toggle_all')
         ->where('status', '0|1');
+    // Route::middleware(['web', 'auth', 'role:admin'])
+    //     ->prefix('admin')
+    //     ->name('admin.')
+    //     ->group(function () {
+            Route::get('hooks', [PluginController::class, 'hooks'])
+                ->name('hooks');
+        // });
 
     // Temas
     Route::get('themes', [ThemeController::class, 'index'])->name('themes.index');
