@@ -88,7 +88,7 @@ class BannersServiceProvider extends ServiceProvider
             }
         }
 
-        // 6. Injeta link no menu lateral administrativo
+        // 6. Injeta links no menu lateral administrativo
         \App\Support\AdminMenu::add([
             'label' => 'Banners',
             'icon'  => 'square',
@@ -96,5 +96,13 @@ class BannersServiceProvider extends ServiceProvider
             'active' => 'admin.banners.*',
             'role' => 'admin',
         ], 'Menus');
+
+        \App\Support\AdminMenu::addSubItem('Banners', [
+            'label' => 'Novo Banner',
+            'icon'  => 'square-plus',
+            'route' => 'admin.banners.create',
+            'active' => 'admin.banners.create',
+            'role' => 'admin',
+        ]);
     }
 }

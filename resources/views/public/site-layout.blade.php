@@ -29,6 +29,9 @@
             <x-breadcrumbs :icon="setting('navigation.breadcrumbs_icon')" />
             @endif
         </div>
+
+        <x-hook name="main.after_breadcrumbs" />
+
         @yield('content')
     </main>
 

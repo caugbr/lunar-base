@@ -1,12 +1,14 @@
 /* --- Estilos Publicos do Banner (Lunar Base) --- */
 
 .banner-wrapper {
-    display: inline-block;
+    display: flex;
+    justify-content: center;
     max-width: 100%;
+    margin-bottom: 2rem;
 }
 
 .banner-link {
-    display: block;
+    /* display: block; */
     text-decoration: none;
     transition: opacity 0.2s ease;
 }

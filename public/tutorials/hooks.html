@@ -97,7 +97,7 @@ HookManager::register('post.footer_end', function($params) {
                     <tr>
                         <th>Nome do Hook</th>
                         <th>Setor</th>
-                        <!-- <th>Utilizado por</th> -->
+                        <th>Tipo</th>
                         <th>Descrição</th>
                     </tr>
                 </thead>
@@ -105,44 +105,63 @@ HookManager::register('post.footer_end', function($params) {
                     <tr>
                         <td><code>admin.header_user_avatar</code></td>
                         <td>Admin</td>
-                        <!-- <td>Avatars</td> -->
+                        <td>Filtro<td>
                         <td>Substitui o ícone do header administrativo pelo avatar circular do usuário.</td>
                     </tr>
                     <tr>
                         <td><code>profile.after_card</code></td>
                         <td>Admin</td>
-                        <!-- <td>Avatars</td> -->
+                        <td>Ação</td>
                         <td>Injeta formulários abaixo do card de perfil do usuário.</td>
                     </tr>
                     <tr>
                         <td><code>main.head</code></td>
                         <td>Público</td>
-                        <!-- <td>Temas / Core</td> -->
-                        <td>Injeta metadados, scripts ou estilos dentro da tag <code>&lt;head&gt;</code> global.</td>
+                        <td>Ação</td>
+                        <td>Dentro da tag <code>&lt;head&gt;</code> global.</td>
+                    </tr>
+                    <tr>
+                        <td><code>main.before_content</code></td>
+                        <td>Público</td>
+                        <td>Ação</td>
+                        <td>Antes do conteúdo principal.</td>
+                    </tr>
+                    <tr>
+                        <td><code>main.after_content</code></td>
+                        <td>Público</td>
+                        <td>Ação</td>
+                        <td>Depois do conteúdo principal.</td>
                     </tr>
                     <tr>
                         <td><code>public.main_menu</code></td>
                         <td>Público</td>
-                        <!-- <td>Menus</td> -->
+                        <td>Filtro</td>
                         <td>Injeta o menu de navegação horizontal no cabeçalho.</td>
                     </tr>
                     <tr>
                         <td><code>post.meta_end</code></td>
                         <td>Público (Post)</td>
-                        <!-- <td>Reactions</td> -->
-                        <td>Injeta elementos de engajamento logo abaixo da área de metadados do artigo.</td>
+                        <td>Ação</td>
+                        <td>Ao final da área de metadados do artigo.</td>
+                    </tr>
+                    <tr>
+                        <td><code>post.before_content</code></td>
+                        <td>Público (Post)</td>
+                        <td>Ação</td>
+                        <td>Antes do corpo de texto dos artigos do blog.</td>
+                    </tr>
                     </tr>
                     <tr>
                         <td><code>post.after_content</code></td>
                         <td>Público (Post)</td>
-                        <!-- <td>Share</td> -->
-                        <td>Injeta botões ao final do corpo de texto dos artigos do blog.</td>
+                        <td>Ação</td>
+                        <td>Após o corpo de texto dos artigos do blog.</td>
                     </tr>
                     <tr>
                         <td><code>post.footer_end</code></td>
                         <td>Público (Post)</td>
-                        <!-- <td>Comments</td> -->
-                        <td>Injeta a área de discussões e comentários no rodapé do artigo.</td>
+                        <td>Ação</td>
+                        <td>Ao final do rodapé do artigo.</td>
                     </tr>
                 </tbody>
             </table>

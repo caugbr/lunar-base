@@ -3,6 +3,10 @@ $bannerClasses = $class ?? '';
 $targetAttr = $banner->target ?? '_self';
 @endphp
 
+@once
+<link rel="stylesheet" href="{{ asset('plugins/banners/css/banners-public.css') }}">
+@endonce
+
 <div class="banner-wrapper {{ $bannerClasses }}">
     <a href="{{ route('banner.click', $banner->id) }}"
        target="{{ $targetAttr }}"

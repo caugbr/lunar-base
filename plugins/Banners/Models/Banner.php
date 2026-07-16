@@ -84,7 +84,7 @@ class Banner extends Model
         };
 
         return $this->clickStats()
-            ->reorder()  // ← limpa o orderBy do relacionamento
+            ->reorder()
             ->selectRaw("DATE_FORMAT(clicked_at, '{$format}') as period, COUNT(*) as total")
             ->groupBy('period')
             ->orderBy('period', 'asc')
