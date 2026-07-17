@@ -39,7 +39,6 @@
                 <div class="edit-preview">
                     <div class="preview-frame">
                         <template x-if="media?.is_image">
-                            {{-- <img :src="media?.thumbnail_url" :alt="media?.alt" class="preview-image"> --}}
                             <img :src="media?.url" :alt="media?.alt" class="preview-image">
                         </template>
                         <template x-if="!media?.is_image">
@@ -50,6 +49,56 @@
                         </template>
                     </div>
                     <p class="preview-size" x-text="media?.size_formatted"></p>
+
+                    {{-- VÍNCULO VIA MEDIAABLE (galeria) --}}
+                    <template x-if="media?.linked_to">
+                        <div class="linked-info">
+                            <div class="linked-info-label">
+                                <x-lucide-link class="lucid-icon" style="width:1rem;height:1rem;" />
+                                <span>Na galeria</span>
+                            </div>
+                            <div class="linked-info-content">
+                                <span class="linked-info-type" x-text="'[' + media.linked_to.type + ']'"></span>
+                                <template x-if="media.linked_to.url">
+                                    <a :href="media.linked_to.url" class="linked-info-title"
+                                    x-text="media.linked_to.title" target="_blank"></a>
+                                </template>
+                                <template x-if="!media.linked_to.url">
+                                    <span class="linked-info-title" x-text="media.linked_to.title"></span>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+
+                    {{-- VÍNCULO VIA THUMBNAIL --}}
+                    <template x-if="media?.thumbnail_of">
+                        <div class="linked-info linked-info--thumb">
+                            <div class="linked-info-label">
+                                <x-lucide-image class="lucid-icon" style="width:1rem;height:1rem;" />
+                                <span>Usada como thumbnail</span>
+                            </div>
+                            <div class="linked-info-content">
+                                <span class="linked-info-type" x-text="'[' + media.thumbnail_of.type + ']'"></span>
+                                <template x-if="media.thumbnail_of.url">
+                                    <a :href="media.thumbnail_of.url" class="linked-info-title"
+                                    x-text="media.thumbnail_of.title" target="_blank"></a>
+                                </template>
+                                <template x-if="!media.thumbnail_of.url">
+                                    <span class="linked-info-title" x-text="media.thumbnail_of.title"></span>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+
+                    {{-- AVISO: nenhum vínculo --}}
+                    <template x-if="!media?.linked_to && !media?.thumbnail_of">
+                        <div class="linked-info linked-info--orphan">
+                            <div class="linked-info-label">
+                                <x-lucide-unlink class="lucid-icon" style="width:1rem;height:1rem;" />
+                                <span>Imagem sem vínculo</span>
+                            </div>
+                        </div>
+                    </template>
                 </div>
 
                 <!-- Campos -->
@@ -179,6 +228,33 @@
     .preview-placeholder span { font-size: 0.75rem; }
     .preview-size {
         margin-top: 0.5rem; font-size: 0.75rem; color: #6b7280; text-align: center;
+    }
+
+    .linked-info {
+        margin-top: 2rem;
+        padding: 0.65rem;
+        border: 1px solid var(--color-border);
+        background-color: var(--color-bg-dark);
+        color: var(--color-text);
+        border-radius: 8px;
+    }
+    .linked-info-label {
+        font-weight: 600;
+    }
+    .linked-info-label .lucid-icon {
+        margin-right: 0.5rem;
+    }
+    .linked-info-content {
+        margin-top: 0.75rem;
+    }
+    .linked-info-type {
+        font-weight: 600;
+        margin-right: 0.5rem;
+    }
+    .linked-info-title {
+        color: var(--color-text-muted);
+        text-decoration: none;
+        font-weight: 600;
     }
 
     /* ===== FIELDS ===== */

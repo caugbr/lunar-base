@@ -114,6 +114,55 @@ class Media extends Model
         return round($size, 2) . ' ' . $units[$unit];
     }
 
+    public function getMediaableLabelAttribute()
+    {
+        return $this->mediaable?->title
+            ?? $this->mediaable?->name
+            ?? 'Sem título';
+    }
+
+    /**
+     * Verifica se esta mídia é thumbnail de algum Post
+     */
+    public function postThumbnail()
+    {
+        return $this->hasOne(\App\Models\Post::class, 'thumbnail_id');
+    }
+
+    /**
+     * Verifica se esta mídia é thumbnail de alguma Page
+     */
+    public function pageThumbnail()
+    {
+        return $this->hasOne(\App\Models\Page::class, 'thumbnail_id');
+    }
+
+    /**
+     * Retorna info da publicação que usa esta mídia como thumbnail
+     */
+    public function getThumbnailOfAttribute()
+    {
+        // Verifica se é thumbnail de Post
+        if ($this->postThumbnail) {
+            return [
+                'type'  => 'Post',
+                'title' => $this->postThumbnail->title ?? 'Sem título',
+                'url'   => route('admin.posts.edit', $this->postThumbnail->id),
+            ];
+        }
+
+        // Verifica se é thumbnail de Page
+        if ($this->pageThumbnail) {
+            return [
+                'type'  => 'Page',
+                'title' => $this->pageThumbnail->title ?? 'Sem título',
+                'url'   => route('admin.pages.edit', $this->pageThumbnail->id),
+            ];
+        }
+
+        return null;
+    }
+
     /**
      * Deleção segura: remove o arquivo físico e todos os seus caches ao deletar o registro
      */

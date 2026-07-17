@@ -17,7 +17,7 @@
     <div class="hooks-explanation">
         <h3><x-lucide-info class="lucid-icon" /> O que sao Hooks?</h3>
         <p>
-            Hooks (ou Ganchos) são pontos de ancoragem posicionados nos arquivos de visão (Blade) do tema público ou do painel administrativo. Eles permitem que plugins injetem conteúdo HTML, estilos CSS, scripts JavaScript ou alterem variáveis de forma transparente e desacoplada. Se o hook inclui parâmetros, eles serão enviados para a função atrelada, como um array associativo.
+            Hooks (ou Ganchos) são pontos de ancoragem posicionados nos arquivos de visão (Blade) do tema público ou do painel administrativo. Eles permitem que plugins injetem conteúdo HTML, estilos CSS, scripts JavaScript ou alterem variáveis de forma transparente e desacoplada. Alguns hooks enviam parâmetros para contextualizar a função. Se há parâmetros no hook, eles serão enviados para a função atrelada como um array associativo.
         </p>
 
         <h4>Como Usar</h4>

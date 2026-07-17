@@ -7,7 +7,7 @@ use Illuminate\Support\Str;
 
 class LinkPluginAssets extends Command
 {
-    protected $signature = 'plugins:link
+    protected $signature = 'plugin:link
                             {plugin : Nome do plugin (ex: forms, calendar, billing)}
                             {--force : Remove o link existente antes de recriar}';
 

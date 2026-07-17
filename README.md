@@ -3,7 +3,7 @@
 O **Lunar Base** é um Starter Kit híbrido para Laravel, projetado com características de CMS modular. Ele gerencia seu comportamento operacional através de estruturas declarativas em arquivos de configuração locais, traits de expansão e helpers de contexto, oferecendo uma base sólida e flexível para o desenvolvimento de aplicações web robustas.
 
 <p align="center">
-  <img src="https://img.shields.io/badge/PHP-8.3+-777BB4?logo=php&logoColor=white" alt="PHP"> <img src="https://img.shields.io/badge/Laravel-12.x-FF2D20?logo=laravel&logoColor=white" alt="Laravel"> <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License"> <img src="https://img.shields.io/badge/CAPTCHA-Turnstile-FFA500?logo=cloudflare&logoColor=white" alt="Captcha"> <img src="https://img.shields.io/badge/2FA-TOTP-blue" alt="2FA">
+  <img src="https://img.shields.io/badge/PHP-8.3+-777BB4?logo=php&logoColor=white" alt="PHP"> <img src="https://img.shields.io/badge/Laravel-12.x-FF2D20?logo=laravel&logoColor=white" alt="Laravel"> <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License">
 </p>
 
 ## Características
@@ -19,7 +19,6 @@ O **Lunar Base** é um Starter Kit híbrido para Laravel, projetado com caracter
 
 *   **Gestão de Conteúdo Completa**: CRUDs robustos para Páginas estáticas e Posts cronológicos (Blog).
 *   **Mídia Polimórfica**: Biblioteca de mídia centralizada com redimensionamento automático e suporte a imagens (incluindo WebP/SVG) e documentos.
-*   **Formulários Dinâmicos**: Construtor de formulários via admin com renderização automática via Shortcodes.
 *   **Segurança Avançada**:
     *   Autenticação de Dois Fatores (2FA) nativa via TOTP (Google Authenticator/Authy).
     *   Integração opcional com Cloudflare Turnstile (CAPTCHA).
@@ -42,8 +41,8 @@ O **Lunar Base** é um Starter Kit híbrido para Laravel, projetado com caracter
 
 ## Módulos do Painel Administrativo
 
-| Módulo         | Descrição                                                                                                                               |
-| :------------- | :-------------------------------------------------------------------------------------------------------------------------------------- |
+| Módulo         | Descrição |
+| :------------- | :------------- |
 | **Dashboard**  | Ponto de ancoragem para futuros widgets, gráficos e relatórios gerenciais.                                                              |
 | **Páginas**    | CRUD para páginas estáticas/dinâmicas com suporte a thumbnails, seleção de layouts (`/config/pageTemplates.php`) e namespaces de URL. |
 | **Posts**      | Gerenciador de publicações cronológicas (blog/notícias) com agendamento, destaque (`featured`) e fixação (`sticky`).                    |

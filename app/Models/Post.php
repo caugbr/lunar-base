@@ -302,4 +302,9 @@ class Post extends Model
     {
         $this->meta()->where('meta_key', $key)->delete();
     }
+
+    public function adminEditUrl()
+    {
+        return route('admin.posts.edit', $this->id);
+    }
 }

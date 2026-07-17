@@ -9,7 +9,10 @@
 - Plugin Comments agora tem uma interface de moderação na admin
 
 ### Added
-- Descrição para todos os hooks do sistema adicionadas
+- Imagens vinculadas agora mostram a publicação relacionada no popup de edição
+- Thumbnails agora mostram a publicação relacionada no popup de edição
+- Plugin Populate adicionado
+- Descrição para todos os hooks do sistema adicionada à admin
 - Interface de hooks adicionado à admin
 - Plugin Banners adicionado
 - Agora getSettingsDefinitions, settingsAll e settingsGroup tem a opção de pegar apenas settings do sistema, evitando as injetadas por plugins e temas

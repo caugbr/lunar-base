@@ -57,6 +57,7 @@
     </div>
 </div>
 
+@once
 @push('styles')
 <style>
     [x-cloak] { display: none !important; }
@@ -184,3 +185,4 @@ function modalComponent(id) {
 }
 </script>
 @endpush
+@endonce

@@ -155,4 +155,9 @@ class Page extends Model
 
         return $term->pages()->where('status', 'published')->get();
     }
+
+    public function adminEditUrl()
+    {
+        return route('admin.pages.edit', $this->id);
+    }
 }

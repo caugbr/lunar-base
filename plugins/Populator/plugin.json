@@ -1,0 +1,6 @@
+{
+    "name": "Populator",
+    "description": "Gera conteudo de teste: usuarios, posts e paginas com imagens placeholder.",
+    "version": "1.0.0",
+    "provider": "Plugins\Populator\PopulatorServiceProvider"
+}

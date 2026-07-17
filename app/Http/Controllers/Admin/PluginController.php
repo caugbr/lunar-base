@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Plugin;
 use Illuminate\Support\Facades\File;
 
@@ -121,5 +120,26 @@ class PluginController extends Controller
 
         // Clean up database records for plugins that no longer exist physically
         Plugin::whereNotIn('folder_name', $scannedFolders)->delete();
+    }
+
+    /**
+     * Testa se um plugin está ativo
+     *
+     * @param string $name  Nome do plugin
+     * @return boolean
+     */
+    public function isPluginActive($name)
+    {
+        return Plugin::where('name', $name)->where('is_active', true)->exists();
+    }
+
+    /**
+     * Retorna um array com os nomes de todos os plugins ativos
+     *
+     * @return array
+     */
+    public function activePlugins(): array
+    {
+        return Plugin::where('is_active', true)->pluck('name')->toArray();
     }
 }

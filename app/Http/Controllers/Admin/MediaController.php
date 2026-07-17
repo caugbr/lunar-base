@@ -134,7 +134,8 @@ class MediaController extends Controller
      */
     public function data(Request $request)
     {
-        $query = Media::query();
+        // $query = Media::query()->with('mediaable');
+        $query = Media::with(['mediaable', 'postThumbnail', 'pageThumbnail']);
 
         // Filtro de vínculo
         if ($request->filled('linked')) {
@@ -191,6 +192,23 @@ class MediaController extends Controller
                     : $item->url; // Fallback para a original se não houver thumb
             }
 
+            // 👇 VÍNCULO 1: via mediaable (polimórfico original)
+            $mediaableInfo = null;
+            if ($item->mediaable) {
+                $mediaableInfo = [
+                    'type'  => class_basename($item->mediaable_type),
+                    'title' => $item->mediaable->title
+                            ?? $item->mediaable->name
+                            ?? 'Sem título',
+                    'url'   => method_exists($item->mediaable, 'adminEditUrl')
+                        ? $item->mediaable->adminEditUrl()
+                        : null,
+                ];
+            }
+
+            // 👇 VÍNCULO 2: via thumbnail_id
+            $thumbnailInfo = $item->thumbnail_of;
+
             return [
                 'id' => $item->id,
                 'name' => $item->name,
@@ -203,6 +221,8 @@ class MediaController extends Controller
                 'is_image' => $item->is_image,
                 'mime_type' => $item->mime_type,
                 'created_at' => $item->created_at->format('d/m/Y H:i'),
+                'linked_to'    => $mediaableInfo,   // 👈 vínculo polimórfico
+                'thumbnail_of' => $thumbnailInfo,   // 👈 vínculo como thumbnail
             ];
         });
 

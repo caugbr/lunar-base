@@ -7,7 +7,7 @@ use Illuminate\Support\Str;
 
 class LinkThemeAssets extends Command
 {
-    protected $signature = 'themes:link {theme : Nome do tema} {--force : Remove o link existente antes de recriar}';
+    protected $signature = 'theme:link {theme : Nome do tema} {--force : Remove o link existente antes de recriar}';
 
     protected $description = 'Cria link simbólico dos assets de um tema em public/themes/';
 
