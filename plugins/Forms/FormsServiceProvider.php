@@ -41,5 +41,13 @@ class FormsServiceProvider extends ServiceProvider
             'active' => 'admin.forms.*',
             'permission' => 'manage-pages',
         ], 'Taxonomias');
+
+        \App\Support\AdminMenu::addSubItem('Formulários', [
+            'label' => 'Novo Formulário',
+            'icon'  => 'form',
+            'route' => 'admin.forms.create',
+            'active' => 'admin.forms.create',
+            'role' => 'manage-pages',
+        ]);
     }
 }

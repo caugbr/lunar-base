@@ -13,9 +13,9 @@
 <div class="admin-card">
     <div class="admin-card-header">
         <h2><x-lucide-file-question-mark class="lucid-icon" /> Minhas Centrais de FAQ</h2>
-        <a href="#quick_create_form" class="admin-btn admin-btn-primary" onclick="event.preventDefault(); document.getElementById('quick_create_form').scrollIntoView({ behavior: 'smooth' })">
+        {{-- <a href="#quick_create_form" class="admin-btn admin-btn-primary" onclick="event.preventDefault(); document.getElementById('quick_create_form').scrollIntoView({ behavior: 'smooth' })">
             <x-lucide-plus class="lucid-icon" /> <span>Novo FAQ</span>
-        </a>
+        </a> --}}
     </div>
 
     {{-- Formulário Rápido de Criação --}}

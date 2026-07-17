@@ -157,12 +157,30 @@ return [
                     'route' => 'admin.taxonomies.index',
                     'active' => 'admin.taxonomies.*',
                     'permission' => 'manage-pages',
+                    'items' => [
+                        [
+                            'label'  => 'Nova Taxonomia',
+                            'icon'   => 'tag',
+                            'route'  => 'admin.taxonomies.create',
+                            'active' => 'admin.taxonomies.create',
+                            'permission' => 'manage-pages',
+                        ]
+                    ]
                 ],
                 [
                     'label' => 'Usuários',
                     'icon' => 'users',
                     'route' => 'admin.users.index',
                     'active' => 'admin.users.*',
+                    'items' => [
+                        [
+                            'label'  => 'Novo usuário',
+                            'icon'   => 'user-plus',
+                            'route'  => 'admin.users.create',
+                            'active' => 'admin.users.create',
+                            'role'   => 'admin',
+                        ]
+                    ]
                 ],
                 [
                     'label' => 'Plugins',

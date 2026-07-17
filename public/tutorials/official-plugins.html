@@ -23,7 +23,7 @@
             <ul>
                 <li><a href="#intro">Introdução</a></li>
                 <li><a href="#avatars">1. Avatars (Imagens de Perfil)</a></li>
-                <li><a href="#comments">2. Comments (Comentários Aninhados)</a></li>
+                <li><a href="#comments">2. Comments (Comentários nos posts)</a></li>
                 <li><a href="#faq">3. FAQ (Perguntas Frequentes)</a></li>
                 <li><a href="#forms">4. Forms (Construtor de Formulários)</a></li>
                 <li><a href="#maintenance">5. Maintenance (Modo de Manutenção)</a></li>
@@ -31,8 +31,8 @@
                 <li><a href="#menus">7. Menus (Construtor de Menus)</a></li>
                 <li><a href="#reactions">8. Reactions (Curtidas e Engajamento)</a></li>
                 <li><a href="#share">9. Share (Compartilhamento Social)</a></li>
-                <!-- <li><a href="#hooks">Hooks Disponíveis</a></li> -->
-                <!-- <li><a href="#shortcodes">Shortcodes</a></li> -->
+                <li><a href="#populator">10. Populator (Gerador de Conteúdo)</a></li>
+                <li><a href="#banners">11. Banners (Gerenciador de Publicidade)</a></li>
                 <li><a href="#best-practices">Boas Práticas</a></li>
             </ul>
         </nav>
@@ -130,7 +130,7 @@
 
         <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="comments">
-            <h2>2. Comments (Comentários Aninhados)</h2>
+            <h2>2. Comments (Comentários nos posts)</h2>
 
             <div class="intro">
                 <p>Sistema completo de comentários com respostas aninhadas, moderação de spam e integração com avatares.
@@ -467,333 +467,78 @@
         </section>
 
         <!-- ═══════════════════════════════════════════════════════════════ -->
-        <!-- <section id="hooks">
-            <h2>Hooks Disponíveis</h2>
+        <section id="populator">
+            <h2>10. Populator (Gerador de Conteúdo de Teste)</h2>
 
             <div class="intro">
-                <p>Hooks são pontos de injeção onde plugins inserem conteúdo automaticamente. Use o componente
-                    <code>&lt;x-hook&gt;</code> no seu tema.</p>
+                <p>Gera massa de dados fictícios de forma rápida para popular o site durante as etapas de desenvolvimento ou demonstração.</p>
             </div>
 
-            <h3>Sintaxe</h3>
-            <div class="example-box">
-                <h4>Hook action (auto-fechado)</h4>
-                <pre><code>&lt;x-hook name="post.footer_end" :params="['post' =&gt; $post]" /&gt;</code></pre>
+            <h3>Como funciona</h3>
+            <ul class="features">
+                <li><strong>Usuários:</strong> Cria contas com nomes realistas brasileiros, atribuições de papéis (roles) randômicas e gera uma senha temporária exibida em tela.</li>
+                <li><strong>Posts e Páginas:</strong> Cria registros contendo títulos, resumos e parágrafos estruturados de Lorem Ipsum em português, mesclando listas e subtítulos.</li>
+                <li><strong>Tratamento de Imagens:</strong> Baixa e registra imagens de destaque (thumbnails) ou arquivos de galeria localmente via Picsum, e injeta tags <code>&lt;figure&gt;</code> com links externos no HTML do conteúdo.</li>
+            </ul>
+
+            <h3>Como usar</h3>
+            <div class="step">
+                <h4><span class="step-number">1</span>Acesse Admin → Configurações → Populator</h4>
             </div>
-
-            <div class="example-box">
-                <h4>Hook filter (com fallback)</h4>
-                <pre><code>&lt;x-hook name="public.main_menu" desc="Menu principal"&gt;
-    &lt;!-- Menu padrão se nenhum plugin injetar --&gt;
-    @foreach($menu as $item)
-        &lt;a href="{{ $item['href'] }}"&gt;{{ $item['label'] }}&lt;/a&gt;
-    @endforeach
-&lt;/x-hook&gt;</code></pre>
+            <div class="step">
+                <h4><span class="step-number">2</span>Gerar Usuários primeiro</h4>
+                <p>Sempre crie usuários antes dos posts/páginas, pois as publicações exigem a vinculação de um autor existente.</p>
             </div>
-
-            <h3>Hooks de Admin</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Hook</th>
-                        <th>Arquivo</th>
-                        <th>Plugin</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><code>admin.header_user_avatar</code></td>
-                        <td>layout.blade.php</td>
-                        <td>Avatars</td>
-                    </tr>
-                    <tr>
-                        <td><code>profile.after_card</code></td>
-                        <td>profile.blade.php</td>
-                        <td>Avatars</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <h3>Hooks Públicos Gerais</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Hook</th>
-                        <th>Arquivo</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><code>main.head</code></td>
-                        <td>site-layout.blade.php</td>
-                    </tr>
-                    <tr>
-                        <td><code>main.before_content</code></td>
-                        <td>site-layout.blade.php</td>
-                    </tr>
-                    <tr>
-                        <td><code>main.after_content</code></td>
-                        <td>site-layout.blade.php</td>
-                    </tr>
-                    <tr>
-                        <td><code>public.main_menu</code></td>
-                        <td>header.blade.php</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <h3>Hooks de Páginas</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Hook</th>
-                        <th>Arquivo</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><code>page.before_content</code></td>
-                        <td>default.blade.php</td>
-                    </tr>
-                    <tr>
-                        <td><code>page.after_content</code></td>
-                        <td>default.blade.php</td>
-                    </tr>
-                    <tr>
-                        <td><code>page.after_footer</code></td>
-                        <td>default.blade.php</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <h3>Hooks de Posts</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Hook</th>
-                        <th>Arquivo</th>
-                        <th>Plugin</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><code>post.meta_end</code></td>
-                        <td>default.blade.php</td>
-                        <td>Reactions</td>
-                    </tr>
-                    <tr>
-                        <td><code>post.before_content</code></td>
-                        <td>default.blade.php</td>
-                        <td>—</td>
-                    </tr>
-                    <tr>
-                        <td><code>post.after_content</code></td>
-                        <td>default.blade.php</td>
-                        <td>Share</td>
-                    </tr>
-                    <tr>
-                        <td><code>post.footer_end</code></td>
-                        <td>default.blade.php</td>
-                        <td>Comments</td>
-                    </tr>
-                    <tr>
-                        <td><code>post.after_footer</code></td>
-                        <td>default.blade.php</td>
-                        <td>—</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="step">
+                <h4><span class="step-number">3</span>Configurar quantidade e mídia</h4>
+                <p>Escolha o número de itens, status (Publicado/Rascunho) e quantidade máxima de imagens internas ou de galeria.</p>
+            </div>
 
             <div class="warning">
-                <strong>Nota:</strong> o sistema ainda não possui uma listagem automática de hooks disponíveis. Esta é
-                uma limitação conhecida.
+                <strong>Aviso:</strong> A geração de posts/páginas com thumbnails ou imagens de galeria realiza requisições externas para baixar os arquivos de teste, o que pode demorar alguns segundos conforme sua conexão.
             </div>
         </section>
 
-        < !-- ═══════════════════════════════════════════════════════════════ -- >
-        <section id="hook-discovery">
-            <h2>Descoberta Automática de Hooks</h2>
-
-            <div class="intro">
-                <p>O Lunar Base possui um sistema inteligente que <strong>varre automaticamente</strong> todos os
-                    arquivos Blade do tema, plugins e core em busca de declarações <code>&lt;x-hook&gt;</code>, criando
-                    um registro centralizado de todos os pontos de injeção disponíveis.</p>
-            </div>
-
-            <h3>Como Funciona</h3>
-            <p>A classe <code>HookDiscoverer</code> realiza uma busca recursiva em três setores:</p>
-
-            <table>
-                <thead>
-                    <tr>
-                        <th>Setor</th>
-                        <th>Diretório</th>
-                        <th>Prioridade</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>Tema</strong></td>
-                        <td><code>themes/</code></td>
-                        <td>1ª (Recomendado)</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Plugins</strong></td>
-                        <td><code>plugins/</code></td>
-                        <td>2ª</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Sistema</strong></td>
-                        <td><code>resources/views/</code></td>
-                        <td>3ª (Core)</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <h3>Tipos de Hooks Detectados</h3>
-            <p>O sistema identifica automaticamente o tipo de hook baseado na estrutura:</p>
-
-            <div class="example-box">
-                <h4>Hook Action (auto-fechado)</h4>
-                <pre><code>&lt;x-hook name="post.footer_end" :params="['post' =&gt; $post]" /&gt;
-
-// Tipo detectado: <strong>action</strong> (sem conteúdo interno)</code></pre>
-            </div>
-
-            <div class="example-box">
-                <h4>Hook Filter (com fallback)</h4>
-                <pre><code>&lt;x-hook name="public.main_menu" desc="Menu principal"&gt;
-    &lt;!-- Menu padrão como fallback --&gt;
-    @foreach($menu as $item)
-        &lt;a href="{{ $item['href'] }}"&gt;{{ $item['label'] }}&lt;/a&gt;
-    @endforeach
-&lt;/x-hook&gt;
-
-// Tipo detectado: <strong>filter</strong> (com conteúdo de fallback)</code></pre>
-            </div>
-
-            <h3>Funções Helper Disponíveis</h3>
-
-            <div class="example-box">
-                <h4>Listar todos os hooks descobertos</h4>
-                <pre><code>// Retorna array com todos os hooks
-$hooks = get_discovered_hooks();
-
-// Filtrar por setor
-$themeHooks = get_discovered_hooks('theme');
-$pluginHooks = get_discovered_hooks('plugin');</code></pre>
-            </div>
-
-            <div class="example-box">
-                <h4>Gerar dropdown de seleção (Admin)</h4>
-                <pre><code>// No painel administrativo, ao criar um menu:
-{!! render_hooks_select([
-    'name'        =&gt; 'hook',
-    'id'          =&gt; 'menu_hook',
-    'selected'    =&gt; $menu-&gt;hook ?? null,
-    'placeholder' =&gt; '-- Selecione um ponto de exibição --'
-]) !!}
-
-// Gera um &lt;select&gt; agrupado por setor com:
-// - [filtro] ou [ação] indicando o tipo
-// - Descrição do hook (se existir)
-// - Data-params com os parâmetros disponíveis</code></pre>
-            </div>
-
-            <h3>Estrutura dos Dados</h3>
-            <p>Cada hook descoberto retorna as seguintes informações:</p>
-
-            <pre><code>[
-    'name'   =&gt; 'post.footer_end',
-    'desc'   =&gt; 'Final do rodapé do post',
-    'params' =&gt; "['post' =&gt; $post]",
-    'type'   =&gt; 'action', // ou 'filter'
-    'sector' =&gt; 'theme',  // ou 'plugin', 'system'
-    'file'   =&gt; '/themes/meu-tema/default.blade.php'
-]</code></pre>
-
-            <h3>Cache e Performance</h3>
-            <div class="tip">
-                <strong>Cache automático:</strong> A varredura é cacheada indefinidamente para performance. O cache é
-                limpo automaticamente quando um tema ou plugin é ativado/desativado.
-            </div>
-
-            <p>Para forçar a atualização manual (útil em desenvolvimento):</p>
-
-            <div class="example-box">
-                <pre><code>// Limpar cache de hooks descobertos
-\HookDiscoverer::clearCache();
-
-// Forçar refresh na próxima chamada
-$hooks = get_discovered_hooks('all', true);</code></pre>
-            </div>
-
-            <h3>Integração com o Plugin Menus</h3>
-            <p>O plugin <strong>Menus</strong> utiliza o <code>render_hooks_select()</code> para permitir que o
-                administrador associe um menu a qualquer hook descoberto no sistema. Quando um menu é associado a um
-                hook, ele é automaticamente injetado naquele ponto durante o carregamento da página.</p>
-
-            <div class="warning">
-                <strong>Limitação atual:</strong> Ainda não existe uma página administrativa dedicada para visualizar
-                todos os hooks descobertos. Use <code>get_discovered_hooks()</code> no tinker ou crie uma rota
-                temporária para inspecionar durante o desenvolvimento do tema.
-            </div>
-        </section> -->
-
         <!-- ═══════════════════════════════════════════════════════════════ -->
-        <!-- <section id="shortcodes">
-            <h2>Shortcodes</h2>
+        <section id="banners">
+            <h2>11. Banners (Gerenciador de Publicidade)</h2>
 
             <div class="intro">
-                <p>Tags que você cola no conteúdo de posts/páginas para exibir recursos dinâmicos.</p>
+                <p>Gerencie campanhas internas ou externas de publicidade visual com suporte a múltiplos métodos de exibição e controle analítico de cliques.</p>
             </div>
 
-            <h3>Lista completa</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Shortcode</th>
-                        <th>Plugin</th>
-                        <th>Descrição</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><code>[faq slug="..."]</code></td>
-                        <td>FAQ</td>
-                        <td>Bloco de perguntas frequentes</td>
-                    </tr>
-                    <tr>
-                        <td><code>[form slug="..."]</code></td>
-                        <td>Forms</td>
-                        <td>Formulário de contato</td>
-                    </tr>
-                    <tr>
-                        <td><code>[map id="..."]</code></td>
-                        <td>Maps</td>
-                        <td>Mapa interativo</td>
-                    </tr>
-                    <tr>
-                        <td><code>[map slug="..."]</code></td>
-                        <td>Maps</td>
-                        <td>Mapa por slug</td>
-                    </tr>
-                    <tr>
-                        <td><code>[list-locations id="..."]</code></td>
-                        <td>Maps</td>
-                        <td>Lista de locais como cards</td>
-                    </tr>
-                </tbody>
-            </table>
+            <h3>Como funciona</h3>
+            <ul class="features">
+                <li>Exibição flexível (Shortcodes, Hooks dinâmicos ou Helper Global).</li>
+                <li>Rastreamento detalhado de cliques salvando Timestamp, endereço de IP e User Agent.</li>
+                <li>Redirecionamento HTTP 301 intermediário para contabilização segura.</li>
+                <li>Painel analítico integrado com gráficos diários e históricos recentes de cliques.</li>
+            </ul>
 
-            <h3>Exemplos</h3>
+            <h3>Métodos de Exibição</h3>
+
             <div class="example-box">
-                <pre><code>[faq slug="duvidas-gerais"]
-[form slug="contato"]
-[map id="1"]
-[list-locations id="1"]</code></pre>
+                <h4>1. Shortcode (Conteúdo de Posts/Páginas)</h4>
+                <pre><code>[banner slug="promocao-verao"]
+[banner slug="banner-lateral" class="rounded-lg shadow-lg"]</code></pre>
+                <small>Nota: A propriedade <code>class</code> opcional sobrescreve a classe padrão definida no painel.</small>
             </div>
-        </section> -->
+
+            <div class="example-box">
+                <h4>2. Helper PHP (Arquivos do Tema)</h4>
+                <pre><code>{!! renderBanner('promocao-verao') !!}
+{!! renderBanner('promocao-verao', 'custom-class-here') !!}</code></pre>
+            </div>
+
+            <div class="example-box">
+                <h4>3. Injeção Automática via Hook</h4>
+                <p>Selecione um ponto de exibição (Hook) cadastrado no tema durante o cadastro do banner. Ele será injetado de forma dinâmica sem necessidade de alteração de código.</p>
+            </div>
+
+            <div class="tip">
+                <strong>Otimização:</strong> Sempre dê preferência por imagens no formato WebP ou JPG otimizados no gerenciador de mídia para não prejudicar o carregamento do tema.
+            </div>
+        </section>
 
         <!-- ══════════════════════════════════════════════════════════════ -->
         <section id="best-practices">
@@ -807,21 +552,29 @@ $hooks = get_discovered_hooks('all', true);</code></pre>
             </div>
 
             <h3>Verificando se plugin está ativo</h3>
+
             <div class="example-box">
-                <h4>Verificando view</h4>
+                <h4>Verificando se está ativo</h4>
+                <pre><code>@if(\App\Models\Plugin::isPluginActive('Comments'))
+  {!! view('comments::comments-area', ['post' =&gt; $post])-&gt;render() !!}
+@endif</code></pre>
+            </div>
+
+            <div class="example-box">
+                <h4>Verificando a view</h4>
                 <pre><code>@if(view()-&gt;exists('comments::comments-area'))
   {!! view('comments::comments-area', ['post' =&gt; $post])-&gt;render() !!}
 @endif</code></pre>
             </div>
 
             <div class="example-box">
-                <h4>Verificando classe</h4>
+                <h4>Verificando a classe</h4>
                 <pre><code>@if(class_exists('\Plugins\Avatars\Helpers\AvatarHelper'))
   &lt;img src="{{ \Plugins\Avatars\Helpers\AvatarHelper::getUrl($user) }}"&gt;
 @endif</code></pre>
             </div>
 
-            <h3>Preferindo hooks</h3>
+            <h3>Prefira usar hooks</h3>
             <div class="tip">
                 <strong>Recomendado:</strong> use hooks para integração automática. Se o plugin for desativado, o hook
                 não renderiza nada — sem quebrar o tema.

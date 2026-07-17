@@ -57,6 +57,14 @@ class MapsServiceProvider extends ServiceProvider
             'active' => 'admin.maps.*',
             'permission' => 'manage-pages',
         ], 'Taxonomias');
+
+        \App\Support\AdminMenu::addSubItem('Mapas', [
+            'label' => 'Novo Mapa',
+            'icon'  => 'map-plus',
+            'route' => 'admin.maps.create',
+            'active' => 'admin.maps.create',
+            'role' => 'admin',
+        ]);
     }
 
     protected function registerSettings(): void
