@@ -28,7 +28,7 @@ class TaxonomyController extends Controller
             'hierarchical' => 'boolean',
         ]);
 
-        $validated['hierarchical'] = $request->has('hierarchical');
+        $validated['hierarchical'] = $request->boolean('hierarchical');
 
         Taxonomy::create($validated);
 
@@ -50,7 +50,7 @@ class TaxonomyController extends Controller
             'hierarchical' => 'boolean',
         ]);
 
-        $validated['hierarchical'] = $request->has('hierarchical');
+        $validated['hierarchical'] = $request->boolean('hierarchical');
 
         $taxonomy->update($validated);
 

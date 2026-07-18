@@ -32,9 +32,13 @@
                 <td><code>{{ $taxonomy->slug }}</code></td>
                 <td class="text-center">
                     @if($taxonomy->hierarchical)
-                        <span class="admin-badge admin-badge-active">✅ Sim</span>
+                        <span class="admin-badge admin-badge-active">
+                            <x-lucide-check class="lucid-icon" /> Sim
+                        </span>
                     @else
-                        <span class="admin-badge admin-badge-inactive">❌ Não</span>
+                        <span class="admin-badge admin-badge-inactive">
+                            <x-lucide-x class="lucid-icon" /> Não
+                        </span>
                     @endif
                 </td>
                 <td>{{ $taxonomy->terms()->count() }}</td>

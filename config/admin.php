@@ -160,9 +160,16 @@ return [
                     'items' => [
                         [
                             'label'  => 'Nova Taxonomia',
-                            'icon'   => 'tag',
+                            'icon'   => 'tag-plus',
                             'route'  => 'admin.taxonomies.create',
                             'active' => 'admin.taxonomies.create',
+                            'permission' => 'manage-pages',
+                        ],
+                        [
+                            'label'  => 'Novo Termo',
+                            'icon'   => 'tag-plus',
+                            'route'  => 'admin.terms.create',
+                            'active' => 'admin.terms.create',
                             'permission' => 'manage-pages',
                         ]
                     ]
