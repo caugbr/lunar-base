@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Lunar Apps</title>
+    <title>Lunar Base</title>
 </head>
 <body style="font-family: 'Inter', 'Segoe UI', Helvetica, Arial, sans-serif; background-color: #0b0f19; margin: 0; padding: 40px 20px; -webkit-font-smoothing: antialiased;">
 
@@ -42,7 +42,7 @@
         <tr>
             <td style="background-color: #0b0f19; padding: 30px 40px; text-align: center; font-size: 13px; color: #6b7280; border-top: 1px solid #1f2937;">
                 Esta é uma notificação automática do sistema sobre os seus serviços.<br>
-                <span style="color: #4b5563; display: inline-block; margin-top: 10px;">© {{ date('Y') }} Lunar Apps</span>
+                <span style="color: #4b5563; display: inline-block; margin-top: 10px;">© {{ date('Y') }} Lunar Base</span>
             </td>
         </tr>
     </table>

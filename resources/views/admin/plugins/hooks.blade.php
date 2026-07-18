@@ -11,7 +11,7 @@
 @section('content')
 <div class="admin-card">
     <div class="admin-card-header">
-        <h2><x-lucide-fishing-hook class="lucid-icon" /> Hooks do sistema</h2>
+        <h2><x-lucide-fishing-hook class="lucid-icon" /> Referência de hooks</h2>
     </div>
 
     <div class="hooks-explanation">

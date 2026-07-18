@@ -8,6 +8,11 @@
         document.cookie = 'XSRF-TOKEN=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     </script>
     <title>Sessão expirada - {{ setting('general.site_name') }}</title>
+    @php
+    $skin = config('admin.skin');
+    $varsFile = $skin === 'default' ? 'css/admin/vars.css' : "css/admin/skins/vars-{$skin}.css";
+    @endphp
+    <link rel="stylesheet" href="{{ asset($varsFile) }}">
     <link rel="stylesheet" href="{{ asset('css/errors.css') }}">
 </head>
 <body>

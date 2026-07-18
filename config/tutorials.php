@@ -1,5 +1,6 @@
 <?php
-// config/tutorials.php
+// Usado pelo comando tutorials:update para atualizar
+// os tutoriais com versão e data a cada mudança
 
 $meses = [
     'January'   => 'Janeiro',
@@ -16,7 +17,7 @@ $meses = [
     'December'  => 'Dezembro',
 ];
 $nameVersion = config('app.name', 'Lunar Base') . ' v' . config('app.version', '1.0.0');
-$footerText = 'Última atualização: ' . $meses[date('F')] . ' ' . date('Y') .
+$footerText = 'Última atualização: ' . $meses[date('F')] . '/' . date('Y') .
               ' | &copy; ' . date('Y') . ' ' . config('app.author');
 
 return [

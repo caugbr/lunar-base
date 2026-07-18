@@ -14,10 +14,10 @@
                 {{-- Tabela do E-mail (Largura fixa para compatibilidade) --}}
                 <table width="600" cellpadding="0" cellspacing="0" border="0" style="background-color: #ffffff; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden;">
 
-                    {{-- Cabeçalho (Padrão Lunar Apps) --}}
+                    {{-- Cabeçalho (Padrão Lunar Base) --}}
                     <tr>
                         <td style="padding: 20px; background-color: #1f2937; color: #ffffff; text-align: center;">
-                            <h1 style="margin: 0; font-size: 24px; font-weight: bold;">Lunar Apps</h1>
+                            <h1 style="margin: 0; font-size: 24px; font-weight: bold;">Lunar Base</h1>
                             <p style="margin: 5px 0 0; font-size: 14px; color: #9ca3af;">Componentes Astrológicos</p>
                         </td>
                     </tr>
@@ -63,11 +63,11 @@
                         </td>
                     </tr>
 
-                    {{-- Rodapé (Padrão Lunar Apps) --}}
+                    {{-- Rodapé (Padrão Lunar Base) --}}
                     <tr>
                         <td style="padding: 20px; background-color: #f9fafb; text-align: center; border-top: 1px solid #e5e7eb;">
                             <p style="margin: 0; font-size: 12px; color: #6b7280;">
-                                Esta é uma notificação automática do sistema sobre os seus serviços. &copy; {{ date('Y') }} Lunar Apps
+                                Esta é uma notificação automática do sistema sobre os seus serviços. &copy; {{ date('Y') }} Lunar Base
                             </p>
                         </td>
                     </tr>
