@@ -1,0 +1,6 @@
+{
+    "name": "Galleries",
+    "description": "Exibe galerias de imagens vinculadas ao post via shortcode [gallery].",
+    "version": "1.0.0",
+    "provider": "Plugins\\Galleries\\GalleriesServiceProvider"
+}

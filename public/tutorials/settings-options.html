@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configurações e Opções Dinâmicas - Lunar Base</title>
+    <title>Configurações e Opções Dinâmicas - Lunar Base v1.0.0</title>
     <link rel="stylesheet" href="tutorials.css">
 </head>
 <body>
     <header>
         <h1>Settings & Options</h1>
-        <p>Lunar Base - Persistência Leve e Formulários Declarativos</p>
+        <p data-subtitle>Lunar Base v1.0.0 - Persistência Leve e Formulários Declarativos</p>
     </header>
 
     <div class="container">
@@ -57,7 +57,7 @@ Settings::addGroup('meu_grupo', [
 ], 'meu_grupo');</pre>
 
             <h4>3. Recuperando os Valores no Front-end:</h4>
-            <pre><code class="code-label">BLADE</code>@if(setting('meu_grupo.meu_modulo_ativo', true))
+            <pre><code class="code-label">BLADE</code>@if(setting('meu_grupo.meu_modulo_ativo', false))
     &lt;div&gt;O módulo está ativo!&lt;/div&gt;
 @endif</pre>
         </section>
@@ -76,12 +76,12 @@ Settings::addGroup('meu_grupo', [
                 <tbody>
                     <tr>
                         <td><code>'text'</code></td>
-                        <td>—</td>
+                        <td>-</td>
                         <td>Input de texto convencional de linha única.</td>
                     </tr>
                     <tr>
                         <td><code>'textarea'</code></td>
-                        <td>—</td>
+                        <td>-</td>
                         <td>Área de texto de múltiplas linhas para descrições.</td>
                     </tr>
                     <tr>
@@ -106,7 +106,7 @@ Settings::addGroup('meu_grupo', [
                     </tr>
                     <tr>
                         <td><code>'subtitle'</code></td>
-                        <td>—</td>
+                        <td>-</td>
                         <td>Separador estético visual para agrupar campos.</td>
                     </tr>
                 </tbody>
@@ -168,6 +168,11 @@ $faqs = getPrefixedOptions('faq_'); // Retorna todas as chaves que começam com 
                 </tbody>
             </table>
         </section>
+
+        <footer>
+            <p><strong>Configurações e Opções Dinâmicas - Lunar Base v1.0.0</strong></p>
+            <p data-footer-info>Última atualização: Julho 2026 | &copy; 2026 Cau Guanabara</p>
+        </footer>
     </div>
 </body>
 </html>

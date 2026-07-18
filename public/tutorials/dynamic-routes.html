@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rotas Dinâmicas para Plugins - Lunar Base</title>
+    <title>Rotas Dinâmicas para Plugins - Lunar Base v1.0.0</title>
     <link rel="stylesheet" href="tutorials.css">
 </head>
 <body>
     <header>
         <h1>Rotas Dinâmicas</h1>
-        <p>Lunar Base — Registro e Resolução de URLs em Tempo de Execução para Plugins</p>
+        <p data-subtitle>Lunar Base v1.0.0 - Registro e Resolução de URLs em Tempo de Execução para Plugins</p>
     </header>
 
     <div class="container">
@@ -50,7 +50,7 @@
             <div class="info">
                 <strong>🔧 Estendendo para N segmentos:</strong>
                 <p>É possível remover essa limitação adicionando uma rota catch-all no <strong>final</strong> do <code>routes/web.php</code>:</p>
-                <pre><code class="code-label">PHP</code>// routes/web.php — adicionar no final, após todas as outras rotas
+                <pre><code class="code-label">PHP</code>// routes/web.php - adicionar no final, após todas as outras rotas
 Route::get('/{any}', [RouteOrchestratorController::class, 'handleCatchAll'])
     ->where('any', '.*')
     ->name('dynamic.catch.all');</pre>
@@ -86,9 +86,9 @@ DynamicRoutes::register('GET', 'galeria/{slug}', function ($slug) {
                 <strong>Assinatura do método:</strong>
                 <code>DynamicRoutes::register(string $method, string $path, callable $callback)</code>
                 <ul>
-                    <li><code>$method</code> — Método HTTP: <code>GET</code>, <code>POST</code>, <code>PUT</code>, <code>DELETE</code></li>
-                    <li><code>$path</code> — Caminho relativo, sem barra inicial. Use <code>{nome}</code> para parâmetros.</li>
-                    <li><code>$callback</code> — Função ou callable que receberá os parâmetros capturados na ordem em que aparecem na URL.</li>
+                    <li><code>$method</code> - Método HTTP: <code>GET</code>, <code>POST</code>, <code>PUT</code>, <code>DELETE</code></li>
+                    <li><code>$path</code> - Caminho relativo, sem barra inicial. Use <code>{nome}</code> para parâmetros.</li>
+                    <li><code>$callback</code> - Função ou callable que receberá os parâmetros capturados na ordem em que aparecem na URL.</li>
                 </ul>
             </div>
         </section>
@@ -126,7 +126,7 @@ Route::get('/{base}', [...'handleOneSegment']);</pre>
                     </ul>
                 </li>
                 <li>
-                    <strong>3. 404 — Nada Encontrado</strong>
+                    <strong>3. 404 - Nada Encontrado</strong>
                     <p>Se nenhuma rota dinâmica corresponder, o orquestrador dispara <code>abort(404)</code>.</p>
                 </li>
             </ol>
@@ -156,7 +156,7 @@ DynamicRoutes::register('GET', 'eventos/{ano}/{slug}', function ($ano, $slug) {
                 <strong>Limitações dos parâmetros:</strong>
                 <ul>
                     <li>Cada <code>{param}</code> captura apenas <strong>um segmento</strong> (não permite barras)</li>
-                    <li>Use nomes descritivos — eles não afetam o funcionamento, apenas a legibilidade</li>
+                    <li>Use nomes descritivos - eles não afetam o funcionamento, apenas a legibilidade</li>
                     <li>Não há validação automática de tipo; faça no callback (ex: <code>is_numeric($ano)</code>)</li>
                 </ul>
             </div>
@@ -167,14 +167,14 @@ DynamicRoutes::register('GET', 'eventos/{ano}/{slug}', function ($ano, $slug) {
 
             <h3>Ordem de Resolução (do mais prioritário ao menos)</h3>
             <ol>
-                <li><strong>Rotas estáticas do Laravel</strong> — <code>/</code>, <code>/docs</code>, <code>/admin/*</code>, etc.</li>
-                <li><strong>Blog base</strong> — valor de <code>setting('navigation.blog_base')</code></li>
-                <li><strong>Posts do blog</strong> — <code>/{blog_base}/{slug}</code></li>
-                <li><strong>Páginas com base fixa</strong> — <code>/{pages_base}/{slug}</code></li>
-                <li><strong>Páginas com namespace (sem base)</strong> — <code>/{namespace}/{slug}</code> <em>(somente se <code>pages_base</code> for null)</em></li>
-                <li><strong>Páginas com base + namespace</strong> — <code>/{pages_base}/{namespace}/{slug}</code></li>
-                <li><strong>Taxonomias do blog</strong> — <code>/{blog_base}/{taxonomia}/{termo}</code></li>
-                <li><strong>Rotas dinâmicas de plugins</strong> — na ordem de registro</li>
+                <li><strong>Rotas estáticas do Laravel</strong> - <code>/</code>, <code>/docs</code>, <code>/admin/*</code>, etc.</li>
+                <li><strong>Blog base</strong> - valor de <code>setting('navigation.blog_base')</code></li>
+                <li><strong>Posts do blog</strong> - <code>/{blog_base}/{slug}</code></li>
+                <li><strong>Páginas com base fixa</strong> - <code>/{pages_base}/{slug}</code></li>
+                <li><strong>Páginas com namespace (sem base)</strong> - <code>/{namespace}/{slug}</code> <em>(somente se <code>pages_base</code> for null)</em></li>
+                <li><strong>Páginas com base + namespace</strong> - <code>/{pages_base}/{namespace}/{slug}</code></li>
+                <li><strong>Taxonomias do blog</strong> - <code>/{blog_base}/{taxonomia}/{termo}</code></li>
+                <li><strong>Rotas dinâmicas de plugins</strong> - na ordem de registro</li>
             </ol>
 
             <div class="warning">
@@ -288,6 +288,11 @@ $postsBase = setting('navigation.posts_base', 'post');
                 </li>
             </ul>
         </section>
+
+        <footer>
+            <p><strong>Rotas Dinâmicas - Lunar Base v1.0.0</strong></p>
+            <p data-footer-info>Última atualização: Julho 2026 | &copy; 2026 Cau Guanabara</p>
+        </footer>
     </div>
 </body>
 </html>

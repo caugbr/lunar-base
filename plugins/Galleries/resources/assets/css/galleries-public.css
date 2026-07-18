@@ -1,0 +1,265 @@
+/* === Galleries Plugin - Público === */
+
+.gallery {
+    margin: 1.5rem 0;
+    --gallery-cols: 3;
+    --gallery-gap: 8px;
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--gallery-cols), 1fr);
+    gap: var(--gallery-gap);
+}
+
+/* Proporções */
+.gallery-grid[data-ratio="square"] .gallery-image { aspect-ratio: 1 / 1; }
+.gallery-grid[data-ratio="4/3"] .gallery-image   { aspect-ratio: 4 / 3; }
+.gallery-grid[data-ratio="16/9"] .gallery-image  { aspect-ratio: 16 / 9; }
+.gallery-grid[data-ratio="auto"] .gallery-image  { aspect-ratio: auto; }
+
+.gallery-item {
+    position: relative;
+    overflow: hidden;
+}
+
+.gallery-link {
+    display: block;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.gallery-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.gallery-rounded .gallery-image {
+    border-radius: 8px;
+}
+
+/* Hover */
+.gallery-link:hover .gallery-image {
+    transform: scale(1.05);
+    filter: brightness(0.85);
+}
+
+.gallery-zoom-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    pointer-events: none;
+    color: #1f2937;
+}
+
+.gallery-zoom-icon svg {
+    width: 20px;
+    height: 20px;
+}
+
+.gallery-link:hover .gallery-zoom-icon {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+/* Legenda */
+.gallery-caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 8px 12px;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.75));
+    color: #fff;
+    font-size: 0.8125rem;
+    line-height: 1.3;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    text-align: left;
+}
+
+.gallery-link:hover .gallery-caption {
+    opacity: 1;
+}
+
+/* === LIGHTBOX === */
+.galleries-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(0, 0, 0, 0.92);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+}
+
+.galleries-lightbox.is-open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.galleries-lightbox img {
+    max-width: 90vw;
+    max-height: 85vh;
+    object-fit: contain;
+    border-radius: 4px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    transform: scale(0.95);
+    transition: transform 0.25s ease;
+}
+
+.galleries-lightbox.is-open img {
+    transform: scale(1);
+}
+
+.galleries-lightbox-caption {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #fff;
+    font-size: 0.95rem;
+    text-align: center;
+    max-width: 80%;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+.galleries-lightbox-close,
+.galleries-lightbox-prev,
+.galleries-lightbox-next {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease;
+}
+
+.galleries-lightbox-close:hover,
+.galleries-lightbox-prev:hover,
+.galleries-lightbox-next:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.galleries-lightbox-close { top: 1.5rem; right: 1.5rem; }
+.galleries-lightbox-prev  { left: 1.5rem; top: 50%; transform: translateY(-50%); }
+.galleries-lightbox-next  { right: 1.5rem; top: 50%; transform: translateY(-50%); }
+
+.galleries-lightbox-close svg,
+.galleries-lightbox-prev svg,
+.galleries-lightbox-next svg {
+    width: 22px;
+    height: 22px;
+}
+
+.galleries-lightbox-counter {
+    position: absolute;
+    top: 1.75rem;
+    left: 1.5rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.875rem;
+    font-variant-numeric: tabular-nums;
+}
+
+/* === LAYOUT MASONRY === */
+.gallery-masonry {
+    /* column-count e column-gap são injetados via inline style na view */
+}
+.gallery-masonry-item {
+    transition: transform 0.3s ease;
+}
+.gallery-masonry-item:hover {
+    transform: translateY(-4px);
+}
+
+/* === LAYOUT CAROUSEL (Base) === */
+.gallery-carousel {
+    position: relative;
+    overflow: hidden;
+    padding: 0 40px; /* Espaço para os botões */
+}
+.gallery-carousel-track {
+    display: flex;
+    gap: var(--gallery-gap, 8px);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+    padding-bottom: 8px;
+}
+.gallery-carousel-track::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+}
+.gallery-carousel-item {
+    flex: 0 0 auto;
+    width: 300px; /* Largura fixa por item no carousel */
+    scroll-snap-align: start;
+}
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255,255,255,0.9);
+    border: 1px solid #ddd;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.carousel-btn.prev { left: 0; }
+.carousel-btn.next { right: 0; }
+
+/* === Responsivo === */
+@media (max-width: 768px) {
+    .gallery-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .galleries-lightbox-close,
+    .galleries-lightbox-prev,
+    .galleries-lightbox-next {
+        width: 38px;
+        height: 38px;
+    }
+}
+
+@media (max-width: 480px) {
+    .gallery-grid {
+        grid-template-columns: 1fr;
+    }
+}

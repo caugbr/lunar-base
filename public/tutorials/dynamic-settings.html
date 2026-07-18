@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configurações no Tema - Lunar Base</title>
+    <title>Configurações Dinâmicas - Lunar Base v1.0.0</title>
     <link rel="stylesheet" href="tutorials.css">
 </head>
 <body>
     <header>
-        <h1>Configurações no Tema</h1>
-        <p>Lunar Base — Injetando Opções de Configuração no Painel Admin</p>
+        <h1>Configurações Dinâmicas</h1>
+        <p data-subtitle>Lunar Base v1.0.0 - Injetando Opções de Configuração no Painel Admin</p>
     </header>
 
     <div class="container">
@@ -66,9 +66,9 @@ public function boot(): void
             <div class="info">
                 <strong>Parâmetros do <code>Settings::add()</code>:</strong>
                 <ul>
-                    <li><code>$campoArray</code> — Array com as propriedades do campo (key, type, label, etc.)</li>
-                    <li><code>$group</code> — Chave do grupo onde injetar (ex: <code>'general'</code>, <code>'reading'</code>)</li>
-                    <li><code>$afterLabel</code> — (Opcional) Rótulo âncora para posicionar o campo após um elemento existente</li>
+                    <li><code>$campoArray</code> - Array com as propriedades do campo (key, type, label, etc.)</li>
+                    <li><code>$group</code> - Chave do grupo onde injetar (ex: <code>'general'</code>, <code>'reading'</code>)</li>
+                    <li><code>$afterLabel</code> - (Opcional) Rótulo âncora para posicionar o campo após um elemento existente</li>
                 </ul>
             </div>
         </section>
@@ -117,6 +117,11 @@ public function boot(): void
                 <li><strong>Não abuse:</strong> Injete apenas configurações cosméticas essenciais. Configurações complexas devem ter sua própria página no Admin.</li>
             </ul>
         </section>
+
+        <footer>
+            <p><strong>Configurações Dinâmicas - Lunar Base v1.0.0</strong></p>
+            <p data-footer-info>Última atualização: Julho 2026 | &copy; 2026 Cau Guanabara</p>
+        </footer>
     </div>
 </body>
 </html>

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manual de Plugins Oficiais - Lunar Base</title>
+    <title>Manual de Plugins - Lunar Base v1.0.0</title>
     <link rel="stylesheet" href="tutorials.css">
 </head>
 
@@ -12,7 +12,7 @@
 
     <header>
         <h1>Plugins Incluídos no Sistema</h1>
-        <p>Lunar Base — Guia de uso e integração dos módulos nativos</p>
+        <p data-subtitle>Lunar Base v1.0.0 - Guia de uso e integração dos módulos nativos</p>
     </header>
 
     <div class="container">
@@ -23,16 +23,17 @@
             <ul>
                 <li><a href="#intro">Introdução</a></li>
                 <li><a href="#avatars">1. Avatars (Imagens de Perfil)</a></li>
-                <li><a href="#comments">2. Comments (Comentários nos posts)</a></li>
-                <li><a href="#faq">3. FAQ (Perguntas Frequentes)</a></li>
-                <li><a href="#forms">4. Forms (Construtor de Formulários)</a></li>
-                <li><a href="#maintenance">5. Maintenance (Modo de Manutenção)</a></li>
-                <li><a href="#maps">6. Maps (Mapas Interativos)</a></li>
-                <li><a href="#menus">7. Menus (Construtor de Menus)</a></li>
-                <li><a href="#reactions">8. Reactions (Curtidas e Engajamento)</a></li>
-                <li><a href="#share">9. Share (Compartilhamento Social)</a></li>
-                <li><a href="#populator">10. Populator (Gerador de Conteúdo)</a></li>
-                <li><a href="#banners">11. Banners (Gerenciador de Publicidade)</a></li>
+                <li><a href="#banners">2. Banners (Gerenciador de Publicidade)</a></li>
+                <li><a href="#comments">3. Comments (Comentários nos posts)</a></li>
+                <li><a href="#faq">4. FAQ (Perguntas Frequentes)</a></li>
+                <li><a href="#forms">5. Forms (Construtor de Formulários)</a></li>
+                <li><a href="#galleries">6. Galleries (Galerias de Imagens)</a></li>
+                <li><a href="#maintenance">7. Maintenance (Modo de Manutenção)</a></li>
+                <li><a href="#maps">8. Maps (Mapas Interativos)</a></li>
+                <li><a href="#menus">9. Menus (Construtor de Menus)</a></li>
+                <li><a href="#populator">10. Populator (Gerador de Conteúdo de Teste)</a></li>
+                <li><a href="#reactions">11. Reactions (Curtidas e Engajamento)</a></li>
+                <li><a href="#share">12. Share (Compartilhamento Social)</a></li>
                 <li><a href="#best-practices">Boas Práticas</a></li>
             </ul>
         </nav>
@@ -123,14 +124,55 @@
 
             <h3>Hooks utilizados</h3>
             <ul>
-                <li><code>admin.header_user_avatar</code> — Header do painel</li>
-                <li><code>profile.after_card</code> — Página de perfil</li>
+                <li><code>admin.header_user_avatar</code> - Header do painel</li>
+                <li><code>profile.after_card</code> - Página de perfil</li>
             </ul>
         </section>
 
         <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="banners">
+            <h2>2. Banners (Gerenciador de Publicidade)</h2>
+
+            <div class="intro">
+                <p>Gerencie campanhas internas ou externas de publicidade visual com suporte a múltiplos métodos de exibição e controle analítico de cliques.</p>
+            </div>
+
+            <h3>Como funciona</h3>
+            <ul class="features">
+                <li>Exibição flexível (Shortcodes, Hooks dinâmicos ou Helper Global).</li>
+                <li>Rastreamento detalhado de cliques salvando Timestamp, endereço de IP e User Agent.</li>
+                <li>Redirecionamento HTTP 301 intermediário para contabilização segura.</li>
+                <li>Painel analítico integrado com gráficos diários e históricos recentes de cliques.</li>
+            </ul>
+
+            <h3>Métodos de Exibição</h3>
+
+            <div class="example-box">
+                <h4>1. Shortcode (Conteúdo de Posts/Páginas)</h4>
+                <pre><code>[banner slug="promocao-verao"]
+[banner slug="banner-lateral" class="rounded-lg shadow-lg"]</code></pre>
+                <small>Nota: A propriedade <code>class</code> opcional sobrescreve a classe padrão definida no painel.</small>
+            </div>
+
+            <div class="example-box">
+                <h4>2. Helper PHP (Arquivos do Tema)</h4>
+                <pre><code>{!! renderBanner('promocao-verao') !!}
+{!! renderBanner('promocao-verao', 'custom-class-here') !!}</code></pre>
+            </div>
+
+            <div class="example-box">
+                <h4>3. Injeção Automática via Hook</h4>
+                <p>Selecione um ponto de exibição (Hook) cadastrado no tema durante o cadastro do banner. Ele será injetado de forma dinâmica sem necessidade de alteração de código.</p>
+            </div>
+
+            <div class="tip">
+                <strong>Otimização:</strong> Sempre dê preferência por imagens no formato WebP ou JPG otimizados no gerenciador de mídia para não prejudicar o carregamento do tema.
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="comments">
-            <h2>2. Comments (Comentários nos posts)</h2>
+            <h2>3. Comments (Comentários nos posts)</h2>
 
             <div class="intro">
                 <p>Sistema completo de comentários com respostas aninhadas, moderação de spam e integração com avatares.
@@ -161,7 +203,7 @@
 
         <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="faq">
-            <h2>3. FAQ (Perguntas Frequentes)</h2>
+            <h2>4. FAQ (Perguntas Frequentes)</h2>
 
             <div class="intro">
                 <p>Crie blocos de perguntas e respostas em formato de acordeão, usando elementos nativos HTML5.</p>
@@ -191,13 +233,13 @@
 
             <div class="tip">
                 <strong>Acessibilidade:</strong> usa <code>&lt;details&gt;</code> e <code>&lt;summary&gt;</code> do
-                HTML5 — funciona sem JavaScript!
+                HTML5 - funciona sem JavaScript!
             </div>
         </section>
 
         <!-- ══════════════════════════════════════════════════════════════ -->
         <section id="forms">
-            <h2>4. Forms (Construtor de Formulários)</h2>
+            <h2>5. Forms (Construtor de Formulários)</h2>
 
             <div class="intro">
                 <p>Crie formulários personalizados para capturar leads e mensagens. Cada envio pode ser notificado por
@@ -277,8 +319,144 @@
         </section>
 
         <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="galleries">
+            <h2>6. Galleries (Galerias de Imagens)</h2>
+
+            <div class="intro">
+                <p>Exiba galerias de imagens vinculadas aos seus posts ou páginas de forma responsiva utilizando o shortcode nativo <code>[gallery]</code>.</p>
+            </div>
+
+            <h3>Como funciona</h3>
+            <p>O plugin identifica automaticamente as mídias vinculadas ao post ou página atual (via relação polimórfica com a tabela de mídias). Ele carrega de forma otimizada os estilos CSS e comportamentos JS somente sob demanda, quando a galeria é renderizada em tela.</p>
+
+            <ul class="features">
+                <li><strong>Três formatos de visualização:</strong> Grid de colunas estático, carrossel dinâmico (com suporte a setas e navegação por teclado) e Masonry (ajuste de proporções variadas, estilo Pinterest).</li>
+                <li><strong>Lightbox integrado:</strong> Visualizador de tela cheia programado em vanilla JS, permitindo avançar, retroceder e fechar com atalhos de teclado (setas e <code>Esc</code>) e navegação simplificada.</li>
+                <li><strong>Gestão de dimensões:</strong> Escolha entre diferentes resoluções de imagens dependendo de sua necessidade estética e de desempenho.</li>
+                <li><strong>Parâmetros visuais:</strong> Definição inline de espaçamentos, cantos arredondados, legendas e proporções de tela.</li>
+            </ul>
+
+            <h3>Atributos do Shortcode</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Atributo</th>
+                        <th>Valores Aceitos</th>
+                        <th>Padrão</th>
+                        <th>Descrição</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>layout</code></td>
+                        <td><code>grid</code>, <code>masonry</code>, <code>carousel</code></td>
+                        <td><code>grid</code></td>
+                        <td>Formato de estruturação das imagens.</td>
+                    </tr>
+                    <tr>
+                        <td><code>ids</code></td>
+                        <td>Lista de IDs numéricos separados por vírgula</td>
+                        <td>—</td>
+                        <td>Renderiza imagens específicas diretamente do banco de dados (ignora o vínculo com o post atual).</td>
+                    </tr>
+                    <tr>
+                        <td><code>columns</code> / <code>cols</code></td>
+                        <td><code>1</code> a <code>6</code></td>
+                        <td><code>3</code></td>
+                        <td>Quantidade de colunas de imagens exibidas paralelamente (para layouts <code>grid</code> e <code>masonry</code>).</td>
+                    </tr>
+                    <tr>
+                        <td><code>size</code></td>
+                        <td><code>thumb</code>, <code>medium</code>, <code>large</code>, <code>original</code></td>
+                        <td><code>medium</code></td>
+                        <td>Resolução das imagens exibidas (Thumb: miniatura 300x300px; Medium: versão redimensionada de 800px).</td>
+                    </tr>
+                    <tr>
+                        <td><code>limit</code></td>
+                        <td>Número inteiro positivo</td>
+                        <td>—</td>
+                        <td>Restringe a quantidade máxima de itens carregados na galeria.</td>
+                    </tr>
+                    <tr>
+                        <td><code>orderby</code></td>
+                        <td><code>id</code>, <code>name</code>, <code>created_at</code></td>
+                        <td><code>created_at</code></td>
+                        <td>Critério para ordenação das mídias.</td>
+                    </tr>
+                    <tr>
+                        <td><code>order</code></td>
+                        <td><code>asc</code>, <code>desc</code>, <code>rand</code></td>
+                        <td><code>asc</code></td>
+                        <td>Sentido de exibição da galeria. Utilize <code>rand</code> para carregar imagens aleatórias a cada visita.</td>
+                    </tr>
+                    <tr>
+                        <td><code>lightbox</code></td>
+                        <td><code>true</code>, <code>false</code></td>
+                        <td><code>true</code></td>
+                        <td>Ativa ou desativa a ampliação e visualização de fotos em modal ampliado.</td>
+                    </tr>
+                    <tr>
+                        <td><code>caption</code></td>
+                        <td><code>true</code>, <code>false</code></td>
+                        <td><code>true</code></td>
+                        <td>Mostra legendas e títulos cadastrados sobre as imagens durante eventos de hover.</td>
+                    </tr>
+                    <tr>
+                        <td><code>gap</code></td>
+                        <td>Número inteiro (pixels)</td>
+                        <td><code>8</code></td>
+                        <td>Espaçamento interno de distância entre os cartões de imagem.</td>
+                    </tr>
+                    <tr>
+                        <td><code>ratio</code></td>
+                        <td><code>square</code>, <code>4/3</code>, <code>16/9</code>, <code>auto</code></td>
+                        <td><code>square</code></td>
+                        <td>Configura o aspect-ratio fixo para as imagens no layout <code>grid</code>.</td>
+                    </tr>
+                    <tr>
+                        <td><code>rounded</code></td>
+                        <td><code>true</code>, <code>false</code></td>
+                        <td><code>true</code></td>
+                        <td>Aplica raios de borda arredondada (border-radius de 8px) nas mídias.</td>
+                    </tr>
+                    <tr>
+                        <td><code>exclude_thumbnail</code></td>
+                        <td><code>true</code>, <code>false</code></td>
+                        <td><code>true</code></td>
+                        <td>Se definido como <code>true</code>, impede a duplicação da imagem principal de destaque do post dentro do corpo da galeria.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Exemplos de Configuração</h3>
+            <div class="example-box">
+                <h4>Grid Padrão de 3 Colunas</h4>
+                <pre><code>[gallery]</code></pre>
+            </div>
+
+            <div class="example-box">
+                <h4>Galeria de Alturas Variadas (Pinterest style)</h4>
+                <pre><code>[gallery layout="masonry" columns="3" gap="12"]</code></pre>
+            </div>
+
+            <div class="example-box">
+                <h4>Carrossel de Slides com Imagens Médias</h4>
+                <pre><code>[gallery layout="carousel" size="medium"]</code></pre>
+            </div>
+
+            <div class="example-box">
+                <h4>Galeria com Seleção Manual de IDs e Proporção Cinema</h4>
+                <pre><code>[gallery ids="4,12,18,31" ratio="16/9" rounded="false"]</code></pre>
+            </div>
+
+            <div class="tip">
+                <strong>Recomendação de Performance:</strong> Dê preferência ao tamanho <code>size="medium"</code> na maioria das galerias. Ele entrega boa visualização em telas de computadores e smartphones, sem comprometer a transferência de banda e performance de carregamento da página.
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="maintenance">
-            <h2>5. Maintenance (Modo de Manutenção)</h2>
+            <h2>7. Maintenance (Modo de Manutenção)</h2>
 
             <div class="intro">
                 <p>Bloqueia o acesso público ao site exibindo uma página de "em manutenção".</p>
@@ -304,13 +482,13 @@
             </ul>
 
             <div class="tip">
-                <strong>SEO:</strong> retorna status HTTP 503 — o Google não indexa a página de manutenção.
+                <strong>SEO:</strong> retorna status HTTP 503 - o Google não indexa a página de manutenção.
             </div>
         </section>
 
         <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="maps">
-            <h2>6. Maps (Mapas Interativos)</h2>
+            <h2>8. Maps (Mapas Interativos)</h2>
 
             <div class="intro">
                 <p>Crie mapas OpenStreetMap com marcadores personalizados e áreas destacadas.</p>
@@ -344,7 +522,7 @@
 
         <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="menus">
-            <h2>7. Menus (Construtor de Menus)</h2>
+            <h2>9. Menus (Construtor de Menus)</h2>
 
             <div class="intro">
                 <p>Crie menus de navegação hierárquicos com sub-menus (dropdowns).</p>
@@ -384,8 +562,41 @@
         </section>
 
         <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="populator">
+            <h2>10. Populator (Gerador de Conteúdo de Teste)</h2>
+
+            <div class="intro">
+                <p>Gera massa de dados fictícios de forma rápida para popular o site durante as etapas de desenvolvimento ou demonstração.</p>
+            </div>
+
+            <h3>Como funciona</h3>
+            <ul class="features">
+                <li><strong>Usuários:</strong> Cria contas com nomes realistas brasileiros, atribuições de papéis (roles) randômicas e gera uma senha temporária exibida em tela.</li>
+                <li><strong>Posts e Páginas:</strong> Cria registros contendo títulos, resumos e parágrafos estruturados de Lorem Ipsum em português, mesclando listas e subtítulos.</li>
+                <li><strong>Tratamento de Imagens:</strong> Baixa e registra imagens de destaque (thumbnails) ou arquivos de galeria localmente via Picsum, e injeta tags <code>&lt;figure&gt;</code> com links externos no HTML do conteúdo.</li>
+            </ul>
+
+            <h3>Como usar</h3>
+            <div class="step">
+                <h4><span class="step-number">1</span>Acesse Admin → Configurações → Populator</h4>
+            </div>
+            <div class="step">
+                <h4><span class="step-number">2</span>Gerar Usuários primeiro</h4>
+                <p>Sempre crie usuários antes dos posts/páginas, pois as publicações exigem a vinculação de um autor existente.</p>
+            </div>
+            <div class="step">
+                <h4><span class="step-number">3</span>Configurar quantidade e mídia</h4>
+                <p>Escolha o número de itens, status (Publicado/Rascunho) e quantidade máxima de imagens internas ou de galeria.</p>
+            </div>
+
+            <div class="warning">
+                <strong>Aviso:</strong> A geração de posts/páginas com thumbnails ou imagens de galeria realiza requisições externas para baixar os arquivos de teste, o que pode demorar alguns segundos conforme sua conexão.
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="reactions">
-            <h2>8. Reactions (Curtidas)</h2>
+            <h2>11. Reactions (Curtidas e Engajamento)</h2>
 
             <div class="intro">
                 <p>Adiciona botões de reação (curtir/não curtir) ao final dos posts.</p>
@@ -414,7 +625,7 @@
 
         <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="share">
-            <h2>9. Share (Compartilhamento)</h2>
+            <h2>12. Share (Compartilhamento Social)</h2>
 
             <div class="intro">
                 <p>Botões de compartilhamento nas redes sociais ao final dos posts.</p>
@@ -466,80 +677,6 @@
             <pre><code>post.after_content</code></pre>
         </section>
 
-        <!-- ═══════════════════════════════════════════════════════════════ -->
-        <section id="populator">
-            <h2>10. Populator (Gerador de Conteúdo de Teste)</h2>
-
-            <div class="intro">
-                <p>Gera massa de dados fictícios de forma rápida para popular o site durante as etapas de desenvolvimento ou demonstração.</p>
-            </div>
-
-            <h3>Como funciona</h3>
-            <ul class="features">
-                <li><strong>Usuários:</strong> Cria contas com nomes realistas brasileiros, atribuições de papéis (roles) randômicas e gera uma senha temporária exibida em tela.</li>
-                <li><strong>Posts e Páginas:</strong> Cria registros contendo títulos, resumos e parágrafos estruturados de Lorem Ipsum em português, mesclando listas e subtítulos.</li>
-                <li><strong>Tratamento de Imagens:</strong> Baixa e registra imagens de destaque (thumbnails) ou arquivos de galeria localmente via Picsum, e injeta tags <code>&lt;figure&gt;</code> com links externos no HTML do conteúdo.</li>
-            </ul>
-
-            <h3>Como usar</h3>
-            <div class="step">
-                <h4><span class="step-number">1</span>Acesse Admin → Configurações → Populator</h4>
-            </div>
-            <div class="step">
-                <h4><span class="step-number">2</span>Gerar Usuários primeiro</h4>
-                <p>Sempre crie usuários antes dos posts/páginas, pois as publicações exigem a vinculação de um autor existente.</p>
-            </div>
-            <div class="step">
-                <h4><span class="step-number">3</span>Configurar quantidade e mídia</h4>
-                <p>Escolha o número de itens, status (Publicado/Rascunho) e quantidade máxima de imagens internas ou de galeria.</p>
-            </div>
-
-            <div class="warning">
-                <strong>Aviso:</strong> A geração de posts/páginas com thumbnails ou imagens de galeria realiza requisições externas para baixar os arquivos de teste, o que pode demorar alguns segundos conforme sua conexão.
-            </div>
-        </section>
-
-        <!-- ═══════════════════════════════════════════════════════════════ -->
-        <section id="banners">
-            <h2>11. Banners (Gerenciador de Publicidade)</h2>
-
-            <div class="intro">
-                <p>Gerencie campanhas internas ou externas de publicidade visual com suporte a múltiplos métodos de exibição e controle analítico de cliques.</p>
-            </div>
-
-            <h3>Como funciona</h3>
-            <ul class="features">
-                <li>Exibição flexível (Shortcodes, Hooks dinâmicos ou Helper Global).</li>
-                <li>Rastreamento detalhado de cliques salvando Timestamp, endereço de IP e User Agent.</li>
-                <li>Redirecionamento HTTP 301 intermediário para contabilização segura.</li>
-                <li>Painel analítico integrado com gráficos diários e históricos recentes de cliques.</li>
-            </ul>
-
-            <h3>Métodos de Exibição</h3>
-
-            <div class="example-box">
-                <h4>1. Shortcode (Conteúdo de Posts/Páginas)</h4>
-                <pre><code>[banner slug="promocao-verao"]
-[banner slug="banner-lateral" class="rounded-lg shadow-lg"]</code></pre>
-                <small>Nota: A propriedade <code>class</code> opcional sobrescreve a classe padrão definida no painel.</small>
-            </div>
-
-            <div class="example-box">
-                <h4>2. Helper PHP (Arquivos do Tema)</h4>
-                <pre><code>{!! renderBanner('promocao-verao') !!}
-{!! renderBanner('promocao-verao', 'custom-class-here') !!}</code></pre>
-            </div>
-
-            <div class="example-box">
-                <h4>3. Injeção Automática via Hook</h4>
-                <p>Selecione um ponto de exibição (Hook) cadastrado no tema durante o cadastro do banner. Ele será injetado de forma dinâmica sem necessidade de alteração de código.</p>
-            </div>
-
-            <div class="tip">
-                <strong>Otimização:</strong> Sempre dê preferência por imagens no formato WebP ou JPG otimizados no gerenciador de mídia para não prejudicar o carregamento do tema.
-            </div>
-        </section>
-
         <!-- ══════════════════════════════════════════════════════════════ -->
         <section id="best-practices">
             <h2>Boas Práticas</h2>
@@ -577,15 +714,14 @@
             <h3>Prefira usar hooks</h3>
             <div class="tip">
                 <strong>Recomendado:</strong> use hooks para integração automática. Se o plugin for desativado, o hook
-                não renderiza nada — sem quebrar o tema.
+                não renderiza nada - sem quebrar o tema.
             </div>
         </section>
 
         <footer>
-            <p><strong>Manual de Plugins Oficiais — Lunar Base</strong></p>
-            <p>Versão 2.0 | Última atualização: Julho de 2026</p>
+            <p><strong>Manual de Plugins Oficiais - Lunar Base v1.0.0</strong></p>
+            <p data-footer-info>Última atualização: Julho 2026 | &copy; 2026 Cau Guanabara</p>
         </footer>
-
     </div>
 
 </body>
