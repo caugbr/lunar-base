@@ -9,6 +9,8 @@
 - Plugin Comments agora tem uma interface de moderação na admin
 
 ### Added
+- Plugin Populator
+- Plugin Galleries
 - Imagens vinculadas agora mostram a publicação relacionada no popup de edição
 - Thumbnails agora mostram a publicação relacionada no popup de edição
 - Plugin Populate adicionado
