@@ -45,28 +45,45 @@ class BannersServiceProvider extends ServiceProvider
         }
 
         // 4. REGISTRO DO SHORTCODE
-        ContentHelper::registerShortcode('banner', function($attributes, $content) {
-            $slug = $attributes['slug'] ?? null;
-            $class = $attributes['class'] ?? null;
+        ContentHelper::registerShortcode(
+            'banner',
+            function($attributes, $content) {
+                $slug = $attributes['slug'] ?? null;
+                $class = $attributes['class'] ?? null;
 
-            if (!$slug) {
-                return '<!-- Erro: [banner] requer atributo "slug" -->';
-            }
+                if (!$slug) {
+                    return '<!-- Erro: [banner] requer atributo "slug" -->';
+                }
 
-            $banner = Banner::where('slug', $slug)
-                ->where('is_active', true)
-                ->with('image')
-                ->first();
+                $banner = Banner::where('slug', $slug)
+                    ->where('is_active', true)
+                    ->with('image')
+                    ->first();
 
-            if (!$banner) {
-                return '';
-            }
+                if (!$banner) {
+                    return '';
+                }
 
-            return view('banners::public.banner', [
-                'banner' => $banner,
-                'class' => $class ?? $banner->class,
-            ])->render();
-        });
+                return view('banners::public.banner', [
+                    'banner' => $banner,
+                    'class' => $class ?? $banner->class,
+                ])->render();
+            },
+            'Renderiza um banner registrado no sistema',
+            '[banner slug="my-banner" class="css-class"]',
+            [
+                'slug' =>[
+                    'label'       => 'Slug registrado para o banner',
+                    'type'        => 'text',
+                    'placeholder' => 'Slug do banner',
+                ],
+                'class' =>[
+                    'label'       => 'Classe CSS para o banner',
+                    'type'        => 'text',
+                    'placeholder' => 'Classe CSS',
+                ],
+            ]
+        );
 
         // 5. Helper global
         if (!function_exists('renderBanner')) {

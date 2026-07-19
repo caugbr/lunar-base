@@ -21,17 +21,137 @@ class GalleriesServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__ . '/resources/views', 'galleries');
 
         // 2. Registra o shortcode [gallery]
-        ContentHelper::registerShortcode('gallery', function ($attributes, $content) {
-            return $this->renderGallery($attributes);
-        });
-
-        // 3. Menu admin (só para a ajuda)
-        // \App\Support\AdminMenu::add([
-        //     'label' => 'Galleries',
-        //     'icon'  => 'images',
-        //     'route' => '#',
-        //     'role'  => 'admin',
-        // ], 'Plugins');
+        // ContentHelper::registerShortcode('gallery', function ($attributes, $content) {
+        //     return $this->renderGallery($attributes);
+        // });
+        // 2. Registra o shortcode [gallery] com a documentação e o esquema de atributos completo
+        ContentHelper::registerShortcode(
+            'gallery',
+            function ($attributes, $content) {
+                return $this->renderGallery($attributes);
+            },
+            'Renderiza uma galeria de fotos dinâmica (a partir de IDs específicos ou vinculadas ao post atual).',
+            '[gallery layout="grid" columns="3" size="medium" lightbox="true" ratio="square"]',
+            [
+                'ids' => [
+                    'label'       => 'IDs das Imagens',
+                    'type'        => 'text',
+                    'placeholder' => 'Ex: 12,15,48 (Deixe em branco para usar fotos do post)',
+                ],
+                'layout' => [
+                    'label'   => 'Layout da Galeria',
+                    'type'    => 'select',
+                    'options' => [
+                        'grid'     => 'Grade (Grid)',
+                        'masonry'  => 'Mosaico (Masonry)',
+                        'carousel' => 'Carrossel (Slider)'
+                    ],
+                    'default' => 'grid'
+                ],
+                'columns' => [
+                    'label'   => 'Colunas (Grades e Mosaicos)',
+                    'type'    => 'select',
+                    'options' => [
+                        '1' => '1 Coluna',
+                        '2' => '2 Colunas',
+                        '3' => '3 Colunas',
+                        '4' => '4 Colunas',
+                        '5' => '5 Colunas',
+                        '6' => '6 Colunas'
+                    ],
+                    'default' => '3'
+                ],
+                'size' => [
+                    'label'   => 'Tamanho das Imagens',
+                    'type'    => 'select',
+                    'options' => [
+                        'thumb'    => 'Miniatura (Thumb)',
+                        'medium'   => 'Médio (Medium)',
+                        'large'    => 'Grande (Large)',
+                        'original' => 'Tamanho Original (Full)'
+                    ],
+                    'default' => 'medium'
+                ],
+                'ratio' => [
+                    'label'   => 'Proporção do Corte (Aspect Ratio)',
+                    'type'    => 'select',
+                    'options' => [
+                        'square' => 'Quadrado (1:1)',
+                        '4/3'    => 'Proporção 4:3',
+                        '16/9'   => 'Proporção 16:9',
+                        'auto'   => 'Automático (Manter proporção original)'
+                    ],
+                    'default' => 'square'
+                ],
+                'gap' => [
+                    'label'       => 'Espaçamento das Fotos (em px)',
+                    'type'        => 'number',
+                    'placeholder' => 'Ex: 8',
+                    'default'     => '8'
+                ],
+                'lightbox' => [
+                    'label'   => 'Ativar efeito Lightbox (Ampliar ao clicar)',
+                    'type'    => 'select',
+                    'options' => [
+                        'true'  => 'Sim',
+                        'false' => 'Não'
+                    ],
+                    'default' => 'true'
+                ],
+                'caption' => [
+                    'label'   => 'Exibir legenda das fotos',
+                    'type'    => 'select',
+                    'options' => [
+                        'true'  => 'Sim',
+                        'false' => 'Não'
+                    ],
+                    'default' => 'true'
+                ],
+                'rounded' => [
+                    'label'   => 'Cantos arredondados nas imagens',
+                    'type'    => 'select',
+                    'options' => [
+                        'true'  => 'Sim',
+                        'false' => 'Não'
+                    ],
+                    'default' => 'true'
+                ],
+                'exclude_thumbnail' => [
+                    'label'   => 'Excluir imagem destacada (Capa do post)',
+                    'type'    => 'select',
+                    'options' => [
+                        'true'  => 'Sim',
+                        'false' => 'Não'
+                    ],
+                    'default' => 'true'
+                ],
+                'orderby' => [
+                    'label'   => 'Ordenar fotos por',
+                    'type'    => 'select',
+                    'options' => [
+                        'created_at' => 'Data de Cadastro',
+                        'name'       => 'Nome do Arquivo',
+                        'id'         => 'ID da Mídia'
+                    ],
+                    'default' => 'created_at'
+                ],
+                'order' => [
+                    'label'   => 'Direção da ordenação',
+                    'type'    => 'select',
+                    'options' => [
+                        'asc'  => 'Crescente (ASC)',
+                        'desc' => 'Decrescente (DESC)',
+                        'rand' => 'Aleatório (RAND)'
+                    ],
+                    'default' => 'asc'
+                ],
+                'limit' => [
+                    'label'       => 'Limite de fotos (Opcional)',
+                    'type'        => 'number',
+                    'placeholder' => 'Vazio para ilimitado'
+                ]
+            ]
+        );
     }
 
     /**
@@ -81,33 +201,6 @@ class GalleriesServiceProvider extends ServiceProvider
         ])->render();
     }
 
-    /**
-     * Tenta descobrir o Post/Page atual via rota, view compartilhada ou fallback
-     */
-    // protected function resolveCurrentModel()
-    // {
-    //     // Tenta via rota (show do post/page)
-    //     $route = request()->route();
-    //     // print "route<pre>";
-    //     // print_r($route); die;
-    //     if ($route) {
-    //         foreach (['post', 'page'] as $param) {
-    //             $value = $route->parameter($param);
-    //             if ($value instanceof \Illuminate\Database\Eloquent\Model) {
-    //                 return $value;
-    //             }
-    //         }
-    //     }
-
-    //     // Tenta via view compartilhada
-    //     foreach (['post', 'page'] as $var) {
-    //         if (view()->shared($var)) {
-    //             return view()->shared($var);
-    //         }
-    //     }
-
-    //     return null;
-    // }
     /**
      * Tenta descobrir o Post/Page atual de forma robusta (por tipo, não por nome)
      */

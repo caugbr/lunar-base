@@ -21,30 +21,42 @@ class FAQServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__ . '/resources/views', 'faq');
 
         // 2. Registra o Shortcode [faq slug="seu-slug"]
-        ContentHelper::registerShortcode('faq', function($attributes, $content) {
-            $slug = $attributes['slug'] ?? null;
-            if (!$slug) return '';
+        ContentHelper::registerShortcode(
+            'faq',
+            function($attributes, $content) {
+                $slug = $attributes['slug'] ?? null;
+                if (!$slug) return '';
 
-            // Busca a option específica do banco
-            $optionData = getOption("faq_{$slug}");
-            if (!$optionData) {
+                // Busca a option específica do banco
+                $optionData = getOption("faq_{$slug}");
+                if (!$optionData) {
+                    return '';
+                }
+
+                // Deserializa os dados salvos em JSON
+                $faq = is_string($optionData) ? json_decode($optionData, true) : $optionData;
+
+                if (empty($faq) || empty($faq['items'])) {
+                    return '';
+                }
+
+                // Renderiza a view pública em acordeão
+                if (view()->exists('faq::public.show')) {
+                    return view('faq::public.show', compact('faq'))->render();
+                }
+
                 return '';
-            }
-
-            // Deserializa os dados salvos em JSON
-            $faq = is_string($optionData) ? json_decode($optionData, true) : $optionData;
-
-            if (empty($faq) || empty($faq['items'])) {
-                return '';
-            }
-
-            // Renderiza a view pública em acordeão
-            if (view()->exists('faq::public.show')) {
-                return view('faq::public.show', compact('faq'))->render();
-            }
-
-            return '';
-        });
+            },
+            'Renderiza um set de perguntas e respostas',
+            '[faq slug="meu-faq"]',
+            [
+                'slug' =>[
+                    'label'       => 'Slug registrado para o FAQ',
+                    'type'        => 'text',
+                    'placeholder' => 'Slug do FAQ',
+                ],
+            ]
+        );
 
         // 3. Injeta a aba FAQ no painel administrativo lateral
         \App\Support\AdminMenu::add([

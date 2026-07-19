@@ -53,23 +53,7 @@
 
 namespace App\Traits;
 
-use App\Models\Form;
-
 trait Shortcodes {
-    /**
-     * Renderiza: [form slug="contato"]
-     */
-    // private static function renderForm($attributes, $content = null)
-    // {
-    //     $slug = $attributes['slug'] ?? null;
-    //     if (!$slug) return '';
-
-    //     $form = Form::active()->where('slug', $slug)->first();
-    //     if (!$form) return '';
-
-    //     return view('components.shortcodes.form', ['form' => $form])->render();
-    // }
-
     /**
      * Renderiza: [script src="..." id="..." ...][/script]
      */
@@ -100,5 +84,17 @@ trait Shortcodes {
         return view('components.shortcodes.link', [
             'attr' => $attributes
         ])->render();
+    }
+
+    /**
+     * Renderiza: [embed url="..."] ou [embed] url [/embed]
+     */
+    private static function renderEmbed($attributes, $content = null)
+    {
+        // Captura a URL independente do formato (como atributo ou entre as tags)
+        $url = trim($attributes['url'] ?? $attributes['href'] ?? $content ?? '');
+
+        // Delega todo o processamento e tratamento de cache para a classe de Suporte
+        return \App\Support\EmbedService::resolve($url);
     }
 }

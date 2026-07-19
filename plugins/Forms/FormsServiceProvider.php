@@ -26,13 +26,25 @@ class FormsServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
         $this->loadViewsFrom(__DIR__ . '/resources/views', 'forms');
 
-        ContentHelper::registerShortcode('form', function($attributes, $content) {
-            $slug = $attributes['slug'] ?? null;
-            if (!$slug) return '';
+        ContentHelper::registerShortcode(
+            'form',
+            function($attributes, $content) {
+                $slug = $attributes['slug'] ?? null;
+                if (!$slug) return '';
 
-            $form = Form::active()->where('slug', $slug)->first();
-            return $form ? view('forms::public.embed', ['form' => $form])->render() : '';
-        });
+                $form = Form::active()->where('slug', $slug)->first();
+                return $form ? view('forms::public.embed', ['form' => $form])->render() : '';
+            },
+            'Renderiza um formulário',
+            '[form slug="form1"]',
+            [
+                'slug' =>[
+                    'label'       => 'Slug registrado para o formulário',
+                    'type'        => 'text',
+                    'placeholder' => 'Slug do formulário',
+                ],
+            ]
+        );
 
         \App\Support\AdminMenu::add([
             'label' => 'Formulários',

@@ -19,6 +19,7 @@
             <ul>
                 <li><a href="#intro">O que são Shortcodes</a></li>
                 <li><a href="#registro">Registrando um Shortcode</a></li>
+                <li><a href="#schema">Esquema de Atributos (Schema)</a></li>
                 <li><a href="#sintaxe">Sintaxe de Uso no Painel</a></li>
                 <li><a href="#exemplo">Exemplo Prático (FAQ)</a></li>
                 <li><a href="#boas-praticas">Remoção de Tags de Parágrafo</a></li>
@@ -34,27 +35,54 @@
 
         <section id="registro">
             <h2>Registrando um Shortcode</h2>
-            <p>Utilize a classe helper <code>ContentHelper::registerShortcode()</code> dentro do método <code>boot()</code> do Service Provider do seu plugin para cadastrar a tag:</p>
+            <p>Utilize a classe helper <code>ContentHelper::registerShortcode()</code> dentro do método <code>boot()</code> do Service Provider do seu plugin para cadastrar a tag. O método aceita parâmetros sequenciais adicionais para autodocumentação na administração:</p>
+
+            <pre><code class="code-label">PHP</code>ContentHelper::registerShortcode(
+    string $tag,
+    callable $callback,
+    string $description = '',
+    string $example = '',
+    array $attributes = []
+);</pre>
+
+            <p>Exemplo de cadastro de shortcode básico simplificado (tag auto-fechada) utilizando parâmetros sequenciais:</p>
             <pre><code class="code-label">PHP</code>use App\Helpers\ContentHelper;
 
 // Cadastro da tag [video id="X"]
-ContentHelper::registerShortcode('video', function($attributes, $content) {
-    // $attributes: Array com os atributos passados (ex: ['id' => '123'])
-    // $content: String com o texto contido entre as tags de abertura e fechamento (se houver)
+ContentHelper::registerShortcode(
+    'video',
+    function($attributes, $content) {
+        $id = $attributes['id'] ?? null;
 
-    $id = $attributes['id'] ?? null;
+        if (!$id) {
+            return '&lt;!-- Erro: [video] requer atributo "id" --&gt;';
+        }
 
-    if (!$id) {
-        return '&lt;!-- Erro: [video] requer atributo "id" --&gt;';
-    }
+        return view('video::player', ['id' => $id])->render();
+    },
+    'Renderiza um player de vídeo do YouTube ou Vimeo.',
+    '[video id="dQw4w9WgXcQ"]'
+);</pre>
+        </section>
 
-    return view('video::player', ['id' => $id])->render();
-});</pre>
+        <section id="schema">
+            <h2>Esquema de Atributos (Schema)</h2>
+            <p>Você pode declarar o quinto parâmetro de atributos aceitos pelo seu shortcode de forma estruturada. Esses dados alimentam a página de <strong>Referência de Shortcodes na Admin</strong> e constroem de forma automática o formulário do <strong>TinyMCE</strong> na hora de inserir ou editar o recurso, evitando erros de digitação.</p>
+
+            <p>Os itens configurados no array de atributos suportam as seguintes chaves de definição:</p>
+            <ul>
+                <li><strong><code>label</code></strong>: Rótulo amigável que aparecerá ao lado do campo no formulário do editor.</li>
+                <li><strong><code>type</code></strong>: O tipo do campo (<code>text</code>, <code>number</code>, <code>select</code>, <code>textarea</code>, <code>checkbox</code>).</li>
+                <li><strong><code>placeholder</code></strong>: Texto de ajuda exibido dentro de inputs de texto vazios.</li>
+                <li><strong><code>options</code></strong>: Array de chave e valor (usado exclusivamente quando o tipo for <code>select</code>).</li>
+                <li><strong><code>default</code></strong>: O valor padrão inicial com o qual o formulário será pré-preenchido.</li>
+                <li><strong><code>required</code></strong>: Sinaliza se o preenchimento do campo é obrigatório para gerar o shortcode.</li>
+            </ul>
         </section>
 
         <section id="sintaxe">
             <h2>Sintaxe de Uso no Painel</h2>
-            <p>As tags de shortcode cadastradas podem ser escritas pelos editores de conteúdo de três formas distintas:</p>
+            <p>As tags de shortcode cadastradas podem ser escritas pelos editores de conteúdo de três formas distintas no editor:</p>
             <table>
                 <thead>
                     <tr>
@@ -85,31 +113,45 @@ ContentHelper::registerShortcode('video', function($attributes, $content) {
 
         <section id="exemplo">
             <h2>Exemplo Prático (FAQ)</h2>
-            <p>Este exemplo prático mostra como o plugin de FAQ registra seu shortcode para carregar conjuntos de perguntas e respostas serializados nas Options do banco de dados:</p>
+            <p>Este exemplo prático mostra como o plugin de FAQ registra seu shortcode passando os parâmetros de forma sequencial para carregar conjuntos de perguntas e respostas serializados nas Options do banco, configurando o esquema de atributos para exigir o preenchimento obrigatório da chave (slug) na interface do TinyMCE:</p>
+
             <pre><code class="code-label">PHP</code>use App\Helpers\ContentHelper;
 
-ContentHelper::registerShortcode('faq', function($attributes, $content) {
-    $slug = $attributes['slug'] ?? null;
+ContentHelper::registerShortcode(
+    'faq',
+    function($attributes, $content) {
+        $slug = $attributes['slug'] ?? null;
 
-    if (!$slug) return '';
+        if (!$slug) return '';
 
-    // Busca os dados serializados da tabela options
-    $optionData = getOption("faq_{$slug}");
-    if (!$optionData) return '';
+        // Busca os dados serializados da tabela options
+        $optionData = getOption("faq_{$slug}");
+        if (!$optionData) return '';
 
-    // Deserializa e renderiza a view correspondente
-    $faq = is_string($optionData) ? json_decode($optionData, true) : $optionData;
+        // Deserializa e renderiza a view correspondente
+        $faq = is_string($optionData) ? json_decode($optionData, true) : $optionData;
 
-    if (empty($faq) || empty($faq['items'])) return '';
+        if (empty($faq) || empty($faq['items'])) return '';
 
-    return view('faq::public.show', compact('faq'))->render();
-});</pre>
+        return view('faq::public.show', compact('faq'))->render();
+    },
+    'Carrega e exibe um conjunto de Perguntas e Respostas estruturado.',
+    '[faq slug="vendas"]',
+    [
+        'slug' => [
+            'label'       => 'Slug identificador da FAQ',
+            'type'        => 'text',
+            'placeholder' => 'Ex: vendas, suporte, geral',
+            'required'    => true
+        ]
+    ]
+);</pre>
         </section>
 
         <section id="boas-praticas">
             <h2>Remoção de Tags de Parágrafo</h2>
             <div class="tip">
-                <strong>Comportamento Automatizado:</strong> Editores ricos (como o TinyMCE) frequentemente envolvem os shortcodes escritos em tags de parágrafo durante a digitação (ex: <code>&lt;p&gt;[meu-shortcode]&lt;/p&gt;</code>). O renderizador de conteúdo do Lunar Base limpa e remove essas tags automaticamente em segundo plano para que as visões HTML injetadas não tenham margens ou estruturas quebras de layout desnecessárias.
+                <strong>Comportamento Automatizado:</strong> Editores ricos (como o TinyMCE) frequentemente envolvem os shortcodes escritos em tags de parágrafo durante a digitação (ex: <code>&lt;p&gt;[meu-shortcode]&lt;/p&gt;</code> ou <code>&lt;p&gt;[meu-shortcode]conteúdo[/meu-shortcode]&lt;/p&gt;</code>). O renderizador de conteúdo do Lunar Base limpa e remove essas tags automaticamente em segundo plano para que as visões HTML injetadas não sofram com margens ou quebras de layout indesejadas geradas pelas tags parágrafo ao redor.
             </div>
         </section>
 

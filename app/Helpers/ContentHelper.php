@@ -13,16 +13,119 @@ class ContentHelper
     protected static $renderedAssets = [];
     protected static $registeredShortcodes = [];
 
-    // Plugin chama isso no seu ServiceProvider
-    public static function registerShortcode(string $tag, callable $callback)
-    {
+    /**
+     * Registra um novo shortcode dinâmico (comum para uso em ServiceProviders de Plugins).
+     */
+    public static function registerShortcode(
+        string $tag,
+        callable $callback,
+        string $description = '',
+        string $example = '',
+        array $attributes = [] // 💡 Novo parâmetro adicionado!
+    ) {
         $tag = strtolower($tag);
         if (isset(self::$registeredShortcodes[$tag])) {
-            // \Log::warning("The shortcode [{$tag}] is already registered");
             return false;
         }
-        self::$registeredShortcodes[$tag] = $callback;
+
+        // Armazena o callback junto aos metadados e o novo esquema de atributos
+        self::$registeredShortcodes[$tag] = [
+            'callback'    => $callback,
+            'description' => $description,
+            'example'     => $example,
+            'attributes'  => $attributes, // 💡 Gravado aqui!
+        ];
+
         return true;
+    }
+
+    /**
+     * Retorna a lista unificada de todos os shortcodes disponíveis no sistema,
+     * incluindo a definição de seus atributos suportados.
+     */
+    public static function getRegisteredShortcodes(): array
+    {
+        // 1. Definição estática com atributos estruturados para os shortcodes do Core (fixos)
+        $coreShortcodes = [
+            'embed' => [
+                'type'        => 'Core',
+                'description' => 'Incorpora de forma responsiva vídeos, áudios, mapas e scripts do YouTube, Vimeo, Spotify, Google Maps e GitHub Gists.',
+                'example'     => '[embed]https://www.youtube.com/watch?v=dQw4w9WgXcQ[/embed]',
+                'attributes'  => [
+                    'url' => [
+                        'label'       => 'URL da Mídia',
+                        'type'        => 'text',
+                        'placeholder' => 'Ex: https://www.youtube.com/watch?v=...',
+                        'required'    => true
+                    ]
+                ]
+            ],
+            'link' => [
+                'type'        => 'Core',
+                'description' => 'Injeta elementos de tag <link> no cabeçalho do documento HTML (útil para CSS ou preloads).',
+                'example'     => '[link rel="stylesheet" href="..."]',
+                'attributes'  => [
+                    'rel' => [
+                        'label'   => 'Relação (rel)',
+                        'type'    => 'text',
+                        'default' => 'stylesheet'
+                    ],
+                    'href' => [
+                        'label'       => 'Caminho do Arquivo (href)',
+                        'type'        => 'text',
+                        'placeholder' => 'Ex: /css/custom.css',
+                        'required'    => true
+                    ]
+                ]
+            ],
+            'script' => [
+                'type'        => 'Core',
+                'description' => 'Injeta elementos de tag <script> assíncronos ou inline de forma segura e controlada no rodapé.',
+                'example'     => '[script src="..." id="..."][/script]',
+                'attributes'  => [
+                    'src' => [
+                        'label'       => 'Caminho do Arquivo (src)',
+                        'type'        => 'text',
+                        'placeholder' => 'Ex: /js/custom.js',
+                        'required'    => true
+                    ],
+                    'id' => [
+                        'label'       => 'ID de Identificação',
+                        'type'        => 'text',
+                        'placeholder' => 'Opcional (ex: custom-script)'
+                    ]
+                ]
+            ],
+            'style' => [
+                'type'        => 'Core',
+                'description' => 'Injeta regras de estilo CSS inline de forma isolada na renderização da página.',
+                'example'     => '[style].classe-css { color: red; }[/style]',
+                'attributes'  => [
+                    'id' => [
+                        'label'       => 'ID de Identificação',
+                        'type'        => 'text',
+                        'placeholder' => 'Opcional (ex: custom-style)'
+                    ]
+                ]
+            ],
+        ];
+
+        // 2. Mapeia os shortcodes dinâmicos que foram ativados por plugins
+        $pluginShortcodes = [];
+        foreach (self::$registeredShortcodes as $tag => $data) {
+            $pluginShortcodes[$tag] = [
+                'type'        => 'Plugin',
+                'description' => $data['description'] ?: 'Sem descrição fornecida.',
+                'example'     => $data['example'] ?: "[{$tag}]",
+                'attributes'  => $data['attributes'] ?? [], // 💡 Mapeia o esquema de atributos do plugin!
+            ];
+        }
+
+        // 3. Mescla e ordena alfabeticamente
+        $all = array_merge($coreShortcodes, $pluginShortcodes);
+        ksort($all);
+
+        return $all;
     }
 
     /**
@@ -40,26 +143,22 @@ class ContentHelper
         return true;
     }
 
+    /**
+     * Processa o conteúdo em busca de shortcodes no formato [tag] ou [tag]conteúdo[/tag]
+     */
     public static function parseShortcodes($content)
     {
         if (empty($content)) return '';
 
-        // Remove parágrafos que envolvem shortcodes antes de parsear
-        $content = preg_replace('/<p>\s*(\[[^\]]+\])\s*<\/p>/i', '$1', $content);
+        // 💡 CORREÇÃO: Remove parágrafos que envolvem shortcodes (suporta fechamento e auto-fechados)
+        $content = preg_replace('/<p>\s*(\[[^\]]+\](?:.*?\[\/[^\]]+\])?)\s*<\/p>/is', '$1', $content);
 
-        /**
-         * Regex explicada:
-         * 1. \[([a-zA-Z0-9_\-]+) -> Captura o nome da tag
-         * 2. ((?:\s+[a-zA-Z0-9_\-]+=(?:"[^"]*"|'[^']*'))*) -> Captura os atributos
-         * 3. \s*\] -> Fecha a tag de abertura
-         * 4. (?:(.*?)\[\/\1\])? -> (Opcional) Captura conteúdo interno até a tag de fechamento [/tag]
-         */
         $pattern = '/\[([a-zA-Z0-9_\-]+)((?:\s+[a-zA-Z0-9_\-]+=(?:"[^"]*"|\'[^\']*\'))*)\s*\](?:(.*?)\[\/\1\])?/is';
 
         return preg_replace_callback($pattern, function($matches) {
             $tag = strtolower($matches[1]);
             $attrsString = $matches[2] ?? '';
-            $innerContent = $matches[3] ?? null; // Conteúdo entre [tag] e [/tag]
+            $innerContent = $matches[3] ?? null;
 
             $attributes = self::parseAttributes($attrsString);
 
@@ -85,7 +184,8 @@ class ContentHelper
 
         // 1. Verifica se existe um shortcode registrado por um plugin
         if (isset(self::$registeredShortcodes[$tag])) {
-            return call_user_func(self::$registeredShortcodes[$tag], $attributes, $content);
+            // 💡 AJUSTE: Agora busca o callback dentro da nova estrutura de array do registro
+            return call_user_func(self::$registeredShortcodes[$tag]['callback'], $attributes, $content);
         }
 
         // 2. Fallback para métodos da Trait (Core)
@@ -95,11 +195,6 @@ class ContentHelper
         }
 
         // 3. Fallback para views no core
-        $method = "render" . Str::studly($tag);
-        if (method_exists(self::class, $method)) {
-            return self::{$method}($attributes, $content);
-        }
-
         $viewPath = "components.shortcodes." . $tag;
         if (view()->exists($viewPath)) {
             return view($viewPath, [
@@ -121,14 +216,12 @@ class ContentHelper
         if (empty($content)) return '';
 
         // 1. Remove parágrafos que contêm apenas espaços, quebras de linha ou &nbsp;
-        // Isso mata o famoso <p>&nbsp;</p> do TinyMCE
         $content = preg_replace('/<p>(&nbsp;|\s)*<\/p>/i', '', $content);
 
-        // 2. Remove parágrafos que envolvem apenas shortcodes (Higiene total)
-        // Transforma <p>[shortcode]</p> em [shortcode]
+        // 2. Remove parágrafos que envolvem apenas shortcodes
         $content = preg_replace('/<p>\s*(\[[^\]]+\])\s*<\/p>/i', '$1', $content);
 
-        // 3. Remove espaços em branco no início e fim de blocos (opcional, mas bom)
+        // 3. Remove espaços em branco nas extremidades
         $content = trim($content);
 
         return $content;

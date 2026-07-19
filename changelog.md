@@ -1,9 +1,11 @@
-
 # Changelog
 
 ## Unreleased
 
 ### Changed
+- Paginação normalizada com custom view para toda a admin
+- Menu admin reorganizado
+- Popups corrigidos para abrir / fechar suavemente com transition
 - Chamadas JS a alert() e confirm() agora usam Dialog
 - Forms e links agora podem usar Dialog através do attr data-confirm
 - Box Metadados em posts agora precisa de uma setting para aparecer
@@ -12,6 +14,9 @@
 - Plugin Comments agora tem uma interface de moderação na admin
 
 ### Added
+- Plugin Shortcode do TinyMCE atualizado para mostrar nomes e atributos dos shortcodes
+- Shortcodes agora são registrados com descrição, exemplo e atributos
+- Shortcode [embed], usando embed/embed
 - JS global dialog.js (alert, confirm, prompt)
 - Filtro na visualização de hooks na admin
 - Plugin Populator

@@ -9,8 +9,9 @@ use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\TaxonomyController;
 use App\Http\Controllers\Admin\TermController;
-use App\Http\Controllers\Admin\AdminLogController;
-use App\Http\Controllers\Admin\RolesPermissionsController;
+// use App\Http\Controllers\Admin\AdminLogController;
+// use App\Http\Controllers\Admin\RolesPermissionsController;
+use App\Http\Controllers\Admin\ReferenceController;
 use App\Http\Controllers\Admin\PluginController;
 use App\Http\Controllers\Admin\ThemeController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
@@ -33,17 +34,9 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::post('plugins/toggle-all/{status}', [PluginController::class, 'toggleAll'])
         ->name('plugins.toggle_all')
         ->where('status', '0|1');
-    // Route::middleware(['web', 'auth', 'role:admin'])
-    //     ->prefix('admin')
-    //     ->name('admin.')
-    //     ->group(function () {
-            Route::get('hooks', [PluginController::class, 'hooks'])
-                ->name('hooks');
-        // });
 
     // Temas
     Route::get('themes', [ThemeController::class, 'index'])->name('themes.index');
-    // Route::post('themes/{theme}/activate', [ThemeController::class, 'activate'])->name('themes.activate');
     Route::post('themes/{theme}/toggle', [ThemeController::class, 'toggle'])->name('themes.toggle');
     Route::get('themes/{theme}/screenshot', [ThemeController::class, 'screenshot'])->name('themes.screenshot');
 
@@ -53,9 +46,19 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
 // ========== ROTAS PROTEGIDAS (ADMIN + EDITOR) ==========
 Route::middleware(['auth', 'role:admin,editor'])->prefix('admin')->name('admin.')->group(function () {
+    // Referências
+    Route::get('reference', [ReferenceController::class, 'index'])
+        ->name('reference.index');
+    Route::get('reference/shortcodes', [ReferenceController::class, 'shortcodes'])
+        ->name('shortcodes');
+    Route::get('reference/hooks', [ReferenceController::class, 'hooks'])
+        ->name('hooks');
+
     // Permissões
-    Route::get('/admin/roles-permissions', [RolesPermissionsController::class, 'index'])
-        ->name('roles-permissions')->middleware('permission:manage-settings');
+    Route::get('reference/roles-permissions', [ReferenceController::class, 'permissions'])
+        ->name('roles-permissions');
+    // Logs
+    Route::get('reference/logs', [ReferenceController::class, 'logs'])->name('logs');
 
     // Páginas
     Route::resource('pages', PageController::class)
@@ -73,8 +76,6 @@ Route::middleware(['auth', 'role:admin,editor'])->prefix('admin')->name('admin.'
     Route::resource('taxonomies', TaxonomyController::class);
     Route::resource('terms', TermController::class);
 
-    // Logs
-    Route::get('logs', [AdminLogController::class, 'index'])->name('logs.index');
 });
 
 // ========== ROTAS ADMIN APENAS ==========

@@ -10,7 +10,6 @@
     $id = $id ?? $name;
     $currentValue = old($name, $value);
 
-    // Busca todos os ícones do Lucide no servidor (apenas os nomes dos arquivos)
     $factory = app(\BladeUI\Icons\Factory::class);
 
     $sets = method_exists($factory, 'sets')
@@ -24,7 +23,6 @@
         return is_object($set) && method_exists($set, 'prefix') && $set->prefix() === 'lucide';
     });
 
-    // Lista de marcas registradas e ícones removidos na v1.0 do Lucide
     $excludedIcons = [
         'chrome', 'chromium', 'codepen', 'codesandbox', 'dribbble', 'facebook', 'figma', 'framer',
         'github', 'gitlab', 'instagram', 'linkedin', 'pocket', 'rail-symbol', 'slack', 'trello',
@@ -43,7 +41,6 @@
                 foreach ($files as $file) {
                     $iconName = $file->getBasename('.svg');
 
-                    // Só adiciona o ícone se ele não estiver na lista de exclusão
                     if (!in_array($iconName, $excludedIcons)) {
                         $icons[] = $iconName;
                     }
@@ -62,7 +59,6 @@
     @endif
 
     <div class="icon-selector-field">
-        {{-- Preview Visual do Ícone Ativo --}}
         <div class="icon-preview-box" id="{{ $id }}_preview">
             @if($currentValue)
                 <x-dynamic-component :component="'lucide-' . $currentValue" class="lucid-icon" />
@@ -71,7 +67,6 @@
             @endif
         </div>
 
-        {{-- Input Real que armazena a string --}}
         <input type="text"
                name="{{ $name }}"
                id="{{ $id }}"
@@ -92,8 +87,8 @@
         </button>
     </div>
 
-    {{-- Modal de Seleção (Popup) --}}
-    <div class="modal-overlay" style="display: none;">
+    {{-- Modal de Seleção (Popup) - 💡 Removido o display:none em linha --}}
+    <div class="modal-overlay">
         <div class="modal-backdrop"></div>
 
         <div class="modal-box lg" style="max-height: 80vh; display: flex; flex-direction: column;">
@@ -103,7 +98,6 @@
             </div>
 
             <div class="modal-body" style="overflow: hidden; display: flex; flex-direction: column; flex: 1;">
-                {{-- Barra de Filtro em Tempo Real --}}
                 <div class="form-group" style="margin-bottom: 1.5rem; flex-shrink: 0;">
                     <input type="text"
                            class="form-input search-input"
@@ -112,7 +106,6 @@
                            spellcheck="false">
                 </div>
 
-                {{-- Grid de Exibição --}}
                 <div class="icon-grid-scroll">
                     <div class="icon-selector-grid">
                         @foreach($icons as $icon)
@@ -121,7 +114,6 @@
                                     data-icon="{{ $icon }}"
                                     title="{{ $icon }}">
                                 <span class="icon-graphic">
-                                    {{-- Renderiza uma tag leve que o JS do Lucide converterá em SVG --}}
                                     <i data-lucide="{{ $icon }}"></i>
                                 </span>
                                 <span class="icon-title">{{ $icon }}</span>
@@ -165,7 +157,7 @@
         height: 20px;
     }
 
-    /* --- ESTILOS DO MODAL / POPUP --- */
+    /* --- ESTILOS DO MODAL / POPUP COM TRANSIÇÃO --- */
     .modal-overlay {
         position: fixed;
         top: 0;
@@ -176,16 +168,29 @@
         display: flex;
         align-items: center;
         justify-content: center;
+
+        /* 💡 ESTADO FECHADO (Invisível) */
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.2s ease, visibility 0.2s ease;
     }
+
+    /* 💡 ESTADO ABERTO (Transição ativada) */
+    .modal-overlay.is-open {
+        opacity: 1;
+        visibility: visible;
+    }
+
     .modal-backdrop {
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(0, 0, 0, 0.5); /* Fundo escurecido semi-transparente */
-        backdrop-filter: blur(2px); /* Leve desfoque opcional */
+        background-color: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(2px);
     }
+
     .modal-box {
         position: relative;
         background: #ffffff;
@@ -196,9 +201,21 @@
         z-index: 10000;
         border: 1px solid #e5e7eb;
         overflow: hidden;
+
+        /* 💡 ESCALA/OPACIDADE PADRÃO (Início do efeito) */
+        transform: scale(0.95);
+        opacity: 0;
+        transition: transform 0.2s ease, opacity 0.2s ease;
     }
+
+    /* 💡 ESCALA/OPACIDADE QUANDO ABERTO */
+    .modal-overlay.is-open .modal-box {
+        transform: scale(1);
+        opacity: 1;
+    }
+
     .modal-box.lg {
-        max-width: 800px; /* Largura maior para comportar o grid de ícones */
+        max-width: 800px;
     }
     .modal-header {
         display: flex;
@@ -231,7 +248,6 @@
         padding: 1.5rem;
         background-color: #ffffff;
     }
-    /* --------------------------------- */
 
     /* Grid de Seleção no Modal */
     .icon-grid-scroll {
@@ -291,17 +307,14 @@
 @endpush
 
 @push('scripts')
-{{-- Carrega o script do Lucide no navegador para fazer a conversão dos ícones --}}
 <script src="https://unpkg.com/lucide@latest"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // Inicializa a substituição dos elementos de ícone pelo SVG correspondente
     if (typeof lucide !== 'undefined') {
         lucide.createIcons();
     }
 
-    // Inicializa todos os seletores de ícones presentes na tela
     document.querySelectorAll('.icon-selector-component').forEach(wrapper => {
         const input = wrapper.querySelector('input[type="text"]');
         const preview = wrapper.querySelector('.icon-preview-box');
@@ -315,9 +328,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // 1. Abrir o Modal
         if (chooseBtn && modal) {
             chooseBtn.addEventListener('click', () => {
-                modal.style.display = 'flex';
+                // 💡 Modificado: Agora adicionamos a classe 'is-open'
+                modal.classList.add('is-open');
 
-                // Reseta a busca ao abrir
                 if (searchInput) {
                     searchInput.value = '';
                     gridItems.forEach(item => item.style.display = '');
@@ -336,14 +349,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 2. Fechar o Modal
         const closeModal = () => {
-            if (modal) modal.style.display = 'none';
+            // 💡 Modificado: Agora removemos a classe 'is-open'
+            if (modal) modal.classList.remove('is-open');
         };
 
         if (closeBtn) closeBtn.addEventListener('click', closeModal);
         if (backdrop) backdrop.addEventListener('click', closeModal);
 
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && modal.style.display === 'flex') {
+            // 💡 Modificado: Verificação da classe 'is-open' ativa
+            if (e.key === 'Escape' && modal.classList.contains('is-open')) {
                 closeModal();
             }
         });
@@ -369,21 +384,17 @@ document.addEventListener('DOMContentLoaded', () => {
             item.addEventListener('click', () => {
                 const icon = item.dataset.icon;
 
-                // Atualiza o valor do input estático
                 if (input) {
                     input.value = icon;
                     input.dispatchEvent(new Event('change', { bubbles: true }));
                 }
 
-                // Atualiza a classe visual ativa no grid de opções
                 gridItems.forEach(i => i.classList.toggle('active', i === item));
 
-                // Clonagem do SVG gerado no cliente
                 if (preview) {
                     const svgMarkup = item.querySelector('.icon-graphic').innerHTML;
                     preview.innerHTML = svgMarkup;
 
-                    // Ajusta a classe para manter o padrão visual do preview
                     const previewSvg = preview.querySelector('svg');
                     if (previewSvg) {
                         previewSvg.setAttribute('class', 'lucid-icon');

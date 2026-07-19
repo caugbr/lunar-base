@@ -7,6 +7,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
 use App\View\Composers\SiteComposer;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Pagination\Paginator;
 use App\Helpers\ContentHelper;
 
 class AppServiceProvider extends ServiceProvider
@@ -20,6 +21,8 @@ class AppServiceProvider extends ServiceProvider
     {
         // O "if" garante que o Laravel não quebre quando você rodar comandos no terminal (como php artisan migrate)
         if (!app()->runningInConsole() || app()->runningUnitTests()) {
+
+            Paginator::defaultView('vendor.pagination.custom');
 
             // Adiciona menu e legal pages
             View::composer('public.*', SiteComposer::class);

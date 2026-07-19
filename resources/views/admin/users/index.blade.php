@@ -93,7 +93,7 @@
     </div>
 
     <div class="admin-pagination">
-        {{ $users->links('pagination::custom') }}
+        {{ $users->links() }}
     </div>
 </div>
 @endsection

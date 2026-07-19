@@ -10,16 +10,18 @@
     x-cloak
     class="modal-overlay"
 >
-    <!-- Overlay -->
+    <!-- Overlay (💡 Adicionado x-transition de opacidade) -->
     <div
         x-show="open"
+        x-transition.opacity.duration.250ms
         @click="closeModal()"
         class="modal-backdrop"
     ></div>
 
-    <!-- Modal -->
+    <!-- Modal (💡 Adicionado x-transition padrão: fade + escala suave) -->
     <div
         x-show="open"
+        x-transition.duration.250ms
         @click.stop
         class="modal-box"
     >
@@ -280,77 +282,13 @@
 
 @push('scripts')
 <script>
-// function mediaEdit(id, csrf) {
-//     return {
-//         open: false,
-//         saving: false,
-//         error: null,
-//         success: null,
-//         media: { id: null, name: '', alt: '', caption: '', url: '', thumbnail_url: '', is_image: false, size_formatted: '' },
-//         csrfToken: csrf,
-//         modalId: id,
-
-//         openModal(item) {
-//             this.media = { ...this.media, ...item, meta: item.meta || {} };
-//             this.error = null;
-//             this.success = null;
-//             this.open = true;
-//         },
-
-//         closeModal() {
-//             this.open = false;
-//         },
-
-//         async save() {
-//             if (!this.media?.id || !this.media?.name?.trim()) return;
-
-//             this.saving = true;
-//             this.error = null;
-//             this.success = null;
-
-//             try {
-//                 const response = await fetch(`/admin/media/${this.media.id}`, {
-//                     method: 'PUT',
-//                     headers: {
-//                         'Content-Type': 'application/json',
-//                         'Accept': 'application/json',
-//                         'X-CSRF-TOKEN': this.csrfToken
-//                     },
-//                     body: JSON.stringify({
-//                         name: this.media.name.trim(),
-//                         alt: this.media.alt?.trim() || null,
-//                         caption: this.media.caption?.trim() || null,
-//                         meta: {
-//                             alignment: this.media.meta?.alignment || 'none'
-//                         }
-//                     })
-//                 });
-
-//                 const data = await response.json();
-
-//                 if (response.ok && data.success) {
-//                     this.success = 'Metadados atualizados com sucesso!';
-//                     setTimeout(() => this.closeModal(), 1200);
-//                     window.dispatchEvent(new CustomEvent('media:updated'));
-//                 } else {
-//                     this.error = data.message || 'Erro ao salvar. Verifique os campos.';
-//                 }
-//             } catch (err) {
-//                 console.error('Erro ao atualizar mídia:', err);
-//                 this.error = 'Erro de conexão. Tente novamente.';
-//             } finally {
-//                 this.saving = false;
-//             }
-//         }
-//     }
-// }
+// O script JS permanece exatamente igual ao seu original.
 function mediaEdit(id, csrf) {
     return {
         open: false,
         saving: false,
         error: null,
         success: null,
-        // 💡 Correção: Inicializa 'meta' de forma segura na carga da página
         media: {
             id: null,
             name: '',
@@ -360,13 +298,12 @@ function mediaEdit(id, csrf) {
             thumbnail_url: '',
             is_image: false,
             size_formatted: '',
-            meta: { alignment: 'none' } // Garante que a ligação inicial não quebre
+            meta: { alignment: 'none' }
         },
         csrfToken: csrf,
         modalId: id,
 
         openModal(item) {
-            // Garante que meta seja um objeto e tenha a chave alignment inicializada
             const itemMeta = item.meta || {};
             const resolvedMeta = { alignment: 'none', ...itemMeta };
 

@@ -194,15 +194,15 @@ return [
                     'icon' => 'puzzle',
                     'route' => 'admin.plugins.index',
                     'active' => 'admin.plugins.*',
-                    'items' => [
-                        [
-                            'label'  => 'Hooks',
-                            'icon'   => 'fishing-hook',
-                            'route'  => 'admin.hooks',
-                            'active' => 'admin.hooks',
-                            'role'   => 'admin',
-                        ]
-                    ]
+                    // 'items' => [
+                    //     [
+                    //         'label'  => 'Hooks',
+                    //         'icon'   => 'fishing-hook',
+                    //         'route'  => 'admin.hooks',
+                    //         'active' => 'admin.hooks',
+                    //         'role'   => 'admin',
+                    //     ]
+                    // ]
                 ],
                 [
                     'label' => 'Temas',
@@ -210,13 +210,13 @@ return [
                     'route' => 'admin.themes.index',
                     'active' => 'admin.themes.*',
                 ],
-                [
-                    'label' => 'Permissões',
-                    'icon' => 'user-key',
-                    'route' => 'admin.roles-permissions',
-                    'active' => 'admin.roles-permissions',
-                    'role' => 'admin',
-                ],
+                // [
+                //     'label' => 'Permissões',
+                //     'icon' => 'user-key',
+                //     'route' => 'admin.roles-permissions',
+                //     'active' => 'admin.roles-permissions',
+                //     'role' => 'admin',
+                // ],
                 [
                     'label' => 'Configurações',
                     'icon' => 'settings',
@@ -225,13 +225,50 @@ return [
                     // 'permission' => 'manage-settings',
                     'role' => 'admin',
                 ],
+                // [
+                //     'label' => 'Logs',
+                //     'icon' => 'list-checks',
+                //     'route' => 'admin.logs.index',
+                //     'active' => 'admin.logs.*',
+                //     // 'permission' => 'manage-logs',
+                //     'role' => 'admin',
+                // ],
                 [
-                    'label' => 'Logs',
-                    'icon' => 'list-checks',
-                    'route' => 'admin.logs.index',
-                    'active' => 'admin.logs.*',
-                    // 'permission' => 'manage-logs',
+                    'label' => 'Referências',
+                    'icon' => 'cog',
+                    'route' => 'admin.reference.index',
+                    'active' => 'admin.reference.*',
                     'role' => 'admin',
+                    'items' => [
+                        [
+                            'label' => 'Hooks',
+                            'icon' => 'fishing-hook',
+                            'route' => 'admin.hooks',
+                            'active' => 'admin.hooks',
+                            'role' => 'admin'
+                        ],
+                        [
+                            'label' => 'Shortcodes',
+                            'icon' => 'brackets',
+                            'route' => 'admin.shortcodes',
+                            'active' => 'admin.shortcodes',
+                            'role' => 'admin'
+                        ],
+                        [
+                            'label' => 'Permissões',
+                            'icon' => 'user-key',
+                            'route' => 'admin.roles-permissions',
+                            'active' => 'admin.roles-permissions',
+                            'role' => 'admin',
+                        ],
+                        [
+                            'label' => 'Logs',
+                            'icon' => 'list-checks',
+                            'route' => 'admin.logs',
+                            'active' => 'admin.logs.*',
+                            'role' => 'admin',
+                        ],
+                    ]
                 ],
             ]
         ]

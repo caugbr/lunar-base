@@ -25,26 +25,43 @@ class MapsServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__ . '/resources/views', 'maps');
 
         // Registra o shortcode [map id="1"]
-        ContentHelper::registerShortcode('map', function ($attributes) {
-            $id = $attributes['id'] ?? null;
-            $slug = null;
-            if (!$id) {
-                $slug = $attributes['slug'] ?? null;
-                if (!$slug) {
-                    return '<!-- [map] shortcode: atributo identificador ("id" ou "slug") é obrigatório -->';
+        ContentHelper::registerShortcode(
+            'map',
+            function ($attributes) {
+                $id = $attributes['id'] ?? null;
+                $slug = null;
+                if (!$id) {
+                    $slug = $attributes['slug'] ?? null;
+                    if (!$slug) {
+                        return '<!-- [map] shortcode: atributo identificador ("id" ou "slug") é obrigatório -->';
+                    }
                 }
-            }
 
-            if ($slug) {
-                $map = Map::where('slug', $slug)->first();
-            } else {
-                $map = Map::with('markers')->find($id);
-            }
+                if ($slug) {
+                    $map = Map::where('slug', $slug)->first();
+                } else {
+                    $map = Map::with('markers')->find($id);
+                }
 
-            if (!$map) return '<!-- [map] shortcode: mapa não encontrado -->';
+                if (!$map) return '<!-- [map] shortcode: mapa não encontrado -->';
 
-            return view('maps::public.map', compact('map'))->render();
-        });
+                return view('maps::public.map', compact('map'))->render();
+            },
+            '',
+            '[form slug="my-map"]',
+            [
+                'slug' =>[
+                    'label'       => 'Slug registrado para o mapa',
+                    'type'        => 'text',
+                    'placeholder' => 'Slug do mapa',
+                ],
+                'id' =>[
+                    'label'       => 'ID registrado para o mapa (se não há slug)',
+                    'type'        => 'text',
+                    'placeholder' => 'ID do mapa',
+                ],
+            ]
+        );
 
         // Registra configurações no painel admin
         $this->registerSettings();

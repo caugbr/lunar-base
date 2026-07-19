@@ -13,11 +13,21 @@
     x-cloak
     class="modal-overlay"
 >
-    <!-- Overlay -->
-    <div x-show="open" @click="close()" class="modal-backdrop"></div>
+    <!-- Overlay / Backdrop (💡 Adicionado x-transition de opacidade) -->
+    <div
+        x-show="open"
+        x-transition.opacity.duration.250ms
+        @click="close()"
+        class="modal-backdrop"
+    ></div>
 
-    <!-- Modal -->
-    <div x-show="open" @click.stop class="modal-box">
+    <!-- Modal Box (💡 Adicionado x-transition padrão: fade + escala suave) -->
+    <div
+        x-show="open"
+        x-transition.duration.250ms
+        @click.stop
+        class="modal-box"
+    >
         <!-- Header -->
         <div class="modal-header">
             <h3>Upload de Mídia</h3>
@@ -64,7 +74,6 @@
             <!-- Estado 3: Metadados pós-upload -->
             <div x-show="step === 'metadata'">
                 <div class="preview-card">
-                    {{-- <img x-show="media?.is_image" :src="media?.thumbnail_url" class="preview-thumb"> --}}
                     <img x-show="media?.is_image" :src="media?.url" class="preview-thumb">
                     <div x-show="!media?.is_image" class="preview-icon"><x-lucide-file class="lucid-icon" /></div>
                     <div class="preview-info">
@@ -139,6 +148,7 @@
 
 @push('scripts')
 <script>
+// O script JS permanece exatamente igual ao seu original.
 function uploadModal(id, context, accept, maxSize, folder, csrf) {
     return {
         id, accept, maxSize, folder, csrf,
@@ -179,7 +189,6 @@ function uploadModal(id, context, accept, maxSize, folder, csrf) {
                 this.error = 'Arquivo muito grande';
                 return;
             }
-            // Apenas armazena, NÃO faz upload ainda
             this.selectedFile = {
                 name: file.name,
                 size: file.size,
@@ -190,7 +199,6 @@ function uploadModal(id, context, accept, maxSize, folder, csrf) {
         },
 
         resetSelection() {
-            // Mantém a estrutura de objeto para evitar erros de reatividade
             this.selectedFile = { name: '', size: 0, type: '', file: null };
             this.error = null;
         },
@@ -230,7 +238,6 @@ function uploadModal(id, context, accept, maxSize, folder, csrf) {
                             this.media = res.data;
                             this.step = 'metadata';
                             window.dispatchEvent(new CustomEvent('media:uploaded', {
-                                // detail: { media: res.data }
                                 detail: {
                                     media: res.data,
                                     source: this.currentContext || this.id
@@ -261,7 +268,6 @@ function uploadModal(id, context, accept, maxSize, folder, csrf) {
         async save() {
             if (!this.media?.id) return;
 
-            // Feedback visual imediato
             const saveBtn = document.querySelector('.modal-footer button.admin-btn-primary');
             const originalText = saveBtn?.innerText;
             if (saveBtn) saveBtn.disabled = true;
@@ -281,7 +287,6 @@ function uploadModal(id, context, accept, maxSize, folder, csrf) {
                     })
                 });
 
-                // ✅ Verifica se a resposta foi bem-sucedida
                 if (!response.ok) {
                     const error = await response.json().catch(() => ({ message: 'Erro ao salvar' }));
                     throw new Error(error.message || 'Falha na atualização');
@@ -289,14 +294,11 @@ function uploadModal(id, context, accept, maxSize, folder, csrf) {
 
                 const result = await response.json();
 
-                // Atualiza o objeto local com os dados retornados (garante consistência)
                 if (result.data) {
                     this.media = { ...this.media, ...result.data };
                 }
 
-                // Dispara evento para o grid recarregar
                 window.dispatchEvent(new CustomEvent('media:updated', {
-                    // detail: this.media
                     detail: {
                         media: result.data,
                         source: this.currentContext || this.id
@@ -308,7 +310,6 @@ function uploadModal(id, context, accept, maxSize, folder, csrf) {
                 console.error('Erro ao salvar metadados:', e);
                 this.error = e.message || 'Não foi possível salvar. Tente novamente.';
             } finally {
-                // Restaura o botão
                 if (saveBtn) {
                     saveBtn.disabled = false;
                     if (originalText) saveBtn.innerText = originalText;
