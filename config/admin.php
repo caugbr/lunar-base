@@ -167,7 +167,7 @@ return [
                         ],
                         [
                             'label'  => 'Novo Termo',
-                            'icon'   => 'tag-plus',
+                            'icon'   => 'plus',
                             'route'  => 'admin.terms.create',
                             'active' => 'admin.terms.create',
                             'permission' => 'manage-pages',
@@ -242,8 +242,7 @@ return [
         "title" => "Dashboard",
         "subtitle" => "Visão geral do sistema",
         "cardTitle" => "Visão geral",
-        "columns" => 4,
-        "boxView" => "admin.dashboard.box"
+        "columns" => 4
     ],
 
     // admin skin

@@ -6,9 +6,9 @@
     @if($user->hasTwoFactorEnabled())
         {{-- ESTADO 1: ATIVADO --}}
         <p>2FA está <strong>ativo</strong>.</p>
-        <form method="POST" action="{{ route('admin.users.two-factor.disable', $user->id) }}">
+        <form method="POST" action="{{ route('admin.users.two-factor.disable', $user->id) }}" data-confirm="Desativar 2FA?">
             @csrf @method('DELETE')
-            <button type="submit" class="admin-btn admin-btn-danger" onclick="return confirm('Desativar 2FA?')">
+            <button type="submit" class="admin-btn admin-btn-danger">
                 <x-lucide-lock-open class="lucid-icon" /> Desativar 2FA
             </button>
         </form>

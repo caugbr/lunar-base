@@ -37,8 +37,6 @@ class HookDiscoverer
             return $allHooks;
         }
 
-        // \Log::info('hooks', ["allHooks" => $allHooks]);
-
         // Filtra por setor específico (system, plugin ou theme)
         return array_filter($allHooks, function ($hook) use ($sector) {
             return $hook['sector'] === $sector;
@@ -84,32 +82,23 @@ class HookDiscoverer
     {
         $content = file_get_contents($filePath);
 
-        // 💡 VIA 1: Busca ganchos fechados com tags </x-hook>
-        // Regex melhorado: captura atributos respeitando strings entre aspas
+        // Regex unificada que captura tanto ganchos auto-fechados (/>) quanto fechados (></x-hook>)
+        // usa um grupo de não-captura (?: ... | ... ) para bifurcar os dois cenários possíveis
         preg_match_all(
-            '/<x-hook\s+((?:[^>"\']|"[^"]*"|\'[^\']*\')*)>(.*?)<\/x-hook>/is',
+            '/<x-hook\s+((?:[^>"\']|"[^"]*"|\'[^\']*\')*?)(?:\/>|>(.*?)<\/x-hook>)/is',
             $content,
-            $matchesClosed,
+            $matches,
             PREG_SET_ORDER
         );
 
-        foreach ($matchesClosed as $match) {
+        foreach ($matches as $match) {
             $attributesString = $match[1];
-            $innerContent = $match[2];
+
+            // Se o gancho for auto-fechado (Opção 1), o grupo 2 (conteúdo interno) não existirá na captura.
+            // Usamos o operador de coalescência nula para garantir que venha uma string vazia.
+            $innerContent = $match[2] ?? '';
+
             self::parseAndRegisterHook($attributesString, $innerContent, $sector, $filePath, $hooks);
-        }
-
-        // 💡 VIA 2: Busca ganchos auto-fechados <x-hook ... />
-        preg_match_all(
-            '/<x-hook\s+((?:[^>"\']|"[^"]*"|\'[^\']*\')*)\/>/is',
-            $content,
-            $matchesSelf,
-            PREG_SET_ORDER
-        );
-
-        foreach ($matchesSelf as $match) {
-            $attributesString = $match[1];
-            self::parseAndRegisterHook($attributesString, '', $sector, $filePath, $hooks);
         }
     }
 
@@ -122,7 +111,6 @@ class HookDiscoverer
         $attributesStringNormalized = str_replace(["\r", "\n"], ' ', $attributesString);
 
         // Captura os pares de chave="valor" (ex: name="menu" ou :params="['id' => 1]")
-        // preg_match_all('/([\w:]+)\s*=\s*["\']([^"\']*)["\']/i', $attributesStringNormalized, $attrMatches, PREG_SET_ORDER);
         preg_match_all('/([\w:]+)\s*=\s*("(?:[^"\\\\]|\\\\.)*"|\'(?:[^\'\\\\]|\\\\.)*\')/', $attributesStringNormalized, $attrMatches, PREG_SET_ORDER);
 
         $attrs = [];

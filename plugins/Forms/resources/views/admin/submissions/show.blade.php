@@ -106,9 +106,9 @@
     </div>
 
     <div class="buttons">
-        <form method="POST" action="{{ route('admin.forms.submissions.destroy', [$form->id, $submission->id]) }}">
+        <form method="POST" action="{{ route('admin.forms.submissions.destroy', [$form->id, $submission->id]) }}" data-confirm="Tem certeza que deseja excluir?">
             @csrf @method('DELETE')
-            <button type="submit" class="admin-btn admin-btn-danger" onclick="return confirm('Tem certeza que deseja excluir?')">
+            <button type="submit" class="admin-btn admin-btn-danger">
                 <x-lucide-trash-2 class="lucid-icon" /> Excluir
             </button>
         </form>

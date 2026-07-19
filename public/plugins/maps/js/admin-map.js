@@ -220,9 +220,10 @@ function mapEditor() {
             });
         },
 
-        removeSelected() {
+        async removeSelected() {
             if (this.selectedIdx === null) return;
-            if (!confirm('Remover este marcador?')) return;
+            const confirmed = await Dialog.confirm('Remover este marcador?');
+            if (!confirmed) return;
             const idx = this.selectedIdx;
             if (this.leafletMarkers[idx]) this.map.removeLayer(this.leafletMarkers[idx]);
             this.markers.splice(idx, 1);
@@ -234,9 +235,10 @@ function mapEditor() {
             this.markers.forEach((_, i) => this._buildMarker(i));
         },
 
-        deleteAll() {
+        async deleteAll() {
             if (this.markers.length === 0) return;
-            if (!confirm(`Remover todos os ${this.markers.length} marcadores?`)) return;
+            const confirmed = await Dialog.confirm(`Remover todos os ${this.markers.length} marcadores?`);
+            if (!confirmed) return;
             this.leafletMarkers.forEach(mk => mk && this.map.removeLayer(mk));
             this.markers = [];
             this.leafletMarkers = [];
@@ -404,7 +406,10 @@ function mapEditor() {
         },
         async savePlace(r) {
             const pid = r._pid || this.suggestPid(r.name);
-            if (!pid) return alert('Informe um identificador');
+            if (!pid) {
+                Dialog.alert('Informe um identificador');
+                return;
+            }
             this.savingPlace = true;
             try {
                 const resp = await fetch(D.routes.geojsonSave, {
@@ -420,7 +425,6 @@ function mapEditor() {
                     }),
                 });
                 const j = await resp.json();
-                if (!resp.ok) { alert(j.error || 'Falha ao salvar'); return; }
                 await this.loadPlacesIndex();
                 this.form.geojson_place = pid;
                 await this.loadPlaceGeoJson();

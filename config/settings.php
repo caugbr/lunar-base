@@ -293,39 +293,6 @@ return [
             ],
         ],
 
-        // ========== LEGAL ==========
-        // 'legal' => [
-        //     'tab' => 'Legal',
-        //     'title' => 'Obrigações legais',
-        //     'description' => 'Detalhes exigidos por lei para o seu site',
-        //     'icon' => 'scale',
-        //     'fields' => [
-        //         [
-        //             'key' => 'cookies_consent',
-        //             'type' => 'switch',
-        //             'label' => 'Consentimento para cookies',
-        //             'description' => 'Janela de consentimento de cookies. É preciso configurar os scripts que instalam cookies no navegador em <code>config/scripts.php</code>.',
-        //             'default' => true,
-        //             'active' => 'Usar',
-        //             'inactive' => 'Não usar',
-        //         ],
-        //         [
-        //             'key' => 'privacy_page_id',
-        //             'type' => 'page',
-        //             'label' => 'Política de privacidade',
-        //             'description' => 'Selecione a página usada para a política de privacidade do site',
-        //             'default' => 'Lunar Base',
-        //         ],
-        //         [
-        //             'key' => 'terms_page_id',
-        //             'type' => 'page',
-        //             'label' => 'Termos de uso',
-        //             'description' => 'Selecione a página usada para os termos de uso do site',
-        //             'default' => 'Lunar Base',
-        //         ],
-        //     ],
-        // ],
-
         // ========== NAVIGATION ==========
         'navigation' => [
             'tab' => 'Navegação',
@@ -359,6 +326,15 @@ return [
                     'default' => false,
                     'active' => 'Abas',
                     'inactive' => 'Sequencial',
+                ],
+                [
+                    'key' => 'show_meta_fields',
+                    'type' => 'switch',
+                    'label' => 'Metadados nos posts',
+                    'description' => 'Marque para mostrar o box Metadados na edição de posts.',
+                    'default' => false,
+                    'active' => 'Mostrar',
+                    'inactive' => 'Esconder',
                 ],
                 [
                     'type' => 'subtitle',
@@ -547,40 +523,6 @@ return [
             ],
         ],
 
-        // ========== PERMALINKS ==========
-        // 'permalinks' => [
-        //     'tab' => 'Permalinks',
-        //     'title' => 'Montagem dos links',
-        //     'description' => 'Configurações para a montagem das URLs',
-        //     'icon' => 'link',
-        //     'fields' => [
-        //         [
-        //             'key' => 'pages_base',
-        //             'type' => 'text',
-        //             'label' => 'Namespace para páginas',
-        //             'description' => 'Prefixo de URL padrão para o carregamento das páginas públicas.',
-        //             'default' => '',
-        //             'warn_on_change' => 'Ao mudar este valor, as URLs de todas as páginas irão mudar e se algum de seus usuários favoritou, seus links deixarão de funcionar. Tem certeza?'
-        //         ],
-        //         [
-        //             'key' => 'posts_base',
-        //             'type' => 'text',
-        //             'label' => 'Namespace para posts',
-        //             'description' => 'Prefixo de URL padrão para o carregamento dos posts do blog.',
-        //             'default' => 'post',
-        //             'warn_on_change' => 'Ao mudar este valor, as URLs de todos os posts irão mudar e se algum de seus usuários favoritou, seus links deixarão de funcionar. Tem certeza?'
-        //         ],
-        //         [
-        //             'key' => 'blog_base',
-        //             'type' => 'text',
-        //             'label' => 'Namespace para o blog',
-        //             'description' => 'Prefixo de URL padrão para o carregamento do blog.',
-        //             'default' => 'blog',
-        //             'warn_on_change' => 'Ao mudar este valor, a URL do blog vai mudar e se algum de seus usuários favoritou, seu link deixará de funcionar. Tem certeza?'
-        //         ],
-        //     ],
-        // ],
-
         // ========== LEITURA ==========
         'reading' => [
             'title' => 'Leitura',
@@ -714,92 +656,6 @@ return [
                 ],
             ],
         ],
-
-        // ========== ACCESSIBILITY ==========
-        // 'accessibility' => [
-        //     'tab' => 'Acessibilidade',
-        //     'title' => 'Acessibilidade',
-        //     'description' => 'Ajuste o elemento que mostra o bloco de acessibilidade',
-        //     'icon' => 'accessibility',
-        //     'fields' => [
-        //         [
-        //             'key' => 'position',
-        //             'type' => 'select',
-        //             'label' => 'Posição do elemento',
-        //             'description' => 'Local para exibir o bloco de acessibilidade.',
-        //             'default' => 'right-middle',
-        //             'options' => [
-        //                 'right-middle' => 'No meio da tela, à direita',
-        //                 'right-top' => 'No topo da tela, à direita',
-        //                 'right-bottom' => 'No fundo da tela, à direita',
-        //                 'left-middle' => 'No meio da tela, à esquerda',
-        //                 'left-top' => 'No topo da tela, à esquerda',
-        //                 'left-bottom' => 'No fundo da tela, à esquerda',
-        //             ]
-        //         ],
-        //         [
-        //             'key' => 'switch_themes',
-        //             'type' => 'switch',
-        //             'label' => 'Seletor de temas',
-        //             'description' => 'Exibir seletor para o usuário decidir pelo tema claro ou o escuro.',
-        //             'default' => false,
-        //             'active' => 'Mostrar',
-        //             'inactive' => 'Não mostrar',
-        //         ],
-        //         [
-        //             'key' => 'vlibras',
-        //             'type' => 'switch',
-        //             'label' => 'VLibras',
-        //             'description' => 'Plugin para ler textos em linguagem de sinais (Vlibras).',
-        //             'default' => false,
-        //             'active' => 'Ativar',
-        //             'inactive' => 'Não ativar',
-        //         ],
-        //         [
-        //             'key' => 'increase_text_size',
-        //             'type' => 'switch',
-        //             'label' => 'Aumentar tamanho do texto',
-        //             'description' => 'Exibir links para aumentar o tamanho do texto.',
-        //             'default' => false,
-        //             'active' => 'Ativar',
-        //             'inactive' => 'Não ativar',
-        //         ],
-        //         [
-        //             'key' => 'text_size_steps',
-        //             'type' => 'number',
-        //             'label' => 'Quantidade de passos (Variações)',
-        //             'description' => 'Quantidade máxima de cliques para aumentar o texto antes de retornar ao tamanho original.',
-        //             'default' => 2,
-        //             'attributes' => [
-        //                 'min' => 1,
-        //                 'max' => 5,
-        //                 'step' => 1,
-        //             ],
-        //             'depends_on' => [
-        //                 'field' => 'increase_text_size',
-        //                 'operator' => '===',
-        //                 'value' => true,
-        //             ]
-        //         ],
-        //         [
-        //             'key' => 'text_size_step_value',
-        //             'type' => 'number',
-        //             'label' => 'Valor de cada passo (Pixels)',
-        //             'description' => 'Quantidade de pixels (px) adicionada ao tamanho do texto a cada clique.',
-        //             'default' => 4,
-        //             'attributes' => [
-        //                 'min' => 1,
-        //                 'max' => 12,
-        //                 'step' => 1,
-        //             ],
-        //             'depends_on' => [
-        //                 'field' => 'increase_text_size',
-        //                 'operator' => '===',
-        //                 'value' => true,
-        //             ]
-        //         ],
-        //     ],
-        // ],
 
         // ========== MÍDIA ==========
         'media' => [

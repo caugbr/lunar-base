@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Lunar Base'),
+    'name' => 'Lunar Base',
     'version' => '1.0.0',
     'author' => 'Cau Guanabara',
 

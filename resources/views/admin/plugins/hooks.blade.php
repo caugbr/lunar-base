@@ -35,6 +35,13 @@
         </div>
     </div>
 
+    <div class="filter">
+        Mostrar:
+        <label><input type="radio" name="show" value="all" checked> Todos</label>
+        <label><input type="radio" name="show" value="admin"> Administração</label>
+        <label><input type="radio" name="show" value="front"> Site público</label>
+    </div>
+
     <div class="table-wrap" style="margin-top: 1.5rem;">
         <table class="admin-table">
             <thead>
@@ -88,3 +95,50 @@
     </div>
 </div>
 @endsection
+
+@once
+@push('styles')
+<style>
+    .filter {
+        background: var(--color-bg-dark);
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-top: 1rem;
+    }
+</style>
+@endpush
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const filterRadios = document.querySelectorAll('input[name="show"]');
+    const rows = document.querySelectorAll('.admin-table tbody tr');
+
+    filterRadios.forEach(radio => {
+        radio.addEventListener('change', function () {
+            const selectedFilter = this.value; // 'all', 'admin' ou 'front'
+
+            rows.forEach(row => {
+                const hookNameElement = row.querySelector('.hook-name');
+
+                // Se a linha não tiver o elemento (ex: a linha de "Nenhum hook descoberto"), ignora
+                if (!hookNameElement) return;
+
+                const hookName = hookNameElement.textContent.trim();
+                const isAdmin = hookName.startsWith('admin.');
+
+                // Lógica de visibilidade baseada no valor selecionado
+                if (selectedFilter === 'all') {
+                    row.style.display = '';
+                } else if (selectedFilter === 'admin') {
+                    row.style.display = isAdmin ? '' : 'none';
+                } else if (selectedFilter === 'front') {
+                    row.style.display = !isAdmin ? '' : 'none';
+                }
+            });
+        });
+    });
+});
+</script>
+@endpush
+@endonce

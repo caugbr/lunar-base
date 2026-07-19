@@ -43,10 +43,10 @@
                             <a href="{{ route('admin.forms.submissions.show', [$form->id, $submission->id]) }}" class="admin-btn admin-btn-secondary" style="padding: 4px 12px;" title="Ver detalhes">
                                 <x-lucide-eye class="lucid-icon" />
                             </a>
-                            <form method="POST" action="{{ route('admin.forms.submissions.destroy', [$form->id, $submission->id]) }}" style="display: inline;">
+                            <form method="POST" action="{{ route('admin.forms.submissions.destroy', [$form->id, $submission->id]) }}" data-confirm="Excluir esta resposta?" style="display: inline;">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="admin-btn admin-btn-danger" style="padding: 4px 12px;" onclick="return confirm('Excluir esta resposta?')" title="Excluir">
+                                <button type="submit" class="admin-btn admin-btn-danger" style="padding: 4px 12px;" title="Excluir">
                                     <x-lucide-trash-2 class="lucid-icon" />
                                 </button>
                             </form>

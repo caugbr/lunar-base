@@ -64,7 +64,7 @@
                     <a href="{{ route('admin.terms.edit', $term->id) }}" class="admin-btn admin-btn-secondary" style="padding: 4px 12px;">
                         <x-lucide-pencil class="lucid-icon" />
                     </a>
-                    <form method="POST" action="{{ route('admin.terms.destroy', $term->id) }}" style="display: inline;" onsubmit="return confirm('Remover este termo?')">
+                    <form method="POST" action="{{ route('admin.terms.destroy', $term->id) }}" style="display: inline;" data-confirm="Remover este termo?">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="admin-btn admin-btn-danger" style="padding: 4px 12px;">

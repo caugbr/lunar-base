@@ -34,7 +34,7 @@ class AvatarsServiceProvider extends ServiceProvider
         }, 'Avatars Plugin');
 
         // Hook 2: Injeta a caixa de upload logo abaixo do formulário de perfil
-        HookManager::register('profile.after_card', function($params) {
+        HookManager::register('admin.profile_after_card', function($params) {
             $user = $params['user'] ?? null;
             if (!$user) return '';
 

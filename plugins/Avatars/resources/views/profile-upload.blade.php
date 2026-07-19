@@ -28,7 +28,7 @@
 
                     @if(\Illuminate\Support\Facades\Storage::disk('public')->exists("avatars/{$user->id}.webp"))
                         <button type="button"
-                                onclick="if(confirm('Deseja remover sua foto de perfil?')) document.getElementById('delete_avatar_form').submit()"
+                                onclick="(async () => { if(await Dialog.confirm('Deseja remover sua foto de perfil?')) document.getElementById('delete_avatar_form').submit(); })()"
                                 class="admin-btn admin-btn-danger">
                             <x-lucide-trash-2 class="lucid-icon" /> Remover Foto
                         </button>

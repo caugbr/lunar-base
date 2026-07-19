@@ -94,6 +94,7 @@
                     </article>
                 </div>
 
+                @if(setting('navigation.show_meta_fields'))
                 <div class="edit-box">
                     <header>Metadados</header>
                     <article>
@@ -104,6 +105,7 @@
                         />
                     </article>
                 </div>
+                @endif
 
             </div>
             <div class="aside-column">

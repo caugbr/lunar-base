@@ -385,14 +385,14 @@
                     const data = await response.json();
 
                     if (response.ok && data.success) {
-                        alert(data.message);
+                        Dialog.alert(data.message);
                     } else {
-                        alert(data.message || 'Erro ao salvar o menu.');
+                        Dialog.alert(data.message || 'Erro ao salvar o menu.');
                     }
 
                 } catch (e) {
                     console.error('Erro ao salvar menu:', e);
-                    alert('Erro de conexão com o servidor.');
+                    Dialog.alert('Erro de conexão com o servidor.');
                 } finally {
                     this.saving = false;
                 }

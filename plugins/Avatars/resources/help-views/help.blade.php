@@ -13,7 +13,7 @@
     <p>O plugin se conecta de forma dinâmica a dois ganchos no painel administrativo do Lunar Base:</p>
     <ul>
         <li><strong><code>admin.header_user_avatar</code>:</strong> Injeta a miniatura circular do avatar do usuário logado no cabeçalho administrativo.</li>
-        <li><strong><code>profile.after_card</code>:</strong> Renderiza um card administrativo completo de upload e corte de imagem diretamente na página de Perfil.</li>
+        <li><strong><code>admin.profile_after_card</code>:</strong> Renderiza um card administrativo completo de upload e corte de imagem diretamente na página de Perfil.</li>
     </ul>
 
     <h4>Como utilizar no Front-End</h4>

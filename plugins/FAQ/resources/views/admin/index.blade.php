@@ -62,10 +62,10 @@
                             <a href="{{ route('admin.faq.edit', $faq['slug']) }}" class="admin-btn admin-btn-secondary faq-table-actions" title="Editar perguntas">
                                 <x-lucide-pencil class="lucid-icon" />
                             </a>
-                            <form method="POST" action="{{ route('admin.faq.destroy', $faq['slug']) }}" style="display: inline;">
+                            <form method="POST" action="{{ route('admin.faq.destroy', $faq['slug']) }}" data-confirm="Remover este FAQ de forma permanente?" style="display: inline;">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="admin-btn admin-btn-danger faq-table-actions" onclick="return confirm('Remover este FAQ de forma permanente?')" title="Excluir FAQ">
+                                <button type="submit" class="admin-btn admin-btn-danger faq-table-actions" title="Excluir FAQ">
                                     <x-lucide-trash-2 class="lucid-icon" />
                                 </button>
                             </form>

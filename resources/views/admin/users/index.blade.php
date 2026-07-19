@@ -61,10 +61,10 @@
 
                             @if($user->hasTwoFactorEnabled())
                                 @if(setting('auth.2fa_enabled'))
-                                <form method="POST" action="{{ route('admin.users.two-factor.disable', $user->id) }}" style="display: inline;">
+                                <form method="POST" action="{{ route('admin.users.two-factor.disable', $user->id) }}" style="display: inline;" data-confirm="Desativar 2FA de {{ $user->name }}?">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="admin-btn admin-btn-secondary" style="padding: 4px 12px;" onclick="return confirm('Desativar 2FA de {{ $user->name }}?')">
+                                    <button type="submit" class="admin-btn admin-btn-secondary" style="padding: 4px 12px;">
                                         <x-lucide-shield-off class="lucid-icon" />
                                     </button>
                                 </form>
@@ -76,10 +76,12 @@
                             @endif
 
                             @if($user->id !== auth()->id())
-                            <form method="POST" action="{{ route('admin.users.destroy', $user->id) }}" style="display: inline;">
+                            <form method="POST" action="{{ route('admin.users.destroy', $user->id) }}" data-confirm="Remover este usuário?" style="display: inline;">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="admin-btn admin-btn-danger" style="padding: 4px 12px;" onclick="return confirm('Remover este usuário?')"><x-lucide-trash-2 class="lucid-icon" /></button>
+                                <button type="submit" class="admin-btn admin-btn-danger" style="padding: 4px 12px;">
+                                    <x-lucide-trash-2 class="lucid-icon" />
+                                </button>
                             </form>
                             @endif
                         </div>

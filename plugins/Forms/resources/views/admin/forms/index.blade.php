@@ -77,10 +77,10 @@
                             <a href="{{ route('admin.forms.show', $form->id) }}" class="admin-btn admin-btn-secondary" style="padding: 4px 12px;" title="Ver formulário">
                                 <x-lucide-eye class="lucid-icon" />
                             </a>
-                            <form method="POST" action="{{ route('admin.forms.destroy', $form->id) }}" style="display: inline;">
+                            <form method="POST" action="{{ route('admin.forms.destroy', $form->id) }}" data-confirm="Remover este formulário e todas as suas respostas?" style="display: inline;">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="admin-btn admin-btn-danger" style="padding: 4px 12px;" onclick="return confirm('Remover este formulário e todas as suas respostas?')" title="Excluir formulário">
+                                <button type="submit" class="admin-btn admin-btn-danger" style="padding: 4px 12px;" title="Excluir formulário">
                                     <x-lucide-trash-2 class="lucid-icon" />
                                 </button>
                             </form>

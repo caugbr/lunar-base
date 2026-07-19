@@ -254,10 +254,10 @@
                                         <x-lucide-x class="lucid-icon" />
                                     </button>
                                 </form>
-                                <form method="POST" action="{{ route('admin.comments.destroy', $comment->id) }}" class="admin-inline-form">
+                                <form method="POST" action="{{ route('admin.comments.destroy', $comment->id) }}" data-confirm="Excluir este comentário permanentemente?" class="admin-inline-form">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="admin-btn admin-btn-danger" onclick="return confirm('Excluir este comentário permanentemente?')" title="Excluir">
+                                    <button type="submit" class="admin-btn admin-btn-danger" title="Excluir">
                                         <x-lucide-trash-2 class="lucid-icon" />
                                     </button>
                                 </form>
@@ -287,20 +287,21 @@
     function submitBulk(status) {
         const checked = document.querySelectorAll('.comment-checkbox:checked');
         if (checked.length === 0) {
-            alert('Selecione pelo menos um comentário.');
+            Dialog.alert('Selecione pelo menos um comentário.');
             return;
         }
         document.getElementById('bulk-status').value = status;
         document.getElementById('bulk-form').submit();
     }
 
-    function submitBulkDelete() {
+    async function submitBulkDelete() {
         const checked = document.querySelectorAll('.comment-checkbox:checked');
         if (checked.length === 0) {
-            alert('Selecione pelo menos um comentário.');
+            Dialog.alert('Selecione pelo menos um comentário.');
             return;
         }
-        if (!confirm('Excluir ' + checked.length + ' comentário(s) permanentemente?')) {
+        const confirmed = await Dialog.confirm('Excluir ' + checked.length + ' comentário(s) permanentemente?');
+        if (!confirmed) {
             return;
         }
         // Change form action to bulk delete route

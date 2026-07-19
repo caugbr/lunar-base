@@ -41,7 +41,7 @@
     </form>
 </div>
 
-<x-hook name="profile.after_card" :params="['user' => $user]" desc="Ponto de inserção abaixo do perfil de usuário" />
+<x-hook name="admin.profile_after_card" :params="['user' => $user]" desc="Ponto de inserção abaixo do perfil de usuário" />
 
 <x-lost-changes-warn selector="#profile_form" />
 

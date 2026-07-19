@@ -76,10 +76,10 @@
                             <a href="{{ route('admin.menus.edit', $menu->id) }}" class="admin-btn admin-btn-secondary" style="padding: 4px 12px;" title="Definir links">
                                 <x-lucide-pencil class="lucid-icon" />
                             </a>
-                            <form method="POST" action="{{ route('admin.menus.destroy', $menu->id) }}" style="display: inline;">
+                            <form method="POST" action="{{ route('admin.menus.destroy', $menu->id) }}" data-confirm="Remover este menu e todos os seus links?" style="display: inline;">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="admin-btn admin-btn-danger" style="padding: 4px 12px;" onclick="return confirm('Remover este menu e todos os seus links?')" title="Excluir menu">
+                                <button type="submit" class="admin-btn admin-btn-danger" style="padding: 4px 12px;" title="Excluir menu">
                                     <x-lucide-trash-2 class="lucid-icon" />
                                 </button>
                             </form>

@@ -769,11 +769,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Bind em TODOS os inputs do grupo
         inputs.forEach(input => {
-            input.addEventListener('change', () => {
+            input.addEventListener('change', async () => {
                 const newValue = readValue();
 
                 if (newValue !== originalValue) {
-                    if (!confirm(message)) {
+                    if (!(await Dialog.confirm(message))) {
                         // Reverte
                         revertGroup(inputs, originalValue);
                     } else {

@@ -77,7 +77,7 @@ class Dashboard
                 : (string) $result;
 
             // Renderiza na moldura
-            return view(config('admin.dashboard.boxView'), [
+            return view('admin.dashboard.box', [
                 'id'      => $box['id'],
                 'title'   => $box['title'] ?? '',
                 'icon'    => $box['icon'] ?? null,

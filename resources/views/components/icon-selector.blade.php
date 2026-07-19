@@ -28,7 +28,7 @@
     $excludedIcons = [
         'chrome', 'chromium', 'codepen', 'codesandbox', 'dribbble', 'facebook', 'figma', 'framer',
         'github', 'gitlab', 'instagram', 'linkedin', 'pocket', 'rail-symbol', 'slack', 'trello',
-        'twitch', 'twitter', 'youtube', 'mouse-pointer-square'
+        'twitch', 'twitter', 'youtube', 'mouse-pointer-square', 'circle-euro-sign'
     ];
 
     $icons = [];

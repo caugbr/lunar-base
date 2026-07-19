@@ -50,7 +50,7 @@
                     <a href="{{ route('admin.terms.index', ['taxonomy_id' => $taxonomy->id]) }}" class="admin-btn admin-btn-secondary" style="padding: 4px 12px;">
                         <x-lucide-tags class="lucid-icon" />
                     </a>
-                    <form method="POST" action="{{ route('admin.taxonomies.destroy', $taxonomy->id) }}" style="display: inline;" onsubmit="return confirm('Remover esta taxonomia?')">
+                    <form method="POST" action="{{ route('admin.taxonomies.destroy', $taxonomy->id) }}" style="display: inline;" data-confirm="Remover esta taxonomia?">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="admin-btn admin-btn-danger" style="padding: 4px 12px;">

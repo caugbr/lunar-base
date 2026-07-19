@@ -74,10 +74,10 @@
                             <a href="{{ route('admin.banners.edit', $banner->id) }}" class="admin-btn admin-btn-secondary" style="padding: 4px 12px;" title="Editar">
                                 <x-lucide-pencil class="lucid-icon" />
                             </a>
-                            <form method="POST" action="{{ route('admin.banners.destroy', $banner->id) }}" style="display: inline;">
+                            <form method="POST" action="{{ route('admin.banners.destroy', $banner->id) }}" data-confirm="Remover este banner?" style="display: inline;">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="admin-btn admin-btn-danger" style="padding: 4px 12px;" onclick="return confirm('Remover este banner?')" title="Excluir">
+                                <button type="submit" class="admin-btn admin-btn-danger" style="padding: 4px 12px;" title="Excluir">
                                     <x-lucide-trash-2 class="lucid-icon" />
                                 </button>
                             </form>

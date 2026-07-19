@@ -102,10 +102,10 @@
                             <a href="{{ route('admin.posts.edit', $post->id) }}" class="admin-btn admin-btn-secondary" style="padding: 4px 12px;">
                                 <x-lucide-pencil class="lucid-icon" />
                             </a>
-                            <form method="POST" action="{{ route('admin.posts.destroy', $post->id) }}" style="display: inline;">
+                            <form method="POST" action="{{ route('admin.posts.destroy', $post->id) }}" data-confirm="Remover este post?" style="display: inline;">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="admin-btn admin-btn-danger" style="padding: 4px 12px;" onclick="return confirm('Remover este post?')">
+                                <button type="submit" class="admin-btn admin-btn-danger" style="padding: 4px 12px;">
                                     <x-lucide-trash-2 class="lucid-icon" />
                                 </button>
                             </form>

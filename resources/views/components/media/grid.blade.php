@@ -398,7 +398,7 @@ function mediaGridComponent(config) {
 
         async deleteItem(item) {
             if (this.selectable) return;
-            if (!confirm(`Excluir "${item.name}" permanentemente?`)) return;
+            if (!(await Dialog.confirm(`Excluir "${item.name}" permanentemente?`))) return;
 
             try {
                 const response = await fetch(`/admin/media/${item.id}`, {
@@ -420,7 +420,7 @@ function mediaGridComponent(config) {
                 }
             } catch (err) {
                 console.error('Erro ao excluir:', err);
-                alert('Erro ao excluir mídia.');
+                Dialog.alert('Erro ao excluir mídia.');
             }
         }
     }

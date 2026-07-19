@@ -6,7 +6,7 @@
     'placeholder' => null,
     'allowInsert' => true,
     'insertLabel' => 'Inserir novo...',
-    'insertPlaceholder' => '',
+    'insertPlaceholder' => 'Novo valor (Enter depois de digitar)',
     'help' => null,
     'required' => false,
     'id' => null,

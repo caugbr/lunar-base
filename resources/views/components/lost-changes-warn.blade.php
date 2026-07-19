@@ -4,10 +4,8 @@
 (() => {
     // Tudo aqui dentro agora roda em um escopo isolado e seguro
     document.addEventListener('DOMContentLoaded', () => {
-        console.log('form warn', '{{ $selector }}')
         const form = document.querySelector('{{ $selector }}');
         if (!form) return;
-        console.log('form', form)
 
         let isDirty = false;
 

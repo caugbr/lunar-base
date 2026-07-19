@@ -45,10 +45,15 @@ if (empty($pairs)) {
         @foreach($pairs as $index => $pair)
             <div class="meta-pair">
                 <div class="form-group">
-                    <input type="text"
-                           name="{{ $name }}[{{ $index }}][key]"
-                           value="{{ $pair['key'] }}"
-                           readonly>
+                    <x-select-input
+                        :name="'{{ $name }}[' . $index . '][key]'"
+                        :options="$existingKeys"
+                        :value="$pair['key']"
+                        placeholder="-- Selecione ou insira --"
+                        :allowInsert="true"
+                        insertLabel="Inserir nova chave..."
+                        insertPlaceholder="Nova chave (pressione Enter depois de digitar)"
+                    />
                 </div>
                 <div class="form-group" style="flex: 1">
                     <input type="text"
