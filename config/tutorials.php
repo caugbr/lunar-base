@@ -16,7 +16,7 @@ $meses = [
     'November'  => 'Novembro',
     'December'  => 'Dezembro',
 ];
-$nameVersion = config('app.name', 'Lunar Base') . ' v' . config('app.version', '1.0.0');
+$nameVersion = config('app.name') . ' v' . config('app.version');
 $footerText = 'Última atualização: ' . $meses[date('F')] . '/' . date('Y') .
               ' | &copy; ' . date('Y') . ' ' . config('app.author');
 
@@ -36,6 +36,10 @@ return [
     | 'replace': A string de substituição usando $1, $2, etc., + o valor dinâmico.
     */
     'replacements' => [
+        [
+            'pattern' => '#(<span class="app-name">)[^<]+(</span>)#',
+            'replace' => '$1' . config('app.name') . '$2',
+        ],
         [
             'pattern' => '#(- )[^<]+(</title>)#',
             'replace' => '$1' . $nameVersion . '$2',

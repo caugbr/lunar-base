@@ -235,7 +235,7 @@ return [
                 // ],
                 [
                     'label' => 'Referências',
-                    'icon' => 'cog',
+                    'icon' => 'terminal',
                     'route' => 'admin.reference.index',
                     'active' => 'admin.reference.*',
                     'role' => 'admin',

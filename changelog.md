@@ -21,6 +21,7 @@
 - Filtro na visualização de hooks na admin
 - Plugin Populator
 - Plugin Galleries
+- Comando para atualizar os tutoriais com nome e versão a cada atualização
 - Imagens vinculadas agora mostram a publicação relacionada no popup de edição
 - Thumbnails agora mostram a publicação relacionada no popup de edição
 - Plugin Populate adicionado

@@ -1,6 +1,6 @@
 @extends('admin.layout')
 @section('header_title', 'Referências do Sistema')
-@section('header_subtitle', 'Documentação, logs e ferramentas de controle para desenvolvedores e administradores')
+@section('header_subtitle', 'Documentação, logs e referências para desenvolvedores e administradores')
 
 @once
 @push('styles')
@@ -107,9 +107,9 @@
 
     {{-- Bloco Introdutório --}}
     <div class="reference-intro">
-        <h3><x-lucide-terminal class="lucid-icon" /> Central de Desenvolvimento e Diagnósticos</h3>
+        <h3><x-lucide-terminal class="lucid-icon" /> Central de Referência do Sistema</h3>
         <p>
-            Bem-vindo à área de referências do Lunar Base. Este espaço foi projetado para centralizar as ferramentas técnicas e de monitoramento do sistema. Aqui você pode visualizar ganchos de extensão ativos, consultar códigos de atalho registrados, auditar as permissões de papéis de usuários e acompanhar o histórico de atividades e auditoria de ações realizadas no painel administrativo.
+            Bem-vindo à área de referências do Lunar Base. Este espaço existe para centralizar as áreas de monitoramento do sistema. Aqui você pode visualizar ganchos de extensão ativos, consultar shortcodes registrados, auditar as permissões de papéis de usuários e acompanhar o histórico de atividades e auditoria de ações realizadas no painel administrativo.
         </p>
     </div>
 
@@ -167,12 +167,12 @@
             </div>
             <div class="reference-card-body">
                 <p class="reference-card-desc">
-                    Monitore os níveis de acesso à administração. Permite gerenciar quais papéis de usuários do sistema possuem privilégios de leitura, escrita e configurações especiais no core.
+                    Monitore os níveis de acesso à administração. Entenda quais papéis de usuários do sistema possuem privilégios de leitura, escrita e outras configurações no core.
                 </p>
             </div>
             <div class="reference-card-footer">
                 <a href="{{ route('admin.roles-permissions') }}" class="admin-btn admin-btn-secondary">
-                    Ir para Permissões
+                    Ver Permissões
                 </a>
             </div>
         </div>
@@ -193,6 +193,26 @@
             <div class="reference-card-footer">
                 <a href="{{ route('admin.logs') }}" class="admin-btn admin-btn-secondary">
                     Auditar Atividades
+                </a>
+            </div>
+        </div>
+
+        <div class="reference-card">
+            <div class="reference-card-header">
+                <div class="reference-card-icon">
+                    <x-lucide-school class="lucid-icon" />
+                </div>
+                <h4 class="reference-card-title">Tutoriais do Sistema</h4>
+            </div>
+            <div class="reference-card-body">
+                <p class="reference-card-desc">
+                    Preparamos alguns tutoriais para quem vai usar o sistema ou desenvolver plugins e temas para o {{ config('app.name') }}.
+                </p>
+            </div>
+            <div class="reference-card-footer">
+                <a href="/tutorials/index.html" class="admin-btn admin-btn-secondary" target="_blank">
+                    <x-lucide-external-link class="lucid-icon" />
+                    Ver Tutoriais
                 </a>
             </div>
         </div>
