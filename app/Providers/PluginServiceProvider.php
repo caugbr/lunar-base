@@ -82,14 +82,35 @@ class PluginServiceProvider extends ServiceProvider
         }
     }
 
+    // private function registerActivePlugins(): void
+    // {
+    //     if (!dbAvailable('plugins')) return;
+
+    //     Plugin::where('is_active', true)
+    //         ->pluck('service_provider_class')
+    //         ->filter(fn($class) => class_exists($class))
+    //         ->each(fn($class) => $this->app->register($class));
+    // }
     private function registerActivePlugins(): void
     {
         if (!dbAvailable('plugins')) return;
 
-        Plugin::where('is_active', true)
-            ->pluck('service_provider_class')
-            ->filter(fn($class) => class_exists($class))
-            ->each(fn($class) => $this->app->register($class));
+        $activePlugins = Plugin::where('is_active', true)->get();
+
+        foreach ($activePlugins as $plugin) {
+            $pluginPath = base_path("plugins/{$plugin->folder_name}");
+
+            // Se a pasta do plugin foi apagada do disco, desativa no banco e pula
+            if (!File::isDirectory($pluginPath)) {
+                $plugin->update(['is_active' => false]);
+                continue;
+            }
+
+            // Como a pasta existe no disco, é seguro chamar o class_exists
+            if (class_exists($plugin->service_provider_class)) {
+                $this->app->register($plugin->service_provider_class);
+            }
+        }
     }
 
     private function registerPluginMigrations(): void

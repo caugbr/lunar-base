@@ -13,7 +13,9 @@ use App\Http\Controllers\Admin\TermController;
 // use App\Http\Controllers\Admin\RolesPermissionsController;
 use App\Http\Controllers\Admin\ReferenceController;
 use App\Http\Controllers\Admin\PluginController;
+use App\Http\Controllers\Admin\PluginMarketplaceController;
 use App\Http\Controllers\Admin\ThemeController;
+use App\Http\Controllers\Admin\ThemeMarketplaceController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\ProfileController as EditorProfileController;
 
@@ -35,10 +37,20 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         ->name('plugins.toggle_all')
         ->where('status', '0|1');
 
+    // Marketplace de Plugins
+    Route::get('plugins/marketplace', [PluginMarketplaceController::class, 'index'])->name('plugins.marketplace.index');
+    Route::post('plugins/marketplace/install', [PluginMarketplaceController::class, 'installBatch'])->name('plugins.marketplace.install');
+    Route::post('plugins/marketplace/refresh', [PluginMarketplaceController::class, 'refresh'])->name('plugins.marketplace.refresh');
+
     // Temas
     Route::get('themes', [ThemeController::class, 'index'])->name('themes.index');
     Route::post('themes/{theme}/toggle', [ThemeController::class, 'toggle'])->name('themes.toggle');
     Route::get('themes/{theme}/screenshot', [ThemeController::class, 'screenshot'])->name('themes.screenshot');
+
+    // Marketplace de Temas
+    Route::get('themes/marketplace', [ThemeMarketplaceController::class, 'index'])->name('themes.marketplace.index');
+    Route::post('themes/marketplace/install', [ThemeMarketplaceController::class, 'installBatch'])->name('themes.marketplace.install');
+    Route::post('themes/marketplace/refresh', [ThemeMarketplaceController::class, 'refresh'])->name('themes.marketplace.refresh');
 
     // Dashboard (ambos veem)
     Route::get('/dashboard', [AdminDashboard::class, 'index'])->name('dashboard.index');

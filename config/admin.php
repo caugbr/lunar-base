@@ -194,21 +194,30 @@ return [
                     'icon' => 'puzzle',
                     'route' => 'admin.plugins.index',
                     'active' => 'admin.plugins.*',
-                    // 'items' => [
-                    //     [
-                    //         'label'  => 'Hooks',
-                    //         'icon'   => 'fishing-hook',
-                    //         'route'  => 'admin.hooks',
-                    //         'active' => 'admin.hooks',
-                    //         'role'   => 'admin',
-                    //     ]
-                    // ]
+                    'items' => [
+                        [
+                            'label'  => 'Instalar plugin',
+                            'icon'   => 'plus',
+                            'route'  => 'admin.plugins.marketplace.index',
+                            'active' => 'admin.plugins.marketplace.index',
+                            'role'   => 'admin',
+                        ]
+                    ]
                 ],
                 [
                     'label' => 'Temas',
                     'icon' => 'palette',
                     'route' => 'admin.themes.index',
                     'active' => 'admin.themes.*',
+                    'items' => [
+                        [
+                            'label'  => 'Instalar tema',
+                            'icon'   => 'plus',
+                            'route'  => 'admin.themes.marketplace.index',
+                            'active' => 'admin.themes.marketplace.index',
+                            'role'   => 'admin',
+                        ]
+                    ]
                 ],
                 // [
                 //     'label' => 'Permissões',
