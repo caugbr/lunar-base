@@ -133,6 +133,7 @@
   --color-border-hover:  rgba(200, 182, 255, 0.2);
   --color-border-light:  rgba(200, 182, 255, 0.08);
   --color-glow:          rgba(157, 124, 255, 0.15);
+  --code-block-bg:       #746fb1;
 
   /* ===== FONTS ===== */
   --font-heading: 'Cormorant Garamond', 'Georgia', serif;

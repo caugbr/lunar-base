@@ -1,0 +1,6 @@
+{
+    "name": "Prism Highlight",
+    "description": "Syntax highlight para códigos com Prism.js.",
+    "version": "1.0.0",
+    "provider": "Plugins\\PrismHighlight\\PrismHighlightServiceProvider"
+}

@@ -478,7 +478,7 @@ echo ""
 echo -e "${YELLOW}[7/7] Finalizando...${NC}"
 
 if [ "$KEEP_DATA" = false ]; then
-    rm -f "$JSON_FILE"
+    # rm -f "$JSON_FILE"
     echo -e "${GREEN}  ✔ Arquivo temporário de usuários removido.${NC}"
 else
     echo -e "${GREEN}  ✔ Arquivo temporário preservado em: ${JSON_FILE}${NC}"
@@ -520,6 +520,13 @@ foreach ($users as $u) {
     echo "     Role:   {$u['role']}\n\n";
 }
 PHPEOF
+
+# -----------------------------------------------------------------------------
+# 12a. Limpeza do JSON
+# -----------------------------------------------------------------------------
+if [ "$KEEP_DATA" = false ]; then
+    rm -f "$JSON_FILE"
+fi
 
 export LUNAR_JSON_FILE="$JSON_FILE"
 php "$PHP_TMP"

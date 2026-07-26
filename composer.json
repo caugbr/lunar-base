@@ -42,7 +42,8 @@
             "app/Helpers/ImageProcessor.php",
             "app/Helpers/LogHelper.php",
             "app/Helpers/OptionHelper.php",
-            "app/Helpers/RolePermissionHelper.php"
+            "app/Helpers/RolePermissionHelper.php",
+            "app/Helpers/DbHelper.php"
         ]
     },
     "autoload-dev": {

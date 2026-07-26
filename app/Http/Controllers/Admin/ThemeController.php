@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Theme;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Str;
 
 class ThemeController extends Controller
 {
@@ -26,28 +27,76 @@ class ThemeController extends Controller
      */
     public function activate(Theme $theme)
     {
-        // Deactivate all other themes in a single database query
         Theme::where('id', '!=', $theme->id)->update(['is_active' => false]);
 
-        // Activate the selected theme
         $theme->update(['is_active' => true]);
+
+        $this->syncAllThemeAssetLinks($theme);
 
         return back()->with('success', "Theme '{$theme->name}' has been activated!");
     }
 
+    /**
+     * Toggle the active state of a theme.
+     */
     public function toggle(Theme $theme)
     {
-        // Se o tema já estiver ativo, apenas desativamos ele
+        // Caso 1: Se o tema já estiver ativo, desativamos ele (ficamos sem tema ativo)
         if ($theme->is_active) {
             $theme->update(['is_active' => false]);
+
+            // Passamos `null` para garantir que TODOS os links de temas sejam removidos do disco
+            $this->syncAllThemeAssetLinks(null);
+
             return back()->with('success', "Tema '{$theme->name}' foi desativado.");
         }
 
-        // Se não estiver ativo, desativamos TODOS os outros e ativamos este
+        // Caso 2: Se o tema estava inativo, desativamos TODOS no banco e ativamos este
         Theme::query()->update(['is_active' => false]);
         $theme->update(['is_active' => true]);
 
+        // Sincroniza o disco para manter apenas o link do tema atual
+        $this->syncAllThemeAssetLinks($theme);
+
         return back()->with('success', "Tema '{$theme->name}' foi ativado!");
+    }
+
+    /**
+     * Garante que APENAS o $activeTheme tenha link simbólico no disco.
+     * Se $activeTheme for null, desvincula todos os temas.
+     */
+    protected function syncAllThemeAssetLinks(?Theme $activeTheme = null): void
+    {
+        // Busca todos os temas cadastrados
+        $themes = Theme::all();
+
+        foreach ($themes as $theme) {
+            // Verifica se este tema específico deve estar vinculado
+            $shouldLink = $activeTheme && ($theme->id === $activeTheme->id);
+
+            $this->setThemeAssetLink($theme, $shouldLink);
+        }
+    }
+
+    /**
+     * Executa o comando Artisan de link ou unlink para um tema individual.
+     */
+    protected function setThemeAssetLink(Theme $theme, bool $enable): void
+    {
+        // Identificador do tema (slug ou nome)
+        $themeIdentifier = Str::lower($theme->slug ?? $theme->name);
+
+        if ($enable) {
+            Artisan::call('theme:link', [
+                'theme' => $themeIdentifier,
+                '--force' => true,
+            ]);
+        } else {
+            Artisan::call('theme:link', [
+                'theme' => $themeIdentifier,
+                '--unlink' => true,
+            ]);
+        }
     }
 
     /**

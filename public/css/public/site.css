@@ -6,9 +6,6 @@
 /* Variables */
 @import url("vars.css");
 
-/* Dynamic forms (mantido separado) */
-/* @import url("dynamic-forms.css"); */
-
 /* Base */
 @import url("base/reset.css");
 @import url("base/typography.css");

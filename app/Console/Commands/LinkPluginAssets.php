@@ -9,7 +9,8 @@ class LinkPluginAssets extends Command
 {
     protected $signature = 'plugin:link
                             {plugin : Nome do plugin (ex: forms, calendar, billing)}
-                            {--force : Remove o link existente antes de recriar}';
+                            {--force : Remove o link existente antes de recriar}
+                            {--unlink : Remove o link simbólico do plugin em vez de criar}';
 
     protected $description = 'Cria link simbólico dos assets de um plugin em public/plugins/';
 
@@ -17,10 +18,20 @@ class LinkPluginAssets extends Command
     {
         $pluginArg    = $this->argument('plugin');
         $pluginStudly = Str::studly($pluginArg);
-        $pluginLower  = Str::lower($pluginArg);
+        $pluginLower  = Str::kebab($pluginStudly);
 
         $targetDir = base_path("plugins/{$pluginStudly}/resources/assets");
         $linkPath  = public_path("plugins/{$pluginLower}");
+
+        if ($this->option('unlink')) {
+            if (file_exists($linkPath) || is_link($linkPath)) {
+                $this->removeExistingLink($linkPath);
+                $this->info("✓ Link removido com sucesso: {$linkPath}");
+            } else {
+                $this->line("! Nenhum link encontrado para remover: {$linkPath}");
+            }
+            return self::SUCCESS;
+        }
 
         if (! is_dir($targetDir)) {
             $this->error("✗ Diretório do plugin não encontrado:");

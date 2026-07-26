@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Plugin;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Str;
 
 class PluginController extends Controller
 {
@@ -25,9 +27,13 @@ class PluginController extends Controller
      */
     public function toggle(Plugin $plugin)
     {
+        $targetState = ! $plugin->is_active;
+
         $plugin->update([
-            'is_active' => !$plugin->is_active
+            'is_active' => $targetState
         ]);
+
+        $this->setPluginAssetLink($plugin, $targetState);
 
         $status = $plugin->is_active ? 'activated' : 'deactivated';
 
@@ -39,20 +45,50 @@ class PluginController extends Controller
      */
     public function toggleAll($status)
     {
-        // 1. Converte o parâmetro de texto para booleano puro do PHP (0 vira false, 1 vira true)
-        $isActive = (bool) $status;
+        $targetState = (bool) $status;
 
-        // 2. Sincroniza a pasta física primeiro
         $this->syncPlugins();
 
-        // 3. Atualiza todos os registros de uma só vez de forma otimizada
-        Plugin::query()->update(['is_active' => $isActive]);
+        $plugins = Plugin::all();
 
-        $message = $isActive
+        foreach ($plugins as $plugin) {
+            $plugin->update(['is_active' => $targetState]);
+
+            // Força o disco a ficar no estado desejado para cada plugin
+            $this->setPluginAssetLink($plugin, $targetState);
+        }
+
+        $message = $targetState
             ? 'Todos os plugins instalados foram ativados com sucesso!'
             : 'Todos os plugins instalados foram desativados com sucesso!';
 
         return back()->with('success', $message);
+    }
+
+    /**
+     * Define explicitamente o estado do link simbólico no sistema de arquivos.
+     *
+     * @param Plugin $plugin Instância do Plugin
+     * @param bool $enable   TRUE para criar/garantir o link | FALSE para remover o link
+     */
+    protected function setPluginAssetLink(Plugin $plugin, bool $enable): void
+    {
+        $pluginIdentifier = Str::kebab($plugin->slug ?? $plugin->name);
+
+        if ($enable) {
+            // Garante que o link será criado.
+            // O --force apaga qualquer link pré-existente ou quebrado antes de recriar.
+            Artisan::call('plugin:link', [
+                'plugin' => $pluginIdentifier,
+                '--force' => true,
+            ]);
+        } else {
+            // Garante que o link NÃO existirá mais no disco.
+            Artisan::call('plugin:link', [
+                'plugin' => $pluginIdentifier,
+                '--unlink' => true,
+            ]);
+        }
     }
 
     /**

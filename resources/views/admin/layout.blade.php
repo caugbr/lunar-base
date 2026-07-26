@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - {{ setting('general.site_name') }}</title>
 
-    <x-hook name="admin.head" :params="$path" desc="Ponto de inserção no HEAD da admin" />
+    <x-hook name="admin.head" :params="$path" desc="Dentro do HEAD da admin" />
 
     @php
     $skin = config('admin.skin');
@@ -40,12 +40,12 @@
                 </h2>
                 <p>Painel Administrativo</p>
 
-                <x-hook name="admin.menu_header" desc="Ponto de inserção no header do menu" />
+                <x-hook name="admin.menu_header" desc="No header do menu" />
             </div>
 
-            <x-hook name="admin.before_menu" :params="$path" desc="Ponto de inserção antes do menu" />
+            <x-hook name="admin.before_menu" :params="$path" desc="Antes do menu" />
             @include('admin.partials.menu')
-            <x-hook name="admin.after_menu" :params="$path" desc="Ponto de inserção depois do menu" />
+            <x-hook name="admin.after_menu" :params="$path" desc="Depois do menu" />
 
             <div class="system-assign">
                 {{ config('app.name') }}

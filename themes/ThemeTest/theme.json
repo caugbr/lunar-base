@@ -1,7 +1,0 @@
-{
-    "name": "Test Theme",
-    "description": "A simple theme to test the dynamic fallback template and view overriding engine.",
-    "version": "1.0.0",
-    "author": "Cau",
-    "screenshot": "resources/assets/images/preview.png"
-}

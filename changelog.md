@@ -3,6 +3,25 @@
 ## Unreleased
 
 ### Changed
+- Criação de plugins e temas não criam mais os links simbólicos
+- Ativação e desativação de plugins e temas agora gerenciam os links simbólicos
+
+### Added
+- Comandos plugin:link e theme:link agora também aceitam a flag --unlink
+- DbHelper.php adicionado com a função global dbAvailable()
+- O comando de criação de temas agora leva arquivos fora da pasta public
+- Comando theme:create agora clona todas as views públicas para o tema
+- Comando theme:create agora clona todos os arquivos css para o tema
+- Plugin Prism Highlight adicionado
+
+### Fixed
+- Providers que davam problema na instalação consertados
+- Arquivo routes/web.php que dava problema na instalação consertado
+- Remover usuário consertado no controller
+
+## [1.1.0] 2026-07-20
+
+### Changed
 - Paginação normalizada com custom view para toda a admin
 - Menu admin reorganizado
 - Popups corrigidos para abrir / fechar suavemente com transition
@@ -31,6 +50,8 @@
 - Agora getSettingsDefinitions, settingsAll e settingsGroup tem a opção de pegar apenas settings do sistema, evitando as injetadas por plugins e temas
 
 ### Fix
+- Arquivo de rotas que depende de setting() modificado pra não dar erro na instalação
+- Providers que usam database atrapalhavam o composer install - corrigidos
 - Componente select-input consertado
 - Correção na ER em HookDiscoverer
 

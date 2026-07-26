@@ -1,0 +1,101 @@
+.prism-code-block {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    margin: 1.5rem 0;
+    font-family: 'Fira Code', 'JetBrains Mono', 'Consolas', monospace;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.prism-code-block.theme-dark {
+    background-color: #282c34;
+}
+
+.prism-code-block.theme-light {
+    background-color: #f5f5f5;
+}
+
+.prism-header {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.theme-light .prism-header {
+    background-color: rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Estilo Plain: remove o fundo e a borda do header, deixando apenas o título se existir */
+.prism-code-block.style-plain .prism-header {
+    background-color: transparent;
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.prism-dots {
+    display: flex;
+    gap: 8px;
+    margin-right: 16px;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.dot.red { background-color: #ff5f56; }
+.dot.yellow { background-color: #ffbd2e; }
+.dot.green { background-color: #27c93f; }
+
+.prism-title {
+    color: #abb2bf;
+    font-size: 13px;
+    font-weight: 500;
+    opacity: 0.8;
+    letter-spacing: 0.5px;
+}
+
+.theme-light .prism-title {
+    color: #333;
+}
+
+.prism-body {
+    padding: 16px;
+    overflow-x: auto;
+}
+
+.prism-body pre {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    text-shadow: none !important;
+}
+
+.prism-body code {
+    font-family: inherit !important;
+    font-size: inherit !important;
+}
+
+/* Garante que o fundo do bloco de código siga o tema do Prism,
+   mas mantém o arredondamento e a sombra da nossa moldura */
+.prism-body pre {
+    margin: 0 !important;
+    padding: 16px !important; /* Um pouco de respiro interno */
+    background: transparent !important; /* Deixa o Prism controlar o fundo */
+    border-radius: 0 0 12px 12px; /* Arredonda apenas embaixo se houver header */
+}
+
+/* Se for estilo plain e sem título, arredonda tudo */
+.prism-code-block.style-plain:not(:has(.prism-header)) .prism-body pre {
+    border-radius: 12px;
+}
+
+/* Ajuste fino para o tema Solarized Light, que às vezes precisa de fundo explícito no container pai */
+.prism-code-block.theme-solarizedlight {
+    background-color: #fdf6e3;
+}

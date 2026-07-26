@@ -25,15 +25,6 @@ class PluginServiceProvider extends ServiceProvider
 
         // Service providers, hooks, shortcodes (só plugins ativos)
         $this->registerActivePlugins();
-
-        // Listar os hooks
-        // \App\Support\AdminMenu::add([
-        //     'label'  => 'Hooks',
-        //     'icon'   => 'plug',
-        //     'route'  => 'admin.hooks.index',
-        //     'active' => 'admin.hooks.*',
-        //     'role'   => 'admin',
-        // ], 'Configuracoes');
     }
 
     /**
@@ -64,6 +55,8 @@ class PluginServiceProvider extends ServiceProvider
      */
     private function registerActivePluginRoutes(): void
     {
+        if (!dbAvailable('plugins')) return;
+
         $activePlugins = Plugin::where('is_active', true)->get();
 
         foreach ($activePlugins as $plugin) {
@@ -91,23 +84,18 @@ class PluginServiceProvider extends ServiceProvider
 
     private function registerActivePlugins(): void
     {
+        if (!dbAvailable('plugins')) return;
+
         Plugin::where('is_active', true)
             ->pluck('service_provider_class')
             ->filter(fn($class) => class_exists($class))
             ->each(fn($class) => $this->app->register($class));
     }
 
-    // private function registerPluginMigrations(): void
-    // {
-    //     $paths = array_filter(glob(base_path('plugins/*/database/migrations')));
-
-    //     if (!empty($paths)) {
-    //         $this->loadMigrationsFrom($paths);
-    //     }
-    // }
-
     private function registerPluginMigrations(): void
     {
+        if (!dbAvailable('plugins')) return;
+
         $activePlugins = Plugin::where('is_active', true)->get();
         $paths = [];
 

@@ -4,7 +4,7 @@ use App\Http\Controllers\HomeController;
 
 require __DIR__.'/admin.php';
 
-if (setting('auth.2fa_enabled', false)) {
+if (dbAvailable('settings') && setting('auth.2fa_enabled', false)) {
     require __DIR__.'/2fa.php';
 }
 

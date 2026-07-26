@@ -39,7 +39,7 @@
             <p>O <span class="app-name">Lunar Base</span> oferece um comando Artisan que gera a estrutura base de um novo tema automaticamente, incluindo diretórios, manifesto, template de exemplo e link simbólico para assets públicos.</p>
 
             <h4>Uso Básico:</h4>
-            <pre><code class="code-label">BASH</code>php artisan theme:create "NomeDoTema" "Descrição opcional do tema"</pre>
+            <pre><code class="code-label">BASH</code>php artisan theme:create "Nome do Tema" "Descrição opcional do tema"</pre>
 
             <h4>O que é gerado automaticamente:</h4>
             <pre><code>themes/
@@ -47,21 +47,22 @@
     ├── resources/
     │   ├── views/
     │   │   └── public/
-    │   │       ├── page-templates/
-    │   │       └── post-templates/
+    │   │       └── ...
     │   └── assets/
     │       ├── css/
+    │       │   └── public/
+    │       │       └── ...
     │       ├── js/
     │       └── images/
-    │           └── screenshot.png  (referenciado no manifesto)
+    │           └── salve aqui a imagem screenshot.png  (referenciada no manifesto)
     ├── theme.json
     └── resources/views/public/templates/default.blade.php</code></pre>
 
             <p>O comando cria automaticamente:</p>
             <ul class="steps">
                 <li>O arquivo <code>theme.json</code> com os metadados do tema (nome, descrição, versão, autor e screenshot).</li>
-                <li>Um template padrão <code>default.blade.php</code> estendendo <code>public.site-layout</code> com a estrutura básica de exibição de páginas.</li>
-                <li>Pastas para assets (CSS, JS, imagens) e templates de página/post.</li>
+                <li>Todas as views originais do <span class="app-name">Lunar Base</span> são copiadas para <code>/resources/views/public</code> e todos os arquivos CSS são copiados para <code>/resources/css/public</code>. No processo, as views são modificadas para carregarem os CSS na pasta do tema.</li>
+                <li>Pastas para assets (CSS, JS, imagens) e templates.</li>
                 <li>Um link simbólico (ou junction no Windows) em <code>public/themes/nome-do-tema</code> apontando para <code>themes/NomeDoTema/resources/assets</code>.</li>
             </ul>
 
@@ -78,15 +79,15 @@
     ├── resources/
     │   ├── views/
     │   │   └── public/
-    │   │       ├── page-templates/
-    │   │       │   └── default.blade.php  {{-- Template de Páginas --}}
-    │   │       └── post-templates/
-    │   │           └── default.blade.php  {{-- Template de Posts --}}
+    │   │       └── {{-- Clona toda a estrutura de templates do sistema --}}
     │   └── assets/
     │       ├── css/
-    │       │   └── style.css
+    │       │   ├── public/
+    │       │   │   └── {{-- Clona toda a estrutura de CSS do sistema --}}
+    │       │   ├── auth.css    {{-- View de login --}}
+    │       │   ├── dialog.css  {{-- Dialogs do sistema (alert, prompt, confirm) --}}
+    │       │   └── errors.css  {{-- Páginas de erro --}}
     │       ├── js/
-    │       │   └── app.js
     │       └── images/
     │           └── screenshot.png
     ├── theme.json

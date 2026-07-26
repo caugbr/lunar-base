@@ -87,9 +87,11 @@ class UserController extends Controller
                 ->with('error', 'Você não pode excluir seu próprio usuário.');
         }
 
+        $name = $user->name;
+
         $user->delete();
 
-        log_admin("Usuário removido: {$validated['name']}", "users");
+        log_admin("Usuário removido: {$name}", "users");
 
         return redirect()->route('admin.users.index')
             ->with('success', 'Usuário removido com sucesso!');

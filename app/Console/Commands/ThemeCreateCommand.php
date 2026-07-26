@@ -24,7 +24,6 @@ class ThemeCreateCommand extends Command
         }
 
         $description = $this->argument('description') ?? "Um tema customizado para Lunar Base.";
-
         $this->info("Gerando tema '{$studlyName}'...");
 
         // 1. Criação de diretórios
@@ -33,9 +32,9 @@ class ThemeCreateCommand extends Command
             $themePath . '/resources/assets',
             $themePath . '/resources/assets/images',
             $themePath . '/resources/assets/css',
+            $themePath . '/resources/assets/css/public', // <-- NOVO: destino dos CSSs
             $themePath . '/resources/assets/js',
-            $themePath . '/resources/views/public/page-templates',
-            $themePath . '/resources/views/public/post-templates'
+            $themePath . '/resources/views'
         ];
 
         foreach ($directories as $dir) {
@@ -52,44 +51,107 @@ class ThemeCreateCommand extends Command
         ];
         File::put($themePath . '/theme.json', json_encode($manifest, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
-        // 3. Criar template de exemplo (default)
-        $defaultTemplate = "<?php\n\n?>\n@extends('public.site-layout')\n\n@section('content')\n<div class=\"container\">\n    <h1>{{ \$page->title }}</h1>\n    <div>{!! \$page->content !!}</div>\n</div>\n@endsection";
-        File::put($themePath . '/resources/views/public/templates/default.blade.php', $defaultTemplate);
+        // 3. Clonar a estrutura de views originais
+        $sourceViews = resource_path('views/public');
+        $destinationViews = $themePath . '/resources/views/public';
+
+        if (File::exists($sourceViews)) {
+            File::copyDirectory($sourceViews, $destinationViews);
+            $this->info("Estrutura de views clonada com sucesso.");
+        } else {
+            $this->warn("Aviso: O diretório original 'resources/views/public' não foi encontrado.");
+        }
+
+        // 4. Copiar os CSSs públicos originais para o tema (NOVO)
+        $sourceCss = public_path('css/public');
+        $destinationBaseCss = $themePath . '/resources/assets/css';
+        $destinationCss = $destinationBaseCss . '/public';
+
+        $cssFiles = [
+            public_path('css') . "/auth.css",
+            public_path('css') . "/dialog.css",
+            public_path('css') . "/errors.css"
+        ];
+
+        // Copiar o diretório de CSS público (css/public -> assets/css/public)
+        if (File::exists($sourceCss)) {
+            File::copyDirectory($sourceCss, $destinationCss);
+            $this->info("CSSs públicos clonados para o tema.");
+        } else {
+            $this->warn("Aviso: O diretório 'public/css/public' não foi encontrado.");
+        }
+
+        // Copiar os arquivos adicionais avulsos para a pasta pai (css/arquivo.css -> assets/css/arquivo.css)
+        foreach ($cssFiles as $file) {
+            if (File::exists($file)) {
+                $fileName = basename($file);
+
+                // Destino ajustado para a pasta base ($destinationBaseCss), fora da pasta /public
+                File::copy($file, $destinationBaseCss . '/' . $fileName);
+                $this->info("Arquivo CSS adicional '{$fileName}' clonado com sucesso em 'assets/css'.");
+            } else {
+                $this->warn("Aviso: O arquivo CSS '{$file}' não foi encontrado para cópia.");
+            }
+        }
+
+        // 5. Reescrever as referências de asset nas views do tema (NOVO)
+        // Converte: asset('css/...)  →  asset('themes/theme-name/css/...)
+        if (File::exists($destinationViews)) {
+            $this->rewriteAssetPaths($destinationViews, $kebabName);
+            $this->info("Referências de asset atualizadas nas views do tema.");
+        }
 
         $this->info("--------------------------------------------------");
         $this->info("Tema '{$studlyName}' criado com sucesso!");
         $this->warn("Path: themes/{$studlyName}");
         $this->info("--------------------------------------------------");
 
-        $this->createPublicAssetLink($kebabName, $themePath);
+        // $this->createPublicAssetLink($kebabName, $themePath);
 
         return Command::SUCCESS;
     }
 
+    /**
+     * Percorre recursivamente todas as views do tema e reescreve
+     * asset('css/...) para asset('themes/{theme}/css/...)
+     */
+    protected function rewriteAssetPaths(string $viewsDir, string $kebabName): void
+    {
+        $files = File::allFiles($viewsDir);
+
+        foreach ($files as $file) {
+            // Só processa arquivos Blade
+            if ($file->getExtension() !== 'php') {
+                continue;
+            }
+
+            $path = $file->getPathname();
+            $content = File::get($path);
+
+            if (str_contains($path, "moon-loader.css")) {
+                continue;
+            }
+
+            // Regex: asset('css/  ou  asset("css/
+            // Preserva a aspa usada ($1) e redireciona para o tema
+            $newContent = preg_replace(
+                '/asset\((["\'])css\//',
+                'asset($1themes/' . $kebabName . '/css/',
+                $content
+            );
+
+            if ($newContent !== $content) {
+                File::put($path, $newContent);
+            }
+        }
+    }
+
     protected function createPublicAssetLink(string $kebabName, string $themePath): void
     {
-        $publicThemesPath = public_path('themes');
-        File::ensureDirectoryExists($publicThemesPath, 0755, true);
-
-        $target = $themePath . '/resources/assets';
-        $link = $publicThemesPath . '/' . $kebabName;
-
-        if (File::exists($link)) return;
-
-        $isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
-
-        if ($isWindows) {
-            exec("mklink /J " . escapeshellarg(str_replace('/', '\\', $link)) . " " . escapeshellarg(str_replace('/', '\\', $target)), $output, $returnVar);
-
-            if ($returnVar !== 0) {
-                $this->error("Erro crítico: Não foi possível criar a junction do Windows.");
-                $this->error("Tente abrir o terminal como Administrador.");
-                die();
-            }
-        } else {
-            symlink($target, $link);
-        }
-
-        $this->info("Link criado com sucesso: public/themes/{$kebabName}");
+        // Chama o comando de linkagem de tema que já calcula o caminho relativo
+        $this->call('theme:link', [
+            'theme' => $kebabName,
+            '--force' => true
+        ]);
     }
 }

@@ -7,7 +7,10 @@ use Illuminate\Support\Str;
 
 class LinkThemeAssets extends Command
 {
-    protected $signature = 'theme:link {theme : Nome do tema} {--force : Remove o link existente antes de recriar}';
+    protected $signature = 'theme:link
+                            {theme : Nome do tema}
+                            {--force : Remove o link existente antes de recriar}
+                            {--unlink : Remove o link simbólico em vez de criar}';
 
     protected $description = 'Cria link simbólico dos assets de um tema em public/themes/';
 
@@ -19,6 +22,16 @@ class LinkThemeAssets extends Command
 
         $targetDir = base_path("themes/{$themeStudly}/resources/assets");
         $linkPath  = public_path("themes/{$themeLower}");
+
+        if ($this->option('unlink')) {
+            if (file_exists($linkPath) || is_link($linkPath)) {
+                $this->removeExistingLink($linkPath);
+                $this->info("✓ Link removido com sucesso: {$linkPath}");
+            } else {
+                $this->line("! Nenhum link encontrado para remover: {$linkPath}");
+            }
+            return self::SUCCESS;
+        }
 
         if (! is_dir($targetDir)) {
             $this->error("✗ Diretório do theme não encontrado:");

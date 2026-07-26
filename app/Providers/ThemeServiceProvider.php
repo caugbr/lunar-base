@@ -11,6 +11,8 @@ class ThemeServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
+        if (!dbAvailable('themes')) return;
+
         if (app()->runningInConsole() && !app()->runningUnitTests()) {
             return;
         }

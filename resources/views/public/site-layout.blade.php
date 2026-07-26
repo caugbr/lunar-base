@@ -12,7 +12,7 @@
     <x-cookie.scripts />
     @endif
 
-    <x-hook name="main.head" :params="$path" desc="Ponto de inserção no elemento HEAD do site" />
+    <x-hook name="main.head" :params="$path" desc="No elemento HEAD do site" />
 
     <link rel="stylesheet" href="{{ asset('css/dialog.css') }}">
 
@@ -25,7 +25,7 @@
 <body {!! $theme !!}>
     @include('public.partials.header')
 
-    <x-hook name="main.before_content" :params="$path" desc="Ponto de inserção antes do conteúdo principal do site" />
+    <x-hook name="main.before_content" :params="$path" desc="Antes do conteúdo principal do site" />
 
     <main class="site-content">
         <div class="container">
@@ -34,12 +34,12 @@
             @endif
         </div>
 
-        <x-hook name="main.after_breadcrumbs" :params="$path" desc="Ponto de inserção abaixo do menu breadcrumbs" />
+        <x-hook name="main.after_breadcrumbs" :params="$path" desc="Abaixo do menu breadcrumbs" />
 
         @yield('content')
     </main>
 
-    <x-hook name="main.after_content" :params="$path" desc="Ponto de inserção abaixo do conteúdo principal do site" />
+    <x-hook name="main.after_content" :params="$path" desc="Abaixo do conteúdo principal do site" />
 
     @include('public.partials.footer')
 

@@ -18,6 +18,8 @@ class MailConfigServiceProvider extends ServiceProvider
 
     private function applyMailSettings(): void
     {
+        if (!dbAvailable('settings')) return;
+
         $settings = [
             'mail.mailers.smtp.host'       => 'mail.mail_host',
             'mail.mailers.smtp.port'       => 'mail.mail_port',

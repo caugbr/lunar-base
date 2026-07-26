@@ -36,7 +36,7 @@ class PluginCreateCommand extends Command
         $this->createDirectories($pluginPath, $hasDatabase, $hasController, $hasViews);
 
         // 2. Criação do Link Simbólico (public/plugins/plugin-name -> plugins/PluginName/resources/assets)
-        $this->createPublicAssetLink($kebabName, $pluginPath);
+        // $this->createPublicAssetLink($kebabName, $pluginPath);
 
         // 3. Geração de arquivos
         $this->generateManifest($pluginPath, $studlyName, $description);
@@ -86,29 +86,12 @@ class PluginCreateCommand extends Command
 
     protected function createPublicAssetLink(string $kebabName, string $pluginPath): void
     {
-        $publicPluginsPath = public_path('plugins');
-        File::ensureDirectoryExists($publicPluginsPath, 0755, true);
-
-        $target = $pluginPath . '/resources/assets';
-        $link = $publicPluginsPath . '/' . $kebabName;
-
-        if (File::exists($link)) return;
-
-        $isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
-
-        if ($isWindows) {
-            exec("mklink /J " . escapeshellarg(str_replace('/', '\\', $link)) . " " . escapeshellarg(str_replace('/', '\\', $target)), $output, $returnVar);
-
-            if ($returnVar !== 0) {
-                $this->error("Erro crítico: Não foi possível criar a junction do Windows.");
-                $this->error("Tente abrir o terminal como Administrador.");
-                die();
-            }
-        } else {
-            symlink($target, $link);
-        }
-
-        $this->info("Link criado com sucesso: public/plugins/{$kebabName}");
+        // Em vez de recriar a lógica do link simbólico, nós chamamos o
+        // comando de linkagem que já possui o cálculo relativo seguro
+        $this->call('plugin:link', [
+            'plugin' => $kebabName,
+            '--force' => true
+        ]);
     }
 
     protected function generateManifest(string $path, string $name, string $description): void
