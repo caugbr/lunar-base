@@ -3,10 +3,19 @@
 ## Unreleased
 
 ### Changed
+
+### Added
+
+### Fixed
+
+## [1.2.0] 2026-07-26
+
+### Changed
 - Criação de plugins e temas não criam mais os links simbólicos
 - Ativação e desativação de plugins e temas agora gerenciam os links simbólicos
 
 ### Added
+- Plugins e temas agora ficam fora do projeto e são baixados direto do github
 - Comandos plugin:link e theme:link agora também aceitam a flag --unlink
 - DbHelper.php adicionado com a função global dbAvailable()
 - O comando de criação de temas agora leva arquivos fora da pasta public
