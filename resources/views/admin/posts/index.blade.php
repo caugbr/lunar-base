@@ -102,6 +102,7 @@
                             <a href="{{ route('admin.posts.edit', $post->id) }}" class="admin-btn admin-btn-secondary" style="padding: 4px 12px;">
                                 <x-lucide-pencil class="lucid-icon" />
                             </a>
+                            <x-hook name="admin.post_actions" :params="['post' => $post]" desc="Actions na listagem de posts" />
                             <form method="POST" action="{{ route('admin.posts.destroy', $post->id) }}" data-confirm="Remover este post?" style="display: inline;">
                                 @csrf
                                 @method('DELETE')

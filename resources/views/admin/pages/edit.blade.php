@@ -11,6 +11,7 @@
             Editar: {{ $page->title }}
         </h2>
         <div class="top-buttons">
+            <x-hook name="admin.edit_page_header_buttons" :params="['page' => $page]" desc="Botões no header da edição de página" />
             <a href="{{ $page->url }}" class="admin-btn admin-btn-secondary" target="_blank">
                 <x-lucide-external-link class="lucid-icon" /> <span>Visitar</span>
             </a>

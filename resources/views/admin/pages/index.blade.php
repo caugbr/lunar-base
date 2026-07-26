@@ -46,8 +46,6 @@
                     @endforeach
                 </select>
             </div>
-        {{-- </div>
-        <div class="admin-filters-row"> --}}
             <div class="admin-filter-actions">
                 <button type="submit" class="admin-btn admin-btn-primary">
                     <x-lucide-filter class="lucid-icon" /> Filtrar
@@ -91,6 +89,7 @@
                             <a href="{{ route('admin.pages.edit', $page->id) }}" class="admin-btn admin-btn-secondary" style="padding: 4px 12px;">
                                 <x-lucide-pencil class="lucid-icon" />
                             </a>
+                            <x-hook name="admin.page_actions" :params="['page' => $page]" desc="Actions na listagem de páginas" />
                             <form method="POST" action="{{ route('admin.pages.destroy', $page->id) }}" data-confirm="Remover esta página?" style="display: inline;">
                                 @csrf
                                 @method('DELETE')

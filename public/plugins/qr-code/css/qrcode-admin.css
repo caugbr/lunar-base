@@ -1,0 +1,96 @@
+/* ==========================================================================
+   Estilos Administrativos do Gerador de QR Code (Lunar Base)
+   ========================================================================== */
+
+.qrcode-generator-grid {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 2rem;
+    align-items: start;
+}
+
+@media (max-width: 1200px) {
+    .qrcode-generator-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Painel de Formulário (Esquerda) */
+.qrcode-settings-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+/* Card de Pré-visualização e Ação (Direita) */
+.qrcode-preview-card {
+    background: var(--color-bg-dark, #12152b);
+    border: 1px solid var(--color-border, rgba(200, 182, 255, 0.12));
+    border-radius: 12px;
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+.qrcode-preview-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-primary, #c8b6ff);
+}
+
+/* Caixa da Imagem Centralizada com Margens */
+.qrcode-preview-box {
+    background: #ffffff;
+    padding: 1.25rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 1.5rem 0; /* Margem acima e abaixo da imagem */
+    max-width: 100%;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.qrcode-preview-box:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+.qrcode-preview-box img,
+.qrcode-preview-box svg {
+    width: 220px;
+    height: 220px;
+    max-width: 100%;
+    display: block;
+}
+
+.qrcode-preview-placeholder {
+    color: var(--color-text-dim, #888888);
+    font-size: 0.875rem;
+    padding: 2.5rem 1rem;
+    text-align: center;
+}
+
+/* Botão de Download abaixo da Imagem */
+.qrcode-download-action {
+    width: 100%;
+}
+
+.qrcode-download-action .admin-btn {
+    width: 100%;
+    justify-content: center;
+}
+
+.qrcode-meta-info {
+    margin-top: 0.75rem;
+    font-size: 0.75rem;
+    color: var(--color-text-dim, #888888);
+    font-family: monospace;
+}

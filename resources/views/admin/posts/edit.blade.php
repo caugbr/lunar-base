@@ -8,6 +8,7 @@
     <div class="admin-card-header">
         <h2><x-lucide-files class="lucid-icon" /> Editar: {{ $post->title }}</h2>
         <div class="top-buttons">
+            <x-hook name="admin.edit_post_header_buttons" :params="['post' => $post]" desc="Botões no header da edição de post" />
             <a href="{{ $post->url }}" class="admin-btn admin-btn-secondary" target="_blank">
                 <x-lucide-external-link class="lucid-icon" /> <span>Visitar</span>
             </a>
