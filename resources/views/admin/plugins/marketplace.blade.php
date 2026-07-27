@@ -1,18 +1,18 @@
 @extends('admin.layout')
 
-@section('header_title', 'Marketplace de Plugins')
+@section('header_title', 'Adicionar ou Remover Plugins')
 @section('header_subtitle', 'Explore, baixe e instale novas extensões para o Lunar Base')
 
 @section('content')
 <div class="admin-card">
     <div class="admin-card-header">
-        <h2><x-lucide-shopping-bag class="lucid-icon" /> Plugins Disponíveis</h2>
-        <div style="display: flex; gap: 0.5rem; align-items: center;">
+        <h2><x-lucide-puzzle class="lucid-icon" /> Plugins Disponíveis</h2>
+        <div class="top-buttons">
 
             {{-- Botão Voltar para Lista Local --}}
             <a href="{{ route('admin.plugins.index') }}" class="admin-btn admin-btn-secondary">
                 <x-lucide-arrow-left class="lucid-icon" />
-                Plugins Instalados
+                Voltar
             </a>
 
             {{-- Formulário de Recarregar Catálogo --}}
@@ -20,7 +20,7 @@
                 @csrf
                 <button type="submit" class="admin-btn admin-btn-secondary" title="Atualizar catálogo remoto">
                     <x-lucide-refresh-cw class="lucid-icon" />
-                    Atualizar Catálogo
+                    Atualizar
                 </button>
             </form>
 
@@ -51,6 +51,7 @@
                 </thead>
                 <tbody>
                     @forelse($plugins as $plugin)
+                    {{-- @php print_r($plugin); @endphp --}}
                     <tr>
                         <td style="text-align: center;">
                             @if(! $plugin['is_installed'])
@@ -82,8 +83,11 @@
                                 </span>
                             @elseif($plugin['is_installed'])
                                 <span class="admin-badge admin-badge-suspended">
-                                    Instalado (Inativo)
+                                    Instalado
                                 </span>
+                                <a href="{{ route('admin.plugins.marketplace.remove', $plugin['folder']) }}" data-name="{{ $plugin['name'] }}" class="remove-plugin" title="Remover plugin">
+                                    <x-lucide-trash-2 class="lucid-icon" />
+                                </a>
                             @else
                                 <span class="admin-badge" style="background-color: #e5e7eb; color: #4b5563;">
                                     Não Instalado
@@ -105,14 +109,91 @@
 </div>
 @endsection
 
+@push('styles')
+<style>
+a.remove-plugin {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-danger, #ef4444);
+    background-color: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.25);
+    padding: 0.2rem 0.55rem;
+    border-radius: 4px;
+    text-decoration: none;
+    margin-left: 0.5rem;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    line-height: 1.2;
+}
+
+a.remove-plugin:hover {
+    background-color: var(--color-danger, #ef4444);
+    color: #ffffff;
+    border-color: var(--color-danger, #ef4444);
+}
+
+a.remove-plugin .lucid-icon {
+    width: 13px;
+    height: 13px;
+}
+</style>
+@endpush
+
 @push('scripts')
 <script>
-    // Função para marcar/desmarcar todos os checkboxes que não estão desabilitados
+    // Função para marcar/desmarcar todos os checkboxes
     function toggleSelectAll(master) {
         const checkboxes = document.querySelectorAll('.plugin-checkbox');
         checkboxes.forEach(cb => {
             cb.checked = master.checked;
         });
     }
+
+    // Função de remoção de plugin
+    async function removePlugin(event) {
+        event.preventDefault();
+
+        // Garante que pega o elemento <a> mesmo se clicar em um ícone interno
+        const link = event.target.closest('a.remove-plugin');
+        if (!link) return;
+
+        const name = link.dataset.name;
+        const url = link.href;
+
+        // Confirmação via seu componente Dialog
+        const confirmed = await Dialog.confirm(`Deseja remover o plugin ${name}?`);
+        if (!confirmed) return;
+
+        // Cria um formulário dinâmico para submeter via POST/DELETE com CSRF
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = url;
+
+        // Token CSRF
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = '_token';
+        csrfInput.value = '{{ csrf_token() }}';
+        form.appendChild(csrfInput);
+
+        // Spoofing de método DELETE do Laravel
+        const methodInput = document.createElement('input');
+        methodInput.type = 'hidden';
+        methodInput.name = '_method';
+        methodInput.value = 'DELETE';
+        form.appendChild(methodInput);
+
+        // Anexa ao DOM e envia
+        document.body.appendChild(form);
+        form.submit();
+    }
+
+    document.addEventListener('click', event => {
+        if (event.target.matches('a.remove-plugin') || event.target.closest('a.remove-plugin')) {
+            removePlugin(event);
+        }
+    });
 </script>
 @endpush

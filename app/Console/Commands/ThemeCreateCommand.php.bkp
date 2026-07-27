@@ -14,13 +14,8 @@ class ThemeCreateCommand extends Command
     public function handle(): int
     {
         $inputName = $this->argument('name');
-
-        // 1. Gera o slug limpo (ex: "Dark Mode" -> "dark-mode" | "FAQ Theme" -> "faq-theme")
-        $slugName = Str::slug($inputName);
-
-        // 2. Gera o StudlyCase limpo para a pasta (ex: "dark-mode" -> "DarkMode" | "faq-theme" -> "FaqTheme")
-        $studlyName = Str::studly($slugName);
-
+        $studlyName = Str::studly($inputName);
+        $kebabName = Str::kebab($studlyName);
         $themePath = base_path("themes/{$studlyName}");
 
         if (File::exists($themePath)) {
@@ -37,7 +32,7 @@ class ThemeCreateCommand extends Command
             $themePath . '/resources/assets',
             $themePath . '/resources/assets/images',
             $themePath . '/resources/assets/css',
-            $themePath . '/resources/assets/css/public',
+            $themePath . '/resources/assets/css/public', // <-- NOVO: destino dos CSSs
             $themePath . '/resources/assets/js',
             $themePath . '/resources/views'
         ];
@@ -48,13 +43,13 @@ class ThemeCreateCommand extends Command
 
         // 2. Criar arquivo theme.json
         $manifest = [
-            'name'        => Str::headline($inputName),
+            'name' => Str::headline($studlyName),
             'description' => $description,
-            'version'     => '1.0.0',
-            'author'      => 'Lunar Developer',
-            'screenshot'  => 'resources/assets/images/screenshot.png'
+            'version' => '1.0.0',
+            'author' => 'Lunar Developer',
+            'screenshot' => 'resources/assets/images/screenshot.png'
         ];
-        File::put($themePath . '/theme.json', json_encode($manifest, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+        File::put($themePath . '/theme.json', json_encode($manifest, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
         // 3. Clonar a estrutura de views originais
         $sourceViews = resource_path('views/public');
@@ -67,7 +62,7 @@ class ThemeCreateCommand extends Command
             $this->warn("Aviso: O diretório original 'resources/views/public' não foi encontrado.");
         }
 
-        // 4. Copiar os CSSs públicos originais para o tema
+        // 4. Copiar os CSSs públicos originais para o tema (NOVO)
         $sourceCss = public_path('css/public');
         $destinationBaseCss = $themePath . '/resources/assets/css';
         $destinationCss = $destinationBaseCss . '/public';
@@ -78,6 +73,7 @@ class ThemeCreateCommand extends Command
             public_path('css') . "/errors.css"
         ];
 
+        // Copiar o diretório de CSS público (css/public -> assets/css/public)
         if (File::exists($sourceCss)) {
             File::copyDirectory($sourceCss, $destinationCss);
             $this->info("CSSs públicos clonados para o tema.");
@@ -85,9 +81,12 @@ class ThemeCreateCommand extends Command
             $this->warn("Aviso: O diretório 'public/css/public' não foi encontrado.");
         }
 
+        // Copiar os arquivos adicionais avulsos para a pasta pai (css/arquivo.css -> assets/css/arquivo.css)
         foreach ($cssFiles as $file) {
             if (File::exists($file)) {
                 $fileName = basename($file);
+
+                // Destino ajustado para a pasta base ($destinationBaseCss), fora da pasta /public
                 File::copy($file, $destinationBaseCss . '/' . $fileName);
                 $this->info("Arquivo CSS adicional '{$fileName}' clonado com sucesso em 'assets/css'.");
             } else {
@@ -95,9 +94,10 @@ class ThemeCreateCommand extends Command
             }
         }
 
-        // 5. Reescrever as referências de asset nas views do tema
+        // 5. Reescrever as referências de asset nas views do tema (NOVO)
+        // Converte: asset('css/...)  →  asset('themes/theme-name/css/...)
         if (File::exists($destinationViews)) {
-            $this->rewriteAssetPaths($destinationViews, $slugName);
+            $this->rewriteAssetPaths($destinationViews, $kebabName);
             $this->info("Referências de asset atualizadas nas views do tema.");
         }
 
@@ -106,18 +106,21 @@ class ThemeCreateCommand extends Command
         $this->warn("Path: themes/{$studlyName}");
         $this->info("--------------------------------------------------");
 
+        // $this->createPublicAssetLink($kebabName, $themePath);
+
         return Command::SUCCESS;
     }
 
     /**
      * Percorre recursivamente todas as views do tema e reescreve
-     * asset('css/...) para asset('themes/{slugName}/css/...)
+     * asset('css/...) para asset('themes/{theme}/css/...)
      */
-    protected function rewriteAssetPaths(string $viewsDir, string $slugName): void
+    protected function rewriteAssetPaths(string $viewsDir, string $kebabName): void
     {
         $files = File::allFiles($viewsDir);
 
         foreach ($files as $file) {
+            // Só processa arquivos Blade
             if ($file->getExtension() !== 'php') {
                 continue;
             }
@@ -129,10 +132,11 @@ class ThemeCreateCommand extends Command
                 continue;
             }
 
-            // Substitui referencias usando o $slugName limpo
+            // Regex: asset('css/  ou  asset("css/
+            // Preserva a aspa usada ($1) e redireciona para o tema
             $newContent = preg_replace(
                 '/asset\((["\'])css\//',
-                'asset($1themes/' . $slugName . '/css/',
+                'asset($1themes/' . $kebabName . '/css/',
                 $content
             );
 
@@ -140,5 +144,14 @@ class ThemeCreateCommand extends Command
                 File::put($path, $newContent);
             }
         }
+    }
+
+    protected function createPublicAssetLink(string $kebabName, string $themePath): void
+    {
+        // Chama o comando de linkagem de tema que já calcula o caminho relativo
+        $this->call('theme:link', [
+            'theme' => $kebabName,
+            '--force' => true
+        ]);
     }
 }

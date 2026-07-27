@@ -3,6 +3,8 @@
 ## Unreleased
 
 ### Changed
+- README.md simplificado
+- Comandos para criar plugins e temas modificados - kebab por slug
 
 ### Added
 
@@ -11,7 +13,7 @@
 ## [1.2.0] 2026-07-26
 
 ### Changed
-- Criação de plugins e temas não criam mais os links simbólicos
+- Comandos para criar plugins e temas não criam mais os links simbólicos
 - Ativação e desativação de plugins e temas agora gerenciam os links simbólicos
 
 ### Added

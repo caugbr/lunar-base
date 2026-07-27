@@ -19,10 +19,14 @@
 /storage/*.key
 /storage/pail
 /vendor
+Homestead.json
+Homestead.yaml
+Thumbs.db
 /plugins/*
 !/plugins/.gitkeep
 /themes/*
 !/themes/.gitkeep
-Homestead.json
-Homestead.yaml
-Thumbs.db
+/public/plugins/*
+!/public/plugins/.gitkeep
+/public/themes/*
+!/public/themes/.gitkeep

@@ -19,7 +19,8 @@ class AddonMarketplaceService
     public function getAvailablePlugins(): array
     {
         $catalog = $this->fetchCatalog();
-        $installedPlugins = Plugin::all()->keyBy('slug');
+
+        $installedPlugins = Plugin::all()->keyBy('folder_name');
 
         return array_map(function ($addon) use ($installedPlugins) {
             return $this->formatAddonData($addon, 'plugin', $installedPlugins);
@@ -32,7 +33,9 @@ class AddonMarketplaceService
     public function getAvailableThemes(): array
     {
         $catalog = $this->fetchCatalog();
-        $installedThemes = Theme::all()->keyBy('slug');
+
+        // Gera a chave em kebab-case dinamicamente para cada tema
+        $installedThemes = Theme::all()->keyBy(fn ($theme) => Str::kebab($theme->folder_name ?? $theme->name));
 
         return array_map(function ($addon) use ($installedThemes) {
             return $this->formatAddonData($addon, 'theme', $installedThemes);
@@ -45,16 +48,14 @@ class AddonMarketplaceService
     protected function formatAddonData(array $addon, string $type, $installedCollection): array
     {
         $name   = $addon['name'];
-        $slug   = Str::kebab($name);   // ex: prism-highlight
-        $folder = Str::studly($name);  // ex: PrismHighlight
+        $folder = Str::studly($name);  // ex: QrCode
 
         $baseDir      = $type === 'theme' ? 'themes' : 'plugins';
         $folderExists = File::exists(base_path("{$baseDir}/{$folder}"));
-        $dbRecord     = $installedCollection->get($slug);
+        $dbRecord     = $installedCollection->get($folder);
 
         return array_merge($addon, [
             'type'         => $type, // 'plugin' ou 'theme'
-            'slug'         => $slug,
             'folder'       => $folder,
             'is_installed' => $folderExists || $dbRecord !== null,
             'is_active'    => $dbRecord ? (bool) $dbRecord->is_active : false,

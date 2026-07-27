@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Plugin;
 use App\Http\Controllers\Controller;
 use App\Services\AddonMarketplaceService;
 use App\Services\AddonInstallerService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 
 class PluginMarketplaceController extends Controller
 {
@@ -78,5 +82,39 @@ class PluginMarketplaceController extends Controller
         $marketplace->clearCache();
 
         return back()->with('success', 'Catálogo de plugins atualizado com sucesso!');
+    }
+
+    /**
+     * Remove completamente a pasta do plugin do disco e do banco.
+     */
+    public function remove(string $folder, AddonMarketplaceService $marketplace)
+    {
+        // 1. Sanitiza o nome da pasta em StudlyCase por segurança
+        $folderName = Str::studly($folder);
+
+        if (empty($folderName)) {
+            return back()->with('error', 'Nome de plugin inválido.');
+        }
+
+        $pluginPath = base_path("plugins/{$folderName}");
+
+        // 2. Apaga a pasta física do plugin
+        if (File::exists($pluginPath)) {
+            File::deleteDirectory($pluginPath);
+        }
+
+        // 3. Apaga o link simbólico de public/plugins/{kebab}
+        Artisan::call('plugin:link', [
+            'plugin' => Str::kebab($folderName),
+            '--unlink' => true,
+        ]);
+
+        // 4. Apaga o registro do banco de dados (se cadastrado)
+        Plugin::where('folder_name', $folderName)->delete();
+
+        // 5. Limpa o cache do catálogo do marketplace para recalcular os status
+        $marketplace->clearCache();
+
+        return back()->with('success', "Plugin '{$folderName}' foi removido com sucesso!");
     }
 }

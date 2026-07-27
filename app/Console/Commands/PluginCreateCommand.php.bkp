@@ -9,20 +9,15 @@ use Illuminate\Support\Str;
 class PluginCreateCommand extends Command
 {
     protected $signature = 'plugin:create {name : The name of the plugin} {description? : An optional description}';
-    protected $description = 'Gera a estrutura completa de um plugin (diretórios, assets e manifest)';
+    protected $description = 'Gera a estrutura completa de um plugin (diretórios, assets, manifest e symlink)';
 
     public function handle(): int
     {
         $inputName = $this->argument('name');
-
-        // 1. Gera o slug limpo (ex: "FAQ" -> "faq" | "Prism Highlight" -> "prism-highlight")
-        $slugName = Str::slug($inputName);
-
-        // 2. Gera o StudlyCase limpo para pastas e classes PHP (ex: "faq" -> "Faq" | "prism-highlight" -> "PrismHighlight")
-        $studlyName = Str::studly($slugName);
-
+        $studlyName = Str::studly($inputName);
         $singularName = Str::singular($studlyName);
-        $pluginPath   = base_path("plugins/{$studlyName}");
+        $kebabName = Str::kebab($studlyName);
+        $pluginPath = base_path("plugins/{$studlyName}");
 
         if (File::exists($pluginPath)) {
             $this->error("Plugin '{$studlyName}' já existe!");
@@ -31,22 +26,25 @@ class PluginCreateCommand extends Command
 
         $this->info("Iniciando setup para '{$studlyName}'...");
 
-        $hasDatabase   = $this->confirm('Requer banco de dados?', true);
+        $hasDatabase = $this->confirm('Requer banco de dados?', true);
         $hasController = $this->confirm('Requer Controller e Rotas?', true);
-        $hasViews      = $this->confirm('Requer Views?', true);
+        $hasViews = $this->confirm('Requer Views?', true);
 
         $description = $this->argument('description') ?? "Plugin {$studlyName} for Lunar Base.";
 
         // 1. Criação da estrutura de diretórios
         $this->createDirectories($pluginPath, $hasDatabase, $hasController, $hasViews);
 
-        // 2. Geração de arquivos
-        $this->generateManifest($pluginPath, $inputName, $description);
-        $this->generateServiceProvider($pluginPath, $studlyName, $singularName, $slugName, $hasDatabase, $hasController, $hasViews);
+        // 2. Criação do Link Simbólico (public/plugins/plugin-name -> plugins/PluginName/resources/assets)
+        // $this->createPublicAssetLink($kebabName, $pluginPath);
+
+        // 3. Geração de arquivos
+        $this->generateManifest($pluginPath, $studlyName, $description);
+        $this->generateServiceProvider($pluginPath, $studlyName, $singularName, $kebabName, $hasDatabase, $hasController, $hasViews);
 
         if ($hasController) {
-            $this->generateRoutes($pluginPath, $studlyName, $singularName, $slugName);
-            $this->generateController($pluginPath, $studlyName, $singularName, $slugName);
+            $this->generateRoutes($pluginPath, $studlyName, $singularName, $kebabName);
+            $this->generateController($pluginPath, $studlyName, $singularName, $kebabName);
         }
 
         if ($hasDatabase) {
@@ -55,13 +53,13 @@ class PluginCreateCommand extends Command
         }
 
         if ($hasViews) {
-            $this->generateViews($pluginPath, $studlyName, $slugName);
+            $this->generateViews($pluginPath, $studlyName, $kebabName);
         }
 
         $this->info("--------------------------------------------------");
         $this->info("Plugin '{$studlyName}' criado com sucesso!");
         $this->info("Path: plugins/{$studlyName}");
-        $this->info("Namespace de Views: {$slugName}::view-name");
+        $this->info("Assets linkados em: public/plugins/{$kebabName}");
         $this->info("--------------------------------------------------");
 
         return Command::SUCCESS;
@@ -86,14 +84,24 @@ class PluginCreateCommand extends Command
         }
     }
 
-    protected function generateManifest(string $path, string $inputName, string $description): void
+    protected function createPublicAssetLink(string $kebabName, string $pluginPath): void
+    {
+        // Em vez de recriar a lógica do link simbólico, nós chamamos o
+        // comando de linkagem que já possui o cálculo relativo seguro
+        $this->call('plugin:link', [
+            'plugin' => $kebabName,
+            '--force' => true
+        ]);
+    }
+
+    protected function generateManifest(string $path, string $name, string $description): void
     {
         $content = json_encode([
-            'name'        => Str::headline($inputName),
+            'name' => Str::headline($name),
             'description' => $description,
-            'version'     => '1.0.0',
-            'provider'    => "Plugins\\" . Str::studly(Str::slug($inputName)) . "\\" . Str::studly(Str::slug($inputName)) . "ServiceProvider",
-        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+            'version' => '1.0.0',
+            'provider' => "Plugins\\{$name}\\{$name}ServiceProvider",
+        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 
         File::put($path . '/plugin.json', $content);
     }
@@ -102,11 +110,12 @@ class PluginCreateCommand extends Command
         string $path,
         string $name,
         string $singularName,
-        string $slugName,
+        string $kebabName,
         bool $hasDatabase,
         bool $hasController,
         bool $hasViews
     ): void {
+        // Monta o método register() com o require das rotas
         $registerLines = [];
         if ($hasController) {
             $registerLines[] = "        \$routesFile = __DIR__ . '/routes.php';";
@@ -116,12 +125,13 @@ class PluginCreateCommand extends Command
         }
         $registerContent = $registerLines ? implode("\n", $registerLines) : "        //";
 
+        // Monta o método boot() dinamicamente
         $bootLines = [];
         if ($hasDatabase) {
             $bootLines[] = "        \$this->loadMigrationsFrom(__DIR__ . '/database/migrations');";
         }
         if ($hasViews) {
-            $bootLines[] = "        \$this->loadViewsFrom(__DIR__ . '/resources/views', '{$slugName}');";
+            $bootLines[] = "        \$this->loadViewsFrom(__DIR__ . '/resources/views', '{$kebabName}');";
         }
         $bootContent = $bootLines ? implode("\n", $bootLines) : "        //";
 
@@ -143,19 +153,19 @@ class PluginCreateCommand extends Command
         File::put($path . "/{$name}ServiceProvider.php", $content);
     }
 
-    protected function generateRoutes(string $path, string $name, string $singularName, string $slugName): void
+    protected function generateRoutes(string $path, string $name, string $singularName, string $kebabName): void
     {
         $content = "<?php\n\n" .
             "use Illuminate\\Support\\Facades\\Route;\n" .
             "use Plugins\\{$name}\\Http\\Controllers\\{$singularName}Controller;\n\n" .
             "Route::middleware(['web', 'auth'])->group(function () {\n" .
-            "    // Route::get('/{$slugName}', [{$singularName}Controller::class, 'index'])->name('{$slugName}.index');\n" .
+            "    // Route::get('/{$kebabName}', [{$singularName}Controller::class, 'index'])->name('{$kebabName}.index');\n" .
             "});\n";
 
         File::put($path . '/routes.php', $content);
     }
 
-    protected function generateController(string $path, string $name, string $singularName, string $slugName): void
+    protected function generateController(string $path, string $name, string $singularName, string $kebabName): void
     {
         $content = "<?php\n\n" .
             "namespace Plugins\\{$name}\\Http\\Controllers;\n\n" .
@@ -165,7 +175,7 @@ class PluginCreateCommand extends Command
             "{\n" .
             "    public function index()\n" .
             "    {\n" .
-            "        return view('{$slugName}::index');\n" .
+            "        return view('{$kebabName}::index');\n" .
             "    }\n" .
             "}\n";
 
@@ -215,7 +225,7 @@ class PluginCreateCommand extends Command
         File::put($path . "/database/migrations/{$datePrefix}_create_{$tableName}_table.php", $content);
     }
 
-    protected function generateViews(string $path, string $name, string $slugName): void
+    protected function generateViews(string $path, string $name, string $kebabName): void
     {
         $headlineName = Str::headline($name);
         $content = "<div>\n" .

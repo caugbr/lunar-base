@@ -5,7 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Services\AddonMarketplaceService;
 use App\Services\AddonInstallerService;
+use App\Models\Theme;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 
 class ThemeMarketplaceController extends Controller
 {
@@ -78,5 +82,41 @@ class ThemeMarketplaceController extends Controller
         $marketplace->clearCache();
 
         return back()->with('success', 'Catálogo de temas atualizado com sucesso!');
+    }
+
+    /**
+     * Remove completamente a pasta do tema do disco e do banco.
+     */
+    public function remove(string $folder, AddonMarketplaceService $marketplace)
+    {
+        // 1. Sanitiza o nome da pasta em StudlyCase por segurança
+        $folderName = Str::studly($folder);
+
+        if (empty($folderName)) {
+            return back()->with('error', 'Nome de tema inválido.');
+        }
+
+        $themePath = base_path("themes/{$folderName}");
+
+        // 2. Apaga a pasta física do tema
+        if (File::exists($themePath)) {
+            File::deleteDirectory($themePath);
+        }
+
+        // 3. Apaga o link simbólico dos assets de public/themes/{nome}
+        Artisan::call('theme:link', [
+            'theme' => Str::lower($folderName),
+            '--unlink' => true,
+        ]);
+
+        // 4. Apaga o registro do banco de dados
+        Theme::where('folder_name', $folderName)
+            ->orWhere('name', $folderName)
+            ->delete();
+
+        // 5. Limpa o cache do catálogo para recarregar o status
+        $marketplace->clearCache();
+
+        return back()->with('success', "Tema '{$folderName}' foi removido com sucesso!");
     }
 }

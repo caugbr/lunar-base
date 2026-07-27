@@ -41,6 +41,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('plugins/marketplace', [PluginMarketplaceController::class, 'index'])->name('plugins.marketplace.index');
     Route::post('plugins/marketplace/install', [PluginMarketplaceController::class, 'installBatch'])->name('plugins.marketplace.install');
     Route::post('plugins/marketplace/refresh', [PluginMarketplaceController::class, 'refresh'])->name('plugins.marketplace.refresh');
+    Route::delete('plugins/marketplace/remove/{folder}', [PluginMarketplaceController::class, 'remove'])->name('plugins.marketplace.remove');
 
     // Temas
     Route::get('themes', [ThemeController::class, 'index'])->name('themes.index');
@@ -51,6 +52,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('themes/marketplace', [ThemeMarketplaceController::class, 'index'])->name('themes.marketplace.index');
     Route::post('themes/marketplace/install', [ThemeMarketplaceController::class, 'installBatch'])->name('themes.marketplace.install');
     Route::post('themes/marketplace/refresh', [ThemeMarketplaceController::class, 'refresh'])->name('themes.marketplace.refresh');
+    Route::delete('themes/marketplace/remove/{folder}', [ThemeMarketplaceController::class, 'remove'])->name('themes.marketplace.remove');
 
     // Dashboard (ambos veem)
     Route::get('/dashboard', [AdminDashboard::class, 'index'])->name('dashboard.index');
