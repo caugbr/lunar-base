@@ -535,7 +535,7 @@ return [
                     'label' => 'Tamanho do resumo',
                     'description' => 'Quantidade máxima de caracteres para resumos de posts e páginas',
                     'default' => 160,
-                    'attributes' => ['min' => 50, 'max' => 600, 'step' => 10],
+                    'attributes' => ['min' => 50, 'max' => 300, 'step' => 10],
                 ],
                 [
                     'key' => 'words_count',

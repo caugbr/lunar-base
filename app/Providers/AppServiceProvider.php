@@ -9,6 +9,9 @@ use App\View\Composers\SiteComposer;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Pagination\Paginator;
 use App\Helpers\ContentHelper;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Http\Request;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -34,6 +37,10 @@ class AppServiceProvider extends ServiceProvider
              */
             Blade::if('onceAsset', function ($id) {
                 return ContentHelper::once($id);
+            });
+
+            RateLimiter::for('api', function (Request $request) {
+                return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
             });
         }
     }

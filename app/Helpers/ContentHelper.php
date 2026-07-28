@@ -226,4 +226,28 @@ class ContentHelper
 
         return $content;
     }
+
+    /**
+     * Remove do texto APENAS os shortcodes que estão realmente registrados no sistema.
+     * Preserva colchetes de textos normais como [Clique aqui] ou [R$ 50].
+     */
+    public static function stripShortcodes(string $content): string
+    {
+        if (empty($content)) return '';
+
+        // Pega as chaves dos shortcodes ativos (Core + Plugins)
+        $registeredTags = array_keys(self::getRegisteredShortcodes());
+
+        if (empty($registeredTags)) {
+            return $content;
+        }
+
+        // Cria a lista regex: (embed|gallery|faq|form|link|script|style)
+        $tagsPattern = implode('|', array_map('preg_quote', $registeredTags));
+
+        // Remove APENAS as tags cadastradas
+        $pattern = '/\[(' . $tagsPattern . ')(?:\s+[^\]]*)?\](?:.*?\[\/\1\])?/is';
+
+        return preg_replace($pattern, '', $content);
+    }
 }

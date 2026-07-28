@@ -4,15 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manual de Plugins - Lunar Base v1.1.0</title>
+    <title>Manual de Plugins - Lunar Base v1.2.0</title>
     <link rel="stylesheet" href="tutorials.css">
 </head>
 
 <body>
 
     <header>
-        <h1>Plugins Incluídos no Sistema</h1>
-        <p data-subtitle>Lunar Base v1.1.0 - Guia de uso e integração dos módulos nativos</p>
+        <h1>Plugins Oficiais e Addons</h1>
+        <p data-subtitle>Lunar Base v1.2.0 - Guia de uso e integração dos módulos expansíveis</p>
     </header>
 
     <div class="container">
@@ -32,8 +32,9 @@
                 <li><a href="#maps">8. Maps (Mapas Interativos)</a></li>
                 <li><a href="#menus">9. Menus (Construtor de Menus)</a></li>
                 <li><a href="#populator">10. Populator (Gerador de Conteúdo de Teste)</a></li>
-                <li><a href="#reactions">11. Reactions (Curtidas e Engajamento)</a></li>
-                <li><a href="#share">12. Share (Compartilhamento Social)</a></li>
+                <li><a href="#qrcode">11. QrCode (Gerador de QR Code)</a></li>
+                <li><a href="#reactions">12. Reactions (Curtidas e Engajamento)</a></li>
+                <li><a href="#share">13. Share (Compartilhamento Social)</a></li>
                 <li><a href="#best-practices">Boas Práticas</a></li>
             </ul>
         </nav>
@@ -43,26 +44,28 @@
             <h2>Introdução</h2>
 
             <div class="intro">
-                <p>Os plugins oficiais do <strong><span class="app-name">Lunar Base</span></strong> são módulos nativos que estendem o
-                    funcionamento do seu site. Eles já vêm instalados e, na maioria dos casos, funcionam de forma
-                    <strong>automática</strong> assim que ativados.</p>
+                <p>A partir da versão v1.2.0, o <strong><span class="app-name">Lunar Base</span></strong> adota uma
+                    arquitetura totalmente desacoplada para extensões. Os plugins oficiais e temas não ficam mais
+                    embutidos no núcleo do sistema, mas sim mantidos em um repositório centralizado dedicado em
+                    <a href="https://github.com/caugbr/lunar-base-addons" target="_blank" rel="noopener noreferrer">https://github.com/caugbr/lunar-base-addons</a>.
+                </p>
             </div>
 
-            <p>Este manual é voltado para quem vai <strong>utilizar</strong> os plugins: administradores, editores de
-                conteúdo e desenvolvedores de tema.</p>
+            <p>Através do <strong>Marketplace de Plugins</strong> (acessível no painel em <code>Admin → Plugins → Instalar plugin</code>),
+                você pode explorar, baixar, ativar, desativar ou remover qualquer módulo de forma dinâmica com apenas um clique.</p>
 
             <div class="feature-grid">
                 <div class="feature-card">
-                    <h4>Plug-and-Play</h4>
-                    <p>Ative o plugin e ele já começa a funcionar automaticamente nos locais apropriados.</p>
+                    <h4>Marketplace Integrado</h4>
+                    <p>Baixe e descompacte plugins oficiais do repositório remoto diretamente no painel administrativo.</p>
                 </div>
                 <div class="feature-card">
-                    <h4>Configurável</h4>
-                    <p>Cada plugin expõe opções no painel administrativo para personalizar comportamento.</p>
+                    <h4>Núcleo Leve</h4>
+                    <p>O core do sistema permanece enxuto. Você instala apenas os módulos que realmente utilizar no seu projeto.</p>
                 </div>
                 <div class="feature-card">
-                    <h4>Integrável</h4>
-                    <p>Hooks e shortcodes permitem incorporar os recursos em qualquer lugar do tema.</p>
+                    <h4>Hooks e Shortcodes</h4>
+                    <p>Módulos ativados se conectam dinamicamente ao tema via hooks e expõem shortcodes no editor de texto.</p>
                 </div>
             </div>
         </section>
@@ -595,8 +598,62 @@
         </section>
 
         <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="qrcode">
+            <h2>11. QrCode (Gerador de QR Code)</h2>
+
+            <div class="intro">
+                <p>Gere imagens vetoriais (SVG) de QR Code para URLs, textos avulsos ou links diretos de artigos para fácil compartilhamento e impressão.</p>
+            </div>
+
+            <h3>Como funciona</h3>
+            <ul class="features">
+                <li><strong>Gerador Avulso no Painel:</strong> Ferramenta dedicada em <code>Admin → Ferramentas → Gerador QR Code</code> para criar códigos vetoriais personalizados com preview ao vivo e download em SVG de alta resolução.</li>
+                <li><strong>Integração com Posts e Páginas:</strong> Modais de visualização rápida acessíveis pelas tabelas de listagem e pelo cabeçalho do formulário de edição de publicações.</li>
+                <li><strong>Desempenho Vetorial:</strong> Utiliza o motor vetorial nativo em SVG (`BaconQrCode`), garantindo imagens nítidas em qualquer dimensão e zero acúmulo de arquivos estáticos temporários no banco ou disco.</li>
+            </ul>
+
+            <h3>Onde aparece no Painel</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Local</th>
+                        <th>Recurso / Comportamento</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Ferramentas → Gerador QR Code</td>
+                        <td>Gerador livre de texto, URL, PIX ou chaves com seletor de resolução e download em SVG</td>
+                    </tr>
+                    <tr>
+                        <td>Tabela de Posts e Páginas</td>
+                        <td>Ícone de ação rápida com botão de QR Code para abrir o modal com link público</td>
+                    </tr>
+                    <tr>
+                        <td>Header de Edição de Posts e Páginas</td>
+                        <td>Botão "QR Code" destacado no topo ao lado das ações do artigo</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Como usar no Tema ou Código PHP</h3>
+            <div class="example-box">
+                <h4>Gerando SVG via Helper do Plugin</h4>
+                <pre><code>{!! \Plugins\QrCode\Helpers\QrCodeHelper::svg('https://seusite.com/post-1', 200) !!}</code></pre>
+            </div>
+
+            <h3>Hooks utilizados</h3>
+            <ul>
+                <li><code>admin.post_actions</code> - Coluna de ações na tabela de Posts</li>
+                <li><code>admin.page_actions</code> - Coluna de ações na tabela de Páginas</li>
+                <li><code>admin.edit_post_header_buttons</code> - Topo da tela de edição de Posts</li>
+                <li><code>admin.edit_page_header_buttons</code> - Topo da tela de edição de Páginas</li>
+            </ul>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="reactions">
-            <h2>11. Reactions (Curtidas e Engajamento)</h2>
+            <h2>12. Reactions (Curtidas e Engajamento)</h2>
 
             <div class="intro">
                 <p>Adiciona botões de reação (curtir/não curtir) ao final dos posts.</p>
@@ -625,7 +682,7 @@
 
         <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="share">
-            <h2>12. Share (Compartilhamento Social)</h2>
+            <h2>13. Share (Compartilhamento Social)</h2>
 
             <div class="intro">
                 <p>Botões de compartilhamento nas redes sociais ao final dos posts.</p>
@@ -719,7 +776,7 @@
         </section>
 
         <footer>
-            <p><strong>Manual de Plugins Oficiais - Lunar Base v1.1.0</strong></p>
+            <p><strong>Manual de Plugins Oficiais - Lunar Base v1.2.0</strong></p>
             <p data-footer-info>Última atualização: Julho/2026 | &copy; 2026 Cau Guanabara</p>
         </footer>
     </div>

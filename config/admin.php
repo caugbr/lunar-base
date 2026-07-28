@@ -219,29 +219,13 @@ return [
                         ]
                     ]
                 ],
-                // [
-                //     'label' => 'Permissões',
-                //     'icon' => 'user-key',
-                //     'route' => 'admin.roles-permissions',
-                //     'active' => 'admin.roles-permissions',
-                //     'role' => 'admin',
-                // ],
                 [
                     'label' => 'Configurações',
                     'icon' => 'settings',
                     'route' => 'admin.settings.index',
                     'active' => 'admin.settings.*',
-                    // 'permission' => 'manage-settings',
                     'role' => 'admin',
                 ],
-                // [
-                //     'label' => 'Logs',
-                //     'icon' => 'list-checks',
-                //     'route' => 'admin.logs.index',
-                //     'active' => 'admin.logs.*',
-                //     // 'permission' => 'manage-logs',
-                //     'role' => 'admin',
-                // ],
                 [
                     'label' => 'Referências',
                     'icon' => 'terminal',

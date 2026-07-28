@@ -256,11 +256,17 @@ class Post extends Model
      */
     public function getExcerptAttribute(?string $value): string
     {
-        if ($value) {
+        if (!empty($value)) {
             return $value;
         }
+
+        $cleanContent = \App\Helpers\ContentHelper::stripShortcodes($this->content ?? '');
+        $cleanContent = strip_tags($cleanContent);
+        $cleanContent = trim(preg_replace('/\s+/', ' ', $cleanContent));
+
         $maxChars = intval(setting('reading.excerpt_size', 160));
-        return \Str::limit(strip_tags($this->content), 160);
+
+        return \Str::limit($cleanContent, $maxChars);
     }
 
     /**

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API REST e Headless CMS - Lunar Base v1.2.0</title>
+    <link rel="stylesheet" href="tutorials.css">
+</head>
+
+<body>
+
+    <header>
+        <h1>API REST e Headless CMS</h1>
+        <p data-subtitle>Lunar Base v1.2.0 - Guia de Consumo e Expansão da API de Entrega de Conteúdo</p>
+    </header>
+
+    <div class="container">
+
+        <nav class="toc">
+            <a href="index.html" class="back-index">Voltar</a>
+            <h2>Sumário</h2>
+            <ul>
+                <li><a href="#intro">Introdução</a></li>
+                <li><a href="#endpoints-core">Endpoints Nativo do Core</a></li>
+                <li><a href="#resolver">Resolvedor Universal de Permalinks</a></li>
+                <li><a href="#schema">Arquitetura Guiada por Schemas</a></li>
+                <li><a href="#plugins">Expansão via Plugins</a></li>
+                <li><a href="#parametros">Filtros, Busca e Paginação</a></li>
+            </ul>
+        </nav>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="intro">
+            <h2>Introdução</h2>
+
+            <div class="intro">
+                <p>O <span class="app-name">Lunar Base</span> atua como um <strong>Headless CMS Híbrido</strong>. Ele
+                    pode servir páginas tradicionais em Blade e, simultaneamente, disponibilizar uma API REST
+                    padronizada e de alta performance para ser consumida por front-ends modernos (como Vue.js, Nuxt,
+                    React, Next.js ou aplicativos móveis).</p>
+            </div>
+
+            <p>A API foi desenhada sob o conceito de <strong>Entrega de Conteúdo Read-Only</strong>. A gestão e edição
+                são mantidas exclusivamente no painel administrativo, garantindo superfície de ataque mínima, resposta
+                ultra-rápida e facilidade de cache.</p>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="endpoints-core">
+            <h2>Endpoints Nativos do Core</h2>
+
+            <p>Por padrão, o ecossistema disponibiliza os seguintes endpoints sob o prefixo <code>/api/v1/</code>:</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Método</th>
+                        <th>Endpoint</th>
+                        <th>Descrição</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>GET</code></td>
+                        <td><code>/api/v1/site</code></td>
+                        <td>Metadados globais (nome, descrição, tema ativo) e o menu principal estruturado.</td>
+                    </tr>
+                    <tr>
+                        <td><code>GET</code></td>
+                        <td><code>/api/v1/posts</code></td>
+                        <td>Listagem paginada e filtrável dos artigos do blog.</td>
+                    </tr>
+                    <tr>
+                        <td><code>GET</code></td>
+                        <td><code>/api/v1/posts/{slug}</code></td>
+                        <td>Retorna o artigo individual com autor, mídias, taxonomias e shortcodes processados.</td>
+                    </tr>
+                    <tr>
+                        <td><code>GET</code></td>
+                        <td><code>/api/v1/pages</code></td>
+                        <td>Listagem das páginas estáticas/institucionais.</td>
+                    </tr>
+                    <tr>
+                        <td><code>GET</code></td>
+                        <td><code>/api/v1/pages/{slug}</code></td>
+                        <td>Retorna uma página estática específica pelo seu slug.</td>
+                    </tr>
+                    <tr>
+                        <td><code>GET</code></td>
+                        <td><code>/api/v1/taxonomies</code></td>
+                        <td>Lista todas as taxonomias (categorias, tags, etc.) e seus respectivos termos.</td>
+                    </tr>
+                    <tr>
+                        <td><code>GET</code></td>
+                        <td><code>/api/v1/resolve</code></td>
+                        <td>Resolvedor dinâmico para mapear URLs amigáveis em aplicações SPA.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="resolver">
+            <h2>Resolvedor Universal de Permalinks</h2>
+
+            <p>Aplicações Single Page (como Vue ou Nuxt) utilizam roteamento dinâmico no cliente e não sabem de antemão
+                se uma URL digitada pelo visitante (ex: <code>/institucional/sobre</code> ou <code>/blog/post-1</code>)
+                trata-se de uma página, post ou recurso de plugin.</p>
+
+            <p>O endpoint <code>GET /api/v1/resolve?path=/sua-url</code> executa a inteligência de rotas do sistema
+                e retorna os dados corretos envelopados em uma única chamada HTTP:</p>
+
+            <div class="example-box">
+                <h4>Exemplo de Resposta: <code>GET /api/v1/resolve?path=/post-1</code></h4>
+                <pre><code class="code-label">JSON</code>{
+    "success": true,
+    "resolved": true,
+    "type": "post",
+    "data": {
+        "id": 1,
+        "title": "Meu Primeiro Post",
+        "slug": "post-1",
+        "url": "http://localhost:8000/post/post-1",
+        "author": { "id": 1, "name": "Cau Guanabara" },
+        "content": {
+            "raw": "Texto com [shortcode]",
+            "rendered": "&lt;p&gt;Texto com componente HTML&lt;/p&gt;"
+        }
+    }
+}</code></pre>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="schema">
+            <h2>Arquitetura Guiada por Schemas</h2>
+
+            <p>A API do <span class="app-name">Lunar Base</span> é impulsionada pela classe
+                <code>App\Support\ApiRegistry</code>. Em vez de criar um controller ou um JsonResource para cada
+                nova tabela, a API lê <strong>Schemas Declarativos</strong>.</p>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>Navegação por Ponto</h4>
+                    <p>Strings simples usam a notação de ponto nativa do Laravel (ex: <code>'author.name'</code> ou
+                        <code>'thumbnail.url'</code>) para extrair dados aninhados sem escrever código.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Campos Calculados</h4>
+                    <p>Closures (funções anônimas) permitem processar shortcodes ou formatar listas dinâmicas em tempo
+                        de execução (ex: <code>ContentHelper::parseShortcodes()</code>).</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Proteção de Dados</h4>
+                    <p>Apenas as chaves explicitamente declaradas no Schema são expostas na resposta JSON, impedindo
+                        o vazamento acidental de campos sensíveis.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="plugins">
+            <h2>Expansão via Plugins</h2>
+
+            <p>Plugins não precisam registrar novos controllers para expor dados na API. Basta invocar o método
+                estático <code>ApiRegistry::register()</code> dentro do método <code>boot()</code> do seu ServiceProvider.</p>
+
+            <div class="example-box">
+                <h4>Exemplo: Registrando a API do Plugin de FAQ</h4>
+                <pre><code class="code-label">PHP</code>use App\Support\ApiRegistry;
+
+public function boot(): void
+{
+    // Registra a entidade 'faqs' na API
+    ApiRegistry::register('faqs', [
+        'source_item' => fn($slug) => getOption("faq_{$slug}"),
+        'schema'      => [
+            'titulo'    => 'title',
+            'slug'      => 'slug',
+            'perguntas' => 'items',
+        ]
+    ]);
+}</code></pre>
+            </div>
+
+            <p>Ao realizar o registro acima, a rota <code>GET /api/v1/faqs/vendas</code> estará instantaneamente disponível para o front-end público com contrato JSON padronizado.</p>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="parametros">
+            <h2>Filtros, Busca e Paginação</h2>
+
+            <p>O controlador genérico da API aceita os seguintes parâmetros de Query String em chamadas de listagem (<code>GET /api/v1/{entity}</code>):</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Parâmetro</th>
+                        <th>Tipo</th>
+                        <th>Padrão</th>
+                        <th>Descrição</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>page</code></td>
+                        <td>int</td>
+                        <td><code>1</code></td>
+                        <td>Página atual da paginação.</td>
+                    </tr>
+                    <tr>
+                        <td><code>per_page</code></td>
+                        <td>int</td>
+                        <td>Configuração do painel</td>
+                        <td>Quantidade de itens retornados por página.</td>
+                    </tr>
+                    <tr>
+                        <td><code>search</code></td>
+                        <td>string</td>
+                        <td><code>null</code></td>
+                        <td>Filtra os resultados por palavra-chave nos campos marcados como <code>searchable</code> no Schema.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="tip">
+                <strong>Proteção Rate Limit:</strong> Por padrão, a API é protegida por um limitador de taxa
+                (<code>RateLimiter</code>) configurado para 60 requisições por minuto por endereço IP, garantindo estabilidade ao servidor.
+            </div>
+        </section>
+
+        <footer>
+            <p><strong>API REST e Headless CMS - Lunar Base v1.2.0</strong></p>
+            <p data-footer-info>Última atualização: Julho/2026 | &copy; 2026 Cau Guanabara</p>
+        </footer>
+
+    </div>
+
+</body>
+
+</html>

@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - {{ setting('general.site_name') }}</title>
 
-    <x-hook name="admin.head" :params="$path" desc="Dentro do HEAD da admin" />
+    <x-hook name="admin.head" :params="['path' => $path]" desc="Dentro do HEAD da admin" />
 
     @php
     $skin = config('admin.skin');
@@ -43,9 +43,9 @@
                 <x-hook name="admin.menu_header" desc="No header do menu" />
             </div>
 
-            <x-hook name="admin.before_menu" :params="$path" desc="Antes do menu" />
+            <x-hook name="admin.before_menu" :params="['path' => $path]" desc="Antes do menu" />
             @include('admin.partials.menu')
-            <x-hook name="admin.after_menu" :params="$path" desc="Depois do menu" />
+            <x-hook name="admin.after_menu" :params="['path' => $path]" desc="Depois do menu" />
 
             <div class="system-assign">
                 {{ config('app.name') }}
@@ -86,11 +86,11 @@
 
                 @yield('content')
 
-                <x-hook name="admin.after_content" :params="$path" desc="Depois do conteúdo da admin" />
+                <x-hook name="admin.after_content" :params="['path' => $path]" desc="Depois do conteúdo da admin" />
             </div>
         </main>
     </div>
     @stack('scripts')
-    <x-hook name="admin.after_all" :params="$path" desc="Final do elemento BODY na admin" />
+    <x-hook name="admin.after_all" :params="['path' => $path]" desc="Final do elemento BODY na admin" />
 </body>
 </html>

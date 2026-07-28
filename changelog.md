@@ -7,8 +7,10 @@
 - Comandos para criar plugins e temas modificados - kebab por slug
 
 ### Added
+- REST API genérica adicionada
 
 ### Fixed
+- Agora excerpts dos posts não mostram mais shortcodes
 
 ## [1.2.0] 2026-07-26
 
