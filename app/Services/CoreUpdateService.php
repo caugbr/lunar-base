@@ -11,7 +11,12 @@ use Exception;
 
 class CoreUpdateService
 {
-    protected string $repo = 'caugbr/lunar-base';
+    protected string $repo;
+
+    public function __construct()
+    {
+        $this->repo = env('GIT_SYSTEM_REPO', 'caugbr/lunar-base');
+    }
 
     /**
      * Retorna informações sobre a atualização do Core

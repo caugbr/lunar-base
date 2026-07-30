@@ -33,8 +33,8 @@
         name="{{ $name }}"
         id="{{ $fieldId }}"
         data-value-msg="{{ $valueMessage }}"
-        {{ $required ? 'required' : '' }}
-        {{ $accept ? 'accept="' . $accept . '"' : '' }}
+        @if($required) required @endif
+        @if($accept) accept="{{ $accept }}" @endif
         style="display: none;"
     >
 </div>

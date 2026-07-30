@@ -9,11 +9,14 @@
 - Comandos para criar plugins e temas modificados - kebab por slug
 
 ### Added
+- Novas variáveis no .env: GIT_SYSTEM_REPO e GIT_ADDONS_REPO (update e marketplace)
+- Plugin Backup
 - Checagem de versão e atualização com um clique
 - Adicionado o componente chart, usando o chat.js via CDN
-- REST API genérica adicionada (readonly, apenas mostra o que é público)
+- REST API genérica adicionada (readonly, expõe apenas o que já é público)
 
 ### Fixed
+- Componente upload-area corrigido (attr accept não funcionava)
 - Agora excerpts dos posts não mostram mais shortcodes
 
 ## [1.2.0] 2026-07-26

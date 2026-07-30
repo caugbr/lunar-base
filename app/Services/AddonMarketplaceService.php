@@ -11,7 +11,14 @@ use Illuminate\Support\Str;
 
 class AddonMarketplaceService
 {
-    protected string $manifestUrl = 'https://github.com/caugbr/lunar-base-addons/releases/latest/download/marketplace.json';
+    protected string $repo;
+    protected string $manifestUrl;
+
+    public function __construct()
+    {
+        $this->repo = env('GIT_ADDONS_REPO', 'caugbr/lunar-base-addons');
+        $this->manifestUrl = "https://github.com/{$this->repo}/releases/latest/download/marketplace.json";
+    }
 
     /**
      * Retorna todos os plugins disponíveis.
