@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const toggleBtn = document.getElementById('menuToggle');
     const sidebar = document.querySelector('.admin-sidebar');
+
+    // Menu mobile
+    const toggleBtn = document.getElementById('menuToggle');
 
     // Cria o overlay
     const overlay = document.createElement('div');
@@ -35,6 +37,16 @@ document.addEventListener('DOMContentLoaded', function() {
     window.addEventListener('resize', function() {
         if (window.innerWidth > 768) {
             closeMenu();
+        }
+    });
+
+    // Menu desktop
+    sidebar.addEventListener('click', event => {
+        const toggleItem = event.target.closest('span.dropdown-arrow');
+        if (toggleItem) {
+            event.preventDefault();
+            const parent = toggleItem.closest('.admin-nav-dropdown');
+            parent.classList.toggle('open');
         }
     });
 });

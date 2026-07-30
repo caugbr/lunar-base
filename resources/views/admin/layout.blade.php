@@ -50,6 +50,7 @@
             <div class="system-assign">
                 {{ config('app.name') }}
                 {{ config('app.version') }}
+                <x-system-update-badge />
             </div>
         </aside>
 

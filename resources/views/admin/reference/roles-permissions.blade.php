@@ -80,7 +80,7 @@
             Matriz de Permissões
         </h3> --}}
 
-        <div class="matrix-table-wrapper">
+        <div class="matrix-table-wrapper table-wrap">
             <table class="matrix-table">
                 <thead>
                     <tr>

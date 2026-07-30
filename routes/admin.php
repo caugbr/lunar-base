@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\ThemeController;
 use App\Http\Controllers\Admin\ThemeMarketplaceController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\ProfileController as EditorProfileController;
+use App\Http\Controllers\Admin\UpdateController;
 
 // ========== ROTAS PÚBLICAS ==========
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -54,8 +55,14 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::post('themes/marketplace/refresh', [ThemeMarketplaceController::class, 'refresh'])->name('themes.marketplace.refresh');
     Route::delete('themes/marketplace/remove/{folder}', [ThemeMarketplaceController::class, 'remove'])->name('themes.marketplace.remove');
 
-    // Dashboard (ambos veem)
+    // Dashboard
     Route::get('/dashboard', [AdminDashboard::class, 'index'])->name('dashboard.index');
+
+    // Update
+    Route::prefix('system')->name('system.')->middleware(['role:admin'])->group(function () {
+        Route::post('update/apply', [UpdateController::class, 'apply'])->name('update.apply');
+        Route::post('update/check', [UpdateController::class, 'check'])->name('update.check');
+    });
 });
 
 // ========== ROTAS PROTEGIDAS (ADMIN + EDITOR) ==========

@@ -55,7 +55,7 @@
                     <td>{{ $user->created_at->format('d/m/Y') }}</td>
                     <td class="admin-actions">
                         <div>
-                            <a href="{{ route('admin.users.edit', $user->id) }}" class="admin-btn admin-btn-secondary" style="padding: 4px 12px;">
+                            <a href="{{ route('admin.users.edit', $user->id) }}" class="admin-btn admin-btn-secondary">
                                 <x-lucide-pencil class="lucid-icon" />
                             </a>
 
@@ -64,12 +64,12 @@
                                 <form method="POST" action="{{ route('admin.users.two-factor.disable', $user->id) }}" style="display: inline;" data-confirm="Desativar 2FA de {{ $user->name }}?">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="admin-btn admin-btn-secondary" style="padding: 4px 12px;">
+                                    <button type="submit" class="admin-btn admin-btn-secondary">
                                         <x-lucide-shield-off class="lucid-icon" />
                                     </button>
                                 </form>
                                 @else
-                                    <button type="button" disabled class="admin-btn admin-btn-secondary" style="padding: 4px 12px;">
+                                    <button type="button" disabled class="admin-btn admin-btn-secondary">
                                         <x-lucide-shield-off class="lucid-icon" />
                                     </button>
                                 @endif
@@ -79,7 +79,7 @@
                             <form method="POST" action="{{ route('admin.users.destroy', $user->id) }}" data-confirm="Remover este usuário?" style="display: inline;">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="admin-btn admin-btn-danger" style="padding: 4px 12px;">
+                                <button type="submit" class="admin-btn admin-btn-danger">
                                     <x-lucide-trash-2 class="lucid-icon" />
                                 </button>
                             </form>

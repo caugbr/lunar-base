@@ -96,17 +96,17 @@
                     </td>
                     <td class="admin-actions">
                         <div>
-                            <a href="{{ $post->url }}" class="admin-btn admin-btn-secondary" style="padding: 4px 12px;" target="_blank">
+                            <a href="{{ $post->url }}" class="admin-btn admin-btn-secondary" target="_blank">
                                 <x-lucide-external-link class="lucid-icon" />
                             </a>
-                            <a href="{{ route('admin.posts.edit', $post->id) }}" class="admin-btn admin-btn-secondary" style="padding: 4px 12px;">
+                            <a href="{{ route('admin.posts.edit', $post->id) }}" class="admin-btn admin-btn-secondary">
                                 <x-lucide-pencil class="lucid-icon" />
                             </a>
                             <x-hook name="admin.post_actions" :params="['post' => $post]" desc="Actions na listagem de posts" />
                             <form method="POST" action="{{ route('admin.posts.destroy', $post->id) }}" data-confirm="Remover este post?" style="display: inline;">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="admin-btn admin-btn-danger" style="padding: 4px 12px;">
+                                <button type="submit" class="admin-btn admin-btn-danger">
                                     <x-lucide-trash-2 class="lucid-icon" />
                                 </button>
                             </form>

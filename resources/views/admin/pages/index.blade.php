@@ -83,17 +83,17 @@
                     <td>{{ $page->created_at->format('d/m/Y H:i') }}</td>
                     <td class="admin-actions">
                         <div>
-                            <a href="{{ $page->url }}" class="admin-btn admin-btn-secondary" style="padding: 4px 12px;" target="_blank">
+                            <a href="{{ $page->url }}" class="admin-btn admin-btn-secondary" target="_blank">
                                 <x-lucide-external-link class="lucid-icon" />
                             </a>
-                            <a href="{{ route('admin.pages.edit', $page->id) }}" class="admin-btn admin-btn-secondary" style="padding: 4px 12px;">
+                            <a href="{{ route('admin.pages.edit', $page->id) }}" class="admin-btn admin-btn-secondary">
                                 <x-lucide-pencil class="lucid-icon" />
                             </a>
                             <x-hook name="admin.page_actions" :params="['page' => $page]" desc="Actions na listagem de páginas" />
                             <form method="POST" action="{{ route('admin.pages.destroy', $page->id) }}" data-confirm="Remover esta página?" style="display: inline;">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="admin-btn admin-btn-danger" style="padding: 4px 12px;">
+                                <button type="submit" class="admin-btn admin-btn-danger">
                                     <x-lucide-trash-2 class="lucid-icon" />
                                 </button>
                             </form>

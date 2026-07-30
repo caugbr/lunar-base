@@ -39,7 +39,13 @@
 
 .admin-actions {
     gap: 10px;
+    white-space: nowrap;
 }
+
+.admin-actions .admin-btn {
+    padding: 4px 12px;
+}
+
 .admin-actions > div {
     display: flex;
     gap: 6px;

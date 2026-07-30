@@ -37,49 +37,51 @@
         </div>
     </form>
 
-    <table class="admin-table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nome</th>
-                <th>Slug</th>
-                <th>Taxonomia</th>
-                <th>Termo Pai</th>
-                <th>Ordem</th>
-                <th>Páginas</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse($terms as $term)
-            <tr>
-                <td>{{ $term->id }}</td>
-                <td>{{ $term->name }}</td>
-                <td><code>{{ $term->slug }}</code></td>
-                <td>{{ $term->taxonomy->name ?? '-' }}</td>
-                <td>{{ $term->parent->name ?? '-' }}</td>
-                <td>{{ $term->order }}</td>
-                <td>{{ $term->pages()->count() }}</td>
-                <td class="admin-actions">
-                    <a href="{{ route('admin.terms.edit', $term->id) }}" class="admin-btn admin-btn-secondary" style="padding: 4px 12px;">
-                        <x-lucide-pencil class="lucid-icon" />
-                    </a>
-                    <form method="POST" action="{{ route('admin.terms.destroy', $term->id) }}" style="display: inline;" data-confirm="Remover este termo?">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="admin-btn admin-btn-danger" style="padding: 4px 12px;">
-                            <x-lucide-trash-2 class="lucid-icon" />
-                        </button>
-                    </form>
-                </td>
-            </tr>
-            @empty
-            <tr>
-                <td colspan="8" class="admin-text-center admin-text-muted">Nenhum termo cadastrado</td>
-            </tr>
-            @endforelse
-        </tbody>
-    </table>
+    <div class="table-wrap">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Slug</th>
+                    <th>Taxonomia</th>
+                    <th>Termo Pai</th>
+                    <th>Ordem</th>
+                    <th>Páginas</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($terms as $term)
+                <tr>
+                    <td>{{ $term->id }}</td>
+                    <td>{{ $term->name }}</td>
+                    <td><code>{{ $term->slug }}</code></td>
+                    <td>{{ $term->taxonomy->name ?? '-' }}</td>
+                    <td>{{ $term->parent->name ?? '-' }}</td>
+                    <td>{{ $term->order }}</td>
+                    <td>{{ $term->pages()->count() }}</td>
+                    <td class="admin-actions">
+                        <a href="{{ route('admin.terms.edit', $term->id) }}" class="admin-btn admin-btn-secondary">
+                            <x-lucide-pencil class="lucid-icon" />
+                        </a>
+                        <form method="POST" action="{{ route('admin.terms.destroy', $term->id) }}" style="display: inline;" data-confirm="Remover este termo?">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="admin-btn admin-btn-danger">
+                                <x-lucide-trash-2 class="lucid-icon" />
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="8" class="admin-text-center admin-text-muted">Nenhum termo cadastrado</td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
 
     <div class="admin-pagination">
         {{ $terms->appends(request()->query())->links() }}

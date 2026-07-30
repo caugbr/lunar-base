@@ -102,6 +102,10 @@
                 $childrenActive = $hasChildren ? $hasActiveChild($item['items']) : false;
                 $isOpen = $isActive || $childrenActive;
                 $childCount = count($item['items'] ?? []);
+
+                if ($item['label'] === 'Referências' && !setting('navigation.show_references')) {
+                    continue;
+                }
             @endphp
 
             @if($hasChildren)

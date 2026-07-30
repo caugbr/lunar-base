@@ -3,11 +3,13 @@
 ## Unreleased
 
 ### Changed
+- Menu admin agora abre submenu no clique da setinha
 - AdinMenu.php agora tem métodos pra adicionar novos grupos ao menu
 - README.md simplificado
 - Comandos para criar plugins e temas modificados - kebab por slug
 
 ### Added
+- Checagem de versão e atualização com um clique
 - Adicionado o componente chart, usando o chat.js via CDN
 - REST API genérica adicionada (readonly, apenas mostra o que é público)
 
