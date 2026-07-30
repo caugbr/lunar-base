@@ -3,11 +3,13 @@
 ## Unreleased
 
 ### Changed
+- AdinMenu.php agora tem métodos pra adicionar novos grupos ao menu
 - README.md simplificado
 - Comandos para criar plugins e temas modificados - kebab por slug
 
 ### Added
-- REST API genérica adicionada
+- Adicionado o componente chart, usando o chat.js via CDN
+- REST API genérica adicionada (readonly, apenas mostra o que é público)
 
 ### Fixed
 - Agora excerpts dos posts não mostram mais shortcodes
