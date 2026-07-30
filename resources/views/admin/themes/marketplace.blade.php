@@ -96,7 +96,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="5" class="admin-text-center admin-text-muted" style="padding: 2rem;">
+                        <td colspan="5" class="admin-empty-list admin-text-muted" style="padding: 2rem;">
                             Nenhum tema disponível no momento ou falha ao carregar o catálogo.
                         </td>
                     </tr>

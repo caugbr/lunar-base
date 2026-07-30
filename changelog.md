@@ -3,6 +3,14 @@
 ## Unreleased
 
 ### Changed
+
+### Added
+
+### Fixed
+
+## [1.3.0] 2026-07-30
+
+### Changed
 - Menu admin agora abre submenu no clique da setinha
 - AdinMenu.php agora tem métodos pra adicionar novos grupos ao menu
 - README.md simplificado

@@ -70,12 +70,16 @@
                 </div>
             </div>
         @empty
-            <div class="admin-text-center admin-text-muted">
+            <div class="admin-empty-list">
                 <div>
-                    <x-lucide-folder-open class="lucid-icon" style="width: 48px; height: 48px; margin: 0 auto;" />
+                    <x-lucide-circle-off class="lucid-icon" />
                 </div>
                 <h3>Nenhum tema encontrado</h3>
-                <p>Insira novas pastas de temas no diretório <code>/themes</code> na raiz do projeto.</p>
+                <p>
+                    Insira novas pastas de temas no diretório
+                    <code>/themes</code> na raiz do projeto.
+                    Ou busque um no <a href="{{ route('admin.themes.marketplace.install') }}">repositório</a>.
+                </p>
             </div>
         @endforelse
     </div>
@@ -207,15 +211,6 @@
     .theme-active-text .lucid-icon {
         width: 16px;
         height: 16px;
-    }
-
-    .admin-text-center {
-        grid-column: 1 / -1;
-        margin: auto;
-        padding: 4rem 2rem;
-        width: 100%;
-        margin-bottom: 1rem;
-        color: var(--color-text-muted, #6B6880);
     }
 </style>
 @endpush

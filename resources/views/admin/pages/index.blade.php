@@ -102,7 +102,14 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="8" class="admin-text-center admin-text-muted">Nenhuma página cadastrada</td>
+                    <td colspan="8">
+                        <div class="admin-empty-list">
+                            <div>
+                                <x-lucide-circle-off class="lucid-icon" />
+                            </div>
+                            <h3>Nenhuma página encontrada</h3>
+                        </div>
+                    </td>
                 </tr>
                 @endforelse
             </tbody>

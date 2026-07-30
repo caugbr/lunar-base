@@ -76,7 +76,14 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="8" class="admin-text-center admin-text-muted">Nenhum termo cadastrado</td>
+                    <td colspan="8">
+                        <div class="admin-empty-list">
+                            <div>
+                                <x-lucide-circle-off class="lucid-icon" />
+                            </div>
+                            <h3>Nenhum termo cadastrado</h3>
+                        </div>
+                    </td>
                 </tr>
                 @endforelse
             </tbody>

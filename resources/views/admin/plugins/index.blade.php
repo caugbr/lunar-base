@@ -89,7 +89,19 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="6" class="admin-text-center admin-text-muted">Nenhum plugin instalado</td>
+                    <td colspan="6">
+                        <div class="admin-empty-list">
+                            <div>
+                                <x-lucide-circle-off class="lucid-icon" />
+                            </div>
+                            <h3>Nenhum plugin encontrado</h3>
+                            <p>
+                                Insira novas pastas de plugins no diretório
+                                <code>/plugins</code> na raiz do projeto.
+                                Ou busque um no <a href="{{ route('admin.plugins.marketplace.install') }}">repositório</a>.
+                            </p>
+                        </div>
+                    </td>
                 </tr>
                 @endforelse
             </tbody>

@@ -79,14 +79,14 @@
                     <td>
                         <span style="color: #1e293b; font-weight: 500;">{{ $log->action }}</span>
                         @if($meta)
-<span class="meta-info">
-    <button type="button" popovertarget="meta-{{ $log->id }}">
-        <x-lucide-info class="lucid-icon" />
-    </button>
-    <span id="meta-{{ $log->id }}" popover class="meta-popup">
-        <code>{{ $meta }}</code>
-    </span>
-</span>
+                            <span class="meta-info">
+                                <button type="button" popovertarget="meta-{{ $log->id }}">
+                                    <x-lucide-info class="lucid-icon" />
+                                </button>
+                                <span id="meta-{{ $log->id }}" popover class="meta-popup">
+                                    <code>{{ $meta }}</code>
+                                </span>
+                            </span>
                         @endif
                     </td>
                     <td class="admin-text-muted" style="max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
@@ -99,9 +99,13 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="5" class="admin-text-center admin-text-muted" style="padding: 40px 0;">
-                        <x-lucide-info class="lucid-icon" style="margin-bottom: 8px; vertical-align: middle;" />
-                        Nenhum log de auditoria encontrado com os filtros aplicados.
+                    <td colspan="5">
+                        <div class="admin-empty-list">
+                            <div>
+                                <x-lucide-circle-off class="lucid-icon" />
+                            </div>
+                            <h3>Nenhum log de auditoria encontrado</h3>
+                        </div>
                     </td>
                 </tr>
                 @endforelse

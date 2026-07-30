@@ -115,7 +115,14 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="7" class="admin-text-center admin-text-muted">Nenhum post cadastrado</td>
+                    <td colspan="7">
+                        <div class="admin-empty-list">
+                            <div>
+                                <x-lucide-circle-off class="lucid-icon" />
+                            </div>
+                            <h3>Nenhum post encontrado</h3>
+                        </div>
+                    </td>
                 </tr>
                 @endforelse
             </tbody>

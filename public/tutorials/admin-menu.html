@@ -9,7 +9,7 @@
 <body>
     <header>
         <h1>Menu Administrativo</h1>
-        <p data-subtitle>Lunar Base v1.2.0 - Adicionando Itens ao Menu Administrativo via Plugin</p>
+        <p data-subtitle>Lunar Base v1.2.0 - Adicionando Seções e Itens ao Menu Administrativo via Plugin</p>
     </header>
 
     <div class="container">
@@ -18,10 +18,11 @@
             <h2>Sumário</h2>
             <ul>
                 <li><a href="#intro">Introdução</a></li>
-                <li><a href="#sintaxe">Sintaxe Básica</a></li>
-                <li><a href="#parametros">Parâmetros</a></li>
+                <li><a href="#secoes">Criando Novas Seções</a></li>
+                <li><a href="#sintaxe">Sintaxe do AdminMenu::add()</a></li>
+                <li><a href="#parametros">Parâmetros de Itens</a></li>
                 <li><a href="#exemplo">Exemplo Completo</a></li>
-                <li><a href="#posicao">Posicionamento</a></li>
+                <li><a href="#posicao">Posicionamento de Seções e Itens</a></li>
                 <li><a href="#boas-praticas">Boas Práticas</a></li>
             </ul>
         </nav>
@@ -29,118 +30,191 @@
         <section id="intro">
             <h2>Introdução</h2>
             <div class="intro">
-                <p>Use o <code>AdminMenu::add()</code> no método <code>boot()</code> do seu ServiceProvider para injetar itens no menu administrativo do <span class="app-name">Lunar Base</span>. O menu é renderizado automaticamente no layout admin, respeitando permissões e roles.</p>
+                <p>Utilize a classe <code>AdminMenu</code> no método <code>boot()</code> do ServiceProvider do seu plugin para injetar novos itens ou criar seções inteiras com títulos no menu lateral do <span class="app-name">Lunar Base</span>. O menu é renderizado automaticamente na barra lateral, respeitando permissões, roles e agrupamentos.</p>
             </div>
         </section>
 
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="secoes">
+            <h2>Criando Novas Seções (Grupos)</h2>
+            <p>Se o seu plugin precisar criar um grupo de navegação dedicado na sidebar com seu próprio título (ex: <strong>Ensino</strong>, <strong>E-commerce</strong>, <strong>Ferramentas</strong>), utilize o método <code>AdminMenu::addSection()</code>:</p>
+
+            <pre><code class="code-label">PHP</code>use App\Support\AdminMenu;
+
+// Cria a seção "Ensino" no topo do menu (posição/índice 0)
+AdminMenu::addSection('Ensino', [], 0);</pre>
+
+            <p>A assinatura do método <code>addSection()</code> aceita três parâmetros:</p>
+            <ul>
+                <li><strong><code>$title</code></strong> (string, obrigatório): Título visível do cabeçalho da seção na sidebar.</li>
+                <li><strong><code>$items</code></strong> (array, opcional): Array inicial de itens para pré-popular a seção.</li>
+                <li><strong><code>$index</code></strong> (int|null, opcional): Posição numérica da seção na sidebar (<code>0</code> para o topo, <code>1</code> para segunda posição, ou <code>null</code> para inserir ao final).</li>
+            </ul>
+
+            <div class="tip">
+                <strong>Idempotência:</strong> Se dois plugins tentarem criar uma seção com o mesmo título (ex: "Ensino"), o sistema une os itens na mesma seção sem duplicar o cabeçalho no menu.
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="sintaxe">
-            <h2>Sintaxe Básica</h2>
+            <h2>Sintaxe do AdminMenu::add()</h2>
+            <p>Para injetar um item de primeiro nível em uma seção específica, utilize o método <code>AdminMenu::add()</code>:</p>
+
             <pre><code class="code-label">PHP</code>use App\Support\AdminMenu;
 
 AdminMenu::add([
-    'label'      => 'Meu Plugin',
-    'icon'       => 'puzzle',           // Ícone Lucide
-    'route'      => 'admin.meuplugin',  // Rota nomeada
-    'active'     => 'admin.meuplugin.*',// Padrão de ativação
-    'permission' => 'manage-pages',     // Permissão (opcional)
+    'label'      => 'Cursos',
+    'icon'       => 'book-open',        // Ícone Lucide
+    'route'      => 'admin.courses.index',
+    'active'     => 'admin.courses.*',
+    'permission' => 'view-courses',     // Permissão (opcional)
     'role'       => 'admin',            // Role (opcional)
-], 'Taxonomias'); // Posição: após qual item?</code></pre>
+], null, 0); // Param 2: após qual item? | Param 3: índice do grupo (0 por padrão)</pre>
         </section>
 
+        <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="parametros">
             <h2>Parâmetros</h2>
+
+            <h3>Campos do Array de Item</h3>
             <table>
-                <tr>
-                    <th>Parâmetro</th>
-                    <th>Obrigatório</th>
-                    <th>Descrição</th>
-                </tr>
-                <tr>
-                    <td><code>label</code></td>
-                    <td>Sim</td>
-                    <td>Texto exibido no menu</td>
-                </tr>
-                <tr>
-                    <td><code>icon</code></td>
-                    <td>Sim</td>
-                    <td>Ícone Lucide (ex: 'settings', 'users', 'file')</td>
-                </tr>
-                <tr>
-                    <td><code>route</code></td>
-                    <td>Sim</td>
-                    <td>Nome da rota Laravel</td>
-                </tr>
-                <tr>
-                    <td><code>active</code></td>
-                    <td>Sim</td>
-                    <td>Padrão para destacar item ativo (use * como wildcard)</td>
-                </tr>
-                <tr>
-                    <td><code>permission</code></td>
-                    <td>Não</td>
-                    <td>Só aparece se usuário tiver esta permissão</td>
-                </tr>
-                <tr>
-                    <td><code>role</code></td>
-                    <td>Não</td>
-                    <td>Só aparece se usuário tiver este role (admin, editor, etc)</td>
-                </tr>
+                <thead>
+                    <tr>
+                        <th>Campo</th>
+                        <th>Obrigatório</th>
+                        <th>Descrição</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>label</code></td>
+                        <td>Sim</td>
+                        <td>Texto exibido no link do menu.</td>
+                    </tr>
+                    <tr>
+                        <td><code>icon</code></td>
+                        <td>Sim</td>
+                        <td>Nome do ícone Lucide (ex: <code>'book-open'</code>, <code>'settings'</code>, <code>'users'</code>).</td>
+                    </tr>
+                    <tr>
+                        <td><code>route</code></td>
+                        <td>Sim</td>
+                        <td>Nome da rota Laravel cadastrada.</td>
+                    </tr>
+                    <tr>
+                        <td><code>active</code></td>
+                        <td>Sim</td>
+                        <td>Padrão que define se o item está ativo (use <code>*</code> como wildcard, ex: <code>admin.courses.*</code>).</td>
+                    </tr>
+                    <tr>
+                        <td><code>permission</code></td>
+                        <td>Não</td>
+                        <td>Exibe o item apenas para usuários com essa permissão do sistema RBAC.</td>
+                    </tr>
+                    <tr>
+                        <td><code>role</code></td>
+                        <td>Não</td>
+                        <td>Exibe o item apenas para usuários com essa role (admin, editor, etc.).</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Assinatura dos Métodos</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Método</th>
+                        <th>Assinatura</th>
+                        <th>Descrição</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>addSection()</code></td>
+                        <td><code>addSection(string $title, array $items = [], ?int $index = null)</code></td>
+                        <td>Cria ou mescla um grupo/seção com título na sidebar.</td>
+                    </tr>
+                    <tr>
+                        <td><code>add()</code></td>
+                        <td><code>add(array $item, ?string $afterLabel = null, int $groupIndex = 0)</code></td>
+                        <td>Injeta um item na seção indicada pelo <code>$groupIndex</code>.</td>
+                    </tr>
+                    <tr>
+                        <td><code>addSubItem()</code></td>
+                        <td><code>addSubItem(string $parentLabel, array $subItem, ?string $afterLabel = null)</code></td>
+                        <td>Injeta um sub-item dentro do dropdown de um item pai.</td>
+                    </tr>
+                </tbody>
             </table>
 
             <div class="tip">
-                <strong>Ícones Disponíveis:</strong> Visite <a href="https://lucide.dev/icons/" target="_blank">Lucide Icons</a> para ver todos os ícones disponíveis.
+                <strong>Ícones Disponíveis:</strong> Consulte a biblioteca <a href="https://lucide.dev/icons/" target="_blank">Lucide Icons</a> para escolher o ícone desejado.
             </div>
         </section>
 
+        <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="exemplo">
             <h2>Exemplo Completo</h2>
             <div class="example-box">
-                <h4>No ServiceProvider do plugin</h4>
-                <pre><code class="code-label">PHP</code>// No método boot() do seu ServiceProvider
-public function boot(): void
-{
-    $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
-    $this->loadViewsFrom(__DIR__ . '/resources/views', 'meuplugin');
+                <h4>No ServiceProvider do Plugin</h4>
+                <pre><code class="code-label">PHP</code>namespace Plugins\Caminho;
 
-    // Adiciona ao menu após "Taxonomias"
-    \App\Support\AdminMenu::add([
-        'label'      => 'Formulários',
-        'icon'       => 'form',
-        'route'      => 'admin.forms.index',
-        'active'     => 'admin.forms.*',
-        'permission' => 'manage-pages',
-    ], 'Taxonomias');
+use Illuminate\Support\ServiceProvider;
+use App\Support\AdminMenu;
+
+class CaminhoServiceProvider extends ServiceProvider
+{
+    public function boot(): void
+    {
+        // 1. Cria a seção "Ensino" na primeira posição do menu (índice 0)
+        AdminMenu::addSection('Ensino', [], 0);
+
+        // 2. Injeta os itens dentro da seção de índice 0 ("Ensino")
+        AdminMenu::add([
+            'label'      => 'Cursos',
+            'icon'       => 'book-open',
+            'route'      => 'admin.courses.index',
+            'active'     => 'admin.courses.*',
+            'permission' => 'view-courses',
+        ], null, 0);
+
+        AdminMenu::add([
+            'label'      => 'Turmas',
+            'icon'       => 'calendar',
+            'route'      => 'admin.classes.index',
+            'active'     => 'admin.classes.*',
+            'permission' => 'view-classes',
+        ], null, 0);
+    }
 }</code></pre>
             </div>
         </section>
 
+        <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="posicao">
-            <h2>Posicionamento</h2>
-            <p>O segundo parâmetro do <code>AdminMenu::add()</code> define o item de referência para posicionamento. O novo item será inserido <strong>após</strong> o item especificado.</p>
+            <h2>Posicionamento de Seções e Itens</h2>
 
-            <div class="example-box">
-                <h4>Itens do menu core (referência)</h4>
-                <pre><code>Dashboard
-Páginas
-Posts
-Taxonomias
-Mídia
-Usuários
-Configurações</code></pre>
-            </div>
+            <h3>1. Posicionamento de Seções (`addSection`)</h3>
+            <p>As seções na sidebar obedecem ao parâmetro <code>$index</code> numérico:</p>
+            <ul>
+                <li><code>0</code>: Posiciona a nova seção no topo do menu.</li>
+                <li><code>1</code>: Posiciona como o segundo grupo da sidebar.</li>
+                <li><code>null</code> (padrão): Insere a seção ao final do menu.</li>
+            </ul>
 
-            <div class="tip">
-                <strong>Dica:</strong> Se o item de referência não existir, o novo item será adicionado no final do menu.
-            </div>
+            <h3>2. Posicionamento de Itens dentro da Seção (`add`)</h3>
+            <p>Dentro de cada seção, os itens utilizam o parâmetro <code>$afterLabel</code> para posicionamento relativo. O novo item será inserido imediatamente <strong>após</strong> o item com o rótulo especificado. Se for omitido ou <code>null</code>, o item vai para o final da sua seção.</p>
         </section>
 
+        <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="boas-praticas">
             <h2>Boas Práticas</h2>
             <ul class="steps">
-                <li><strong>Use permissões:</strong> Sempre defina <code>permission</code> para não expor funcionalidades a usuários não autorizados.</li>
-                <li><strong>Ícones consistentes:</strong> Use ícones Lucide que façam sentido semântico para a funcionalidade.</li>
-                <li><strong>Rotas nomeadas:</strong> Sempre use rotas nomeadas no <code>route</code> para evitar quebras se URLs mudarem.</li>
-                <li><strong>Wildcard no active:</strong> Use <code>admin.meuplugin.*</code> para que o item fique ativo em todas as sub-rotas.</li>
+                <li><strong>Organize por Seções:</strong> Use <code>AdminMenu::addSection()</code> para agrupar módulos complexos e manter a sidebar limpa e intuitiva.</li>
+                <li><strong>Use permissões:</strong> Sempre defina o campo <code>permission</code> para ocultar links de usuários não autorizados.</li>
+                <li><strong>Ícones semânticos:</strong> Escolha ícones do Lucide que transmitam claramente a função do módulo.</li>
+                <li><strong>Wildcard no active:</strong> Use <code>admin.meumodulo.*</code> no campo <code>active</code> para que o item permaneça destacado em telas de edição e cadastro.</li>
             </ul>
         </section>
 

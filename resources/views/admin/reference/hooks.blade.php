@@ -85,7 +85,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="4" class="admin-text-center admin-text-muted" style="padding: 30px;">
+                    <td colspan="4" class="admin-empty-list admin-text-muted" style="padding: 30px;">
                         Nenhum hook descoberto. Certifique-se de que o HookDiscoverer está configurado.
                     </td>
                 </tr>

@@ -9,3 +9,19 @@
 .text-center {
     text-align: center;
 }
+
+.admin-empty-list {
+    grid-column: 1 / -1;
+    margin: auto;
+    padding: 4rem 2rem;
+    width: 100%;
+    margin-bottom: 1rem;
+    color: var(--color-text-muted, #6B6880);
+    text-align: center;
+}
+
+.admin-empty-list .lucid-icon {
+    width: 48px;
+    height: 48px;
+    margin: 0 auto;
+}

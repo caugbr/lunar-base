@@ -31,13 +31,6 @@
                     <td>{{ $user->id }}</td>
                     <td>{{ $user->name }}</td>
                     <td>{{ $user->email }}</td>
-                    {{-- <td>
-                        @if($user->role == 'admin')
-                            <span class="admin-badge admin-badge-admin">Admin</span>
-                        @else
-                            <span class="admin-badge admin-badge-partner">Parceiro</span>
-                        @endif
-                    </td> --}}
                     <td>
                         @if($user->isAdmin())
                             <span class="admin-badge admin-badge-admin">Admin</span>
@@ -45,13 +38,6 @@
                             <span class="admin-badge admin-badge-editor">Editor</span>
                         @endif
                     </td>
-                    {{-- <td>
-                        @if($user->partner)
-                            <a href="{{ route('admin.partners.edit', $user->partner->id) }}" class="admin-btn-link">Ver dados</a>
-                        @else
-                            -
-                        @endif
-                    </td> --}}
                     <td>{{ $user->created_at->format('d/m/Y') }}</td>
                     <td class="admin-actions">
                         <div>

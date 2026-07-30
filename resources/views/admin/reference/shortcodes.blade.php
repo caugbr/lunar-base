@@ -100,7 +100,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="4" class="admin-text-center admin-text-muted empty-row-padding">
+                    <td colspan="4" class="admin-empty-list admin-text-muted empty-row-padding">
                         Nenhum shortcode ativo foi detectado no sistema no momento.
                     </td>
                 </tr>
