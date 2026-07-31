@@ -108,14 +108,25 @@ return [
      */
     'menu' => [
         [
-            'title' => 'Sistema',
+            // 'title' => '',
             'items' => [
                 [
                     'label' => 'Dashboard',
                     'icon' => 'layout-dashboard',
                     'route' => 'admin.dashboard.index',
                     'active' => 'admin.dashboard.index',
-                ],
+                ]
+            ]
+        ],
+        [
+            'title' => 'Sistema',
+            'items' => [
+                // [
+                //     'label' => 'Dashboard',
+                //     'icon' => 'layout-dashboard',
+                //     'route' => 'admin.dashboard.index',
+                //     'active' => 'admin.dashboard.index',
+                // ],
                 [
                     'label' => 'Páginas',
                     'icon' => 'file',

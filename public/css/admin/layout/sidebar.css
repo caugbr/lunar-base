@@ -13,8 +13,8 @@
 
 .admin-sidebar-header {
     padding: 24px 20px;
-    /* border-bottom: 1px solid var(--sidebar-border); */
-    margin-bottom: 20px;
+    border-bottom: 1px solid var(--sidebar-border);
+    margin-bottom: 10px;
 }
 
 .admin-sidebar-header h2 {

@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manual de Componentes Globais - Lunar Base v1.2.0</title>
+    <title>Manual de Componentes Globais - Lunar Base v1.3.0</title>
     <!-- Link para o arquivo CSS centralizado -->
     <link rel="stylesheet" href="tutorials.css">
 </head>
 <body>
     <header>
         <h1>Manual de Componentes Globais</h1>
-        <p data-subtitle>Lunar Base v1.2.0 - Guia de Blade Components do Sistema</p>
+        <p data-subtitle>Lunar Base v1.3.0 - Guia de Blade Components do Sistema</p>
     </header>
 
     <div class="container">
@@ -27,6 +27,7 @@
                 <li><a href="#modal">Janelas Modais (modal)</a></li>
                 <li><a href="#utilidades">Componentes de Utilidade & UI</a></li>
                 <li><a href="#acessibilidade">Acessibilidade, SEO & Tema</a></li>
+                <li><a href="#boas-praticas">Boas Práticas</a></li>
             </ul>
         </nav>
 
@@ -106,26 +107,30 @@
 
             <h4>Parâmetros Aceitos:</h4>
             <table>
-                <tr>
-                    <th>Parâmetro</th>
-                    <th>Tipo</th>
-                    <th>Descrição</th>
-                </tr>
-                <tr>
-                    <td><code>page</code></td>
-                    <td><code>Page</code> (Model)</td>
-                    <td>Instância de página (opcional, tenta auto-resolver)</td>
-                </tr>
-                <tr>
-                    <td><code>post</code></td>
-                    <td><code>Post</code> (Model)</td>
-                    <td>Instância de post de blog (opcional, tenta auto-resolver)</td>
-                </tr>
-                <tr>
-                    <td><code>icon</code></td>
-                    <td><code>string</code></td>
-                    <td>Nome do ícone Lucide a ser exibido à esquerda da trilha (ex: 'home')</td>
-                </tr>
+                <thead>
+                    <tr>
+                        <th>Parâmetro</th>
+                        <th>Tipo</th>
+                        <th>Descrição</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>page</code></td>
+                        <td><code>Page</code> (Model)</td>
+                        <td>Instância de página (opcional, tenta auto-resolver)</td>
+                    </tr>
+                    <tr>
+                        <td><code>post</code></td>
+                        <td><code>Post</code> (Model)</td>
+                        <td>Instância de post de blog (opcional, tenta auto-resolver)</td>
+                    </tr>
+                    <tr>
+                        <td><code>icon</code></td>
+                        <td><code>string</code></td>
+                        <td>Nome do ícone Lucide a ser exibido à esquerda da trilha (ex: 'home')</td>
+                    </tr>
+                </tbody>
             </table>
         </section>
 
@@ -264,6 +269,85 @@ window.dispatchEvent(new CustomEvent('modal-close', { detail: { id: 'galeriaModa
             <h3>2. Renderizador de QR Code (&lt;x-qr-code&gt;)</h3>
             <p>Recebe e renderiza uma marcação SVG pura contendo um código QR de forma segura, garantindo que o desenho se ajuste às dimensões do bloco de destino.</p>
             <pre><code class="code-label">BLADE</code>&lt;x-qr-code :svg="$qrCodeSvg" /&gt;</pre>
+
+            <!-- chart -->
+            <h3>3. Gráficos e Estatísticas (&lt;x-chart&gt;)</h3>
+            <p>Gera gráficos interativos, responsivos e elegantes utilizando a biblioteca Chart.js. O componente suporta múltiplos tipos de visualização (barras, linhas, pizza e rosca), isola o escopo de execução do JavaScript com IIFE, trata o redimensionamento do navegador via <em>debounce</em> e carrega o script externo do CDN de forma assíncrona apenas uma vez por página (via <code>@once</code>).</p>
+
+            <pre><code class="code-label">BLADE</code>{{-- Exemplo 1: Gráfico de Barras Padrão --}}
+&lt;x-chart
+    type="bar"
+    :labels="['Jan', 'Fev', 'Mar', 'Abr']"
+    :data="[12, 19, 3, 5]"
+    label="Vendas de Posts"
+    height="280"
+/&gt;
+
+{{-- Exemplo 2: Gráfico de Pizza com Cores Personalizadas --}}
+&lt;x-chart
+    type="pie"
+    :labels="['Ativos', 'Inativos', 'Pendentes']"
+    :data="[45, 12, 5]"
+    label="Distribuição de Alunos"
+    :colors="['#10b981', '#ef4444', '#f59e0b']"
+    height="320"
+/&gt;</pre>
+
+            <h4>Parâmetros Aceitos:</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Propriedade</th>
+                        <th>Tipo</th>
+                        <th>Padrão</th>
+                        <th>Descrição</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>type</code></td>
+                        <td><code>string</code></td>
+                        <td><code>'bar'</code></td>
+                        <td>Tipo do gráfico: <code>bar</code>, <code>line</code>, <code>pie</code> ou <code>doughnut</code>.</td>
+                    </tr>
+                    <tr>
+                        <td><code>labels</code></td>
+                        <td><code>array</code></td>
+                        <td><code>[]</code></td>
+                        <td>Array com os rótulos do eixo X ou legendas das fatias.</td>
+                    </tr>
+                    <tr>
+                        <td><code>data</code></td>
+                        <td><code>array</code></td>
+                        <td><code>[]</code></td>
+                        <td>Array de valores numéricos correspondentes aos rótulos.</td>
+                    </tr>
+                    <tr>
+                        <td><code>label</code></td>
+                        <td><code>string</code></td>
+                        <td><code>'Dados'</code></td>
+                        <td>Título do conjunto de dados (dataset).</td>
+                    </tr>
+                    <tr>
+                        <td><code>height</code></td>
+                        <td><code>int</code></td>
+                        <td><code>300</code></td>
+                        <td>Altura em pixels do contêiner do gráfico.</td>
+                    </tr>
+                    <tr>
+                        <td><code>colors</code></td>
+                        <td><code>array|null</code></td>
+                        <td><code>null</code></td>
+                        <td>Array de cores HEX/RGB para sobrescrever a paleta padrão em gráficos do tipo pizza/rosca.</td>
+                    </tr>
+                    <tr>
+                        <td><code>id</code></td>
+                        <td><code>string</code></td>
+                        <td>Auto-gerado</td>
+                        <td>ID único do elemento <code>&lt;canvas&gt;</code> (opcional, gerado via <code>uniqid</code> por padrão).</td>
+                    </tr>
+                </tbody>
+            </table>
         </section>
 
         <section id="acessibilidade">
@@ -305,7 +389,7 @@ window.dispatchEvent(new CustomEvent('modal-close', { detail: { id: 'galeriaModa
         </section>
 
         <footer>
-            <p><strong>Manual de Componentes Globais - Lunar Base v1.2.0</strong></p>
+            <p><strong>Manual de Componentes Globais - Lunar Base v1.3.0</strong></p>
             <p data-footer-info>Última atualização: Julho/2026 | &copy; 2026 Cau Guanabara</p>
         </footer>
     </div>

@@ -98,7 +98,7 @@
                             <p>
                                 Insira novas pastas de plugins no diretório
                                 <code>/plugins</code> na raiz do projeto.
-                                Ou busque um no <a href="{{ route('admin.plugins.marketplace.install') }}">repositório</a>.
+                                Ou busque um no <a href="{{ route('admin.plugins.marketplace.index') }}">repositório</a>.
                             </p>
                         </div>
                     </td>

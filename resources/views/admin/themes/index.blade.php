@@ -78,7 +78,7 @@
                 <p>
                     Insira novas pastas de temas no diretório
                     <code>/themes</code> na raiz do projeto.
-                    Ou busque um no <a href="{{ route('admin.themes.marketplace.install') }}">repositório</a>.
+                    Ou busque um no <a href="{{ route('admin.themes.marketplace.index') }}">repositório</a>.
                 </p>
             </div>
         @endforelse
