@@ -14,7 +14,7 @@ return [
     */
 
     'name' => 'Lunar Base',
-    'version' => '1.3.0',
+    'version' => '1.3.1',
     'author' => 'Cau Guanabara',
 
     /*
