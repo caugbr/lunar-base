@@ -100,15 +100,15 @@
             window.removeEventListener('beforeunload', preventUnload);
 
             if (response.ok && data.success) {
-                alert('Lunar Base atualizado com sucesso!');
+                Dialog.alert('Lunar Base atualizado com sucesso!');
                 window.location.reload();
             } else {
-                alert('Erro na atualização: ' + (data.message || 'Falha ao aplicar arquivo.'));
+                Dialog.alert('Erro na atualização: ' + (data.message || 'Falha ao aplicar arquivo.'));
                 backdrop.style.setProperty('display', 'none', 'important');
             }
         } catch (error) {
             window.removeEventListener('beforeunload', preventUnload);
-            alert('Erro de conexão durante o processo de atualização.');
+            Dialog.alert('Erro de conexão durante o processo de atualização.');
             backdrop.style.setProperty('display', 'none', 'important');
         }
     }
