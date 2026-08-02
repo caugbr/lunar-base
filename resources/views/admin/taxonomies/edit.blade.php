@@ -30,20 +30,43 @@
             </div>
         </div>
 
-        <div class="form-group">
-            <label for="description">Descrição</label>
-            <textarea name="description" id="description" rows="3">{{ old('description', $taxonomy->description) }}</textarea>
-            @error('description') <small class="error">{{ $message }}</small> @enderror
+        <div class="admin-form-row">
+            <div class="form-group">
+                <label for="description">Descrição</label>
+                <textarea name="description" id="description" rows="3">{{ old('description', $taxonomy->description) }}</textarea>
+                @error('description') <small class="error">{{ $message }}</small> @enderror
+            </div>
+
+            <div class="form-group">
+                <label>Tipos de publicação</label>
+                <div class="post-types">
+                    @foreach(\App\Support\PublicationTypes::all() as $typeKey => $typeLabel)
+                        <label>
+                            <input type="checkbox"
+                                name="target_types[]"
+                                value="{{ $typeKey }}"
+                                {{ isset($taxonomy) && is_array($taxonomy->target_types) && in_array($typeKey, $taxonomy->target_types) ? 'checked' : '' }}>
+                            <span>{{ $typeLabel }}</span>
+                        </label>
+                    @endforeach
+                </div>
+                <small>Se nenhum for selecionado, a taxonomia estará disponível para todos os tipos.</small>
+            </div>
         </div>
 
-        <div class="form-group">
-            {{-- <label class="checkbox-label">
-                <input type="checkbox" name="hierarchical" value="1" {{ old('hierarchical', $taxonomy->hierarchical) ? 'checked' : '' }}>
-                <span>Hierárquica</span>
-            </label> --}}
-            <label for="hierarchical">Hierárquica?</label>
-            <x-switch name="hierarchical" id="hierarchical" checked="{{ old('hierarchical', $taxonomy->hierarchical) ? true : false }}" active="Sim" inactive="Não" />
-            <small>Termos podem ter sub-termos (ex: Categorias com subcategorias)</small>
+        <div class="admin-form-row">
+            <div class="form-group">
+                <label for="hierarchical">Hierárquica?</label>
+                <x-switch name="hierarchical" id="hierarchical" checked="{{ old('hierarchical', $taxonomy->hierarchical) ? true : false }}" active="Sim" inactive="Não" />
+                <small>Termos podem ter sub-termos (ex: Categorias com subcategorias)</small>
+            </div>
+            <div class="form-group">
+                <label for="unique">Única?</label>
+                <x-switch name="unique" id="unique" checked="{{ old('unique', $taxonomy->unique) ? true : false }}" active="Única" inactive="Múltipla" />
+                <small>
+                    Se marcado, cada publicação poderá usar apenas um termo.
+                </small>
+            </div>
         </div>
 
         <div class="buttons">
@@ -56,3 +79,22 @@
 
 <x-lost-changes-warn selector="#tax_form" />
 @endsection
+
+@push('styles')
+<style>
+    .post-types {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        min-height: 5.4rem;
+        padding: 0.5rem;
+        border-radius: 8px;
+        background-color: var(--color-bg-dark);
+        border: 1px solid var(--color-border);
+    }
+    .post-types label {
+        cursor: pointer;
+        white-space: nowrap;
+    }
+</style>
+@endpush

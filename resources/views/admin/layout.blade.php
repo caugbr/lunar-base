@@ -47,11 +47,7 @@
             @include('admin.partials.menu')
             <x-hook name="admin.after_menu" :params="['path' => $path]" desc="Depois do menu" />
 
-            <div class="system-assign">
-                {{ config('app.name') }}
-                {{ config('app.version') }}
-                <x-system-update-badge />
-            </div>
+
         </aside>
 
         <!-- Conteúdo Principal -->
@@ -88,6 +84,23 @@
                 @yield('content')
 
                 <x-hook name="admin.after_content" :params="['path' => $path]" desc="Depois do conteúdo da admin" />
+            </div>
+
+            <div class="admin-footer">
+                <div class="left">
+                    {!! setting('general.admin_footer_text', '') !!}
+                </div>
+                <div class="right">
+                    <div class="system-assign">
+                        <a target="_blank" href="{{ config('app.author_link') }}">
+                            {{ config('app.author') }}
+                        </a>
+                        &nbsp;|&nbsp;
+                        {{ config('app.name') }}
+                        {{ config('app.version') }}
+                        <x-system-update-badge />
+                    </div>
+                </div>
             </div>
         </main>
     </div>

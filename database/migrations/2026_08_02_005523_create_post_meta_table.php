@@ -11,13 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('term_relationships', function (Blueprint $table) {
+        Schema::create('post_meta', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('term_id');
-            $table->unsignedBigInteger('page_id')->index();
+            $table->unsignedBigInteger('post_id')->index();
+            $table->string('meta_key')->index();
+            $table->longText('meta_value')->nullable();
             $table->timestamps();
 
-            $table->unique(['term_id', 'page_id']);
+            $table->unique(['post_id', 'meta_key']);
         });
     }
 
@@ -26,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('term_relationships');
+        Schema::dropIfExists('post_meta');
     }
 };

@@ -259,6 +259,13 @@ return [
                     'options' => ['light' => 'Claro', 'dark' => 'Escuro'],
                 ],
                 [
+                    'key' => 'admin_footer_text',
+                    'type' => 'text',
+                    'label' => 'Texto no footer da administração',
+                    'description' => 'Texto opcional no lado esquerdo do footer no painel administrativo.',
+                    'default' => '',
+                ],
+                [
                     'type' => 'subtitle',
                     'label' => 'Obrigações legais',
                     'icon' => 'scale',
@@ -569,6 +576,14 @@ return [
                     'description' => 'Quantidade máxima de itens para paginação de mídia na administração',
                     'default' => 24,
                     'attributes' => ['min' => 6, 'max' => 60, 'step' => 6],
+                ],
+                [
+                    'key' => 'max_features_posts',
+                    'type' => 'number',
+                    'label' => 'Quantidade de posts na home',
+                    'description' => 'Quantidade máxima de posts destacados na home',
+                    'default' => 5,
+                    'attributes' => ['min' => 1, 'max' => 10],
                 ],
                 [
                     'key' => 'posts_max_items',

@@ -6,11 +6,14 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
         Schema::create('two_factor_settings', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->unique()->constrained()->onDelete('cascade');
+            $table->bigIncrements('id');
+            $table->unsignedBigInteger('user_id')->unique();
             $table->text('secret')->nullable();
             $table->timestamp('confirmed_at')->nullable();
             $table->string('otp_code')->nullable();
@@ -19,6 +22,9 @@ return new class extends Migration
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::dropIfExists('two_factor_settings');

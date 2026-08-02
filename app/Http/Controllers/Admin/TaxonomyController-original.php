@@ -22,22 +22,15 @@ class TaxonomyController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name'           => 'required|string|max:255',
-            'slug'           => 'required|string|max:255|unique:taxonomies',
-            'description'    => 'nullable|string',
-            'hierarchical'   => 'boolean',
-            'unique'         => 'boolean',
-            'target_types'   => 'nullable|array',
-            'target_types.*' => 'string',
+            'name' => 'required|string|max:255',
+            'slug' => 'required|string|max:255|unique:taxonomies',
+            'description' => 'nullable|string',
+            'hierarchical' => 'boolean',
+            'unique' => 'boolean',
         ]);
 
         $validated['hierarchical'] = $request->boolean('hierarchical');
-        $validated['unique']       = $request->boolean('unique');
-
-        // Se nenhum checkbox for marcado, salva null (torna a taxonomia global)
-        $validated['target_types'] = $request->filled('target_types')
-            ? array_values($request->input('target_types'))
-            : null;
+        $validated['unique'] = $request->boolean('unique');
 
         Taxonomy::create($validated);
 
@@ -53,22 +46,15 @@ class TaxonomyController extends Controller
     public function update(Request $request, Taxonomy $taxonomy)
     {
         $validated = $request->validate([
-            'name'           => 'required|string|max:255',
-            'slug'           => 'required|string|max:255|unique:taxonomies,slug,' . $taxonomy->id,
-            'description'    => 'nullable|string',
-            'hierarchical'   => 'boolean',
-            'unique'         => 'boolean',
-            'target_types'   => 'nullable|array',
-            'target_types.*' => 'string',
+            'name' => 'required|string|max:255',
+            'slug' => 'required|string|max:255|unique:taxonomies,slug,' . $taxonomy->id,
+            'description' => 'nullable|string',
+            'hierarchical' => 'boolean',
+            'unique' => 'boolean',
         ]);
 
         $validated['hierarchical'] = $request->boolean('hierarchical');
-        $validated['unique']       = $request->boolean('unique');
-
-        // Se desmarcar todos os tipos, volta a ser global (null)
-        $validated['target_types'] = $request->filled('target_types')
-            ? array_values($request->input('target_types'))
-            : null;
+        $validated['unique'] = $request->boolean('unique');
 
         $taxonomy->update($validated);
 

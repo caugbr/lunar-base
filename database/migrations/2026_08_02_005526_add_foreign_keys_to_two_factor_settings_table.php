@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('admin_logs', function (Blueprint $table) {
-            $table->foreign(['user_id'])->references(['id'])->on('users')->onUpdate('no action')->onDelete('set null');
+        Schema::table('two_factor_settings', function (Blueprint $table) {
+            $table->foreign(['user_id'])->references(['id'])->on('users')->onUpdate('no action')->onDelete('cascade');
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('admin_logs', function (Blueprint $table) {
-            $table->dropForeign('admin_logs_user_id_foreign');
+        Schema::table('two_factor_settings', function (Blueprint $table) {
+            $table->dropForeign('two_factor_settings_user_id_foreign');
         });
     }
 };

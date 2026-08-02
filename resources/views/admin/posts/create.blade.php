@@ -55,38 +55,7 @@
                     </article>
                 </div>
 
-                <div class="edit-box">
-                    <header>Taxonomias</header>
-                    <article>
-                        @if(isset($taxonomies) && count($taxonomies))
-                        <div class="form-group">
-                            @foreach($taxonomies as $taxonomy)
-                                <div class="taxonomy-group">
-                                    <h4>
-                                        {{ $taxonomy->name }}
-                                        @if($taxonomy->description)
-                                            <small>({{ $taxonomy->description }})</small>
-                                        @endif
-                                    </h4>
-                                    <div class="terms-checkbox-group">
-                                        @foreach($taxonomy->terms as $term)
-                                            <label>
-                                                <input type="checkbox" name="term_ids[]" value="{{ $term->id }}"
-                                                    {{ isset($selectedTermIds) && in_array($term->id, $selectedTermIds) ? 'checked' : '' }}>
-                                                <span>{{ $term->name }}</span>
-                                                @if($term->parent)
-                                                    <small>({{ $term->parent->name }})</small>
-                                                @endif
-                                            </label>
-                                        @endforeach
-                                    </div>
-                                </div>
-                            @endforeach
-                            <small>Selecione os termos que classificam este post</small>
-                        </div>
-                        @endif
-                    </article>
-                </div>
+                <x-render name="taxonomy_fields" :params="['type' => 'post']" />
 
                 @if(setting('navigation.show_meta_fields'))
                 <div class="edit-box">

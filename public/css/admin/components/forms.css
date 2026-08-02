@@ -84,3 +84,9 @@ select {
     flex-direction: row;
     gap: 20px;
 }
+
+@media (max-width: 990px) {
+    .admin-form-row {
+        flex-direction: column;
+    }
+}

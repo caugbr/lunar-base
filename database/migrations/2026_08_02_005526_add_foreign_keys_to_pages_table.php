@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::table('pages', function (Blueprint $table) {
             $table->foreign(['author_id'])->references(['id'])->on('users')->onUpdate('no action')->onDelete('restrict');
+            $table->foreign(['parent_id'])->references(['id'])->on('pages')->onUpdate('no action')->onDelete('set null');
             $table->foreign(['thumbnail_id'])->references(['id'])->on('media')->onUpdate('no action')->onDelete('set null');
         });
     }
@@ -24,6 +25,7 @@ return new class extends Migration
     {
         Schema::table('pages', function (Blueprint $table) {
             $table->dropForeign('pages_author_id_foreign');
+            $table->dropForeign('pages_parent_id_foreign');
             $table->dropForeign('pages_thumbnail_id_foreign');
         });
     }

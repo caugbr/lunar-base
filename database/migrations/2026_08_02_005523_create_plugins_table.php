@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('taxonomies', function (Blueprint $table) {
+        Schema::create('plugins', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name');
-            $table->string('slug')->unique();
+            $table->string('folder_name')->unique();
+            $table->string('service_provider_class');
+            $table->string('version')->nullable();
             $table->text('description')->nullable();
-            $table->boolean('hierarchical')->default(false);
+            $table->boolean('is_active')->default(false);
             $table->timestamps();
         });
     }
@@ -26,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('taxonomies');
+        Schema::dropIfExists('plugins');
     }
 };

@@ -18,7 +18,7 @@ class PostController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Post::with(['author', 'terms']);
+        $query = Post::with(['author', 'terms'])->published()->feedOrder();
 
         // Filtro por título
         if ($request->filled('title')) {
@@ -60,7 +60,7 @@ class PostController extends Controller
         $users = User::whereIn('role', ['admin', 'editor'])->orderBy('name')->get();
         $currentUserId = Auth::id();
         $templates = Config::get('postTemplates.templates', []);
-        $taxonomies = Taxonomy::with('terms')->get();
+        $taxonomies = Taxonomy::forType('post')->with('terms')->get();
         $existingMetaKeys = PostMeta::select('meta_key')
             ->distinct()
             ->orderBy('meta_key')
@@ -85,7 +85,7 @@ class PostController extends Controller
             'featured' => 'nullable|boolean',
             'sticky' => 'nullable|boolean',
             'term_ids' => 'nullable|array',
-            'term_ids.*' => 'exists:terms,id',
+            'term_ids.*' => 'nullable|exists:terms,id',
             'gallery_ids' => 'nullable|array',
             'gallery_ids.*' => 'exists:media,id',
         ]);
@@ -98,6 +98,8 @@ class PostController extends Controller
         }
 
         $post = Post::create($validated);
+
+        $post->terms()->sync(array_filter($validated['term_ids'] ?? []));
 
         $post->meta()->delete(); // Limpa tudo e reinsere (simples)
 
@@ -115,9 +117,6 @@ class PostController extends Controller
                 }
             }
         }
-
-        // Sincronizar termos
-        $post->terms()->sync($request->term_ids ?? []);
 
         // Atualiza a galeria
         if (isset($validated['gallery_ids'])) {
@@ -140,7 +139,7 @@ class PostController extends Controller
         $templates = Config::get('postTemplates.templates', []);
 
         // Carrega taxonomias e termos para o formulário
-        $taxonomies = Taxonomy::with('terms')->get();
+        $taxonomies = Taxonomy::forType('post')->with('terms')->get();
         // IDs dos termos já associados ao post
         $selectedTermIds = $post->terms->pluck('id')->toArray();
 
@@ -179,7 +178,7 @@ class PostController extends Controller
             'featured' => 'nullable|boolean',
             'sticky' => 'nullable|boolean',
             'term_ids' => 'nullable|array',
-            'term_ids.*' => 'exists:terms,id',
+            'term_ids.*' => 'nullable|exists:terms,id',
             'gallery_ids' => 'nullable|array',
             'gallery_ids.*' => 'exists:media,id',
         ]);
@@ -190,6 +189,8 @@ class PostController extends Controller
         }
 
         $post->update($validated);
+
+        $post->terms()->sync(array_filter($validated['term_ids'] ?? []));
 
         $post->meta()->delete(); // Limpa tudo e reinsere (simples)
 
@@ -207,9 +208,6 @@ class PostController extends Controller
                 }
             }
         }
-
-        // Sincronizar termos
-        $post->terms()->sync($request->term_ids ?? []);
 
         // Atualiza a galeria
         if (isset($validated['gallery_ids'])) {

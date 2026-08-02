@@ -209,12 +209,3 @@
         display: none;
     }
 }
-
-.system-assign {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--sidebar-text-muted);
-    font-size: 0.8rem;
-    padding: 0.4rem 0;
-}

@@ -1,0 +1,32 @@
+
+.admin-footer {
+    display: flex;
+    gap: 2rem;
+    justify-content: space-between;
+    padding: 0 1rem 0.6rem;
+    font-size: 0.8em;
+    color: var(--sidebar-text-muted);
+}
+
+.admin-footer a {
+    text-decoration: none;
+    color: var(--color-text-muted);
+}
+
+.admin-footer a:hover {
+    color: var(--color-text);
+}
+
+.admin-footer .left {
+    text-align: left;
+    flex: 1;
+}
+
+.admin-footer .right {
+    text-align: right;
+}
+
+.system-assign {
+    display: flex;
+    align-items: center;
+}

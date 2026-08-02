@@ -53,7 +53,7 @@ class PageController extends Controller
         $users = User::whereIn('role', ['admin', 'editor'])->orderBy('name')->get();
         $currentUserId = Auth::id();
         $templates = Config::get('pageTemplates.templates', []);
-        $taxonomies = Taxonomy::with('terms')->get();
+        $taxonomies = Taxonomy::forType('page')->with('terms')->get();
         $namespaces = $this->getNamespaces();
 
         return view('admin.pages.create', compact('users', 'namespaces', 'currentUserId', 'templates', 'taxonomies'));
@@ -81,7 +81,7 @@ class PageController extends Controller
             'template' => 'required|string|in:' . implode(',', array_keys(Config::get('pageTemplates.templates', []))),
             'thumbnail_id' => 'nullable|exists:media,id',
             'term_ids' => 'nullable|array',
-            'term_ids.*' => 'exists:terms,id',
+            'term_ids.*' => 'nullable|exists:terms,id',
             'gallery_ids' => 'nullable|array',
             'gallery_ids.*' => 'exists:media,id',
         ]);
@@ -90,8 +90,7 @@ class PageController extends Controller
 
         $page = Page::create($validated);
 
-        // Sincronizar termos
-        $page->terms()->sync($request->term_ids ?? []);
+        $page->terms()->sync(array_filter($validated['term_ids'] ?? []));
 
         // Atualiza a galeria
         if (isset($validated['gallery_ids'])) {
@@ -114,7 +113,7 @@ class PageController extends Controller
         $templates = Config::get('pageTemplates.templates', []);
 
         // Carrega taxonomias e termos para o formulário
-        $taxonomies = Taxonomy::with('terms')->get();
+        $taxonomies = Taxonomy::forType('page')->with('terms')->get();
         // IDs dos termos já associados à página
         $selectedTermIds = $page->terms->pluck('id')->toArray();
 
@@ -145,15 +144,14 @@ class PageController extends Controller
             'template' => 'required|string|in:' . implode(',', array_keys(Config::get('pageTemplates.templates', []))),
             'thumbnail_id' => 'nullable|exists:media,id',
             'term_ids' => 'nullable|array',
-            'term_ids.*' => 'exists:terms,id',
+            'term_ids.*' => 'nullable|exists:terms,id',
             'gallery_ids' => 'nullable|array',
             'gallery_ids.*' => 'exists:media,id',
         ]);
 
         $page->update($validated);
 
-        // Sincronizar termos
-        $page->terms()->sync($request->term_ids ?? []);
+        $page->terms()->sync(array_filter($validated['term_ids'] ?? []));
 
         // Atualiza a galeria
         if (isset($validated['gallery_ids'])) {

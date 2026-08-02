@@ -3,10 +3,17 @@
 ## Unreleased
 
 ### Changed
+- Migrations limpas, geradas novamente a partir do banco
 
 ### Added
+- Posts em destaque na home via <x-render name="featured_posts" />
+- Componente Render para adicionar trechos de código nas views - exclusivo do core
+- Taxonomias agora podem ser definidas para um tipo específico de publicação
+- Plugin e temas podem registrar novos tipos de publicação e ter taxonomias exclusivas
 
 ### Fixed
+- Sticky posts agora aparecem no início da listagem no blog
+- Corrigida a validação do term_ids ao salvar posts e páginas
 
 ## [1.3.0] 2026-07-30
 
@@ -14,7 +21,7 @@
 - Menu admin agora abre submenu no clique da setinha
 - AdinMenu.php agora tem métodos pra adicionar novos grupos ao menu
 - README.md simplificado
-- Comandos para criar plugins e temas modificados - kebab por slug
+- Comandos para criar plugins e temas modificados - substituímos kebab por slug
 
 ### Added
 - Novas variáveis no .env: GIT_SYSTEM_REPO e GIT_ADDONS_REPO (update e marketplace)

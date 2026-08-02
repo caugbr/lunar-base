@@ -15,7 +15,7 @@ class PublicPostController extends Controller
      */
     public function index(Request $request)
     {
-        // 💡 Identifica que é a listagem do blog
+        // Identifica que é a listagem do blog
         request()->route()->setParameter('resolved_entity', 'blog');
 
         $query = Post::with('thumbnail')->published()->feedOrder();
