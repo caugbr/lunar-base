@@ -21,7 +21,7 @@
 
 {{-- Backdrop / Modal de Bloqueio (Escondido por padrão com display: none !important) --}}
 @once
-@push('styles')
+{{-- @push('styles') --}}
 <style>
     .system-update-overlay {
         position: fixed;
@@ -53,7 +53,7 @@
         to { transform: rotate(360deg); }
     }
 </style>
-@endpush
+{{-- @endpush --}}
 
 {{-- 💡 O 'display: none !important' direto no atributo style impede qualquer ocupação de espaço na página --}}
 <div id="system-update-backdrop" class="system-update-overlay" style="display: none !important;">
@@ -69,7 +69,8 @@
     async function triggerSystemUpdate(event, targetVersion) {
         event.preventDefault();
 
-        if (!confirm(`Deseja iniciar a atualização automática do Lunar Base para a versão v${targetVersion}?`)) {
+        const confirmed = await Dialog.confirm(`Deseja iniciar a atualização automática do Lunar Base para a versão v${targetVersion}?`);
+        if (!confirmed) {
             return;
         }
 

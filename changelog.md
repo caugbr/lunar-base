@@ -3,6 +3,14 @@
 ## Unreleased
 
 ### Changed
+
+### Added
+
+### Fixed
+
+## [1.4.1] 
+
+### Changed
 - Migrations limpas, geradas novamente a partir do banco
 
 ### Added
@@ -12,6 +20,7 @@
 - Plugin e temas podem registrar novos tipos de publicação e ter taxonomias exclusivas
 
 ### Fixed
+- System update agora usa Dialog e o CSS carrega
 - Sticky posts agora aparecem no início da listagem no blog
 - Corrigida a validação do term_ids ao salvar posts e páginas
 

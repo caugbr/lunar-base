@@ -34,6 +34,7 @@
     font-weight: 700;
     color: var(--color-text, #1e293b);
     margin: 0 0 0.5rem 0;
+    text-align: left
 }
 
 /* Container da Grade de Destaques na Home */
@@ -41,7 +42,7 @@
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
-    margin: 1.5rem 0;
+    margin: 2.5rem 0 1.5rem;
 }
 
 /* Card Horizontal do Post */

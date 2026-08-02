@@ -6,6 +6,7 @@
     <article>
         <div class="form-group">
             @foreach($taxonomies as $taxonomy)
+                @continue($taxonomy->terms->isEmpty())
                 <div class="taxonomy-group">
                     <h4>
                         {{ $taxonomy->name }}

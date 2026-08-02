@@ -578,6 +578,13 @@ return [
                     'attributes' => ['min' => 6, 'max' => 60, 'step' => 6],
                 ],
                 [
+                    'key' => 'featured_posts_title',
+                    'type' => 'text',
+                    'label' => 'Título para posts na home',
+                    'description' => 'Título para o bloco de posts destacados na home',
+                    'default' => '',
+                ],
+                [
                     'key' => 'max_features_posts',
                     'type' => 'number',
                     'label' => 'Quantidade de posts na home',
