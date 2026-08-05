@@ -41,8 +41,8 @@ class AddonMarketplaceService
     {
         $catalog = $this->fetchCatalog();
 
-        // Chaveia pela pasta física/Studly (ex: BlackTheme)
-        $installedThemes = Theme::all()->keyBy(fn ($theme) => Str::studly($theme->folder_name ?? $theme->name));
+        // Gera a chave em kebab-case dinamicamente para cada tema
+        $installedThemes = Theme::all()->keyBy(fn ($theme) => Str::kebab($theme->folder_name ?? $theme->name));
 
         return array_map(function ($addon) use ($installedThemes) {
             return $this->formatAddonData($addon, 'theme', $installedThemes);
@@ -55,30 +55,18 @@ class AddonMarketplaceService
     protected function formatAddonData(array $addon, string $type, $installedCollection): array
     {
         $name   = $addon['name'];
-        $folder = Str::studly($name);  // ex: QrCode / BlackTheme
+        $folder = Str::studly($name);  // ex: QrCode
 
         $baseDir      = $type === 'theme' ? 'themes' : 'plugins';
         $folderExists = File::exists(base_path("{$baseDir}/{$folder}"));
         $dbRecord     = $installedCollection->get($folder);
 
-        // Versão instalada localmente no seu banco
-        $localVersion = $dbRecord ? $dbRecord->version : null;
-
-        // Versão remota vinda do marketplace.json do GitHub
-        $remoteVersion = $addon['version'] ?? '1.0.0';
-
-        // Verifica se a versão remota é maior que a local
-        $hasUpdate = $dbRecord && version_compare($remoteVersion, $localVersion, '>');
-
         return array_merge($addon, [
-            'type'           => $type,
-            'folder'         => $folder,
-            'is_installed'   => $folderExists || $dbRecord !== null,
-            'is_active'      => $dbRecord ? (bool) $dbRecord->is_active : false,
-            'db_id'          => $dbRecord ? $dbRecord->id : null,
-            'local_version'  => $localVersion,
-            'remote_version' => $remoteVersion,
-            'has_update'     => $hasUpdate,
+            'type'         => $type, // 'plugin' ou 'theme'
+            'folder'       => $folder,
+            'is_installed' => $folderExists || $dbRecord !== null,
+            'is_active'    => $dbRecord ? (bool) $dbRecord->is_active : false,
+            'db_id'        => $dbRecord ? $dbRecord->id : null,
         ]);
     }
 

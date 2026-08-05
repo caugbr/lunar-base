@@ -8,7 +8,24 @@
 
 ### Fixed
 
-## [1.4.1] 
+## [1.5.0] 2026-08-05
+
+### Changed
+- PublicationTypes.php modificado para preparar tipos extra para exportação
+- Plugin Backup agora adiciona seu link no menu sob Ferramentas
+- Campos de senha nas configurações agora tem um toggle pra ver o texto digitado
+
+### Added
+- Plugins e temas agora tem link para atualizar quando a versão no github for superior
+- View admin.tools.tool-card para adicionar um tool card em Ferramentas
+- Área de ferramentas do sistema
+- Exportar e importar páginas, posts, taxonomias e conteúdos registratos por plugins
+- Adicionado o plugin Asaas para pagamentos com o banco Asaas
+
+### Fixed
+- Criação dos links para temas e plugins ajustada para usar Str::slug
+
+## [1.4.1] 2026-08-01
 
 ### Changed
 - Migrations limpas, geradas novamente a partir do banco

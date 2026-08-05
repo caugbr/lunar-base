@@ -96,7 +96,6 @@
                                     value="{{ $value }}"
                                     can_clear="{{ $def['can_clear'] ?? true }}"
                                 />
-                                {{-- label="{{ $def['label'] }}" --}}
                                 @break
 
                             @case('page')
@@ -212,19 +211,24 @@
                                 @break
 
                             @case('url')
-                                {{-- 💡 autocomplete="off" impede o histórico de sugestões de links --}}
+                                {{-- autocomplete="off" impede o histórico de sugestões de links --}}
                                 <input type="url" name="{{ $def['key'] }}" id="{{ $def['key'] }}" value="{{ $value }}" class="form-input" placeholder="https://..." autocomplete="off">
                                 @break
 
                             @case('email')
-                                {{-- 💡 autocomplete="off" impede a listagem suspensa de e-mails antigos --}}
+                                {{-- autocomplete="off" impede a listagem suspensa de e-mails antigos --}}
                                 <input type="email" name="{{ $def['key'] }}" id="{{ $def['key'] }}" value="{{ $value }}" class="form-input" placeholder="email@exemplo.com" autocomplete="off">
                                 @break
 
                             @case('password')
                                 <div class="password-field">
-                                    {{-- 💡 autocomplete="new-password" força o navegador a limpar sugestões de preenchimento de login --}}
                                     <input type="password" name="{{ $def['key'] }}" id="{{ $def['key'] }}" value="" class="form-input" placeholder="••••••••" autocomplete="new-password">
+                                    <a href="#" class="show" title="Ver senha">
+                                        <x-lucide-eye class="lucid-icon" />
+                                    </a>
+                                    <a href="#" class="hide" title="Esconder senha">
+                                        <x-lucide-eye-off class="lucid-icon" />
+                                    </a>
                                 </div>
                                 @if($value)
                                     <label class="remove-password-label">
@@ -238,7 +242,7 @@
                                 @break
 
                             @default
-                                {{-- 💡 autocomplete="off" e spellcheck="false" blindam campos de texto de sugestões históricas e corretores --}}
+                                {{-- autocomplete="off" e spellcheck="false" blindam campos de texto de sugestões históricas e corretores --}}
                                 <input type="text" name="{{ $def['key'] }}" id="{{ $def['key'] }}" value="{{ $value }}" class="form-input" autocomplete="off" spellcheck="false">
                         @endswitch
 
@@ -520,11 +524,48 @@
     .form-group.field-disabled .field-label {
         color: #9ca3af;
     }
+
+    /* ===== Campos de senha ===== */
+    .password-field {
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+    }
+    .password-field a {
+        color: var(--color-text);
+        text-decoration: none;
+    }
+    .password-field a .lucid-icon {
+        width: 20px;
+        height: 20px;
+    }
+    .password-field input {
+        flex: 1;
+    }
+    .password-field a.hide {
+        display: none;
+    }
+    .password-field.expose a.hide {
+        display: inline;
+    }
+    .password-field.expose a.show {
+        display: none;
+    }
 </style>
 @endpush
 
 @push('scripts')
 <script>
+function togglePassExposed(event) {
+    event.preventDefault();
+    const wrapper = event.target.closest('.password-field');
+    wrapper.classList.toggle('expose');
+    if (wrapper.matches('.expose')) {
+        wrapper.querySelector('input').type = 'text';
+    } else {
+        wrapper.querySelector('input').type = 'password';
+    }
+}
 function switchTab(tabKey) {
     document.querySelectorAll('.settings-tab').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.tab === tabKey);
@@ -539,6 +580,11 @@ function switchTab(tabKey) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Password fields
+    const passToggles = document.querySelectorAll('.password-field a');
+    passToggles.forEach(a => a.addEventListener('click', togglePassExposed));
+
+    // tabs
     const activeTab = document.getElementById('_active_tab')?.value;
     if (activeTab) {
         switchTab(activeTab);

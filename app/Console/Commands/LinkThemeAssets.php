@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 class LinkThemeAssets extends Command
 {
     protected $signature = 'theme:link
-                            {theme : Nome do tema}
+                            {theme : Nome do tema (ex: "FJS Theme", "Lunar Apps" ou "lunar-apps")}
                             {--force : Remove o link existente antes de recriar}
                             {--unlink : Remove o link simbólico em vez de criar}';
 
@@ -16,12 +16,25 @@ class LinkThemeAssets extends Command
 
     public function handle(): int
     {
-        $themeArg    = $this->argument('theme');
-        $themeStudly = Str::studly($themeArg);
-        $themeLower  = Str::lower($themeArg);
+        $themeArg = $this->argument('theme');
 
-        $targetDir = base_path("themes/{$themeStudly}/resources/assets");
-        $linkPath  = public_path("themes/{$themeLower}");
+        // 1. Gera o SLUG limpo para o atalho público (ex: "FJS Theme" -> "fjs-theme" | "Lunar Apps" -> "lunar-apps")
+        $themeSlug = Str::slug(preg_replace('/([a-z0-9])([A-Z])/', '$1-$2', $themeArg));
+
+        // 2. Busca a pasta física em /themes/
+        // Opção A: Nome em StudlyCase a partir do slug (ex: "FjsTheme" ou "LunarApps")
+        $themeStudly = Str::studly($themeSlug);
+        $targetDir   = base_path("themes/{$themeStudly}/resources/assets");
+
+        // Opção B: Fallback para o nome exato digitado (ex: "FJSTheme")
+        if (! is_dir($targetDir)) {
+            $exactDir = base_path("themes/{$themeArg}/resources/assets");
+            if (is_dir($exactDir)) {
+                $targetDir = $exactDir;
+            }
+        }
+
+        $linkPath = public_path("themes/{$themeSlug}");
 
         if ($this->option('unlink')) {
             if (file_exists($linkPath) || is_link($linkPath)) {
@@ -68,7 +81,7 @@ class LinkThemeAssets extends Command
         $this->line("    → {$targetDir}");
         $this->line("    (relativo: {$relativeTarget})");
         $this->line("");
-        $this->line("  Acesse em: " . url("themes/{$themeLower}/css/arquivo.css"));
+        $this->line("  Acesse em: " . url("themes/{$themeSlug}/css/arquivo.css"));
 
         return self::SUCCESS;
     }

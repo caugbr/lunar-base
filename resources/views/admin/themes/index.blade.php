@@ -44,28 +44,62 @@
                         {{ $theme->description ?? 'Nenhuma descrição fornecida para este tema.' }}
                     </p>
 
-                    <div class="theme-meta">
+                    {{-- <div class="theme-meta">
                         <span><strong>Versão:</strong> {{ $theme->version }}</span>
+                        <span><strong>Autor:</strong> {{ $theme->author }}</span>
+                        <span><strong>Pasta:</strong> themes/{{ $theme->folder_name }}</span>
+                    </div> --}}
+                    <div class="theme-meta">
+                        <span>
+                            <strong>Versão:</strong> v{{ $theme->version }}
+                            @if($theme->has_update)
+                                <span class="admin-badge" style="background-color: #f59e0b; color: #ffffff; font-size: 0.7rem; margin-left: 4px;" title="Versão v{{ $theme->remote_version }} disponível no GitHub">
+                                    v{{ $theme->remote_version }} disponível!
+                                </span>
+                            @endif
+                        </span>
                         <span><strong>Autor:</strong> {{ $theme->author }}</span>
                         <span><strong>Pasta:</strong> themes/{{ $theme->folder_name }}</span>
                     </div>
 
-                    <div class="theme-footer">
-                        {{-- @if($theme->is_active)
-                            <span class="theme-active-text"><x-lucide-check-circle class="lucid-icon" /> Tema Ativo</span>
-                        @else --}}
-                            <form method="POST" action="{{ route('admin.themes.toggle', $theme->id) }}">
-                                @csrf
-                                <x-switch
-                                    name="is_active"
-                                    id="theme_{{ $theme->id }}"
-                                    :checked="$theme->is_active"
-                                    active="Ativo"
-                                    inactive="Inativo"
-                                    onChange="this.form.submit()"
-                                />
-                            </form>
-                        {{-- @endif --}}
+
+                    {{-- <div class="theme-footer">
+                        <form method="POST" action="{{ route('admin.themes.toggle', $theme->id) }}">
+                            @csrf
+                            <x-switch
+                                name="is_active"
+                                id="theme_{{ $theme->id }}"
+                                :checked="$theme->is_active"
+                                active="Ativo"
+                                inactive="Inativo"
+                                onChange="this.form.submit()"
+                            />
+                        </form>
+                    </div> --}}
+                    <div class="theme-footer" style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            @if($theme->has_update)
+                                <form method="POST" action="{{ route('admin.themes.marketplace.install') }}" style="display: inline;">
+                                    @csrf
+                                    <input type="hidden" name="selected_themes[]" value="{{ json_encode(['name' => $theme->name, 'download_url' => $theme->download_url]) }}">
+                                    <button type="submit" class="admin-btn admin-btn-sm" style="background-color: #f59e0b; color: #ffffff; border: none; padding: 0.25rem 0.55rem; font-size: 0.75rem;" title="Atualizar para v{{ $theme->remote_version }}">
+                                        <x-lucide-refresh-cw class="lucid-icon" /> Atualizar
+                                    </button>
+                                </form>
+                            @endif
+                        </div>
+
+                        <form method="POST" action="{{ route('admin.themes.toggle', $theme->id) }}">
+                            @csrf
+                            <x-switch
+                                name="is_active"
+                                id="theme_{{ $theme->id }}"
+                                :checked="$theme->is_active"
+                                active="Ativo"
+                                inactive="Inativo"
+                                onChange="this.form.submit()"
+                            />
+                        </form>
                     </div>
                 </div>
             </div>
@@ -211,6 +245,10 @@
     .theme-active-text .lucid-icon {
         width: 16px;
         height: 16px;
+    }
+
+    .switch-label {
+        position: static !important;
     }
 </style>
 @endpush

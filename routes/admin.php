@@ -19,6 +19,7 @@ use App\Http\Controllers\Admin\ThemeMarketplaceController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\ProfileController as EditorProfileController;
 use App\Http\Controllers\Admin\UpdateController;
+use App\Http\Controllers\Admin\ContentTransferController;
 
 // ========== ROTAS PÚBLICAS ==========
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -63,6 +64,11 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::post('update/apply', [UpdateController::class, 'apply'])->name('update.apply');
         Route::post('update/check', [UpdateController::class, 'check'])->name('update.check');
     });
+
+    Route::view('tools', 'admin.tools.index')->name('tools.index');
+    Route::get('tools/content-transfer', [ContentTransferController::class, 'index'])->name('tools.content-transfer.index');
+    Route::post('tools/content-transfer/export', [ContentTransferController::class, 'export'])->name('tools.content-transfer.export');
+    Route::post('tools/content-transfer/import', [ContentTransferController::class, 'import'])->name('tools.content-transfer.import');
 });
 
 // ========== ROTAS PROTEGIDAS (ADMIN + EDITOR) ==========

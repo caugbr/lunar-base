@@ -7,17 +7,32 @@ use App\Models\Theme;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Str;
+use App\Services\AddonMarketplaceService;
 
 class ThemeController extends Controller
 {
     /**
      * Display the theme gallery and synchronize with directories.
      */
-    public function index()
+    public function index(AddonMarketplaceService $marketplace)
     {
         $this->syncThemes();
 
         $themes = Theme::orderBy('name')->get();
+
+        // Busca informações do GitHub para comparar versões na lista local
+        $remoteThemes = collect($marketplace->getAvailableThemes())->keyBy('folder');
+
+        $themes->transform(function ($theme) use ($remoteThemes) {
+            $folderName = Str::studly($theme->folder_name);
+            $remote     = $remoteThemes->get($folderName);
+
+            $theme->remote_version = $remote['remote_version'] ?? null;
+            $theme->has_update     = $remote['has_update'] ?? false;
+            $theme->download_url   = $remote['download_url'] ?? null;
+
+            return $theme;
+        });
 
         return view('admin.themes.index', compact('themes'));
     }

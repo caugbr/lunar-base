@@ -7,17 +7,32 @@ use App\Models\Plugin;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Str;
+use App\Services\AddonMarketplaceService;
 
 class PluginController extends Controller
 {
     /**
      * Display a listing of installed plugins and synchronize them.
      */
-    public function index()
+    public function index(AddonMarketplaceService $marketplace)
     {
         $this->syncPlugins();
 
         $plugins = Plugin::orderBy('name')->get();
+
+        // Busca informações do GitHub para comparar versões na lista local
+        $remotePlugins = collect($marketplace->getAvailablePlugins())->keyBy('folder');
+
+        $plugins->transform(function ($plugin) use ($remotePlugins) {
+            $folderName = Str::studly($plugin->folder_name);
+            $remote     = $remotePlugins->get($folderName);
+
+            $plugin->remote_version = $remote['remote_version'] ?? null;
+            $plugin->has_update     = $remote['has_update'] ?? false;
+            $plugin->download_url   = $remote['download_url'] ?? null;
+
+            return $plugin;
+        });
 
         return view('admin.plugins.index', compact('plugins'));
     }

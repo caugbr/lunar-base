@@ -238,6 +238,20 @@ return [
                     'role' => 'admin',
                 ],
                 [
+                    'label'      => 'Ferramentas',
+                    'icon'       => 'wrench',
+                    'route'      => 'admin.tools.index',
+                    'active'     => 'admin.tools.*',
+                    'items'      => [
+                        [
+                            'label'      => 'Exportar / Importar',
+                            'icon'       => 'combine',
+                            'route'      => 'admin.tools.content-transfer.index',
+                            'active'     => 'admin.tools.content-transfer.*',
+                        ],
+                    ]
+                ],
+                [
                     'label' => 'Referências',
                     'icon' => 'terminal',
                     'route' => 'admin.reference.index',

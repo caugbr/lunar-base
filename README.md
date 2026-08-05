@@ -73,6 +73,7 @@ chmod +x install.sh
 | **Plugins** | Gerenciador de extensões ativas e acesso ao *Marketplace de Plugins*. |
 | **Temas** | Gerenciador de temas visuais e acesso ao *Marketplace de Temas*. |
 | **Configurações** | Painel para parametrização de variáveis globais do sistema. |
+| **Ferramentas** | Exportar ou exportar posta, pages, taxonomias e outros. |
 | **Referências** | Documentação e auditoria técnica interna (*Hooks*, *Shortcodes*, *Permissões* e *Logs*). |
 
 ---

@@ -16,12 +16,25 @@ class LinkPluginAssets extends Command
 
     public function handle(): int
     {
-        $pluginArg    = $this->argument('plugin');
-        $pluginStudly = Str::studly($pluginArg);
-        $pluginLower  = Str::kebab($pluginStudly);
+        $pluginArg = $this->argument('plugin');
 
-        $targetDir = base_path("plugins/{$pluginStudly}/resources/assets");
-        $linkPath  = public_path("plugins/{$pluginLower}");
+        // 1. Gera o SLUG limpo para o atalho público (ex: "Prism Highlight" -> "prism-highlight" | "FAQ" -> "faq")
+        $pluginSlug = Str::slug(preg_replace('/([a-z0-9])([A-Z])/', '$1-$2', $pluginArg));
+
+        // 2. Busca a pasta física em /plugins/
+        // Opção A: Nome em StudlyCase a partir do slug (ex: "PrismHighlight" ou "Faq")
+        $pluginStudly = Str::studly($pluginSlug);
+        $targetDir    = base_path("plugins/{$pluginStudly}/resources/assets");
+
+        // Opção B: Fallback para o nome exato digitado (ex: "FAQ" ou "PrismHighlight")
+        if (! is_dir($targetDir)) {
+            $exactDir = base_path("plugins/{$pluginArg}/resources/assets");
+            if (is_dir($exactDir)) {
+                $targetDir = $exactDir;
+            }
+        }
+
+        $linkPath = public_path("plugins/{$pluginSlug}");
 
         if ($this->option('unlink')) {
             if (file_exists($linkPath) || is_link($linkPath)) {
@@ -68,7 +81,7 @@ class LinkPluginAssets extends Command
         $this->line("    → {$targetDir}");
         $this->line("    (relativo: {$relativeTarget})");
         $this->line("");
-        $this->line("  Acesse em: " . url("plugins/{$pluginLower}/css/arquivo.css"));
+        $this->line("  Acesse em: " . url("plugins/{$pluginSlug}/css/arquivo.css"));
 
         return self::SUCCESS;
     }

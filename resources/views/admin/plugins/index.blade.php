@@ -70,20 +70,38 @@
                             Provider: {{ $plugin->service_provider_class }}
                         </div> --}}
                     </td>
-                    <td><code>v{{ $plugin->version }}</code></td>
+                    <td>
+                        <code>v{{ $plugin->version }}</code>
+                        @if($plugin->has_update)
+                            <span class="admin-badge" style="background-color: #f59e0b; color: #ffffff; font-size: 0.7rem; margin-left: 4px;" title="Versão v{{ $plugin->remote_version }} disponível no GitHub">
+                                v{{ $plugin->remote_version }} disponível!
+                            </span>
+                        @endif
+                    </td>
                     <td><code>plugins/{{ $plugin->folder_name }}</code></td>
                     <td>
                         <span class="admin-badge {{ $plugin->is_active ? 'admin-badge-active' : 'admin-badge-suspended' }}">
                             {{ $plugin->is_active ? 'Ativo' : 'Inativo' }}
                         </span>
                     </td>
-                    <td class="admin-actions">
-                        <div>
-                            {{-- Formulário de ativação rápida utilizando a estrutura nativa de switches do Lunar Base --}}
+                    <td class="admin-actions" style="max-width: 140px;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;">
+
+                            {{-- Switch de Ativar/Desativar --}}
                             <form method="POST" action="{{ route('admin.plugins.toggle', $plugin->id) }}" style="display: inline;">
                                 @csrf
                                 <x-switch name="is_active" checked="{{ old('is_active', $plugin->is_active) }}" active="Ligado" inactive="Desligado" style="top: 0;" onChange="this.form.submit()" />
                             </form>
+                            {{-- Botão de Atualizar em 1 clique --}}
+                            @if($plugin->has_update)
+                                <form method="POST" action="{{ route('admin.plugins.marketplace.install') }}" style="display: inline;">
+                                    @csrf
+                                    <input type="hidden" name="selected_plugins[]" value="{{ json_encode(['name' => $plugin->name, 'download_url' => $plugin->download_url]) }}">
+                                    <button type="submit" class="admin-btn admin-btn-sm" style="background-color: #f59e0b; color: #ffffff; border: none; padding: 0.25rem 0.5rem; font-size: 0.75rem;" title="Atualizar para v{{ $plugin->remote_version }}">
+                                        <x-lucide-refresh-cw class="lucid-icon" />
+                                    </button>
+                                </form>
+                            @endif
                         </div>
                     </td>
                 </tr>

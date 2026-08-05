@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\Plugin;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Admin\PluginController;
 use App\Services\AddonMarketplaceService;
 use App\Services\AddonInstallerService;
 use Illuminate\Http\Request;
@@ -71,7 +72,7 @@ class PluginMarketplaceController extends Controller
             $message .= " Falha em: " . implode(', ', $failedPlugins);
         }
 
-        return back()->with('success', $message);
+        return redirect()->action([PluginController::class, 'index'])->with('success', $message);
     }
 
     /**
@@ -115,6 +116,7 @@ class PluginMarketplaceController extends Controller
         // 5. Limpa o cache do catálogo do marketplace para recalcular os status
         $marketplace->clearCache();
 
+        return redirect()->action([PluginController::class, 'index'])->with('success', "Plugin '{$folderName}' foi removido com sucesso!");
         return back()->with('success', "Plugin '{$folderName}' foi removido com sucesso!");
     }
 }
