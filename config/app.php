@@ -14,7 +14,7 @@ return [
     */
 
     'name' => 'Lunar Base',
-    'version' => '1.4.1',
+    'version' => '1.5.0',
     'author' => 'Cau Guanabara',
     'author_link' => 'https://cauguanabara.com.br',
 
