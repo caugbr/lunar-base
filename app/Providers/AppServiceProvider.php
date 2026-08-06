@@ -3,7 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-// use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\View;
 use App\View\Composers\SiteComposer;
 use Illuminate\Support\Facades\Blade;
@@ -12,6 +12,8 @@ use App\Helpers\ContentHelper;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Http\Request;
+use Illuminate\Auth\Notifications\VerifyEmail; // Adicionado
+use Illuminate\Notifications\Messages\MailMessage; // Adicionado
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -42,6 +44,37 @@ class AppServiceProvider extends ServiceProvider
             RateLimiter::for('api', function (Request $request) {
                 return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
             });
+
+            // Personaliza o e-mail nativo de verificação para usar a sua view Blade (emails.verify-email)
+            VerifyEmail::toMailUsing(function (object $notifiable, string $url) {
+                return (new MailMessage)
+                    ->subject('Confirme seu e-mail - ' . setting('general.site_name', config('app.name')))
+                    ->view('emails.verify-email', [
+                        'url'  => $url,
+                        'user' => $notifiable,
+                    ]);
+            });
+
+            // Configura o SMTP dinamicamente usando os seus dados de settings
+            try {
+                if (function_exists('setting')) {
+                    $mailHost = setting('mail.mail_host');
+
+                    if (!empty($mailHost)) {
+                        Config::set('mail.default', 'smtp');
+                        Config::set('mail.mailers.smtp.host', $mailHost);
+                        Config::set('mail.mailers.smtp.port', setting('mail.mail_port', 587));
+                        Config::set('mail.mailers.smtp.encryption', setting('mail.mail_encryption', 'tls'));
+                        Config::set('mail.mailers.smtp.username', setting('mail.mail_username'));
+                        Config::set('mail.mailers.smtp.password', setting('mail.mail_password'));
+                        Config::set('mail.from.address', setting('mail.mail_from_address'));
+                        Config::set('mail.from.name', setting('mail.mail_from_name'));
+                    }
+                }
+            } catch (\Throwable $e) {
+                // Evita quebrar comandos Artisan caso o banco ainda não tenha sido migrado
+            }
+
         }
     }
 }

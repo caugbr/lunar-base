@@ -1,12 +1,15 @@
 # Changelog
 
-## Unreleased
-
-### Changed
+## [1.6.0] 2026-08-06
 
 ### Added
+- Opção (setting) para exigir verificação de email no cadastro
+
+### Changed
+- Emails agora tem um layout separado (emails.layout)
 
 ### Fixed
+- Criação de links para temas e plugins agora usam o método interno do Laravel
 
 ## [1.5.0] 2026-08-05
 

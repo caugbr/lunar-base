@@ -417,10 +417,18 @@ return [
             'icon' => 'shield',
             'fields' => [
                 [
+                    'key' => 'verify_email',
+                    'type' => 'switch',
+                    'label' => 'Validar emails',
+                    'description' => 'Ao se cadastrar, usuários precisarão confirmar se o email fornecido é real.',
+                    'default' => false,
+                    'active' => 'Verificar',
+                    'inactive' => 'Não verificar',
+                ],
+                [
                     'key' => 'use_captcha',
                     'type' => 'switch',
                     'label' => 'Usar CAPTCHA',
-                    // 'description' => 'CAPTCHA é um mecanismo que verifica se quem está fazendo login é uma pessoa.',
                     'description' => 'CAPTCHA é um mecanismo que verifica se quem está fazendo login é uma pessoa. Requer conta Cloudflare e widget Turnstile — <a href="https://developers.cloudflare.com/turnstile/get-started/" target="_blank">entenda como fazer (inglês)</a>.',
                     'default' => false,
                     'active' => 'Usar CAPTCHA no login.',

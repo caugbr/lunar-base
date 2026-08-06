@@ -23,6 +23,27 @@ class UserController extends Controller
         return view('admin.users.create')->with('roles', $roles);
     }
 
+    // public function store(Request $request)
+    // {
+    //     $validated = $request->validate([
+    //         'name' => 'required|string|max:255',
+    //         'email' => 'required|email|unique:users',
+    //         'password' => 'required|string|min:8',
+    //         'role' => 'required|in:admin,editor',
+    //     ]);
+
+    //     User::create([
+    //         'name' => $validated['name'],
+    //         'email' => $validated['email'],
+    //         'password' => Hash::make($validated['password']),
+    //         'role' => $validated['role'],
+    //     ]);
+
+    //     log_admin("Usuário criado: {$validated['name']}", "users");
+
+    //     return redirect()->route('admin.users.index')
+    //         ->with('success', 'Usuário criado com sucesso!');
+    // }
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -32,17 +53,28 @@ class UserController extends Controller
             'role' => 'required|in:admin,editor',
         ]);
 
-        User::create([
+        $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
+            'password' => $validated['password'], // A Model já faz o Hash pelo 'password' => 'hashed' no casts()
             'role' => $validated['role'],
         ]);
 
         log_admin("Usuário criado: {$validated['name']}", "users");
 
+        $successMsg = 'Usuário criado com sucesso!';
+
+        if (setting('auth.verify_email', false)) {
+            $successMsg = 'Usuário criado com sucesso! Um e-mail de verificação foi enviado.';
+            // Dispara o e-mail de verificação oficial do Laravel
+            $user->sendEmailVerificationNotification();
+        } else {
+            // Se a verificação está DESATIVADA no sistema, já marca como verificado imediatamente no banco
+            $user->markEmailAsVerified();
+        }
+
         return redirect()->route('admin.users.index')
-            ->with('success', 'Usuário criado com sucesso!');
+            ->with('success', $successMsg);
     }
 
     public function edit($id)

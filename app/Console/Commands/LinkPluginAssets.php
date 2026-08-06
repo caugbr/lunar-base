@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
 class LinkPluginAssets extends Command
@@ -39,7 +40,7 @@ class LinkPluginAssets extends Command
         if ($this->option('unlink')) {
             if (file_exists($linkPath) || is_link($linkPath)) {
                 $this->removeExistingLink($linkPath);
-                $this->info("✓ Link removido com sucesso: {$linkPath}");
+                $this->info("✓ Link/Pasta removido com sucesso: {$linkPath}");
             } else {
                 $this->line("! Nenhum link encontrado para remover: {$linkPath}");
             }
@@ -66,10 +67,7 @@ class LinkPluginAssets extends Command
             mkdir($parentDir, 0755, true);
         }
 
-        // Calcula o caminho relativo corretamente
-        $relativeTarget = $this->getRelativePath($linkPath, $targetDir);
-
-        $created = $this->createLink($relativeTarget, $linkPath, $targetDir);
+        $created = $this->createLink($linkPath, $targetDir);
 
         if (! $created) {
             $this->error("✗ Falha ao criar o link.");
@@ -79,7 +77,6 @@ class LinkPluginAssets extends Command
         $this->info("✓ Link criado com sucesso:");
         $this->line("  {$linkPath}");
         $this->line("    → {$targetDir}");
-        $this->line("    (relativo: {$relativeTarget})");
         $this->line("");
         $this->line("  Acesse em: " . url("plugins/{$pluginSlug}/css/arquivo.css"));
 
@@ -87,75 +84,35 @@ class LinkPluginAssets extends Command
     }
 
     /**
-     * Calcula o caminho relativo entre dois caminhos absolutos.
+     * Cria o link usando a mesma Engine nativa do 'php artisan storage:link'
      */
-    private function getRelativePath(string $from, string $to): string
+    private function createLink(string $link, string $absoluteTarget): bool
     {
-        // Normaliza os caminhos
-        $from = str_replace('\\', '/', realpath(dirname($from)));
-        $to   = str_replace('\\', '/', realpath($to));
+        try {
+            // Usa a Facade oficial do Laravel (igualzinho ao storage:link)
+            File::link($absoluteTarget, $link);
 
-        $fromParts = explode('/', $from);
-        $toParts   = explode('/', $to);
+            return file_exists($link) || is_link($link);
+        } catch (\Throwable $e) {
+            // Se o servidor proibir links por política de segurança, copia a pasta
+            $this->warn("  ! Não foi possível criar link simbólico. Copiando arquivos...");
+            File::copyDirectory($absoluteTarget, $link);
 
-        // Encontra o prefixo comum
-        $commonLength = 0;
-        $max = min(count($fromParts), count($toParts));
-        for ($i = 0; $i < $max; $i++) {
-            if ($fromParts[$i] !== $toParts[$i]) break;
-            $commonLength++;
+            return is_dir($link);
         }
-
-        // Calcula quantos níveis subir
-        $upCount = count($fromParts) - $commonLength;
-        $relativePath = str_repeat('../', $upCount);
-
-        // Adiciona o caminho até o destino
-        $relativePath .= implode('/', array_slice($toParts, $commonLength));
-
-        return $relativePath;
     }
 
     /**
-     * Cria o link simbólico detectando o sistema operacional.
-     */
-    private function createLink(string $target, string $link, string $absoluteTarget): bool
-    {
-        if (PHP_OS_FAMILY === 'Windows') {
-            // No Windows, usa caminho ABSOLUTO para junctions (mais confiável)
-            $cmd = sprintf(
-                'mklink /J %s %s',
-                escapeshellarg($link),
-                escapeshellarg($absoluteTarget)
-            );
-            exec($cmd, $output, $returnCode);
-
-            if ($returnCode !== 0) {
-                $this->line("  Erro: " . implode("\n  ", $output));
-            }
-
-            return $returnCode === 0 && file_exists($link);
-        }
-
-        // Linux/macOS: usa caminho relativo
-        return symlink($target, $link);
-    }
-
-    /**
-     * Remove um link existente.
+     * Remove um link ou pasta existente usando a Facade do Laravel
      */
     private function removeExistingLink(string $path): void
     {
-        if (PHP_OS_FAMILY === 'Windows') {
-            if (is_dir($path) && ! is_link($path)) {
-                rmdir($path);
-            } else {
-                @unlink($path);
-            }
+        if (is_link($path)) {
+            File::delete($path);
+        } elseif (is_dir($path)) {
+            File::deleteDirectory($path);
         } else {
-            if (is_link($path)) {
-                unlink($path);
-            }
+            File::delete($path);
         }
     }
 }

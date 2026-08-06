@@ -26,8 +26,12 @@ Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+$middlewares = ['auth'];
+if (dbAvailable('settings') && setting('auth.verify_email', false)) {
+    $middlewares = ['auth', 'verified'];
+}
 // ========== ROTAS PROTEGIDAS ==========
-Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware($middlewares)->prefix('admin')->name('admin.')->group(function () {
     // Perfil (ambos editam seu próprio perfil)
     Route::get('/profile', [EditorProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [EditorProfileController::class, 'update'])->name('profile.update');
@@ -71,8 +75,13 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::post('tools/content-transfer/import', [ContentTransferController::class, 'import'])->name('tools.content-transfer.import');
 });
 
+
+$middlewares = ['auth', 'role:admin,editor'];
+if (dbAvailable('settings') && setting('auth.verify_email', false)) {
+    $middlewares = ['auth', 'role:admin,editor', 'verified'];
+}
 // ========== ROTAS PROTEGIDAS (ADMIN + EDITOR) ==========
-Route::middleware(['auth', 'role:admin,editor'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware($middlewares)->prefix('admin')->name('admin.')->group(function () {
     // Referências
     Route::get('reference', [ReferenceController::class, 'index'])
         ->name('reference.index');
@@ -106,7 +115,12 @@ Route::middleware(['auth', 'role:admin,editor'])->prefix('admin')->name('admin.'
 });
 
 // ========== ROTAS ADMIN APENAS ==========
-Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+
+$middlewares = ['auth', 'role:admin'];
+if (dbAvailable('settings') && setting('auth.verify_email', false)) {
+    $middlewares = ['auth', 'role:admin', 'verified'];
+}
+Route::middleware($middlewares)->prefix('admin')->name('admin.')->group(function () {
     // CRUD de usuários (só admin)
     Route::resource('users', UserController::class);
 

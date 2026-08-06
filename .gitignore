@@ -30,3 +30,4 @@ Thumbs.db
 !/public/plugins/.gitkeep
 /public/themes/*
 !/public/themes/.gitkeep
+*-original*
