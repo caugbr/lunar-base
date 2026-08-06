@@ -140,3 +140,20 @@ if (!function_exists('deleteImage')) {
         }
     }
 }
+
+
+/**
+ * Converte path relativo em URL pública
+ */
+if (!function_exists('getImage')) {
+    function getImage($path, $disk = 'public')
+    {
+        if (!$path) return null;
+        if (Str::startsWith($path, ['http://', 'https://'])) {
+            return $path;
+        }
+        return Storage::disk($disk)->exists($path)
+            ? Storage::disk($disk)->url($path)
+            : null;
+    }
+}
