@@ -19,30 +19,24 @@ class PageController extends Controller
     {
         $query = Page::with(['author', 'terms']);
 
-        // Filtro por título
         if ($request->filled('title')) {
             $query->where('title', 'like', '%' . $request->input('title') . '%');
         }
 
-        // Filtro por namespace
         if ($request->filled('namespace')) {
             $query->where('namespace', 'like', '%' . $request->input('namespace') . '%');
         }
 
-        // Filtro por status
         if ($request->filled('status')) {
             $query->where('status', $request->input('status'));
         }
 
-        // Filtro por autor
         if ($request->filled('author_id')) {
             $query->where('author_id', $request->input('author_id'));
         }
 
         $pages = $query->orderBy('created_at', 'desc')->paginate(setting('reading.pagination_max_items'));
         $namespaces = $this->getNamespaces();
-
-        // Dados para os selects dos filtros
         $authors = User::whereIn('role', ['admin', 'editor'])->orderBy('name')->get();
 
         return view('admin.pages.index', compact('pages', 'namespaces', 'authors'));
@@ -56,7 +50,18 @@ class PageController extends Controller
         $taxonomies = Taxonomy::forType('page')->with('terms')->get();
         $namespaces = $this->getNamespaces();
 
-        return view('admin.pages.create', compact('users', 'namespaces', 'currentUserId', 'templates', 'taxonomies'));
+        $existingMetaKeys = Page::whereNotNull('meta')
+            ->pluck('meta')
+            ->flatMap(function ($meta) {
+                $array = is_array($meta) ? $meta : json_decode($meta, true);
+                return array_keys($array ?? []);
+            })
+            ->unique()
+            ->sort()
+            ->values()
+            ->toArray();
+
+        return view('admin.pages.create', compact('users', 'namespaces', 'currentUserId', 'templates', 'taxonomies', 'existingMetaKeys'));
     }
 
     public function store(Request $request)
@@ -84,15 +89,21 @@ class PageController extends Controller
             'term_ids.*' => 'nullable|exists:terms,id',
             'gallery_ids' => 'nullable|array',
             'gallery_ids.*' => 'exists:media,id',
+            // Validação dos metas
+            'meta' => 'nullable|array',
+            'meta.*.key' => 'nullable|string',
+            'meta.*.value' => 'nullable|string',
         ]);
 
-         $validated['content'] = ContentHelper::sanitizeForStorage($request->content);
+        $validated['content'] = ContentHelper::sanitizeForStorage($request->content);
+
+        // Formata os campos meta para array associativo ['chave' => 'valor']
+        $validated['meta'] = $this->formatMetaInput($request->input('meta'));
 
         $page = Page::create($validated);
 
         $page->terms()->sync(array_filter($validated['term_ids'] ?? []));
 
-        // Atualiza a galeria
         if (isset($validated['gallery_ids'])) {
             Media::whereIn('id', $validated['gallery_ids'])
                 ->update([
@@ -111,15 +122,22 @@ class PageController extends Controller
     {
         $users = User::whereIn('role', ['admin', 'editor'])->orderBy('name')->get();
         $templates = Config::get('pageTemplates.templates', []);
-
-        // Carrega taxonomias e termos para o formulário
         $taxonomies = Taxonomy::forType('page')->with('terms')->get();
-        // IDs dos termos já associados à página
         $selectedTermIds = $page->terms->pluck('id')->toArray();
-
         $namespaces = $this->getNamespaces();
 
-        return view('admin.pages.edit', compact('page', 'users', 'templates', 'taxonomies', 'selectedTermIds', 'namespaces'));
+        $existingMetaKeys = Page::whereNotNull('meta')
+            ->pluck('meta')
+            ->flatMap(function ($meta) {
+                $array = is_array($meta) ? $meta : json_decode($meta, true);
+                return array_keys($array ?? []);
+            })
+            ->unique()
+            ->sort()
+            ->values()
+            ->toArray();
+
+        return view('admin.pages.edit', compact('page', 'users', 'templates', 'taxonomies', 'selectedTermIds', 'namespaces', 'existingMetaKeys'));
     }
 
     public function update(Request $request, Page $page)
@@ -147,13 +165,21 @@ class PageController extends Controller
             'term_ids.*' => 'nullable|exists:terms,id',
             'gallery_ids' => 'nullable|array',
             'gallery_ids.*' => 'exists:media,id',
+            // Validação dos metas
+            'meta' => 'nullable|array',
+            'meta.*.key' => 'nullable|string',
+            'meta.*.value' => 'nullable|string',
         ]);
+
+        $validated['content'] = ContentHelper::sanitizeForStorage($request->content);
+
+        // Formata os campos meta para array associativo ['chave' => 'valor']
+        $validated['meta'] = $this->formatMetaInput($request->input('meta'));
 
         $page->update($validated);
 
         $page->terms()->sync(array_filter($validated['term_ids'] ?? []));
 
-        // Atualiza a galeria
         if (isset($validated['gallery_ids'])) {
             Media::where('mediaable_id', $page->id)
                 ->where('mediaable_type', Page::class)
@@ -186,10 +212,6 @@ class PageController extends Controller
             ->with('success', 'Página removida com sucesso!');
     }
 
-    /**
-     * Retorna todos os namespaces únicos existentes na tabela pages.
-     * Inclui null/vazio como uma opção para páginas sem namespace.
-     */
     public function getNamespaces()
     {
         return Page::select('namespace')
@@ -198,5 +220,28 @@ class PageController extends Controller
             ->where('namespace', '!=', '')
             ->orderBy('namespace')
             ->pluck('namespace');
+    }
+
+    /**
+     * Converte os pares do formulário [['key' => 'a', 'value' => 'b']]
+     * em um array associativo limpo ['a' => 'b'] para o campo JSON do banco.
+     */
+    protected function formatMetaInput(?array $metaInput): array
+    {
+        if (empty($metaInput)) {
+            return [];
+        }
+
+        $formatted = [];
+        foreach ($metaInput as $item) {
+            $key = trim($item['key'] ?? '');
+            $value = $item['value'] ?? '';
+
+            if ($key !== '') {
+                $formatted[$key] = $value;
+            }
+        }
+
+        return $formatted;
     }
 }

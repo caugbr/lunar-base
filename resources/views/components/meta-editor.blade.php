@@ -46,7 +46,7 @@ if (empty($pairs)) {
             <div class="meta-pair">
                 <div class="form-group">
                     <x-select-input
-                        :name="'{{ $name }}[' . $index . '][key]'"
+                        :name="$name . '[' . $index . '][key]'"
                         :options="$existingKeys"
                         :value="$pair['key']"
                         placeholder="-- Selecione ou insira --"

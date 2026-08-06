@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\HasMeta;
 
 class Page extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, HasMeta;
 
     protected $table = 'pages';
 
@@ -22,7 +23,8 @@ class Page extends Model
         'parent_id',
         'status',
         'template',
-        'thumbnail_id'
+        'thumbnail_id',
+        'meta'
     ];
 
     protected $casts = [

@@ -41,9 +41,13 @@ trait HasMeta
         return $this;
     }
 
+    // public function hasMeta(string $key): bool
+    // {
+    //     return array_key_exists($key, $this->meta ?? []);
+    // }
     public function hasMeta(string $key): bool
     {
-        return array_key_exists($key, $this->meta ?? []);
+        return data_get($this->meta ?? [], $key) !== null;
     }
 
     public function allMeta(): array

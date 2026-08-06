@@ -71,6 +71,18 @@
                 {{-- Taxonomias --}}
                 <x-render name="taxonomy_fields" :params="['type' => 'page', 'item' => $page]" />
 
+                @if(setting('navigation.show_meta_fields'))
+                <div class="edit-box">
+                    <header>Metadados</header>
+                    <article>
+                        <x-meta-editor
+                            name="meta"
+                            :existingKeys="$existingMetaKeys"
+                            :values="$page->meta ?? []"
+                        />
+                    </article>
+                </div>
+                @endif
             </div>
             <div class="aside-column">
                 <div class="edit-box">

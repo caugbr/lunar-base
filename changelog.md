@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.6.2] 2026-08-06
+
+### Added
+- Metadata nas páginas
+
+### Fixed
+- Componente meta-editor corrigido
+
 ## [1.6.0] 2026-08-06
 
 ### Added
