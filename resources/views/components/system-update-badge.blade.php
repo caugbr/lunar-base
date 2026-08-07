@@ -100,6 +100,7 @@
             window.removeEventListener('beforeunload', preventUnload);
 
             if (response.ok && data.success) {
+                backdrop.style.setProperty('display', 'none', 'important');
                 Dialog.alert('Lunar Base atualizado com sucesso!');
                 window.location.reload();
             } else {

@@ -882,14 +882,14 @@ return [
                 [
                     'key' => 'extra_domains',
                     'type' => 'repeater',
-                    'label' => 'Domínios e Subdomínios Mapeados',
+                    // 'label' => 'Domínios e Subdomínios Mapeados',
                     'description' => 'Adicione os domínios que apontam para namespaces específicos',
                     'default' => [],
                     'fields' => [
                         [
                             'key' => 'domain',
                             'type' => 'text',
-                            'label' => 'Domínio / Subdomínio',
+                            'label' => 'Domínio',
                             'placeholder' => 'ex: parceiros.lunarapps.com.br',
                         ],
                         [

@@ -2,7 +2,7 @@
    Estilos Base do Dialog (Compatível com qualquer área do site)
    ========================================================================== */
 
-.modal-overlay {
+.dialog-modal-overlay {
     position: fixed;
     inset: 0;
     z-index: 9999;
@@ -14,18 +14,18 @@
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
-.modal-overlay > * {
+.dialog-modal-overlay > * {
     pointer-events: auto;
 }
 
-.modal-backdrop {
+.dialog-modal-backdrop {
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(4px);
 }
 
-.modal-box {
+.dialog-modal-box {
     position: relative;
     background: white;
     border-radius: 0.75rem;
@@ -38,14 +38,14 @@
 }
 
 /* Tamanhos de Modal Box */
-.modal-box.sm { max-width: 24rem; }
-.modal-box.md { max-width: 32rem; }
-.modal-box.lg { max-width: 48rem; }
-.modal-box.xl { max-width: 64rem; }
-.modal-box.full { max-width: 95vw; max-height: 95vh; }
+.dialog-modal-box.sm { max-width: 24rem; }
+.dialog-modal-box.md { max-width: 32rem; }
+.dialog-modal-box.lg { max-width: 48rem; }
+.dialog-modal-box.xl { max-width: 64rem; }
+.dialog-modal-box.full { max-width: 95vw; max-height: 95vh; }
 
 /* Header do Modal */
-.modal-header {
+.dialog-modal-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -54,14 +54,14 @@
     background: #f9fafb;
 }
 
-.modal-title {
+.dialog-modal-title {
     font-size: 1.125rem;
     font-weight: 600;
     color: #1f2937;
     margin: 0;
 }
 
-.modal-close {
+.dialog-modal-close {
     background: none;
     border: none;
     color: #9ca3af;
@@ -76,20 +76,20 @@
     line-height: 1;
 }
 
-.modal-close:hover {
+.dialog-modal-close:hover {
     background: #e5e7eb;
     color: #374151;
 }
 
 /* Corpo do Modal */
-.modal-body {
+.dialog-modal-body {
     padding: 1.5rem;
     overflow-y: auto;
     flex: 1;
 }
 
 /* Rodapé do Modal */
-.modal-footer {
+.dialog-modal-footer {
     display: flex;
     align-items: center;
     justify-content: flex-end;

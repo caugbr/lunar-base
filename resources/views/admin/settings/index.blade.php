@@ -91,7 +91,9 @@
 
                         {{-- RENDERIZAÇÃO DOS INPUTS --}}
                         @if($def['type'] === 'repeater')
+                            @if($def['label'] ?? false)
                             <label class="field-label">{{ $def['label'] }}</label>
+                            @endif
                             @include('admin.settings.partials.repeater', ['def' => $def, 'value' => $value])
                         @else
                             @include('admin.settings.partials.input', [

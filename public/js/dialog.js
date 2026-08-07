@@ -9,7 +9,7 @@ class Dialog {
         return new Promise((resolve) => {
             // 1. Cria o overlay container do modal
             const overlay = document.createElement('div');
-            overlay.className = 'modal-overlay';
+            overlay.className = 'dialog-modal-overlay';
             overlay.style.pointerEvents = 'auto';
             overlay.style.opacity = '0';
             overlay.style.transition = 'opacity 0.2s ease';
@@ -29,17 +29,17 @@ class Dialog {
 
             // 3. Monta a árvore de elementos internos
             overlay.innerHTML = `
-                <div class="modal-backdrop" style="opacity: 0; transition: opacity 0.2s ease;"></div>
-                <div class="modal-box sm" style="transform: scale(0.95); opacity: 0; transition: transform 0.2s ease, opacity 0.2s ease;">
-                    <div class="modal-header">
-                        <h3 class="modal-title">${title || (type === 'alert' ? 'Aviso' : type === 'confirm' ? 'Confirmação' : 'Entrada')}</h3>
-                        <button id="dialog-btn-close" class="modal-close" aria-label="Fechar">✕</button>
+                <div class="dialog-modal-backdrop" style="opacity: 0; transition: opacity 0.2s ease;"></div>
+                <div class="dialog-modal-box sm" style="transform: scale(0.95); opacity: 0; transition: transform 0.2s ease, opacity 0.2s ease;">
+                    <div class="dialog-modal-header">
+                        <h3 class="dialog-modal-title">${title || (type === 'alert' ? 'Aviso' : type === 'confirm' ? 'Confirmação' : 'Entrada')}</h3>
+                        <button id="dialog-btn-close" class="dialog-modal-close" aria-label="Fechar">✕</button>
                     </div>
-                    <div class="modal-body">
+                    <div class="dialog-modal-body">
                         <p style="margin: 0; color: #374151;">${message}</p>
                         ${inputHtml}
                     </div>
-                    <div class="modal-footer">
+                    <div class="dialog-modal-footer">
                         ${footerHtml}
                     </div>
                 </div>
@@ -53,8 +53,8 @@ class Dialog {
             // 4. Executa a animação de entrada no frame seguinte
             requestAnimationFrame(() => {
                 overlay.style.opacity = '1';
-                const backdrop = overlay.querySelector('.modal-backdrop');
-                const box = overlay.querySelector('.modal-box');
+                const backdrop = overlay.querySelector('.dialog-modal-backdrop');
+                const box = overlay.querySelector('.dialog-modal-box');
 
                 if (backdrop) backdrop.style.opacity = '1';
                 if (box) {
@@ -72,8 +72,8 @@ class Dialog {
 
             // 5. Função de encerramento e remoção com transição suave
             const closeWithResult = (result) => {
-                const backdrop = overlay.querySelector('.modal-backdrop');
-                const box = overlay.querySelector('.modal-box');
+                const backdrop = overlay.querySelector('.dialog-modal-backdrop');
+                const box = overlay.querySelector('.dialog-modal-box');
 
                 if (backdrop) backdrop.style.opacity = '0';
                 if (box) {
@@ -85,7 +85,7 @@ class Dialog {
                 setTimeout(() => {
                     overlay.remove();
                     // Só libera a rolagem se não restarem outros overlays ativos na página
-                    if (!document.querySelector('.modal-overlay')) {
+                    if (!document.querySelector('.dialog-modal-overlay')) {
                         document.body.style.overflow = '';
                     }
                     resolve(result);
@@ -112,7 +112,7 @@ class Dialog {
                 closeWithResult(type === 'prompt' ? null : false);
             });
 
-            overlay.querySelector('.modal-backdrop').addEventListener('click', () => {
+            overlay.querySelector('.dialog-modal-backdrop').addEventListener('click', () => {
                 closeWithResult(type === 'prompt' ? null : false);
             });
 
