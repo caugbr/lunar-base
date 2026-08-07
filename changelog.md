@@ -1,8 +1,10 @@
 # Changelog
 
-## [1.6.2] 2026-08-06
+## [1.8.0] 2026-08-07
 
 ### Added
+- Campo repeater nas settings
+- Site domains - gerenciar mais de um domínio no mesmo sistema
 - Metadata nas páginas
 
 ### Fixed
