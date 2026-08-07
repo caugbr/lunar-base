@@ -212,14 +212,59 @@ class PageController extends Controller
             ->with('success', 'Página removida com sucesso!');
     }
 
-    public function getNamespaces()
+    // public function getNamespaces()
+    // {
+    //     return Page::select('namespace')
+    //         ->distinct()
+    //         ->whereNotNull('namespace')
+    //         ->where('namespace', '!=', '')
+    //         ->orderBy('namespace')
+    //         ->pluck('namespace');
+    // }
+    /**
+     * Retorna todos os namespaces únicos (das páginas e dos domínios configurados).
+     * Sinaliza os namespaces que pertencem a domínios ativos.
+     *
+     * @return array Array associativo no formato ['valor' => 'Rótulo']
+     */
+    public function getNamespaces(): array
     {
-        return Page::select('namespace')
+        // 1. Pega os namespaces mapeados em Domínios no Settings (via helper siteDomains())
+        $domainNamespaces = collect(siteDomains())
+            ->pluck('namespace')
+            ->filter()
+            ->map(fn($ns) => trim($ns))
+            ->unique()
+            ->values()
+            ->toArray();
+
+        // 2. Pega os namespaces já em uso fisicamente na tabela pages
+        $dbNamespaces = Page::select('namespace')
             ->distinct()
             ->whereNotNull('namespace')
             ->where('namespace', '!=', '')
-            ->orderBy('namespace')
-            ->pluck('namespace');
+            ->pluck('namespace')
+            ->map(fn($ns) => trim($ns))
+            ->toArray();
+
+        // 3. Unifica e ordena todos os namespaces sem duplicados
+        $allNamespaces = collect(array_merge($domainNamespaces, $dbNamespaces))
+            ->unique()
+            ->sort()
+            ->values();
+
+        // 4. Monta o array associativo ['valor' => 'Rótulo']
+        $options = [];
+        foreach ($allNamespaces as $ns) {
+            $isDomain = in_array($ns, $domainNamespaces, true);
+
+            // Adiciona um sinalizador visual se for um namespace de domínio ativo
+            $label = $isDomain ? "{$ns} (Domínio)" : $ns;
+
+            $options[$ns] = $label;
+        }
+
+        return $options;
     }
 
     /**

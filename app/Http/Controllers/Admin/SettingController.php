@@ -102,7 +102,6 @@ class SettingController extends Controller
 
                 // === PASSWORD: criptografa antes de salvar ===
                 if ($type === 'password') {
-                    // 1. Verifica se marcou para remover
                     if ($request->boolean("remove_settings.{$key}")) {
                         Setting::set($key, '', $groupKey, $type);
                         continue;
@@ -110,7 +109,6 @@ class SettingController extends Controller
 
                     $input = $request->input($key);
 
-                    // 2. Se o campo veio vazio, mantém o valor existente
                     if (blank($input)) {
                         $existing = Setting::settings()->where('key', $key)->value('value');
                         if ($existing) {
@@ -119,7 +117,6 @@ class SettingController extends Controller
                         continue;
                     }
 
-                    // 3. Nova senha informada — criptografa e salva
                     $encrypted = Crypt::encryptString($input);
                     Setting::set($key, $encrypted, $groupKey, $type);
                     continue;
@@ -192,6 +189,28 @@ class SettingController extends Controller
                     continue;
                 }
 
+                // === REPEATER (Matrizes/Tabelas replicáveis) ===
+                if ($type === 'repeater') {
+                    $rawInput = $request->input($key, []);
+
+                    if (is_array($rawInput)) {
+                        // Limpa linhas totalmente em branco antes de salvar
+                        $cleaned = array_values(array_filter($rawInput, function ($row) {
+                            if (!is_array($row)) {
+                                return !blank($row);
+                            }
+                            return count(array_filter($row, fn($v) => !blank($v))) > 0;
+                        }));
+
+                        $value = json_encode($cleaned, JSON_UNESCAPED_UNICODE);
+                    } else {
+                        $value = is_string($rawInput) ? $rawInput : json_encode([], JSON_UNESCAPED_UNICODE);
+                    }
+
+                    Setting::set($key, $value, $groupKey, $type);
+                    continue;
+                }
+
                 // === DEFAULT: text, textarea, url, email ===
                 $value = $request->input($key, $def['default'] ?? '');
                 Setting::set($key, $value, $groupKey, $type);
@@ -205,14 +224,9 @@ class SettingController extends Controller
 
     private function logChanges(array $original, array $modified): void
     {
-        // Campos internos do Laravel e de controle da interface
         $ignoredKeys = ['_token', '_active_tab', '_method'];
-
-        // Tipos de campo que nunca devem ter valores logados
         $sensitiveTypes = ['password'];
 
-        // Pega as definições para saber os tipos dos campos
-        // $definitions = config('settings.definitions', []);
         $definitions = getSettingsDefinitions();
         $fieldTypes = [];
 
@@ -227,28 +241,21 @@ class SettingController extends Controller
         $changes = [];
 
         foreach ($modified as $key => $newValue) {
-            // Ignora campos internos do Laravel
             if (in_array($key, $ignoredKeys, true)) {
                 continue;
             }
 
-            // Ignora campos auxiliares (ex: site_thumbnail_current, remove_settings.*)
             if (str_ends_with($key, '_current') || str_starts_with($key, 'remove_settings.')) {
                 continue;
             }
 
-            // Normaliza a chave: remove sufixo _current se existir no original
             $originalKey = $key;
-
-            // Pega valor original (pode ser null se campo não existia)
             $oldValue = $original[$originalKey] ?? null;
 
-            // Se não mudou, pula
             if ($oldValue === $newValue || $newValue === NULL) {
                 continue;
             }
 
-            // Se é campo de senha, loga apenas que foi alterado, sem o valor
             $fieldType = $fieldTypes[$originalKey] ?? 'text';
 
             if (in_array($fieldType, $sensitiveTypes, true)) {

@@ -873,6 +873,34 @@ return [
                 ],
             ],
         ],
-
+        'multisite' => [
+            'tab' => 'Domínios',
+            'title' => 'Multi-Site / Domínios',
+            'description' => 'Mapeamento de domínios adicionais para namespaces do sistema',
+            'icon' => 'globe',
+            'fields' => [
+                [
+                    'key' => 'extra_domains',
+                    'type' => 'repeater',
+                    'label' => 'Domínios e Subdomínios Mapeados',
+                    'description' => 'Adicione os domínios que apontam para namespaces específicos',
+                    'default' => [],
+                    'fields' => [
+                        [
+                            'key' => 'domain',
+                            'type' => 'text',
+                            'label' => 'Domínio / Subdomínio',
+                            'placeholder' => 'ex: parceiros.lunarapps.com.br',
+                        ],
+                        [
+                            'key' => 'namespace',
+                            'type' => 'text',
+                            'label' => 'Namespace do Conteúdo',
+                            'placeholder' => 'ex: parceiros',
+                        ],
+                    ],
+                ],
+            ],
+        ],
     ],
 ];
