@@ -65,7 +65,10 @@
         </div>
     </div>
 </footer>
-@php
+
+<x-assessibility />
+
+{{-- @php
 $useSwitchThemes = setting('reading.switch_themes');
 $useTextSize = setting('reading.increase_text_size');
 $useVlibras = setting('reading.vlibras');
@@ -152,4 +155,4 @@ $textSizeStepValue = setting('reading.text_size_step_value', 4);
     margin: 0 !important;
 }
 </style>
-@endif
+@endif --}}

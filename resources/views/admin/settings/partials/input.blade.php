@@ -112,6 +112,15 @@
             <a href="#" class="show" title="Ver senha"><x-lucide-eye class="lucid-icon" /></a>
             <a href="#" class="hide" title="Esconder senha"><x-lucide-eye-off class="lucid-icon" /></a>
         </div>
+        @if($value)
+            <label class="remove-password-label">
+                <input type="checkbox" name="remove_settings[{{ $def['key'] }}]" value="1">
+                Remover senha atual
+            </label>
+            <small class="form-help">Senha configurada. Deixe em branco para manter, ou marque para remover.</small>
+        @else
+            <small class="form-help">Nenhuma senha configurada.</small>
+        @endif
         @break
 
     @default

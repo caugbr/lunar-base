@@ -50,9 +50,9 @@ class PluginController extends Controller
 
         $this->setPluginAssetLink($plugin, $targetState);
 
-        $status = $plugin->is_active ? 'activated' : 'deactivated';
+        $status = $plugin->is_active ? 'ativado' : 'desativado';
 
-        return back()->with('success', "Plugin '{$plugin->name}' has been {$status}!");
+        return back()->with('success', "Plugin '{$plugin->name}' foi {$status}!");
     }
 
     /**

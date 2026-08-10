@@ -1,5 +1,25 @@
 # Changelog
 
+## Unreleased
+
+## [1.9.0] 2026-08-09
+
+### Added
+- Componente Assessibility
+
+### Changed
+- Plugin Menus agora mostra o path das páginas como title
+- Links para instalar na index de plugins e temas
+
+### Fixed
+- Funcionalidade de remover senha em configurações foi restaurada
+- Algumas mensagens em inglês agora estão em potuguês
+
+## [1.8.1] 2026-08-07
+
+### Fixed
+- Ajustes no sistema de domínios extra
+
 ## [1.8.0] 2026-08-07
 
 ### Added

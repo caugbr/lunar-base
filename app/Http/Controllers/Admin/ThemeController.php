@@ -48,7 +48,7 @@ class ThemeController extends Controller
 
         $this->syncAllThemeAssetLinks($theme);
 
-        return back()->with('success', "Theme '{$theme->name}' has been activated!");
+        return back()->with('success', "Tema '{$theme->name}' ativado com sucesso!");
     }
 
     /**
