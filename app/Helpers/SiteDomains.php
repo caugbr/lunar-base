@@ -85,3 +85,40 @@ if (! function_exists('siteDomains')) {
         return is_array($domains) ? $domains : [];
     }
 }
+
+if (! function_exists('isExtraDomain')) {
+    /**
+     * Retorna um boolean indicando se o domínio atual (ou o informado)
+     * é um domínio extra cadastrado nas configurações.
+     *
+     * @param string|null $domain Opcional. Se informado, valida o domínio fornecido em vez da requisição atual.
+     * @return bool
+     */
+    function isExtraDomain(?string $domain = null): bool
+    {
+        // Se nenhum domínio específico for passado, valida a requisição atual
+        if ($domain === null) {
+            return currentSiteData() !== null;
+        }
+
+        // Se um domínio for passado como argumento, compara com a lista de siteDomains()
+        foreach (siteDomains() as $item) {
+            $configuredDomain = trim($item['domain'] ?? '');
+            $namespace = trim($item['namespace'] ?? '');
+
+            if (empty($configuredDomain) && empty($namespace)) {
+                continue;
+            }
+
+            if (
+                ($configuredDomain && $domain === $configuredDomain) ||
+                ($configuredDomain && str_contains($domain, $configuredDomain)) ||
+                ($namespace && str_contains($domain, $namespace))
+            ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+}

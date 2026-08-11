@@ -30,6 +30,12 @@ class SiteComposer
         $currentUrl = request()->url();
 
         foreach ($rawMenu as $item) {
+            // 1. Filtro de Visibilidade por Domínio/Namespace
+            if (!$this->isItemVisibleForCurrentDomain($item)) {
+                continue;
+            }
+
+            // 2. Trata rotas nomeadas
             if (!empty($item['route'])) {
                 $item['href'] = route($item['route']);
                 $item['current_class'] = $item['href'] === $currentUrl ? ' active' : '';
@@ -37,6 +43,7 @@ class SiteComposer
                 continue;
             }
 
+            // 3. Trata caminhos/URLs diretas
             if (!empty($item['path'])) {
                 $item['href'] = url($item['path']);
                 $item['current_class'] = $item['href'] === $currentUrl ? ' active' : '';
@@ -44,13 +51,37 @@ class SiteComposer
                 continue;
             }
 
+            // 4. Trata Páginas por Slug (Busca Inteligente)
             $page = false;
             if (!empty($item['slug'])) {
-                $query = Page::published()->where('slug', $item['slug']);
+                // Se o item do menu especificou um namespace explicitamente no array, usa ele
                 if (!empty($item['namespace'])) {
-                    $query->where('namespace', $item['namespace']);
+                    $page = Page::published()
+                        ->where('slug', $item['slug'])
+                        ->where('namespace', $item['namespace'])
+                        ->first();
+                } else {
+                    // Caso contrário, busca no namespace do domínio atual
+                    $currentNs = currentNamespace();
+
+                    if ($currentNs && $currentNs !== 'default') {
+                        $page = Page::published()
+                            ->where('slug', $item['slug'])
+                            ->where('namespace', $currentNs)
+                            ->first();
+                    }
+
+                    // Fallback: Se não encontrou no namespace atual (ou está no principal),
+                    // busca a página global (sem namespace)
+                    if (!$page) {
+                        $page = Page::published()
+                            ->where('slug', $item['slug'])
+                            ->where(function ($q) {
+                                $q->whereNull('namespace')->orWhere('namespace', '');
+                            })
+                            ->first();
+                    }
                 }
-                $page = $query->first();
             }
 
             if ($page) {
@@ -61,6 +92,48 @@ class SiteComposer
         }
 
         return $menu;
+    }
+
+    /**
+     * Verifica se o item do menu deve ser exibido no domínio/namespace atual.
+     */
+    protected function isItemVisibleForCurrentDomain(array $item): bool
+    {
+        $domains = $item['domains'] ?? ['*'];
+
+        // Se for informado como string separada por vírgula, converte para array
+        if (is_string($domains)) {
+            $domains = array_map('trim', explode(',', $domains));
+        }
+
+        // Se estiver vazio ou contiver '*', está visível em TODOS os domínios
+        if (empty($domains) || in_array('*', $domains, true)) {
+            return true;
+        }
+
+        $currentHost      = currentSiteDomain(); // Ex: 'parceiros.lunarapps.com.br' ou host atual
+        $currentNamespace = currentNamespace();  // Ex: 'parceiros' ou 'default'
+
+        foreach ($domains as $domain) {
+            $domain = trim($domain);
+
+            // Match direto pelo host do domínio
+            if ($domain === $currentHost) {
+                return true;
+            }
+
+            // Match pelo namespace associado ao domínio
+            if ($domain === $currentNamespace) {
+                return true;
+            }
+
+            // Aliases comuns para o site principal/padrão
+            if (in_array($domain, ['main', 'default', 'primary'], true) && !isExtraDomain()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     protected function getTermsAndPrivacyPages(): array

@@ -2,6 +2,24 @@
 
 ## Unreleased
 
+### Added
+
+### Changed
+
+### Fixed
+
+## [1.10.0] 2026-08-10
+
+### Added
+- Plugins atualizados com valores configuráveis
+- Componente ConfigurablePluginValues
+- Adicionado arquivo config/pluginSettings.php para valores configuráveis de plugins
+- Plugin Menus agora trabalha em conjunto com os extra domains
+- Helper buildMenu agora trabalha com o parâmetro 'domains' (array)
+
+### Changed
+- Ajuste no CSS do campo de senha em configurações
+
 ## [1.9.0] 2026-08-09
 
 ### Added

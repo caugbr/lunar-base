@@ -109,12 +109,14 @@
     @case('password')
         <div class="password-field">
             <input type="password" name="{{ $inputName }}" id="{{ str_replace(['[', ']'], ['_', ''], $inputName) }}" value="" class="form-input" placeholder="••••••••" autocomplete="new-password">
-            <a href="#" class="show" title="Ver senha"><x-lucide-eye class="lucid-icon" /></a>
-            <a href="#" class="hide" title="Esconder senha"><x-lucide-eye-off class="lucid-icon" /></a>
+            @if(!$value)
+                <a href="#" class="show" title="Ver senha"><x-lucide-eye class="lucid-icon" /></a>
+                <a href="#" class="hide" title="Esconder senha"><x-lucide-eye-off class="lucid-icon" /></a>
+            @endif
         </div>
         @if($value)
             <label class="remove-password-label">
-                <input type="checkbox" name="remove_settings[{{ $def['key'] }}]" value="1">
+                <input type="checkbox" name="remove_settings[{{ $def['key'] }}]" value="1" style="font-weight: 400; font-size: 0.75em;">
                 Remover senha atual
             </label>
             <small class="form-help">Senha configurada. Deixe em branco para manter, ou marque para remover.</small>
