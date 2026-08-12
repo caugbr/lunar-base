@@ -7,6 +7,8 @@
 ### Changed
 
 ### Fixed
+- Plugin helpers não carregavam arquivos com funções globais, só classes, agora carregam
+- Marketplace de plugins agora mostra a versão local pros plugins instalados
 
 ## [1.10.0] 2026-08-10
 
@@ -104,7 +106,7 @@
 - Novas variáveis no .env: GIT_SYSTEM_REPO e GIT_ADDONS_REPO (update e marketplace)
 - Plugin Backup
 - Checagem de versão e atualização com um clique
-- Adicionado o componente chart, usando o chat.js via CDN
+- Adicionado o componente chart, usando o chart.js via CDN
 - REST API genérica adicionada (readonly, expõe apenas o que já é público)
 
 ### Fixed

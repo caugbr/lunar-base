@@ -74,7 +74,12 @@
                             </span>
                         </td>
                         <td>
-                            <code>v{{ $plugin['version'] }}</code>
+                            @php
+                                $version = $plugin['is_installed']
+                                            ? $plugin['local_version']
+                                            : $plugin['remote_version'];
+                            @endphp
+                            <code>v{{ $version }}</code>
                         </td>
                         <td>
                             @if($plugin['is_active'])

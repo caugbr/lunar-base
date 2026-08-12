@@ -82,15 +82,6 @@ class PluginServiceProvider extends ServiceProvider
         }
     }
 
-    // private function registerActivePlugins(): void
-    // {
-    //     if (!dbAvailable('plugins')) return;
-
-    //     Plugin::where('is_active', true)
-    //         ->pluck('service_provider_class')
-    //         ->filter(fn($class) => class_exists($class))
-    //         ->each(fn($class) => $this->app->register($class));
-    // }
     private function registerActivePlugins(): void
     {
         if (!dbAvailable('plugins')) return;
@@ -105,6 +96,9 @@ class PluginServiceProvider extends ServiceProvider
                 $plugin->update(['is_active' => false]);
                 continue;
             }
+
+            // Carrega apenas os arquivos de Funções Globais (evitando Classes PSR-4)
+            $this->registerPluginHelpers($pluginPath);
 
             // Como a pasta existe no disco, é seguro chamar o class_exists
             if (class_exists($plugin->service_provider_class)) {
@@ -130,6 +124,48 @@ class PluginServiceProvider extends ServiceProvider
 
         if (!empty($paths)) {
             $this->loadMigrationsFrom($paths);
+        }
+    }
+
+    /**
+     * Carrega cuidadosamente os arquivos de funções/helpers do plugin.
+     * Normaliza caminhos de arquivo (Linux/Windows) e ignora Classes PSR-4.
+     */
+    private function registerPluginHelpers(string $pluginPath): void
+    {
+        $filesToInclude = [];
+
+        // 1. Suporte a arquivo helper.php solto na raiz do plugin
+        $rootHelper = "{$pluginPath}/helper.php";
+        if (File::exists($rootHelper)) {
+            $filesToInclude[] = $rootHelper;
+        }
+
+        // 2. Suporte a todos os arquivos .php dentro da pasta /Helpers
+        $helpersDir = "{$pluginPath}/Helpers";
+        if (File::isDirectory($helpersDir)) {
+            $filesToInclude = array_merge($filesToInclude, File::glob("{$helpersDir}/*.php"));
+        }
+
+        foreach ($filesToInclude as $file) {
+            // Normaliza barras para funcionar perfeitamente tanto em Linux quanto Windows
+            $cleanFile     = str_replace('\\', '/', $file);
+            $cleanBasePath = str_replace('\\', '/', base_path('plugins/'));
+
+            // Extrai o caminho relativo (ex: "Menus/Helpers/MenuHelper.php" ou "Forms/helper.php")
+            $relativePath  = Str::after($cleanFile, $cleanBasePath);
+
+            // Monta o FQCN esperado da classe (ex: "Plugins\Menus\Helpers\MenuHelper")
+            $classFqcn     = 'Plugins\\' . str_replace(['/', '.php'], ['\\', ''], $relativePath);
+
+            // Se o Composer (PSR-4) conseguir carregar como uma Classe válida,
+            // ignora o require manual e deixa o Composer gerenciar por demanda
+            if (class_exists($classFqcn, true)) {
+                continue;
+            }
+
+            // Se for um arquivo de funções globais (ex: renderForm(), renderMenu()), carrega com segurança
+            require_once $file;
         }
     }
 }
