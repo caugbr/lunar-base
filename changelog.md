@@ -2,13 +2,21 @@
 
 ## Unreleased
 
+## [1.12.0] 2026-08-13
+
 ### Added
+- Versão do sistema agora fica em /VERSION
+- Helper appVersion() para pegar a versão
+- config('app.version') atualizada pra retornar a versão em VERSION
 
 ### Changed
+- Update core agora elimina os arquivos originais antes de substituir, evitando órfãos
+- Update não sobrescreve mais arquivos em /config, apenas adiciona se houver um novo
+- Update agora checa o composer.lock e atualiza se houve mudança
 
 ### Fixed
-- Plugin helpers não carregavam arquivos com funções globais, só classes, agora carregam
-- Marketplace de plugins agora mostra a versão local pros plugins instalados
+- Helpers de plugins não carregavam arquivos com funções globais, só classes, agora carregam
+- Marketplace de plugins agora mostra a versão local pra plugins instalados
 
 ## [1.10.0] 2026-08-10
 

@@ -37,15 +37,7 @@
             "Themes\\": "themes/"
         },
         "files": [
-            "app/Helpers/HookHelper.php",
-            "app/Helpers/SettingHelper.php",
-            "app/Helpers/ImageHelper.php",
-            "app/Helpers/ImageProcessor.php",
-            "app/Helpers/LogHelper.php",
-            "app/Helpers/OptionHelper.php",
-            "app/Helpers/RolePermissionHelper.php",
-            "app/Helpers/DbHelper.php",
-            "app/Helpers/SiteDomains.php"
+            "app/helpers.php"
         ]
     },
     "autoload-dev": {
