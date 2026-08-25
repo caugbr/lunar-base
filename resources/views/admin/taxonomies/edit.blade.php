@@ -40,13 +40,13 @@
             <div class="form-group">
                 <label>Tipos de publicação</label>
                 <div class="post-types">
-                    @foreach(\App\Support\PublicationTypes::all() as $typeKey => $typeLabel)
+                    @foreach(\App\Support\PublicationTypes::all() as $typeKey => $type)
                         <label>
                             <input type="checkbox"
                                 name="target_types[]"
                                 value="{{ $typeKey }}"
                                 {{ isset($taxonomy) && is_array($taxonomy->target_types) && in_array($typeKey, $taxonomy->target_types) ? 'checked' : '' }}>
-                            <span>{{ $typeLabel }}</span>
+                            <span>{{ $type['label'] }}</span>
                         </label>
                     @endforeach
                 </div>

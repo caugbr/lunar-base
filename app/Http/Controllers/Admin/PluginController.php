@@ -30,6 +30,7 @@ class PluginController extends Controller
             $plugin->remote_version = $remote['remote_version'] ?? null;
             $plugin->has_update     = $remote['has_update'] ?? false;
             $plugin->download_url   = $remote['download_url'] ?? null;
+            $plugin->changelog      = $remote['changelog'] ?? null;
 
             return $plugin;
         });

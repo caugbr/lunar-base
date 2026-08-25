@@ -4,6 +4,7 @@
 @section('header_subtitle', 'Gerencie as extensões e módulos adicionais do sistema')
 
 @section('content')
+{{-- @php print_r($plugins); @endphp --}}
 <div class="admin-card">
     <div class="admin-card-header">
         <h2><x-lucide-puzzle class="lucid-icon" /> Plugins instalados</h2>
@@ -49,6 +50,7 @@
                         $helpView = "{$kebabName}-help::help";
                     }
                 @endphp
+                {{-- @php print json_encode($plugin); @endphp --}}
                 <tr class="{{ $plugin->is_active ? 'active' : 'inactive' }}">
                     <td>
                         <strong>{{ $plugin->name }}</strong>
@@ -66,15 +68,24 @@
                     </td>
                     <td style="max-width: 320px; white-space: normal;">
                         <span class="admin-text-muted" style="font-size: 0.875rem;">{{ $plugin->description ?? 'Nenhuma descrição fornecida.' }}</span>
-                        {{-- <div style="font-size: 0.725rem; color: #888; font-family: monospace; margin-top: 4px;">
-                            Provider: {{ $plugin->service_provider_class }}
-                        </div> --}}
                     </td>
                     <td>
                         <code>v{{ $plugin->version }}</code>
                         @if($plugin->has_update)
                             <span class="admin-badge" style="background-color: #f59e0b; color: #ffffff; font-size: 0.7rem; margin-left: 4px;" title="Versão v{{ $plugin->remote_version }} disponível no GitHub">
                                 v{{ $plugin->remote_version }} disponível!
+                                @if($plugin->changelog ?? false)
+                                    <button type="button"
+                                        onclick="window.dispatchEvent(new CustomEvent('modal-open', { detail: { id: 'changelog-{{ $plugin->id }}' } }))"
+                                        class="transparent-btn"
+                                        style="color: #fff"
+                                        title="Mais detalhes">
+                                        <x-lucide-scroll-text class="lucid-icon" />
+                                    </button>
+                                    <x-modal id="changelog-{{ $plugin->id }}" title="Ver mudanças" size="lg">
+                                        @include('admin.plugins.changelog', ['name' => $plugin->name, 'changelog' => $plugin->changelog])
+                                    </x-modal>
+                                @endif
                             </span>
                         @endif
                     </td>

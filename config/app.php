@@ -14,7 +14,14 @@ return [
     */
 
     'name' => 'Lunar Base',
-    'version' => appVersion(),
+    'version' => trim(@file_get_contents(base_path('VERSION')) ?: '1.12.0'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Author information
+    |--------------------------------------------------------------------------
+    */
+
     'author' => 'Cau Guanabara',
     'author_link' => 'https://cauguanabara.com.br',
 

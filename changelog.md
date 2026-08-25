@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+## [1.13.0] 2026-08-25
+
+### Added
+- Plugins com versões atualizadas agora mostram o changelog da nova, se existir
+
+### Changed
+
+### Fixed
+- Criação / edição de taxonomias corrigidas. PublicationTypes retorna um array agora
+
 ## [1.12.0] 2026-08-13
 
 ### Added
