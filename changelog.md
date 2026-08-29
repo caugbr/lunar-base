@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## [1.14.0] 2026-08-29
 
 ### Added
 - Theme preview
