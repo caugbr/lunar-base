@@ -111,7 +111,7 @@ class PluginCreateCommand extends Command
         if ($hasController) {
             $registerLines[] = "        \$routesFile = __DIR__ . '/routes.php';";
             $registerLines[] = "        if (file_exists(\$routesFile)) {";
-            $registerLines[] = "            require \$routesFile;";
+            $registerLines[] = "            \$this->loadRoutesFrom(\$routesFile);";
             $registerLines[] = "        }";
         }
         $registerContent = $registerLines ? implode("\n", $registerLines) : "        //";

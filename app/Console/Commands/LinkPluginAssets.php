@@ -103,16 +103,35 @@ class LinkPluginAssets extends Command
     }
 
     /**
-     * Remove um link ou pasta existente usando a Facade do Laravel
+     * Remove um link simbólico ou pasta existente com compatibilidade Windows/Linux
      */
     private function removeExistingLink(string $path): void
     {
-        if (is_link($path)) {
-            File::delete($path);
-        } elseif (is_dir($path)) {
-            File::deleteDirectory($path);
+        // Normaliza barras para o padrão do SO
+        $normalizedPath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $path);
+
+        // 1. Se for Windows
+        if (PHP_OS_FAMILY === 'Windows') {
+            // No Windows, links de diretório são removidos com rmdir do PHP ou rmdir do CMD
+            if (is_dir($normalizedPath)) {
+                // Tenta remover o atalho/link sem apagar o conteúdo da pasta original
+                if (! @rmdir($normalizedPath)) {
+                    // Fallback via comando nativo do Windows para Junctions/Symlinks
+                    @exec(sprintf('rd /s /q "%s"', $normalizedPath));
+                }
+            } elseif (file_exists($normalizedPath)) {
+                @unlink($normalizedPath);
+            }
+            return;
+        }
+
+        // 2. Se for Linux / MacOS
+        if (is_link($normalizedPath)) {
+            File::delete($normalizedPath);
+        } elseif (is_dir($normalizedPath)) {
+            File::deleteDirectory($normalizedPath);
         } else {
-            File::delete($path);
+            File::delete($normalizedPath);
         }
     }
 }

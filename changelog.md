@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+### Added
+- Theme preview
+- Plugin Tracker
+- Plugin Space
+- Helpers add_script/add_inline_script, add_style/add_inline_style - assets sem repetição
+- Comando migrate:fake - adiciona ao banco as migrations sem executar
+
+### Changed
+
+### Fixed
+- Comandos plugin:link e theme:link com o parâmetro --unlink agora funcionam no windows
+
 ## [1.13.0] 2026-08-25
 
 ### Added

@@ -20,11 +20,42 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\ProfileController as EditorProfileController;
 use App\Http\Controllers\Admin\UpdateController;
 use App\Http\Controllers\Admin\ContentTransferController;
+use App\Models\Theme;
+use Illuminate\Support\Facades\Artisan;
 
 // ========== ROTAS PÚBLICAS ==========
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+// Theme preview
+Route::post('/admin/themes/clear-preview', function () {
+    $previewThemeFolder = session('preview_theme');
+
+    if ($previewThemeFolder) {
+        // Verifica se esse tema NÃO é o tema oficial ativo (para não deslinkar o tema principal por engano)
+        $isActiveOfficial = Theme::where('folder_name', $previewThemeFolder)
+            ->where('is_active', true)
+            ->exists();
+
+        if (!$isActiveOfficial) {
+            try {
+                // REMOVE O LINK SIMBÓLICO
+                Artisan::call('theme:link', [
+                    'theme' => $previewThemeFolder,
+                    '--unlink' => true
+                ]);
+            } catch (\Throwable $e) {
+                \Log::error('O link do tema temporário não pôde ser removido', ["tema" => $previewThemeFolder, "erro" => $e]);
+            }
+        }
+
+        // Limpa a sessão
+        session()->forget('preview_theme');
+    }
+
+    return response()->json(['success' => true]);
+})->name('admin.themes.clear_preview');
 
 $middlewares = ['auth'];
 if (dbAvailable('settings') && setting('auth.verify_email', false)) {

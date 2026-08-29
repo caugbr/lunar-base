@@ -77,6 +77,17 @@
                         </form>
                     </div> --}}
                     <div class="theme-footer" style="display: flex; justify-content: space-between; align-items: center;">
+                        @if(!$theme->is_active)
+                        <div>
+                            <button type="button"
+                                    onclick="openThemePreview('{{ $theme->folder_name }}')"
+                                    class="admin-btn admin-btn-secondary"
+                                    title="Preview">
+                                <x-lucide-eye class="lucid-icon" />
+                            </button>
+                        </div>
+                        @endif
+
                         <div>
                             @if($theme->has_update)
                                 <form method="POST" action="{{ route('admin.themes.marketplace.install') }}" style="display: inline;">
@@ -119,7 +130,58 @@
     </div>
 </div>
 
+<!-- Modal de Tela Cheia com iframe -->
+<div id="preview-modal" style="display: none; position: fixed; inset: 0; z-index: 99999; background: rgba(0,0,0,0.8);">
+    <!-- Barra superior do Preview -->
+    <div style="background: #1e293b; color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center;">
+        <span id="preview-title" style="font-weight: 600;">Modo de Visualização</span>
+        <div style="display: flex; gap: 10px;">
+            <button type="button" onclick="closeThemePreview()" class="admin-btn admin-btn-secondary" style="background: #ef4444; border: none; color: white;">
+                <x-lucide-x class="lucid-icon" /> Fechar Visualização
+            </button>
+        </div>
+    </div>
+
+    <!-- Iframe que carrega o site -->
+    <iframe id="preview-iframe" src="" style="width: 100%; height: calc(100vh - 52px); border: none; background: white;"></iframe>
+</div>
+
 @once
+@push('scripts')
+<script>
+function openThemePreview(themeFolder) {
+    const modal = document.getElementById('preview-modal');
+    const iframe = document.getElementById('preview-iframe');
+    const title = document.getElementById('preview-title');
+
+    title.innerText = `Visualizando Tema: ${themeFolder}`;
+
+    // Abre o iframe passando o tema via GET (que seta a sessão)
+    iframe.src = `/?preview_theme=${themeFolder}`;
+    modal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+}
+
+function closeThemePreview() {
+    const modal = document.getElementById('preview-modal');
+    const iframe = document.getElementById('preview-iframe');
+
+    // 1. Limpa a sessão no backend via AJAX
+    fetch('{{ route("admin.themes.clear_preview") }}', {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Content-Type': 'application/json'
+        }
+    }).finally(() => {
+        // 2. Limpa o iframe e fecha o modal
+        iframe.src = 'about:blank';
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    });
+}
+</script>
+@endpush
 @push('styles')
 <style>
     /* --- Estilização da Galeria de Temas (Lunar Base UI) --- */

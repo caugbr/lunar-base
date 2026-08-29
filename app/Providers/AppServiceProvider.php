@@ -14,12 +14,16 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Http\Request;
 use Illuminate\Auth\Notifications\VerifyEmail; // Adicionado
 use Illuminate\Notifications\Messages\MailMessage; // Adicionado
+use App\Services\AssetManager;
 
 class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        //
+        // Registra como Singleton para manter a fila durante todo o ciclo de vida da requisição
+        $this->app->singleton(AssetManager::class, function () {
+            return new AssetManager();
+        });
     }
 
     public function boot(): void
@@ -76,5 +80,17 @@ class AppServiceProvider extends ServiceProvider
             }
 
         }
+
+        // Diretivas Blade estilo WordPress
+        Blade::directive('headerAssets', function () {
+            return "<?php
+            echo app(\\App\Services\\AssetManager::class)->renderStyles();
+            echo app(\\App\Services\\AssetManager::class)->renderScripts(false);
+            ?>";
+        });
+
+        Blade::directive('footerAssets', function () {
+            return "<?php echo app(\\App\Services\\AssetManager::class)->renderScripts(true); ?>";
+        });
     }
 }
