@@ -1,5 +1,17 @@
 # Changelog
 
+## Unreleased
+
+## [1.15.0] 2026-08-29
+
+### Added
+- Toggle menu movido para o core, definido em Settings
+- Seletor do componente text-size configurável via Settings
+
+### Changed
+- Plugin Space virou MaximizeEditor e apenas adiciona o botão no TinyMCE
+- Componente Vlibras atualizado
+
 ## [1.14.0] 2026-08-29
 
 ### Added

@@ -108,6 +108,9 @@
     </div>
     @footerAssets
     @stack('scripts')
+    @if(setting('navigation.use_toggle_menu', false))
+    <script src="{{ asset('js/toggle-menu.js') }}"></script>
+    @endif
     <x-hook name="admin.after_all" :params="$path" desc="Final do elemento BODY na admin" />
 </body>
 </html>

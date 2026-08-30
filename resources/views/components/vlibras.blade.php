@@ -1,52 +1,55 @@
 @props([
-    'position' => 'R',   // Posições: 'R' (Direita), 'L' (Esquerda), 'TL', 'TR', 'BL', 'BR', 'T', 'B'
-    'avatar' => 'icaro', // Avatares: 'icaro' (masculino), 'hosana' (feminino), 'guga' ou 'random'
-    'opacity' => 1.0     // Opacidade do widget (de 0.0 a 1.0)
+    'avatar' => 'icaro',
+    'opacity' => 1.0
 ])
 
-@php
-if (str_starts_with(setting('reading.position'), 'left')) {
-    $position = 'L';
-}
-@endphp
-
-<!-- Container do botão flutuante e do widget do VLibras -->
-<div vw class="enabled">
-    <div vw-access-button class="active"></div>
-    <div vw-plugin-wrapper>
-        <div class="vw-plugin-top"></div>
-    </div>
-</div>
+<!-- O seu botão estilizado perfeitamente integrado à sua barra de acessibilidade -->
+<button type="button"
+        id="custom-vlibras-btn"
+        class="accessibility-btn"
+        title="Acessibilidade em Libras"
+        onclick="toggleVLibras()"
+        style="display: inline-flex; width:32px; height: 32px; justify-content: center; align-items: center; border-radius: 6px; border: 1px solid currentColor; background: transparent; cursor: pointer;">
+    <img style="width: 20px; height: 20px;" src="{{ asset('images/vlibras.png') }}" alt="Vlibras">
+</button>
 
 @push('scripts')
-<!-- Script de integração oficial do VLibras -->
 <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // Inicializa o widget com as propriedades recebidas do Laravel
-        new window.VLibras.Widget({
-            rootPath: 'https://vlibras.gov.br/app',
-            position: '{{ $position }}',
-            avatar: '{{ $avatar }}',
-            opacity: {{ (float) $opacity }}
-        });
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
     });
+
+    // Função que clica no botão oficial dentro do Shadow DOM
+    function toggleVLibras() {
+        const shadowHost = document.getElementById('vlibras-access-wrapper');
+        if (shadowHost && shadowHost.shadowRoot) {
+            const btn = shadowHost.shadowRoot.querySelector('button, [vw-access-button], .vw-access-button');
+            if (btn) {
+                btn.click();
+                return;
+            }
+        }
+
+        // Fallback para versões antigas
+        const fallbackBtn = document.querySelector('[vw-access-button]');
+        if (fallbackBtn) fallbackBtn.click();
+    }
 </script>
 @endpush
 
 @push('footer-styles')
 <style>
-    /* Garante que o botão fique acima de qualquer menu ou elemento flutuante do site */
-    [vw] {
-        z-index: 99999 !important;
+    /* Esconde o botão flutuante padrão do VLibras para usar apenas o da sua barra */
+    #vlibras-access-wrapper,
+    [vw-access-button] {
+        display: none !important;
     }
 
-    /* Pequeno refinamento estético de transição para o botão oficial */
-    .vw-access-button {
-        transition: transform 0.2s ease-in-out !important;
-    }
-    .vw-access-button:hover {
-        transform: scale(1.08) !important;
+    /* Mantém a janela do avatar visível quando o widget for aberto */
+    .vp-container,
+    [vw-plugin-wrapper] {
+        display: block !important;
     }
 </style>
 @endpush

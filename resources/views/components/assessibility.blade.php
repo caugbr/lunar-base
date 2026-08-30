@@ -5,6 +5,7 @@
     'positionClass' => setting('reading.position', 'right-middle'),
     'textSizeSteps' => setting('reading.text_size_steps', 2),
     'textSizeStepValue' => setting('reading.text_size_step_value', 4),
+    'textSizeSelecttor' => setting('reading.text_size_selector', '.post-content, .page-content'),
 ])
 
 @php
@@ -15,7 +16,7 @@
     <x-switch-theme />
     @endif
     @if($useTextSize)
-    <x-text-size :variation="$textSizeSteps" :step="$textSizeStepValue" />
+    <x-text-size :variation="$textSizeSteps" :step="$textSizeStepValue" :selector="$textSizeSelecttor" />
     @endif
     @if($useVlibras)
     <x-vlibras />

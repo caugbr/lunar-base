@@ -353,6 +353,15 @@ return [
                     'inactive' => 'Esconder',
                 ],
                 [
+                    'key' => 'use_toggle_menu',
+                    'type' => 'switch',
+                    'label' => 'Minimizar menu',
+                    'description' => 'Marque para adicionar um botão que esconde o menu.',
+                    'default' => false,
+                    'active' => 'Usar',
+                    'inactive' => 'Não usar',
+                ],
+                [
                     'type' => 'subtitle',
                     'icon' => 'lock-open',
                     'label' => 'Frontend'
@@ -658,6 +667,18 @@ return [
                     'default' => false,
                     'active' => 'Ativar',
                     'inactive' => 'Não ativar',
+                ],
+                [
+                    'key' => 'text_size_selector',
+                    'type' => 'text',
+                    'label' => 'Seletor CSS',
+                    'description' => 'Seletor que define que elementos terão seu texto aumentado.',
+                    'default' => '.post-content, .page-content',
+                    'depends_on' => [
+                        'field' => 'increase_text_size',
+                        'operator' => '===',
+                        'value' => true,
+                    ]
                 ],
                 [
                     'key' => 'text_size_steps',
