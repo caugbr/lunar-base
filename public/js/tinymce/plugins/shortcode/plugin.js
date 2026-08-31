@@ -1,8 +1,6 @@
 (function() {
     'use strict';
 
-    console.log("LOG: Plugin Shortcode Dinâmico carregado!");
-
     tinymce.PluginManager.add('shortcode', function(editor) {
 
         // Utilitário Vanilla para proteger caracteres especiais em atributos HTML

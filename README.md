@@ -9,7 +9,8 @@ O **Lunar Base** é um Starter Kit híbrido para Laravel 12, projetado com carac
   <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License">
 </p>
 
-
+## Addons
+O Lunar Base trabalha com o conceito de temas e plugins. Esse material está em um repositório separado,  que serve de base para baixar e atualizar através da própria interface. Veja no repositório: https://github.com/caugbr/lunar-base-addons.
 
 ## Instalação
 

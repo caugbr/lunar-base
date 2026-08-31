@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+## [1.16.0] 2026-08-30
+
+### Added
+- Componente x-plugin-dependencies mostra no help pacotes a serem instalados para o plugin
+
+### Changed
+- Plugin Tracker mais completo
+- README inclui uma citação ao repositório de temas e plugins
+
 ## [1.15.0] 2026-08-29
 
 ### Added
