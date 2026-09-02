@@ -29,9 +29,11 @@
     </div>
 
     <div class="help-footer">
-        <p>
+        <div>
             <x-lucide-info class="lucid-icon" />
-            Clique em <strong>Novo Usuário</strong> no topo para cadastrar um novo membro na equipe.
-        </p>
+            <div>
+                Clique em <strong>Novo Usuário</strong> no topo para cadastrar um novo membro na equipe.
+            </div>
+        </div>
     </div>
 </div>

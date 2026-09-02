@@ -25,9 +25,11 @@
     </div>
 
     <div class="help-footer">
-        <p>
+        <div>
             <x-lucide-info class="lucid-icon" />
-            Clique em <strong>Atualizar</strong> para aplicar as novas configurações ao termo e a todos os posts vinculados a ele.
-        </p>
+            <div>
+                Clique em <strong>Atualizar</strong> para aplicar as novas configurações ao termo e a todos os posts vinculados a ele.
+            </div>
+        </div>
     </div>
 </div>

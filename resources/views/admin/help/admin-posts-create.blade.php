@@ -40,9 +40,11 @@
     </div>
 
     <div class="help-footer">
-        <p>
+        <div>
             <x-lucide-info class="lucid-icon" />
-            Para salvar sem publicar imediatamente, altere o status para <strong>Rascunho</strong> antes de clicar em Salvar.
-        </p>
+            <div>
+                Para salvar sem publicar imediatamente, altere o status para <strong>Rascunho</strong> antes de clicar em Salvar.
+            </div>
+        </div>
     </div>
 </div>

@@ -25,9 +25,11 @@
     </div>
 
     <div class="help-footer">
-        <p>
+        <div>
             <x-lucide-info class="lucid-icon" />
-            Clique em <strong>Atualizar</strong> para aplicar as novas permissões ou dados.
-        </p>
+            <div>
+                Clique em <strong>Atualizar</strong> para aplicar as novas permissões ou dados.
+            </div>
+        </div>
     </div>
 </div>

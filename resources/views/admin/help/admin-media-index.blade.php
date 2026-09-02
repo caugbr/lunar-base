@@ -37,9 +37,11 @@
     </div>
 
     <div class="help-footer">
-        <p>
+        <div>
             <x-lucide-info class="lucid-icon" />
-            Utilize imagens no formato <strong>WebP</strong> ou comprimidas para garantir que as páginas do seu site carreguem de forma ultrarrápida.
-        </p>
+            <div>
+                Utilize imagens no formato <strong>WebP</strong> ou comprimidas para garantir que as páginas do seu site carreguem de forma ultrarrápida.
+            </div>
+        </div>
     </div>
 </div>

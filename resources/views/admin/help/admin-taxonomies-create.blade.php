@@ -29,9 +29,11 @@
     </div>
 
     <div class="help-footer">
-        <p>
+        <div>
             <x-lucide-info class="lucid-icon" />
-            Após salvar a taxonomia, você poderá começar a cadastrar os termos dentro dela.
-        </p>
+            <div>
+                Após salvar a taxonomia, você poderá começar a cadastrar os termos dentro dela.
+            </div>
+        </div>
     </div>
 </div>

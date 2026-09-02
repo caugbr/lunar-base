@@ -29,9 +29,11 @@
     </div>
 
     <div class="help-footer">
-        <p>
+        <div>
             <x-lucide-info class="lucid-icon" />
-            Clique em <strong>Novo Termo</strong> para criar um novo item de classificação.
-        </p>
+            <div>
+                Clique em <strong>Novo Termo</strong> para criar um novo item de classificação.
+            </div>
+        </div>
     </div>
 </div>

@@ -33,9 +33,11 @@
     </div>
 
     <div class="help-footer">
-        <p>
+        <div>
             <x-lucide-info class="lucid-icon" />
-            Clique em <strong>Nova Taxonomia</strong> para criar uma nova forma de classificar posts ou páginas.
-        </p>
+            <div>
+                Clique em <strong>Nova Taxonomia</strong> para criar uma nova forma de classificar posts ou páginas.
+            </div>
+        </div>
     </div>
 </div>

@@ -33,9 +33,11 @@
     </div>
 
     <div class="help-footer">
-        <p>
+        <div>
             <x-lucide-info class="lucid-icon" />
-            Após instalar um plugin, volte para a tela de <strong>Plugins Instalados</strong> para ativá-lo e configurá-lo.
-        </p>
+            <div>
+                Após instalar um plugin, volte para a tela de <strong>Plugins Instalados</strong> para ativá-lo e configurá-lo.
+            </div>
+        </div>
     </div>
 </div>

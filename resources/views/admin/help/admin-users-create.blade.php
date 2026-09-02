@@ -25,9 +25,11 @@
     </div>
 
     <div class="help-footer">
-        <p>
+        <div>
             <x-lucide-info class="lucid-icon" />
-            Clique em <strong>Salvar</strong> para criar o usuário e liberar o acesso imediatamente.
-        </p>
+            <div>
+                Clique em <strong>Salvar</strong> para criar o usuário e liberar o acesso imediatamente.
+            </div>
+        </div>
     </div>
 </div>

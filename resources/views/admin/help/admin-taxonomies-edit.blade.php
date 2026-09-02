@@ -25,9 +25,11 @@
     </div>
 
     <div class="help-footer">
-        <p>
+        <div>
             <x-lucide-info class="lucid-icon" />
-            Clique em <strong>Atualizar</strong> para persistir as alterações desta classificação.
-        </p>
+            <div>
+                Clique em <strong>Atualizar</strong> para persistir as alterações desta classificação.
+            </div>
+        </div>
     </div>
 </div>

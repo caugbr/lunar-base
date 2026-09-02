@@ -35,7 +35,8 @@
     <button type="button"
         onclick="window.dispatchEvent(new CustomEvent('modal-open', { detail: { id: '{{ $helpView }}' } }))"
         class="admin-btn admin-btn-secondary"
-        title="Ajuda da interface">
+        title="Ajuda da interface"
+        disabled>
         <x-lucide-circle-question-mark class="lucid-icon" />
     </button>
 </div>
@@ -49,6 +50,10 @@
                 const header = document.querySelector('.admin-header');
                 header.classList.toggle('show-help');
             });
+        }
+        const helpButton = document.querySelector('button[title="Ajuda da interface"]');
+        if (helpButton) {
+            helpButton.disabled = false;
         }
     });
 </script>

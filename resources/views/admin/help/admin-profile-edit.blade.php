@@ -25,9 +25,11 @@
     </div>
 
     <div class="help-footer">
-        <p>
+        <div>
             <x-lucide-info class="lucid-icon" />
-            Clique em <strong>Salvar alterações</strong> para atualizar sua conta com segurança.
-        </p>
+            <div>
+                Clique em <strong>Salvar alterações</strong> para atualizar sua conta com segurança.
+            </div>
+        </div>
     </div>
 </div>

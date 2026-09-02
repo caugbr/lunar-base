@@ -34,9 +34,11 @@
     </div>
 
     <div class="help-footer">
-        <p>
+        <div>
             <x-lucide-info class="lucid-icon" />
-            Clique no botão <strong>Nova Página</strong> no canto superior direito para criar uma nova publicação.
-        </p>
+            <div>
+                Clique no botão <strong>Nova Página</strong> no canto superior direito para criar uma nova publicação.
+            </div>
+        </div>
     </div>
 </div>

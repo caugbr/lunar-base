@@ -33,9 +33,11 @@
     </div>
 
     <div class="help-footer">
-        <p>
+        <div>
             <x-lucide-info class="lucid-icon" />
-            Após instalar um novo tema, retorne à tela de <strong>Temas Instalados</strong> para testar a prévia ou ativá-lo no site.
-        </p>
+            <div>
+                Após instalar um novo tema, retorne à tela de <strong>Temas Instalados</strong> para testar a prévia ou ativá-lo no site.
+            </div>
+        </div>
     </div>
 </div>

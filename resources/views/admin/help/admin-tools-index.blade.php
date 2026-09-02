@@ -21,9 +21,11 @@
     </div>
 
     <div class="help-footer">
-        <p>
+        <div>
             <x-lucide-info class="lucid-icon" />
-            Selecione a ferramenta desejada clicando no botão do card correspondente.
-        </p>
+            <div>
+                Selecione a ferramenta desejada clicando no botão do card correspondente.
+            </div>
+        </div>
     </div>
 </div>

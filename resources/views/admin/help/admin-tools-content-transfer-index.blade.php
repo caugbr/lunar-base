@@ -29,9 +29,11 @@
     </div>
 
     <div class="help-footer">
-        <p>
+        <div>
             <x-lucide-alert-triangle class="lucid-icon" style="color: #f59e0b;" />
-            Recomenda-se realizar um backup prévio do banco de dados antes de executar importações em massa em ambiente de produção.
-        </p>
+            <div>
+                Recomenda-se realizar um backup prévio do banco de dados antes de executar importações em massa em ambiente de produção.
+            </div>
+        </div>
     </div>
 </div>

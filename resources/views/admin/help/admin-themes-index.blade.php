@@ -33,9 +33,11 @@
     </div>
 
     <div class="help-footer">
-        <p>
+        <div>
             <x-lucide-info class="lucid-icon" />
-            Clique em <strong>Instalar tema</strong> no topo para explorar novos modelos e layouts no catálogo remoto.
-        </p>
+            <div>
+                Clique em <strong>Instalar tema</strong> no topo para explorar novos modelos e layouts no catálogo remoto.
+            </div>
+        </div>
     </div>
 </div>

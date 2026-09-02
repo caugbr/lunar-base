@@ -33,9 +33,11 @@
     </div>
 
     <div class="help-footer">
-        <p>
+        <div>
             <x-lucide-info class="lucid-icon" />
-            Clique em <strong>Novo Post</strong> no topo da página para iniciar a redação de um novo artigo.
-        </p>
+            <div>
+                Clique em <strong>Novo Post</strong> no topo da página para iniciar a redação de um novo artigo.
+            </div>
+        </div>
     </div>
 </div>

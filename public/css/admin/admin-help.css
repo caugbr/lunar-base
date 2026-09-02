@@ -65,8 +65,8 @@
     color: #4b5563;
 }
 
-.help-content .help-footer p {
+.help-content .help-footer > div {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 10px;
 }

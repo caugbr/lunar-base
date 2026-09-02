@@ -33,9 +33,11 @@
     </div>
 
     <div class="help-footer">
-        <p>
+        <div>
             <x-lucide-info class="lucid-icon" />
-            Clique em <strong>Salvar</strong> para disponibilizar o termo imediatamente nos formulários de criação de posts e páginas.
-        </p>
+            <div>
+                Clique em <strong>Salvar</strong> para disponibilizar o termo imediatamente nos formulários de criação de posts e páginas.
+            </div>
+        </div>
     </div>
 </div>

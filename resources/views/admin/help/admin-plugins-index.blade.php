@@ -37,9 +37,11 @@
     </div>
 
     <div class="help-footer">
-        <p>
+        <div>
             <x-lucide-info class="lucid-icon" />
-            Clique em <strong>Instalar plugin</strong> no topo para explorar novos módulos disponíveis no repositório.
-        </p>
+            <div>
+                Clique em <strong>Instalar plugin</strong> no topo para explorar novos módulos disponíveis no repositório.
+            </div>
+        </div>
     </div>
 </div>

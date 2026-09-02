@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## [1.17.1] 2026-09-02
+
+## Added
+- Help para as refrências na admin
+
+## Fixed
+- Ajuste no JS e no CSS das views de help
+
 ## [1.17.0] 2026-09-01
 
 ### Added

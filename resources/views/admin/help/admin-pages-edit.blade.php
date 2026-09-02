@@ -37,9 +37,11 @@
     </div>
 
     <div class="help-footer">
-        <p>
+        <div>
             <x-lucide-info class="lucid-icon" />
-            Clique em <strong>Atualizar</strong> para gravar suas alterações ou use o botão <strong>Visitar</strong> no topo para ver como ficou no ar.
-        </p>
+            <div>
+                Clique em <strong>Atualizar</strong> para gravar suas alterações ou use o botão <strong>Visitar</strong> no topo para ver como ficou no ar.
+            </div>
+        </div>
     </div>
 </div>

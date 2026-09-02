@@ -33,9 +33,11 @@
     </div>
 
     <div class="help-footer">
-        <p>
+        <div>
             <x-lucide-info class="lucid-icon" />
-            Lembre-se de clicar em <strong>Salvar</strong> para aplicar e persistir suas alterações.
-        </p>
+            <div>
+                Lembre-se de clicar em <strong>Salvar</strong> para aplicar e persistir suas alterações.
+            </div>
+        </div>
     </div>
 </div>

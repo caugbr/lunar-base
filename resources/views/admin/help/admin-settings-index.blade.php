@@ -41,9 +41,11 @@
     </div>
 
     <div class="help-footer">
-        <p>
+        <div>
             <x-lucide-info class="lucid-icon" />
-            Após realizar qualquer modificação, desça até o final da página e clique em <strong>Salvar Configurações</strong> para aplicar as novas regras.
-        </p>
+            <div>
+                Após realizar qualquer modificação, desça até o final da página e clique em <strong>Salvar Configurações</strong> para aplicar as novas regras.
+            </div>
+        </div>
     </div>
 </div>
