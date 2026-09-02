@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## [1.17.0] 2026-09-01
+
 ### Added
 - Várias páginas de ajuda adicionadas na admin
 - Plugin GTranslate
