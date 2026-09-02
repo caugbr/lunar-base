@@ -233,8 +233,6 @@
 @endpush
 
 @push('scripts')
-{{-- Alpine CDN --}}
-<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <script src="{{ asset('js/tinymce/tinymce.min.js') }}"></script>
 <script src="{{ asset('js/page-media.js') }}"></script>
 <script>

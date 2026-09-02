@@ -88,16 +88,16 @@
     </div>
 
     {{-- Modal de Seleção (Popup) - 💡 Removido o display:none em linha --}}
-    <div class="modal-overlay">
-        <div class="modal-backdrop"></div>
+    <div class="icon-modal-overlay">
+        <div class="icon-modal-backdrop"></div>
 
-        <div class="modal-box lg" style="max-height: 80vh; display: flex; flex-direction: column;">
-            <div class="modal-header">
+        <div class="icon-modal-box lg" style="max-height: 80vh; display: flex; flex-direction: column;">
+            <div class="icon-modal-header">
                 <h3>Selecionar Ícone Lucide</h3>
-                <button type="button" class="modal-close" aria-label="Fechar">&times;</button>
+                <button type="button" class="icon-modal-close" aria-label="Fechar">&times;</button>
             </div>
 
-            <div class="modal-body" style="overflow: hidden; display: flex; flex-direction: column; flex: 1;">
+            <div class="icon-modal-body" style="overflow: hidden; display: flex; flex-direction: column; flex: 1;">
                 <div class="form-group" style="margin-bottom: 1.5rem; flex-shrink: 0;">
                     <input type="text"
                            class="form-input search-input"
@@ -158,7 +158,7 @@
     }
 
     /* --- ESTILOS DO MODAL / POPUP COM TRANSIÇÃO --- */
-    .modal-overlay {
+    .icon-modal-overlay {
         position: fixed;
         top: 0;
         left: 0;
@@ -176,12 +176,12 @@
     }
 
     /* 💡 ESTADO ABERTO (Transição ativada) */
-    .modal-overlay.is-open {
+    .icon-modal-overlay.is-open {
         opacity: 1;
         visibility: visible;
     }
 
-    .modal-backdrop {
+    .icon-modal-backdrop {
         position: absolute;
         top: 0;
         left: 0;
@@ -191,7 +191,7 @@
         backdrop-filter: blur(2px);
     }
 
-    .modal-box {
+    .icon-modal-box {
         position: relative;
         background: #ffffff;
         border-radius: 8px;
@@ -209,15 +209,15 @@
     }
 
     /* 💡 ESCALA/OPACIDADE QUANDO ABERTO */
-    .modal-overlay.is-open .modal-box {
+    .icon-modal-overlay.is-open .icon-modal-box {
         transform: scale(1);
         opacity: 1;
     }
 
-    .modal-box.lg {
+    .icon-modal-box.lg {
         max-width: 800px;
     }
-    .modal-header {
+    .icon-modal-header {
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -225,13 +225,13 @@
         border-bottom: 1px solid #e5e7eb;
         background-color: #ffffff;
     }
-    .modal-header h3 {
+    .icon-modal-header h3 {
         margin: 0;
         font-size: 1.125rem;
         font-weight: 600;
         color: #111827;
     }
-    .modal-close {
+    .icon-modal-close {
         background: transparent;
         border: none;
         font-size: 1.5rem;
@@ -241,10 +241,10 @@
         padding: 0.25rem;
         line-height: 1;
     }
-    .modal-close:hover {
+    .icon-modal-close:hover {
         color: #374151;
     }
-    .modal-body {
+    .icon-modal-body {
         padding: 1.5rem;
         background-color: #ffffff;
     }
@@ -319,9 +319,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const input = wrapper.querySelector('input[type="text"]');
         const preview = wrapper.querySelector('.icon-preview-box');
         const chooseBtn = wrapper.querySelector('.choose-btn');
-        const modal = wrapper.querySelector('.modal-overlay');
-        const backdrop = wrapper.querySelector('.modal-backdrop');
-        const closeBtn = wrapper.querySelector('.modal-close');
+        const modal = wrapper.querySelector('.icon-modal-overlay');
+        const backdrop = wrapper.querySelector('.icon-modal-backdrop');
+        const closeBtn = wrapper.querySelector('.icon-modal-close');
         const searchInput = wrapper.querySelector('.search-input');
         const gridItems = wrapper.querySelectorAll('.icon-grid-item');
 

@@ -58,7 +58,7 @@
 </div>
 
 @once
-@push('styles')
+{{-- @push('styles') --}}
 <style>
     [x-cloak] { display: none !important; }
 
@@ -152,11 +152,9 @@
         background: #f9fafb;
     }
 </style>
-@endpush
+{{-- @endpush --}}
 
 @push('scripts')
-{{-- Alpine CDN --}}
-<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <script>
 function modalComponent(id) {
     return {

@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+### Added
+- Várias páginas de ajuda adicionadas na admin
+- Plugin GTranslate
+- Config site.loginFooterText - para personalizar o texto na tela de login
+
+### Changed
+- Alpine agora carrega uma única vez no head da admin e foi removido de outros locais
+
+### Fixed
+- Icon selector não usa mais classes conflitantes com o modal
+- Modal agora não usa mais @push('styles')
+
 ## [1.16.0] 2026-08-30
 
 ### Added

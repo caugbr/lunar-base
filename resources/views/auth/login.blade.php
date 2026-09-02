@@ -57,7 +57,10 @@
         </form>
 
         <div class="info">
-            Acesso restrito
+            @php
+                $footerMsg = config('site.loginFooterText', 'Acesso restrito');
+            @endphp
+            {{ $footerMsg }}
         </div>
     </div>
     <script>

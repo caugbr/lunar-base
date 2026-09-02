@@ -91,5 +91,6 @@ return [
             "label" => "Bem vindo",
             "slug" => "bem-vindo"
         ],
-    ]
+    ],
+    "loginFooterText" => "Acesso restrito"
 ];
