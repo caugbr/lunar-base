@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guia de Configuração - Lunar Base v1.12.0</title>
+    <title>Guia de Configuração - Lunar Base v1.17.1</title>
     <link rel="stylesheet" href="tutorials.css">
 </head>
 
@@ -12,7 +12,7 @@
 
     <header>
         <h1>Guia de Configuração</h1>
-        <p data-subtitle>Lunar Base v1.12.0 - Referência completa dos arquivos em /config</p>
+        <p data-subtitle>Lunar Base v1.17.1 - Referência completa dos arquivos em /config</p>
     </header>
 
     <div class="container">
@@ -27,6 +27,7 @@
                 <li><a href="#default-users">defaultUsers.php (Usuários Padrão)</a></li>
                 <li><a href="#image-sizes">imageSizes.php (Tamanhos de Imagem)</a></li>
                 <li><a href="#page-templates">pageTemplates.php (Templates de Páginas)</a></li>
+                <li><a href="#plugin-settings">pluginSettings.php (Sobrescrita de Plugins)</a></li>
                 <li><a href="#post-templates">postTemplates.php (Templates de Posts)</a></li>
                 <li><a href="#rbac">rolesPermissions.php (Permissões e Perfis)</a></li>
                 <li><a href="#settings">settings.php (Configurações do Sistema)</a></li>
@@ -73,6 +74,11 @@
                     <tr>
                         <td><code>pageTemplates.php</code></td>
                         <td>Baixa (ao criar novos templates)</td>
+                        <td>Baixo</td>
+                    </tr>
+                    <tr>
+                        <td><code>pluginSettings.php</code></td>
+                        <td>Média (ao customizar parâmetros de plugins)</td>
                         <td>Baixo</td>
                     </tr>
                     <tr>
@@ -445,6 +451,57 @@ users, user-pen, user-key, settings, list-checks, puzzle, palette</code></pre>
     &lt;/div&gt;
 &lt;/article&gt;
 @endsection</code></pre>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="plugin-settings">
+            <h2>pluginSettings.php (Sobrescrita de Plugins)</h2>
+
+            <div class="intro">
+                <p>O <code>config/pluginSettings.php</code> é o arquivo dedicado para o desenvolvedor ou administrador
+                    personalizar os parâmetros operacionais dos plugins sem alterar o código-fonte original dentro da pasta <code>/plugins</code>.</p>
+            </div>
+
+            <h3>Por que utilizar este arquivo?</h3>
+            <p>Quando um plugin é atualizado via Marketplace (ou sobrescrito pelo Git), todos os arquivos internos da pasta <code>/plugins/{NomeDoPlugin}/</code> são substituídos. O <code>pluginSettings.php</code> fica localizado com segurança na pasta <code>/config</code> do site, garantindo que <strong>suas customizações nunca sejam perdidas durante atualizações de versão</strong>.</p>
+
+            <h3>Estrutura e Sobrescrita</h3>
+            <p>Cada plugin possui um bloco nomeado com o mesmo nome de sua pasta. Os parâmetros definidos sobrescrevem os valores padrões declarados no manifesto <code>plugin.json</code>:</p>
+
+            <div class="example-box">
+                <h4>Exemplo de <code>config/pluginSettings.php</code></h4>
+                <pre><code class="code-label">PHP</code>&lt;?php
+
+return [
+    // Customizações do plugin Tracker
+    'Tracker' => [
+        'dashboardDays'     => 60, // Aumenta o período padrão do dashboard para 60 dias
+        'topPagesLimit'     => 15, // Exibe 15 páginas mais acessadas em vez de 10
+        'topReferrersLimit' => 10,
+        'menuAfterItem'     => 'Temas',
+    ],
+
+    // Customizações do plugin GTranslate
+    'GTranslate' => [
+        'defaultLanguage'   => 'pt',
+        'includedLanguages' => 'pt,en,es,fr',
+        'displayMode'       => 'flagsAndDropdown',
+    ],
+
+    // Customizações do Gateway Asaas
+    'Asaas' => [
+        'environment' => env('ASAAS_ENV', 'production'),
+        'apiKey'      => env('ASAAS_API_KEY'),
+    ],
+];</code></pre>
+            </div>
+
+            <h3>Como consultar os parâmetros configuráveis de cada plugin</h3>
+            <p>Cada plugin documenta suas variáveis aceitas no modal de ajuda em <strong>Admin → Plugins</strong> (ícone de ajuda <x-lucide-help-circle />), através do componente de visualização <code>&lt;x-configurable-plugin-values /&gt;</code>.</p>
+
+            <div class="tip">
+                <strong>Leitura no código do plugin:</strong> Os plugins acessam esses valores utilizando o helper <code>config('pluginSettings.NomeDoPlugin.chave', $fallback)</code>.
             </div>
         </section>
 
@@ -1122,8 +1179,8 @@ php artisan config:clear</code></pre>
         </section>
 
         <footer>
-            <p><strong>Guia de Configuração - Lunar Base v1.12.0</strong></p>
-            <p data-footer-info>Última atualização: Agosto/2026 | &copy; 2026 Cau Guanabara</p>
+            <p><strong>Guia de Configuração - Lunar Base v1.17.1</strong></p>
+            <p data-footer-info>Última atualização: Setembro/2026 | &copy; 2026 Cau Guanabara</p>
         </footer>
 
     </div>

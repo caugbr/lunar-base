@@ -2,12 +2,19 @@
 
 ## Unreleased
 
+### Added
+- Plugin Tracker - subitens no menu
+- Plugin Tracker - adicionada ajuda contextual
+
+### Changed
+- Ajuda contextual agora cobre os plugins também
+
 ## [1.17.1] 2026-09-02
 
-## Added
+### Added
 - Help para as refrências na admin
 
-## Fixed
+### Fixed
 - Ajuste no JS e no CSS das views de help
 
 ## [1.17.0] 2026-09-01

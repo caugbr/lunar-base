@@ -125,7 +125,7 @@ window.addEventListener('media:updated', (e) => {
 });
 
 window.addEventListener('media:inserted', (e) => {
-    console.log('inserted', e.detail.media)
+    // console.log('inserted', e.detail.media)
     let shouldClose = false;
     if (e.detail.source === 'editor') {
         const media = e.detail.media;

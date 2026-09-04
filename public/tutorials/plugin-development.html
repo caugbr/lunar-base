@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manual de Desenvolvimento de Plugins - Lunar Base v1.12.0</title>
+    <title>Manual de Desenvolvimento de Plugins - Lunar Base v1.17.1</title>
     <link rel="stylesheet" href="tutorials.css">
 </head>
 <body>
     <header>
         <h1>Desenvolvimento de Plugins</h1>
-        <p data-subtitle>Lunar Base v1.12.0 - Estrutura Base e Ciclo de Vida do Provedor</p>
+        <p data-subtitle>Lunar Base v1.17.1 - Guia de Arquitetura, Ciclo de Vida e Extensibilidade Modular</p>
     </header>
 
     <div class="container">
@@ -20,180 +20,302 @@
                 <li><a href="#intro">Introdução</a></li>
                 <li><a href="#comando">Comando de Geração Rápida</a></li>
                 <li><a href="#estrutura">Estrutura de Pastas</a></li>
-                <li><a href="#manifesto">O Manifesto (plugin.json)</a></li>
+                <li><a href="#manifesto">Manifesto (plugin.json) e Configurações</a></li>
+                <li><a href="#changelog">Arquivo de Mudanças (CHANGELOG.md)</a></li>
+                <li><a href="#help-view">Ajuda do Plugin e Componentes Auxiliares</a></li>
+                <li><a href="#help-contextual">Ajuda Contextual para Telas da Admin</a></li>
+                <li><a href="#publication-types">Registro de Tipos de Publicação (PublicationTypes)</a></li>
                 <li><a href="#provedor">Ciclo de Vida (ServiceProvider)</a></li>
                 <li><a href="#db">Banco de Dados (Migrations & Models)</a></li>
                 <li><a href="#boas-praticas">Boas Práticas de Organização</a></li>
             </ul>
         </nav>
 
+        <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="intro">
             <h2>Introdução</h2>
             <div class="intro">
-                <p>O sistema de plugins do <span class="app-name">Lunar Base</span> permite estender as funcionalidades do sistema de forma modular. Cada plugin funciona como uma aplicação isolada, possuindo suas próprias rotas, controladores, visões, modelos e migrações.</p>
+                <p>O sistema de plugins do <span class="app-name">Lunar Base</span> permite estender as funcionalidades do sistema de forma totalmente modular e desacoplada. Cada plugin funciona como um mini-ecossistema independente, contendo suas próprias rotas, controladores, visões, modelos, migrações de banco, documentação e pontos de configuração.</p>
             </div>
         </section>
 
+        <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="comando">
             <h2>Comando de Geração Rápida</h2>
-            <p>O <span class="app-name">Lunar Base</span> oferece um comando Artisan que gera a estrutura completa de um plugin automaticamente, incluindo diretórios, arquivos base, manifesto e link simbólico para assets públicos.</p>
+            <p>O <span class="app-name">Lunar Base</span> oferece um comando Artisan que gera a estrutura completa de um plugin automaticamente:</p>
 
-            <h4>Uso Básico:</h4>
             <pre><code class="code-label">BASH</code>php artisan plugin:create "NomeDoPlugin" "Descrição opcional do plugin"</pre>
 
             <h4>Opções Interativas:</h4>
-            <p>Durante a execução, o comando fará três perguntas interativas:</p>
+            <p>Durante a execução, o comando perguntará se o módulo requer:</p>
             <ul class="steps">
-                <li><strong>Requer banco de dados?</strong> - Cria a pasta <code>Models/</code> e <code>database/migrations/</code>, além de gerar um modelo e uma migration em branco.</li>
-                <li><strong>Requer Controller e Rotas?</strong> - Cria a pasta <code>Http/Controllers/</code>, gera um controller base e o arquivo <code>routes.php</code> com middleware <code>web</code> e <code>auth</code>.</li>
-                <li><strong>Requer Views?</strong> - Cria a pasta <code>resources/views/</code> e <code>resources/help-views/</code>, gerando uma view de exemplo e uma view de ajuda para o painel administrativo.</li>
+                <li><strong>Banco de dados?</strong> - Cria as pastas <code>Models/</code> e <code>database/migrations/</code> com arquivos de exemplo.</li>
+                <li><strong>Controller e Rotas?</strong> - Cria <code>Http/Controllers/</code> e o arquivo <code>routes.php</code>.</li>
+                <li><strong>Views?</strong> - Cria <code>resources/views/</code> e a pasta obrigatória <code>resources/help-views/</code> com o arquivo <code>help.blade.php</code>.</li>
             </ul>
 
-            <h4>O que é gerado automaticamente:</h4>
-            <pre><code>plugins/
-└── NomeDoPlugin/
-    ├── Http/Controllers/NomeDoPluginController.php  (se confirmado)
-    ├── Models/NomeDoPlugin.php                      (se confirmado)
-    ├── database/migrations/2026_..._create_nome_do_plugin_table.php  (se confirmado)
-    ├── resources/views/index.blade.php              (se confirmado)
-    ├── resources/help-views/help.blade.php          (sempre)
-    ├── resources/assets/css/                      (sempre)
-    ├── resources/assets/js/                       (sempre)
-    ├── plugin.json
-    ├── NomeDoPluginServiceProvider.php
-    └── routes.php                                   (se confirmado)</code></pre>
-
             <div class="tip">
-                <strong>Dica:</strong> O comando também cria automaticamente um link simbólico (ou junction no Windows) em <code>public/plugins/nome-do-plugin</code> apontando para <code>plugins/NomeDoPlugin/resources/assets</code>, permitindo que você referencie assets públicos sem configuração manual.
+                <strong>Assets Públicos:</strong> O comando cria automaticamente o link simbólico (ou junction no Windows) em <code>public/plugins/nome-do-plugin</code> apontando para <code>plugins/NomeDoPlugin/resources/assets</code>.
             </div>
         </section>
 
+        <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="estrutura">
             <h2>Estrutura de Pastas</h2>
-            <p>Os plugins residem na pasta <code>/plugins</code> na raiz do projeto. A estrutura padrão de um plugin chamado "MeuPlugin" é:</p>
+            <p>Os plugins residem na pasta <code>/plugins</code> na raiz do projeto:</p>
             <pre><code>plugins/
 └── MeuPlugin/
     ├── Http/
-    │   └── Controllers/
-    │       └── MeuController.php
+    │   ├── Controllers/
+    │   │   └── MeuPluginController.php
+    │   └── Middleware/
+    │       └── MeuMiddleware.php
     ├── Models/
-    │   └── MeuModel.php
+    │   └── MeuItem.php
     ├── database/
     │   └── migrations/
-    │       └── 2026_01_01_000000_create_meu_plugin_table.php
+    │       └── 2026_01_01_000000_create_meu_item_table.php
     ├── resources/
-    │   ├── views/
-    │   │   ├── admin/
-    │   │   └── public/
-    │   └── assets/
-    │       ├── css/
-    │       └── js/
-    ├── plugin.json
-    ├── MeuPluginServiceProvider.php
-    └── routes.php</code></pre>
+    │   ├── assets/
+    │   │   ├── css/
+    │   │   └── js/
+    │   ├── help-views/
+    │   │   └── help.blade.php              {{-- 💡 Obrigatório: Manual do plugin --}}
+    │   └── views/
+    │       ├── help/                       {{-- 💡 Ajuda contextual por rota da admin --}}
+    │       │   └── admin-meuplugin-index.blade.php
+    │       └── index.blade.php
+    ├── CHANGELOG.md                        {{-- 💡 Histórico de versões e novidades --}}
+    ├── plugin.json                         {{-- 💡 Manifesto e parâmetros configuráveis --}}
+    ├── MeuPluginServiceProvider.php        {{-- 💡 Provedor de inicialização --}}
+    └── routes.php                          {{-- 💡 Rotas web e administrativas --}}</code></pre>
         </section>
 
+        <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="manifesto">
-            <h2>O Manifesto (plugin.json)</h2>
-            <p>O arquivo <code>plugin.json</code> armazena os metadados necessários para que o painel do administrador reconheça o plugin:</p>
+            <h2>Manifesto (plugin.json) e Configurações</h2>
+            <p>O arquivo <code>plugin.json</code> armazena os metadados do plugin, os requisitos técnicos do sistema e as <strong>variáveis customizáveis</strong> que o usuário pode sobrescrever em <code>config/pluginSettings.php</code>:</p>
+
             <pre><code class="code-label">JSON</code>{
-    "name": "MeuPlugin",
-    "description": "Adiciona funcionalidades personalizadas ao sistema.",
-    "version": "1.0.0",
-    "provider": "Plugins\MeuPlugin\MeuPluginServiceProvider"
+    "name": "Tracker",
+    "description": "Estatísticas de acesso, visualizações de páginas e eventos.",
+    "version": "1.1.0",
+    "provider": "Plugins\\Tracker\\TrackerServiceProvider",
+    "requirements": {
+        "composer": {
+            "stevebauman/location": "^7.0"
+        },
+        "php": ">=8.1"
+    },
+    "configurable": {
+        "dashboardDays": {
+            "type": "integer",
+            "default": 30,
+            "description": "Quantidade de dias retroativos no Dashboard."
+        },
+        "topPagesLimit": {
+            "type": "integer",
+            "default": 10,
+            "description": "Limite de páginas exibidas no card."
+        }
+    }
 }</pre>
+
+            <h4>Como ler os valores no código PHP:</h4>
+            <p>No seu Controller ou ServiceProvider, utilize o helper <code>setting()</code> com fallback para as configurações:</p>
+            <pre><code class="code-label">PHP</code>$days = (int) setting('pluginSettings.Tracker.dashboardDays', 30);
+$limit = (int) setting('pluginSettings.Tracker.topPagesLimit', 10);</pre>
         </section>
 
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="changelog">
+            <h2>Arquivo de Mudanças (CHANGELOG.md)</h2>
+            <div class="intro">
+                <p>Todo plugin deve manter um arquivo <code>CHANGELOG.md</code> na raiz da sua pasta. Quando uma atualização fica disponível no Marketplace de Plugins, o sistema lê esse arquivo e renderiza um modal visual destacando as novidades, melhorias e correções da versão.</p>
+            </div>
+
+            <h4>Estrutura recomendada para o <code>CHANGELOG.md</code>:</h4>
+            <pre><code class="code-label">MARKDOWN</code># Changelog
+
+## [1.1.0] - 2026-08-30
+### Added
+- Novo relatório de picos de acesso por horário (00h às 23h).
+- Suporte a geolocalização via pacote stevebauman/location.
+
+### Changed
+- Refatoração dos gráficos para usar o componente x-chart.
+
+### Fixed
+- Correção de cálculo de visitantes únicos por IP diário.</pre>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="help-view">
+            <h2>Ajuda do Plugin e Componentes Auxiliares</h2>
+            <p>O arquivo <code>resources/help-views/help.blade.php</code> é <strong>obrigatório</strong>. Ele é exibido quando o administrador clica no ícone de interrogação (<x-lucide-help-circle />) na lista de plugins em <strong>Admin → Plugins</strong>.</p>
+
+            <p>Para orientar o usuário sobre requisitos e customizações sem escrever código manual, utilize os dois componentes globais do Core no final do arquivo:</p>
+
+            <pre><code class="code-label">BLADE</code>&lt;div class="plugin-help-content"&gt;
+    &lt;header&gt;
+        &lt;h3&gt;&lt;x-lucide-activity class="lucid-icon" /&gt; Tracker&lt;/h3&gt;
+        &lt;p&gt;Monitoramento de tráfego, visualizações e conversões do site.&lt;/p&gt;
+    &lt;/header&gt;
+
+    &lt;h4&gt;Como funciona&lt;/h4&gt;
+    &lt;p&gt;O plugin captura pageviews no front-end de forma anônima e sem cookies.&lt;/p&gt;
+
+    &lt;!-- 💡 Gera o bloco PHP de config/pluginSettings.php baseado no plugin.json --&gt;
+    &lt;x-configurable-plugin-values plugin="Tracker" /&gt;
+
+    &lt;!-- 💡 Checa se as dependências do Composer e PHP estão instaladas no vendor --&gt;
+    &lt;x-plugin-dependencies plugin="Tracker" /&gt;
+&lt;/div&gt;</pre>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="help-contextual">
+            <h2>Ajuda Contextual para Telas da Admin</h2>
+            <div class="intro">
+                <p>Se o seu plugin cria telas na área administrativa (ex: <code>admin.tracker.index</code>, <code>admin.tracker.hourly</code>), você pode adicionar ajuda contextual no botão de interrogação do cabeçalho da página.</p>
+            </div>
+
+            <h4>Como fazer:</h4>
+            <p>Basta criar uma view dentro da pasta <code>resources/views/help/</code> do plugin, com o nome da rota substituindo pontos por hífens:</p>
+            <ul>
+                <li>Rota: <code>admin.tracker.index</code> $\rightarrow$ Arquivo: <code>resources/views/help/admin-tracker-index.blade.php</code></li>
+                <li>Rota: <code>admin.tracker.hourly</code> $\rightarrow$ Arquivo: <code>resources/views/help/admin-tracker-hourly.blade.php</code></li>
+            </ul>
+
+            <pre><code class="code-label">BLADE</code>&lt;div class="help-content"&gt;
+    &lt;div class="help-header"&gt;
+        &lt;h3&gt;&lt;x-lucide-help-circle class="lucid-icon" /&gt; Acessos por Horário&lt;/h3&gt;
+        &lt;p&gt;Identifique os momentos de maior pico de audiência nas 24 horas do dia.&lt;/p&gt;
+    &lt;/div&gt;
+
+    &lt;div class="help-body"&gt;
+        &lt;ul class="help-list"&gt;
+            &lt;li&gt;&lt;strong&gt;Picos:&lt;/strong&gt; O card superior indica o horário com maior tráfego.&lt;/li&gt;
+        &lt;/ul&gt;
+    &lt;/div&gt;
+
+    &lt;div class="help-footer"&gt;
+        &lt;div&gt;
+            &lt;x-lucide-info class="lucid-icon" /&gt;
+            &lt;div&gt;Os horários utilizam o fuso horário configurado no servidor.&lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</pre>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="publication-types">
+            <h2>Registro de Tipos de Publicação (PublicationTypes)</h2>
+            <div class="intro">
+                <p>Se o seu plugin introduzir uma nova entidade de conteúdo gerenciável (como <strong>Cursos</strong>, <strong>Imóveis</strong>, <strong>Eventos</strong>), registre-a no <code>PublicationTypes</code> para integrá-la automaticamente às <strong>Taxonomias</strong> e ao módulo de <strong>Transferência de Conteúdo (Export/Import JSON)</strong>.</p>
+            </div>
+
+            <h4>Como Registrar no <code>boot()</code> do ServiceProvider:</h4>
+            <pre><code class="code-label">PHP</code>use App\Support\PublicationTypes;
+use Plugins\Caminho\Models\Course;
+
+public function boot(): void
+{
+    // Registra o tipo 'course' no sistema
+    PublicationTypes::register(
+        'course',
+        'Cursos',
+        Course::class,
+        ['classes', 'terms'] // Relacionamentos incluídos na exportação JSON
+    );
+}</pre>
+
+            <h4>Benefícios Automáticos:</h4>
+            <ul class="steps">
+                <li><strong>Taxonomias Dedicadas:</strong> Em <em>Admin → Taxonomias</em>, o tipo "Cursos" aparecerá como opção de checkbox para vincular categorias ou tags exclusivas para cursos.</li>
+                <li><strong>Exportação/Importação JSON:</strong> Em <em>Admin → Ferramentas → Transferência de Conteúdo</em>, o tipo aparecerá para ser exportado e importado entre servidores.</li>
+            </ul>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="provedor">
             <h2>Ciclo de Vida (ServiceProvider)</h2>
-            <p>A classe ServiceProvider é a porta de entrada do plugin no ciclo de inicialização do Laravel. Ela determina o que é registrado (bindings) e o que é carregado (assets, views, rotas) em cada requisição.</p>
-            <pre><code class="code-label">PHP</code><?php
+            <p>O ServiceProvider conecta todos os componentes do plugin ao ciclo de vida do Laravel:</p>
 
-namespace Plugins\MeuPlugin;
+            <pre><code class="code-label">PHP</code>namespace Plugins\Tracker;
 
 use Illuminate\Support\ServiceProvider;
+use App\Support\AdminMenu;
+use Plugins\Tracker\Http\Middleware\TrackPageViews;
 
-class MeuPluginServiceProvider extends ServiceProvider
+class TrackerServiceProvider extends ServiceProvider
 {
-    /**
-     * Registro de dependências na memória. Executado antes das views carregarem.
-     */
     public function register(): void
     {
+        // 1. Registra as rotas durante o register()
         $routesFile = __DIR__ . '/routes.php';
         if (file_exists($routesFile)) {
-            require $routesFile;
+            $this->loadRoutesFrom($routesFile);
         }
     }
 
-    /**
-     * Inicialização e carregamento de arquivos físicos.
-     */
     public function boot(): void
     {
-        // Carrega as migrations do plugin de forma automática
+        // 2. Carrega Migrations e Views com Namespace exclusivo
         $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
+        $this->loadViewsFrom(__DIR__ . '/resources/views', 'tracker');
 
-        // Carrega as views associando o namespace "meuplugin"
-        $this->loadViewsFrom(__DIR__ . '/resources/views', 'meuplugin');
+        // 3. Registra o Item na Sidebar da Administração
+        AdminMenu::add([
+            'label'      => 'Tráfego',
+            'icon'       => 'activity',
+            'route'      => 'admin.tracker.index',
+            'active'     => 'admin.tracker.*',
+            'permission' => 'view-dashboard',
+        ], 'Temas', 1);
+
+        // 4. Injeta Middleware no Grupo 'web'
+        $this->app['router']->pushMiddlewareToGroup('web', TrackPageViews::class);
     }
 }</pre>
         </section>
 
+        <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="db">
             <h2>Banco de Dados (Migrations & Models)</h2>
-            <p>Se o seu plugin requer tabelas no banco de dados, utilize migrations convencionais do Laravel localizadas dentro da pasta <code>database/migrations</code> do plugin.</p>
+            <p>As migrações do plugin são carregadas automaticamente via <code>$this->loadMigrationsFrom(...)</code> sem necessidade de movê-las para a pasta raiz do Laravel.</p>
 
-            <h4>Exemplo de Migration do Plugin:</h4>
-            <pre><code class="code-label">PHP</code><?php
+            <h4>Exemplo de Model com Trait HasMeta:</h4>
+            <p>Se a sua entidade precisar de armazenamento de campos dinâmicos em formato JSON, use a trait nativa <code>HasMeta</code>:</p>
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-
-return new class extends Migration {
-    public function up(): void
-    {
-        Schema::create('meu_plugin_items', function (Blueprint $table) {
-            $table->id();
-            $table->string('titulo');
-            $table->text('descricao')->nullable();
-            $table->timestamps();
-        });
-    }
-
-    public function down(): void
-    {
-        Schema::dropIfExists('meu_plugin_items');
-    }
-};</pre>
-
-            <h4>Exemplo de Model correspondente:</h4>
-            <pre><code class="code-label">PHP</code><?php
-
-namespace Plugins\MeuPlugin\Models;
+            <pre><code class="code-label">PHP</code>namespace Plugins\Tracker\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\HasMeta;
 
-class MeuModel extends Model
+class TrackerSettings extends Model
 {
-    protected $table = 'meu_plugin_items';
-    protected $fillable = ['titulo', 'descricao'];
+    use HasMeta;
+
+    protected $table = 'tracker_settings';
+    protected $fillable = ['name', 'meta'];
 }</pre>
         </section>
 
+        <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="boas-praticas">
             <h2>Boas Práticas de Organização</h2>
             <ul class="steps">
-                <li><strong>Nomenclatura:</strong> Use sempre PascalCase para pastas e namespaces (ex: <code>Plugins\MeuPlugin</code>).</li>
-                <li><strong>Namespaces de Views:</strong> Sempre carregue suas views com um identificador de namespace exclusivo (como <code>meuplugin</code>) no seu ServiceProvider para evitar colisões com outros módulos.</li>
-                <li><strong>Sanitização:</strong> Ao processar dados enviados por usuários no frontend, utilize funções de higienização do PHP (como <code>strip_tags</code>) para evitar falhas de segurança.</li>
+                <li><strong>Nomenclatura Única:</strong> Use PascalCase para pastas e namespaces (ex: <code>Plugins\Tracker</code>).</li>
+                <li><strong>Namespaces de Views:</strong> Sempre defina um namespace exclusivo e em minúsculas (ex: <code>'tracker'</code>) no <code>loadViewsFrom()</code> para evitar conflitos de templates.</li>
+                <li><strong>Isolamento de Assets:</strong> Injete estilos e scripts usando <code>add_script()</code> e <code>add_inline_script()</code> no `@footerAssets`, mantendo o código JS em arquivos estáticos separados.</li>
+                <li><strong>Checagem de Dependências:</strong> Use <code>class_exists()</code> para verificar pacotes opcionais antes de executar métodos que possam falhar caso o pacote não esteja no <code>vendor/</code>.</li>
             </ul>
         </section>
 
         <footer>
-            <p><strong>Manual de Desenvolvimento de Plugins - Lunar Base v1.12.0</strong></p>
-            <p data-footer-info>Última atualização: Agosto/2026 | &copy; 2026 Cau Guanabara</p>
+            <p><strong>Manual de Desenvolvimento de Plugins - Lunar Base v1.17.1</strong></p>
+            <p data-footer-info>Última atualização: Setembro/2026 | &copy; 2026 Cau Guanabara</p>
         </footer>
     </div>
 </body>

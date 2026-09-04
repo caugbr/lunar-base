@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Desenvolvimento de Temas - Lunar Base v1.12.0</title>
+    <title>Desenvolvimento de Temas - Lunar Base v1.17.1</title>
     <link rel="stylesheet" href="tutorials.css">
 </head>
 <body>
     <header>
         <h1>Desenvolvimento de Temas</h1>
-        <p data-subtitle>Lunar Base v1.12.0 - Estrutura de Arquivos e Sobrescrita de Views</p>
+        <p data-subtitle>Lunar Base v1.17.1 - Estrutura de Arquivos, Sobrescrita de Views e Assets</p>
     </header>
 
     <div class="container">
@@ -23,22 +23,24 @@
                 <li><a href="#manifesto">O Manifesto (theme.json)</a></li>
                 <li><a href="#overrides">Sobrescrita de Views (Overrides)</a></li>
                 <li><a href="#assets">Assets e Links Simbólicos</a></li>
+                <li><a href="#preview">Visualização Prévia (Theme Preview Nativo)</a></li>
                 <li><a href="#boas-praticas">Boas Práticas de Design</a></li>
             </ul>
         </nav>
 
+        <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="intro">
             <h2>Introdução</h2>
             <div class="intro">
-                <p>O sistema de temas do <span class="app-name">Lunar Base</span> permite transformar completamente a identidade visual do site público. Os temas herdam a lógica do core por padrão, mas dão total liberdade para que qualquer arquivo visual seja substituído de forma transparente.</p>
+                <p>O sistema de temas do <span class="app-name">Lunar Base</span> permite transformar completamente a identidade visual do site público. Os temas herdam a lógica e views do core por padrão, mas dão total liberdade para que qualquer template ou folha de estilo seja substituído de forma transparente.</p>
             </div>
         </section>
 
+        <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="comando">
             <h2>Comando de Geração Rápida</h2>
-            <p>O <span class="app-name">Lunar Base</span> oferece um comando Artisan que gera a estrutura base de um novo tema automaticamente, incluindo diretórios, manifesto, template de exemplo e link simbólico para assets públicos.</p>
+            <p>O <span class="app-name">Lunar Base</span> oferece um comando Artisan que gera a estrutura base de um novo tema automaticamente, incluindo diretórios, manifesto, templates e link simbólico para assets públicos:</p>
 
-            <h4>Uso Básico:</h4>
             <pre><code class="code-label">BASH</code>php artisan theme:create "Nome do Tema" "Descrição opcional do tema"</pre>
 
             <h4>O que é gerado automaticamente:</h4>
@@ -47,30 +49,25 @@
     ├── resources/
     │   ├── views/
     │   │   └── public/
-    │   │       └── ...
+    │   │       └── ... (Clona toda a estrutura de views públicas)
     │   └── assets/
     │       ├── css/
     │       │   └── public/
-    │       │       └── ...
+    │       │       └── ... (Clona toda a estrutura de CSS público)
     │       ├── js/
     │       └── images/
-    │           └── salve aqui a imagem screenshot.png  (referenciada no manifesto)
-    ├── theme.json
-    └── resources/views/public/templates/default.blade.php</code></pre>
+    │           └── screenshot.png (Imagem de capa do tema)
+    └── theme.json</code></pre>
 
             <p>O comando cria automaticamente:</p>
             <ul class="steps">
                 <li>O arquivo <code>theme.json</code> com os metadados do tema (nome, descrição, versão, autor e screenshot).</li>
-                <li>Todas as views originais do <span class="app-name">Lunar Base</span> são copiadas para <code>/resources/views/public</code> e todos os arquivos CSS são copiados para <code>/resources/css/public</code>. No processo, as views são modificadas para carregarem os CSS na pasta do tema.</li>
-                <li>Pastas para assets (CSS, JS, imagens) e templates.</li>
-                <li>Um link simbólico (ou junction no Windows) em <code>public/themes/nome-do-tema</code> apontando para <code>themes/NomeDoTema/resources/assets</code>.</li>
+                <li>Pastas estruturadas para templates Blade e assets estáticos (CSS, JS, imagens).</li>
+                <li>Um link simbólico (ou junction no Windows) em <code>public/themes/nome-do-tema</code> apontando para a pasta <code>resources/assets</code> do tema.</li>
             </ul>
-
-            <div class="tip">
-                <strong>Dica:</strong> Após criar o tema, basta ativá-lo no painel administrativo em <strong>Aparência → Temas</strong>. O sistema passará a priorizar automaticamente as views do seu tema sobre as views padrão do core.
-            </div>
         </section>
 
+        <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="estrutura">
             <h2>Estrutura do Tema</h2>
             <p>Os temas residem no diretório <code>/themes</code> na raiz do projeto. Um tema chamado "AstralDark" possui a seguinte estrutura:</p>
@@ -79,21 +76,22 @@
     ├── resources/
     │   ├── views/
     │   │   └── public/
-    │   │       └── {{-- Clona toda a estrutura de templates do sistema --}}
+    │   │       ├── site-layout.blade.php      {{-- Layout mestre do site público --}}
+    │   │       ├── page-templates/            {{-- Modelos de páginas institucionais --}}
+    │   │       └── post-templates/            {{-- Modelos de artigos do blog --}}
     │   └── assets/
     │       ├── css/
-    │       │   ├── public/
-    │       │   │   └── {{-- Clona toda a estrutura de CSS do sistema --}}
-    │       │   ├── auth.css    {{-- View de login --}}
-    │       │   ├── dialog.css  {{-- Dialogs do sistema (alert, prompt, confirm) --}}
-    │       │   └── errors.css  {{-- Páginas de erro --}}
+    │       │   ├── public/                    {{-- Estilos do front-end --}}
+    │       │   ├── auth.css                   {{-- Tela de login --}}
+    │       │   └── errors.css                 {{-- Páginas de erro (404, 500) --}}
     │       ├── js/
     │       └── images/
-    │           └── screenshot.png
+    │           └── screenshot.png             {{-- Prévia exibida na Admin --}}
     ├── theme.json
-    └── ThemeServiceProvider.php            {{-- Opcional (Lógica avançada) --}}</code></pre>
+    └── ThemeServiceProvider.php               {{-- Opcional (Lógica avançada) --}}</code></pre>
         </section>
 
+        <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="manifesto">
             <h2>O Manifesto (theme.json)</h2>
             <p>O arquivo <code>theme.json</code> define as informações que aparecem na biblioteca de temas do painel de administração:</p>
@@ -106,6 +104,7 @@
 }</pre>
         </section>
 
+        <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="overrides">
             <h2>Sobrescrita de Views (Overrides)</h2>
             <p>O motor do <span class="app-name">Lunar Base</span> prioriza as views do seu tema ativo de forma transparente. Se você colocar um arquivo dentro do diretório do tema que corresponda ao caminho das views do core, o sistema carregará o seu arquivo no lugar do original.</p>
@@ -124,35 +123,54 @@
             </div>
         </section>
 
+        <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="assets">
             <h2>Assets e Links Simbólicos</h2>
             <p>Os arquivos estáticos (CSS, JS, imagens) do seu tema ficam isolados e são disponibilizados publicamente através de links simbólicos gerados na pasta pública do servidor.</p>
 
             <h4>Referenciando Assets no Blade:</h4>
-            <pre><code class="code-label">BLADE</code>@once
-@push('styles')
-&lt;link rel="stylesheet" href="{{ asset('themes/astraldark/css/style.css') }}"&gt;
-@endpush
-@once</pre>
+            <pre><code class="code-label">BLADE</code>&lt;link rel="stylesheet" href="{{ asset('themes/astraldark/css/public/style.css') }}"&gt;</pre>
 
             <div class="tip">
-                <strong>Gerando links manualmente:</strong> Ao criar ou copiar um tema manualmente em disco, você pode forçar a regeneração do link simbólico executando o comando no console:
-                <pre style="margin-top: 10px;"><code class="code-label">BASH</code>php artisan themes:link NomeDoTema</pre>
+                <strong>Gerando links manualmente:</strong> Ao criar ou copiar um tema manualmente em disco, você pode forçar a criação ou remoção do link simbólico executando:
+                <pre style="margin-top: 10px;"><code class="code-label">BASH</code># Criar link simbólico do tema
+php artisan theme:link NomeDoTema --force
+
+# Remover link simbólico
+php artisan theme:link NomeDoTema --unlink</pre>
             </div>
         </section>
 
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="preview">
+            <h2>Visualização Prévia (Theme Preview Nativo)</h2>
+            <div class="intro">
+                <p>O <span class="app-name">Lunar Base</span> possui um sistema de <strong>Theme Preview</strong> embutido no Core. Você não precisa programar nenhuma linha de código adicional no seu tema para que a prévia funcione.</p>
+            </div>
+
+            <h4>Como funciona para o desenvolvedor e administrador:</h4>
+            <ul class="steps">
+                <li><strong>Isolamento Total:</strong> Em <strong>Admin → Temas</strong>, ao clicar no botão de prévia (<x-lucide-eye />) de um tema inativo, o sistema abre uma janela modal com o site carregado em um iframe isolado.</li>
+                <li><strong>Criação Automática de Assets:</strong> O Core cria os links simbólicos temporários dos arquivos estáticos do tema instantaneamente para que o design renderize com 100% de fidelidade visual.</li>
+                <li><strong>Segurança para Visitantes:</strong> A prévia só é visível dentro da janela modal do administrador. Visitantes externos e acessos diretos continuam visualizando o tema oficial ativo no site sem nenhuma interferência.</li>
+                <li><strong>Limpeza Automática:</strong> Ao fechar o modal de visualização, a sessão de prévia é destruída e os links temporários são limpos pelo Core automaticamente.</li>
+            </ul>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="boas-praticas">
             <h2>Boas Práticas de Design</h2>
             <ul class="steps">
-                <li><strong>Uso de @once:</strong> Envolva as chamadas de folhas de estilo e scripts JS nas tags <code>@once</code> e <code>@push</code> para prevenir carregamentos duplicados em loops ou acordeões.</li>
-                <li><strong>Não edite o Core:</strong> Se precisar alterar o design de uma view padrão do sistema, copie-a para a pasta correspondente no seu tema e faça a edição por lá.</li>
+                <li><strong>Não edite o Core:</strong> Nunca altere os arquivos dentro de <code>resources/views/public/</code> diretamente. Copie o arquivo para dentro da pasta do seu tema e faça as alterações por lá.</li>
+                <li><strong>Mantenha a Tag de Screenshots Atualizada:</strong> Salve uma captura de tela nítida do seu tema em <code>resources/assets/images/screenshot.png</code> (proporção recomendada: 600×400px) para ilustrar o card do tema no painel de administração.</li>
+                <li><strong>Use os Componentes Globais:</strong> Aproveite os Blade Components do sistema (como <code>&lt;x-breadcrumbs /&gt;</code>, <code>&lt;x-seo-meta /&gt;</code> e <code>&lt;x-assessibility /&gt;</code>) para manter seu tema moderno, acessível e otimizado para SEO.</li>
                 <li><strong>Imagens Otimizadas:</strong> Prefira formatos como WebP ou SVG para manter o carregamento das páginas rápido e responsivo.</li>
             </ul>
         </section>
 
         <footer>
-            <p><strong>Manual de Desenvolvimento de Temas - Lunar Base v1.12.0</strong></p>
-            <p data-footer-info>Última atualização: Agosto/2026 | &copy; 2026 Cau Guanabara</p>
+            <p><strong>Manual de Desenvolvimento de Temas - Lunar Base v1.17.1</strong></p>
+            <p data-footer-info>Última atualização: Setembro/2026 | &copy; 2026 Cau Guanabara</p>
         </footer>
     </div>
 </body>

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciamento de Assets (AssetManager) - Lunar Base v1.17.1</title>
+    <link rel="stylesheet" href="tutorials.css">
+</head>
+<body>
+    <header>
+        <h1>Gerenciamento de Assets</h1>
+        <p data-subtitle>Lunar Base v1.17.1 - Controle de Fila, Desacoplamento de CSS/JS e Scripts Inline</p>
+    </header>
+
+    <div class="container">
+        <nav class="toc">
+            <a href="index.html" class="back-index">Voltar</a>
+            <h2>Sumário</h2>
+            <ul>
+                <li><a href="#intro">Introdução</a></li>
+                <li><a href="#diretivas">Diretivas Blade (@headerAssets e @footerAssets)</a></li>
+                <li><a href="#helpers">Helpers Globais</a></li>
+                <li><a href="#estilos">Enfileirando Folhas de Estilo (CSS)</a></li>
+                <li><a href="#scripts">Enfileirando Scripts (JS)</a></li>
+                <li><a href="#inline">Injeção Dinâmica (Inline CSS e JS)</a></li>
+                <li><a href="#ciclo">Como Funciona por Baixo dos Panos (Singleton)</a></li>
+                <li><a href="#boas-praticas">Boas Práticas para Plugins e Temas</a></li>
+            </ul>
+        </nav>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="intro">
+            <h2>Introdução</h2>
+            <div class="intro">
+                <p>O <span class="app-name">Lunar Base</span> disponibiliza um serviço centralizado de <strong>AssetManager</strong> (inspirado no modelo de <em>enqueue</em>). Ele resolve o problema comum de plugins e temas que precisam injetar folhas de estilo (CSS), scripts externos (JS) ou configurações dinâmicas de backend sem poluir ou engessar os arquivos de layout Blade.</p>
+            </div>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>Prevenção de Duplicatas</h4>
+                    <p>Cada asset é registrado com um identificador único (<code>handle</code>). Se dois plugins solicitarem a mesma biblioteca (ex: Chart.js), ela será carregada apenas uma vez.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Posicionamento Automático</h4>
+                    <p>Controle se os scripts devem ser injetados no cabeçalho ou no rodapé, com suporte nativo a atributos como <code>defer</code> e controle de versão (cache-busting).</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Injeção Dinâmica de Variáveis</h4>
+                    <p>Passe dados, chaves de API e tokens CSRF do PHP diretamente para o JavaScript sem misturar tags Blade dentro de arquivos <code>.js</code>.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="diretivas">
+            <h2>Diretivas Blade (@headerAssets e @footerAssets)</h2>
+            <p>Para que o sistema renderize a fila de assets enfileirados, os layouts principais (tanto da administração quanto dos temas públicos) devem incluir as duas diretivas nas posições corretas:</p>
+
+            <pre><code class="code-label">HTML (Layout Base)</code>&lt;!DOCTYPE html&gt;
+&lt;html lang="pt-BR"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;@yield('title', config('app.name'))&lt;/title&gt;
+
+    &lt;!-- CSS nativo do layout --&gt;
+    &lt;link rel="stylesheet" href="{{ asset('css/style.css') }}"&gt;
+
+    &lt;!-- 💡 Renderiza todas as tags &lt;link&gt; e scripts síncronos do cabeçalho --&gt;
+    @headerAssets
+&lt;/head&gt;
+&lt;body&gt;
+    @yield('content')
+
+    &lt;!-- 💡 Renderiza todas as tags &lt;script&gt; e scripts inline no final do &lt;body&gt; --&gt;
+    @footerAssets
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="helpers">
+            <h2>Helpers Globais</h2>
+            <p>O ecossistema disponibiliza 4 funções helpers globais prontas para uso em qualquer Controller, Middleware, ServiceProvider de Plugin ou arquivo Blade:</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Helper</th>
+                        <th>Finalidade</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>add_style()</code></td>
+                        <td>Enfileira um arquivo CSS externo ou local na tag <code>&lt;head&gt;</code>.</td>
+                    </tr>
+                    <tr>
+                        <td><code>add_script()</code></td>
+                        <td>Enfileira um arquivo JavaScript externo ou local (no header ou footer).</td>
+                    </tr>
+                    <tr>
+                        <td><code>add_inline_style()</code></td>
+                        <td>Injeta um bloco de regras CSS inline gerado dinamicamente via PHP.</td>
+                    </tr>
+                    <tr>
+                        <td><code>add_inline_script()</code></td>
+                        <td>Injeta um bloco de código JavaScript inline antes dos scripts no rodapé.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="estilos">
+            <h2>Enfileirando Folhas de Estilo (CSS)</h2>
+            <p>Utilize a função <code>add_style()</code> para adicionar arquivos CSS. O sistema cuida da renderização de tags <code>&lt;link rel="stylesheet"&gt;</code> formatadas com identificadores únicos:</p>
+
+            <pre><code class="code-label">PHP</code>add_style(
+    string $handle,               // Identificador único (ex: 'leaflet-css')
+    string $src,                  // URL completa ou caminho via asset()
+    array $deps = [],             // Dependências (opcional)
+    string $version = '1.0.0',    // Versão para controle de cache (?v=1.0.0)
+    string $media = 'all'         // Atributo media (ex: 'all', 'screen', 'print')
+);</pre>
+
+            <div class="example-box">
+                <h4>Exemplo Prático:</h4>
+                <pre><code class="code-label">PHP</code>// No boot() de um plugin ou em um Controller:
+add_style('leaflet-maps', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css', [], '1.9.4');
+add_style('meu-plugin-custom', asset('plugins/meuplugin/css/style.css'), [], '1.0.2');</pre>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="scripts">
+            <h2>Enfileirando Scripts (JS)</h2>
+            <p>Utilize a função <code>add_script()</code> para carregar bibliotecas ou arquivos de comportamento JavaScript:</p>
+
+            <pre><code class="code-label">PHP</code>add_script(
+    string $handle,               // Identificador único (ex: 'chart-js')
+    string $src,                  // URL do script
+    array $deps = [],             // Dependências
+    string $version = '1.0.0',    // Versão (?v=1.0.0)
+    bool $inFooter = true,        // true = renderiza no @footerAssets | false = no @headerAssets
+    bool $defer = false           // Adiciona o atributo 'defer' na tag &lt;script&gt;
+);</pre>
+
+            <div class="example-box">
+                <h4>Exemplo Prático:</h4>
+                <pre><code class="code-label">PHP</code>// Carrega o Chart.js no footer com defer ativado
+add_script('chart-js', 'https://cdn.jsdelivr.net/npm/chart.js', [], '4.4.0', true, true);
+
+// Carrega o script de rastreamento do plugin
+add_script('tracker-events', asset('plugins/tracker/js/eventTracker.js'), ['chart-js'], '1.0.0', true, true);</pre>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="inline">
+            <h2>Injeção Dinâmica (Inline CSS e JS)</h2>
+            <p>Uma das maiores vantagens do AssetManager é permitir que o backend envie variáveis computadas em tempo de execução para o JavaScript ou CSS sem misturar lógica Blade em arquivos estáticos.</p>
+
+            <h3>1. Passando Configurações para o JavaScript (`add_inline_script`)</h3>
+            <p>Ideal para injetar URLs de API, tokens CSRF ou dados vindos do banco de dados:</p>
+
+            <div class="example-box">
+                <pre><code class="code-label">PHP</code>// No ServiceProvider do Plugin ou Controller:
+$eventUrl = route('tracker.api.event');
+$csrfToken = csrf_token();
+
+add_inline_script("window.TRACKER_CONFIG = { eventUrl: '{$eventUrl}', csrfToken: '{$csrfToken}' };");
+add_script('tracker-js', asset('plugins/tracker/js/eventTracker.js'), [], '1.0.0', true, true);</pre>
+                <p>Dentro do seu arquivo <code>eventTracker.js</code> externo e estático, basta ler o objeto global <code>window.TRACKER_CONFIG</code>!</p>
+            </div>
+
+            <h3>2. Injetando Cores e Estilos Dinâmicos (`add_inline_style`)</h3>
+            <p>Ideal quando o administrador escolhe cores ou fontes personalizadas no painel administrativo:</p>
+
+            <div class="example-box">
+                <pre><code class="code-label">PHP</code>$corPrimaria = setting('general.theme_primary_color', '#2563eb');
+
+add_inline_style(":root { --color-brand: {$corPrimaria}; }");</pre>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="ciclo">
+            <h2>Como Funciona por Baixo dos Panos (Singleton)</h2>
+            <p>A classe <code>App\Services\AssetManager</code> é registrada como um <strong>Singleton</strong> no Service Container do Laravel:</p>
+
+            <pre><code class="code-label">PHP</code>// No AppServiceProvider:
+$this->app->singleton(AssetManager::class, function () {
+    return new AssetManager();
+});</pre>
+
+            <h4>Por que isso é importante?</h4>
+            <ul class="steps">
+                <li>Durante uma mesma requisição HTTP, todas as chamadas a <code>add_script()</code> ou <code>add_style()</code> feitas por controllers, middlewares ou plugins diferentes compartilham a <strong>mesma fila em memória</strong>.</li>
+                <li>Quando o Blade atinge a tag <code>@headerAssets</code> ou <code>@footerAssets</code>, ele consulta a instância única na memória e imprime as tags HTML finais sem duplicatas.</li>
+                <li>Ao término da requisição, a memória é limpa automaticamente pelo PHP/Laravel, garantindo que os assets de uma página nunca vazem para outra.</li>
+            </ul>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="boas-praticas">
+            <h2>Boas Práticas para Plugins e Temas</h2>
+            <ul class="steps">
+                <li><strong>Nomes de Handles Semânticos:</strong> Use identificadores claros com prefixo do seu plugin (ex: <code>tracker-chart-js</code>, <code>caminho-custom-css</code>) para evitar colisões acidentais.</li>
+                <li><strong>Prefira Scripts no Footer com Defer:</strong> Salvo casos estritamente necessários no <code>&lt;head&gt;</code>, mantenha <code>$inFooter = true</code> e <code>$defer = true</code> para não bloquear a renderização da página (melhorando o score de performance e Core Web Vitals).</li>
+                <li><strong>Não duplique tags &lt;script&gt; soltas no Blade:</strong> Se seu plugin precisa carregar uma biblioteca JS, use sempre <code>add_script()</code> no ServiceProvider ou Controller em vez de colar tags <code>&lt;script src="..."&gt;</code> no meio do corpo HTML.</li>
+                <li><strong>Use Controle de Versão:</strong> Ao atualizar os arquivos CSS/JS do seu plugin, altere o parâmetro de versão (ex: <code>'1.0.1'</code>) para forçar a renovação de cache nos navegadores dos visitantes.</li>
+            </ul>
+        </section>
+
+        <footer>
+            <p><strong>Gerenciamento de Assets - Lunar Base v1.17.1</strong></p>
+            <p data-footer-info>Última atualização: Setembro/2026 | &copy; 2026 Cau Guanabara</p>
+        </footer>
+    </div>
+</body>
+</html>

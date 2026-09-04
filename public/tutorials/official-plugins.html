@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manual de Plugins - Lunar Base v1.12.0</title>
+    <title>Manual de Plugins - Lunar Base v1.17.1</title>
     <link rel="stylesheet" href="tutorials.css">
 </head>
 
@@ -12,7 +12,7 @@
 
     <header>
         <h1>Plugins Oficiais e Addons</h1>
-        <p data-subtitle>Lunar Base v1.12.0 - Guia de uso e integração dos módulos expansíveis</p>
+        <p data-subtitle>Lunar Base v1.17.1 - Guia de uso e integração dos módulos expansíveis</p>
     </header>
 
     <div class="container">
@@ -22,21 +22,24 @@
             <h2>Sumário</h2>
             <ul>
                 <li><a href="#intro">Introdução</a></li>
-                <li><a href="#avatars">1. Avatars (Imagens de Perfil)</a></li>
-                <li><a href="#backup">2. Backup (Gerenciador de Backups)</a></li>
-                <li><a href="#banners">3. Banners (Gerenciador de Publicidade)</a></li>
-                <li><a href="#comments">4. Comments (Comentários nos posts)</a></li>
-                <li><a href="#faq">5. FAQ (Perguntas Frequentes)</a></li>
-                <li><a href="#forms">6. Forms (Construtor de Formulários)</a></li>
-                <li><a href="#galleries">7. Galleries (Galerias de Imagens)</a></li>
-                <li><a href="#maintenance">8. Maintenance (Modo de Manutenção)</a></li>
-                <li><a href="#maps">9. Maps (Mapas Interativos)</a></li>
-                <li><a href="#menus">10. Menus (Construtor de Menus)</a></li>
-                <li><a href="#populator">11. Populator (Gerador de Conteúdo de Teste)</a></li>
-                <li><a href="#prismhighlight">12. PrismHighlight (Syntax Highlighting)</a></li>
-                <li><a href="#qrcode">13. QrCode (Gerador de QR Code)</a></li>
-                <li><a href="#reactions">14. Reactions (Curtidas e Engajamento)</a></li>
-                <li><a href="#share">15. Share (Compartilhamento Social)</a></li>
+                <li><a href="#asaas">1. Asaas (Gateway de Pagamento)</a></li>
+                <li><a href="#avatars">2. Avatars (Imagens de Perfil)</a></li>
+                <li><a href="#backup">3. Backup (Gerenciador de Backups)</a></li>
+                <li><a href="#banners">4. Banners (Gerenciador de Publicidade)</a></li>
+                <li><a href="#comments">5. Comments (Comentários nos posts)</a></li>
+                <li><a href="#faq">6. FAQ (Perguntas Frequentes)</a></li>
+                <li><a href="#forms">7. Forms (Construtor de Formulários)</a></li>
+                <li><a href="#galleries">8. Galleries (Galerias de Imagens)</a></li>
+                <li><a href="#gtranslate">9. GTranslate (Google Tradutor)</a></li>
+                <li><a href="#maintenance">10. Maintenance (Modo de Manutenção)</a></li>
+                <li><a href="#maps">11. Maps (Mapas Interativos)</a></li>
+                <li><a href="#menus">12. Menus (Construtor de Menus)</a></li>
+                <li><a href="#populator">13. Populator (Gerador de Conteúdo de Teste)</a></li>
+                <li><a href="#prismhighlight">14. PrismHighlight (Syntax Highlighting)</a></li>
+                <li><a href="#qrcode">15. QrCode (Gerador de QR Code)</a></li>
+                <li><a href="#reactions">16. Reactions (Curtidas e Engajamento)</a></li>
+                <li><a href="#share">17. Share (Compartilhamento Social)</a></li>
+                <li><a href="#tracker">18. Tracker (Estatísticas de Acesso)</a></li>
                 <li><a href="#best-practices">Boas Práticas</a></li>
             </ul>
         </nav>
@@ -73,8 +76,38 @@
         </section>
 
         <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="asaas">
+            <h2>1. Asaas (Gateway de Pagamento)</h2>
+
+            <div class="intro">
+                <p>Integração completa com a API do Asaas para cobranças avulsas, assinaturas recorrentes, geração de PIX instantâneo, boletos e cartão de crédito com suporte a Webhooks automáticos.</p>
+            </div>
+
+            <h3>Como funciona</h3>
+            <ul class="features">
+                <li><strong>Ambientes Sandbox e Produção:</strong> Alterne facilmente entre o modo de testes e o ambiente real com chaves de API independentes.</li>
+                <li><strong>Gestão de Clientes e Cobranças:</strong> Sincroniza cadastros de clientes e emite faturas PIX (QR Code e Copia e Cola), Boletos Bancários e Cartão de Crédito.</li>
+                <li><strong>Webhooks Automáticos:</strong> Recebe notificações em tempo real de pagamento aprovado, vencido ou estornado para atualizar pedidos ou matrículas no sistema.</li>
+            </ul>
+
+            <h3>Configuração em <code>config/pluginSettings.php</code></h3>
+            <div class="example-box">
+                <h4>Definindo credenciais do Asaas</h4>
+                <pre><code class="code-label">PHP</code>'Asaas' => [
+    'apiKey'      => env('ASAAS_API_KEY', 'sua-api-key-aqui'),
+    'environment' => 'sandbox', // 'sandbox' ou 'production'
+    'webhookToken'=> env('ASAAS_WEBHOOK_TOKEN', 'token-de-seguranca'),
+],</code></pre>
+            </div>
+
+            <div class="tip">
+                <strong>Dica:</strong> Em produção, configure a URL de Webhook no painel do Asaas apontando para <code>https://seusite.com/asaas/webhook</code>.
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="avatars">
-            <h2>1. Avatars (Imagens de Perfil)</h2>
+            <h2>2. Avatars (Imagens de Perfil)</h2>
 
             <div class="intro">
                 <p>Permite que usuários façam upload de fotos de perfil personalizadas. A imagem é automaticamente
@@ -117,7 +150,7 @@
             <h3>Como usar no tema</h3>
             <div class="example-box">
                 <h4>Exibindo avatar</h4>
-                <pre><code>&lt;img src="{{ \Plugins\Avatars\Helpers\AvatarHelper::getUrl($user) }}"
+                <pre><code class="code-label">PHP</code>&lt;img src="{{ \Plugins\Avatars\Helpers\AvatarHelper::getUrl($user) }}"
      alt="Avatar"
      class="avatar-circle-sm"&gt;</code></pre>
             </div>
@@ -136,7 +169,7 @@
 
         <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="backup">
-            <h2>2. Backup (Gerenciador de Backups)</h2>
+            <h2>3. Backup (Gerenciador de Backups)</h2>
 
             <div class="intro">
                 <p>Módulo completo para geração, download, importação externa e restauração em 1 clique de cópias de segurança do site.</p>
@@ -144,8 +177,8 @@
 
             <h3>Como funciona</h3>
             <ul class="features">
-                <li><strong>Pacotes Modulares em .ZIP:</strong> Escolha entre incluir Banco de Dados (SQL/SQLite), Mídias (`storage/app/public`), Plugins e Temas.</li>
-                <li><strong>Importação de ZIPs Externos:</strong> Faça upload de arquivos `.zip` gerados em outras máquinas para restaurar ou migrar sites facilmente.</li>
+                <li><strong>Pacotes Modulares em .ZIP:</strong> Escolha entre incluir Banco de Dados (SQL/SQLite), Mídias (<code>storage/app/public</code>), Plugins e Temas.</li>
+                <li><strong>Importação de ZIPs Externos:</strong> Faça upload de arquivos <code>.zip</code> gerados em outras máquinas para restaurar ou migrar sites facilmente.</li>
                 <li><strong>Restauração em 1 Clique:</strong> Substitui dados e arquivos com trava de segurança visual e bloqueio contra fechamento do navegador.</li>
                 <li><strong>Comando CLI para Automação:</strong> Permite agendar tarefas automáticas no servidor (Cron) via Artisan.</li>
             </ul>
@@ -160,23 +193,23 @@
             </div>
             <div class="step">
                 <h4><span class="step-number">3</span>Importe ou Restaure</h4>
-                <p>Use o botão "Importar Backup" para enviar um `.zip` do computador ou clique em "Restaurar" em qualquer item da tabela.</p>
+                <p>Use o botão "Importar Backup" para enviar um <code>.zip</code> do computador ou clique em "Restaurar" em qualquer item da tabela.</p>
             </div>
 
             <h3>Comando Artisan para Servidor (Cron Job)</h3>
             <div class="example-box">
                 <h4>Executando backup via linha de comando</h4>
-                <pre><code>php artisan backup:run</code></pre>
+                <pre><code class="code-label">BASH</code>php artisan backup:run</pre>
             </div>
 
             <div class="tip">
-                <strong>Clonagem de Site:</strong> O arquivo `.zip` gerado contém o banco, mídias, temas e plugins. Você pode instalar o Lunar Base limpo em um servidor novo e usar o "Importar Backup" para ter uma cópia 100% idêntica rodando em segundos.
+                <strong>Clonagem de Site:</strong> O arquivo <code>.zip</code> gerado contém o banco, mídias, temas e plugins. Você pode instalar o Lunar Base limpo em um servidor novo e usar o "Importar Backup" para ter uma cópia 100% idêntica rodando em segundos.
             </div>
         </section>
 
         <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="banners">
-            <h2>3. Banners (Gerenciador de Publicidade)</h2>
+            <h2>4. Banners (Gerenciador de Publicidade)</h2>
 
             <div class="intro">
                 <p>Gerencie campanhas internas ou externas de publicidade visual com suporte a múltiplos métodos de exibição e controle analítico de cliques.</p>
@@ -194,14 +227,14 @@
 
             <div class="example-box">
                 <h4>1. Shortcode (Conteúdo de Posts/Páginas)</h4>
-                <pre><code>[banner slug="promocao-verao"]
+                <pre><code class="code-label">HTML</code>[banner slug="promocao-verao"]
 [banner slug="banner-lateral" class="rounded-lg shadow-lg"]</code></pre>
                 <small>Nota: A propriedade <code>class</code> opcional sobrescreve a classe padrão definida no painel.</small>
             </div>
 
             <div class="example-box">
                 <h4>2. Helper PHP (Arquivos do Tema)</h4>
-                <pre><code>{!! renderBanner('promocao-verao') !!}
+                <pre><code class="code-label">PHP</code>{!! renderBanner('promocao-verao') !!}
 {!! renderBanner('promocao-verao', 'custom-class-here') !!}</code></pre>
             </div>
 
@@ -217,7 +250,7 @@
 
         <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="comments">
-            <h2>4. Comments (Comentários nos posts)</h2>
+            <h2>5. Comments (Comentários nos posts)</h2>
 
             <div class="intro">
                 <p>Sistema completo de comentários com respostas aninhadas, moderação de spam e integração com avatares.
@@ -248,7 +281,7 @@
 
         <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="faq">
-            <h2>5. FAQ (Perguntas Frequentes)</h2>
+            <h2>6. FAQ (Perguntas Frequentes)</h2>
 
             <div class="intro">
                 <p>Crie blocos de perguntas e respostas em formato de acordeão, usando elementos nativos HTML5.</p>
@@ -273,7 +306,7 @@
             <h3>Como exibir</h3>
             <div class="example-box">
                 <h4>Shortcode</h4>
-                <pre><code>[faq slug="duvidas-gerais"]</code></pre>
+                <pre><code class="code-label">HTML</code>[faq slug="duvidas-gerais"]</code></pre>
             </div>
 
             <div class="tip">
@@ -284,7 +317,7 @@
 
         <!-- ══════════════════════════════════════════════════════════════ -->
         <section id="forms">
-            <h2>6. Forms (Construtor de Formulários)</h2>
+            <h2>7. Forms (Construtor de Formulários)</h2>
 
             <div class="intro">
                 <p>Crie formulários personalizados para capturar leads e mensagens. Cada envio pode ser notificado por
@@ -355,7 +388,7 @@
             <h3>Como exibir</h3>
             <div class="example-box">
                 <h4>Shortcode</h4>
-                <pre><code>[form slug="contato"]</code></pre>
+                <pre><code class="code-label">HTML</code>[form slug="contato"]</code></pre>
             </div>
 
             <div class="warning">
@@ -365,7 +398,7 @@
 
         <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="galleries">
-            <h2>7. Galleries (Galerias de Imagens)</h2>
+            <h2>8. Galleries (Galerias de Imagens)</h2>
 
             <div class="intro">
                 <p>Exiba galerias de imagens vinculadas aos seus posts ou páginas de forma responsiva utilizando o shortcode nativo <code>[gallery]</code>.</p>
@@ -414,94 +447,63 @@
                         <td><code>size</code></td>
                         <td><code>thumb</code>, <code>medium</code>, <code>large</code>, <code>original</code></td>
                         <td><code>medium</code></td>
-                        <td>Resolução das imagens exibidas (Thumb: miniatura 300x300px; Medium: versão redimensionada de 800px).</td>
-                    </tr>
-                    <tr>
-                        <td><code>limit</code></td>
-                        <td>Número inteiro positivo</td>
-                        <td>—</td>
-                        <td>Restringe a quantidade máxima de itens carregados na galeria.</td>
-                    </tr>
-                    <tr>
-                        <td><code>orderby</code></td>
-                        <td><code>id</code>, <code>name</code>, <code>created_at</code></td>
-                        <td><code>created_at</code></td>
-                        <td>Critério para ordenação das mídias.</td>
-                    </tr>
-                    <tr>
-                        <td><code>order</code></td>
-                        <td><code>asc</code>, <code>desc</code>, <code>rand</code></td>
-                        <td><code>asc</code></td>
-                        <td>Sentido de exibição da galeria. Utilize <code>rand</code> para carregar imagens aleatórias a cada visita.</td>
+                        <td>Resolução das imagens exibidas.</td>
                     </tr>
                     <tr>
                         <td><code>lightbox</code></td>
                         <td><code>true</code>, <code>false</code></td>
                         <td><code>true</code></td>
-                        <td>Ativa ou desativa a ampliação e visualização de fotos em modal ampliado.</td>
-                    </tr>
-                    <tr>
-                        <td><code>caption</code></td>
-                        <td><code>true</code>, <code>false</code></td>
-                        <td><code>true</code></td>
-                        <td>Mostra legendas e títulos cadastrados sobre as imagens durante eventos de hover.</td>
-                    </tr>
-                    <tr>
-                        <td><code>gap</code></td>
-                        <td>Número inteiro (pixels)</td>
-                        <td><code>8</code></td>
-                        <td>Espaçamento interno de distância entre os cartões de imagem.</td>
+                        <td>Ativa ou desativa o visualizador ampliado de fotos.</td>
                     </tr>
                     <tr>
                         <td><code>ratio</code></td>
                         <td><code>square</code>, <code>4/3</code>, <code>16/9</code>, <code>auto</code></td>
                         <td><code>square</code></td>
-                        <td>Configura o aspect-ratio fixo para as imagens no layout <code>grid</code>.</td>
-                    </tr>
-                    <tr>
-                        <td><code>rounded</code></td>
-                        <td><code>true</code>, <code>false</code></td>
-                        <td><code>true</code></td>
-                        <td>Aplica raios de borda arredondada (border-radius de 8px) nas mídias.</td>
-                    </tr>
-                    <tr>
-                        <td><code>exclude_thumbnail</code></td>
-                        <td><code>true</code>, <code>false</code></td>
-                        <td><code>true</code></td>
-                        <td>Se definido como <code>true</code>, impede a duplicação da imagem principal de destaque do post dentro do corpo da galeria.</td>
+                        <td>Aspect-ratio fixo para as imagens no layout <code>grid</code>.</td>
                     </tr>
                 </tbody>
             </table>
 
-            <h3>Exemplos de Configuração</h3>
             <div class="example-box">
-                <h4>Grid Padrão de 3 Colunas</h4>
-                <pre><code>[gallery]</code></pre>
+                <h4>Exemplo de Galeria Masonry</h4>
+                <pre><code class="code-label">HTML</code>[gallery layout="masonry" columns="3" gap="12"]</code></pre>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="gtranslate">
+            <h2>9. GTranslate (Google Tradutor)</h2>
+
+            <div class="intro">
+                <p>Adiciona tradução instantânea e multilíngue ao site público ou painel administrativo utilizando a engine oficial do Google Translate.</p>
             </div>
 
+            <h3>Como funciona</h3>
+            <ul class="features">
+                <li><strong>Tradução Instantânea:</strong> Traduz todo o conteúdo visual da página em tempo real sem necessidade de APIs pagas ou recargas lentas.</li>
+                <li><strong>Três Modos de Exibição:</strong> Suporta bandeiras clicáveis com imagens em alta resolução (<code>flags</code>), menu seletor suspenso (<code>dropdown</code>) ou ambos combinados (<code>flagsAndDropdown</code>).</li>
+                <li><strong>Componente Blade Reutilizável:</strong> Insira o seletor em qualquer cabeçalho, rodapé ou barra de acessibilidade usando <code>&lt;x-gtranslate::selector /&gt;</code>.</li>
+            </ul>
+
+            <h3>Como usar no Tema</h3>
             <div class="example-box">
-                <h4>Galeria de Alturas Variadas (Pinterest style)</h4>
-                <pre><code>[gallery layout="masonry" columns="3" gap="12"]</code></pre>
+                <h4>Inserindo o seletor no Blade</h4>
+                <pre><code class="code-label">BLADE</code>&lt;x-gtranslate::selector /&gt;</pre>
             </div>
 
+            <h3>Configuração em <code>config/pluginSettings.php</code></h3>
             <div class="example-box">
-                <h4>Carrossel de Slides com Imagens Médias</h4>
-                <pre><code>[gallery layout="carousel" size="medium"]</code></pre>
-            </div>
-
-            <div class="example-box">
-                <h4>Galeria com Seleção Manual de IDs e Proporção Cinema</h4>
-                <pre><code>[gallery ids="4,12,18,31" ratio="16/9" rounded="false"]</code></pre>
-            </div>
-
-            <div class="tip">
-                <strong>Recomendação de Performance:</strong> Dê preferência ao tamanho <code>size="medium"</code> na maioria das galerias. Ele entrega boa visualização em telas de computadores e smartphones, sem comprometer a transferência de banda e performance de carregamento da página.
+                <pre><code class="code-label">PHP</code>'GTranslate' => [
+    'defaultLanguage'   => 'pt',
+    'includedLanguages' => 'pt,en,es,fr,de,it',
+    'displayMode'       => 'flagsAndDropdown', // 'flags', 'dropdown' ou 'flagsAndDropdown'
+],</code></pre>
             </div>
         </section>
 
         <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="maintenance">
-            <h2>8. Maintenance (Modo de Manutenção)</h2>
+            <h2>10. Maintenance (Modo de Manutenção)</h2>
 
             <div class="intro">
                 <p>Bloqueia o acesso público ao site exibindo uma página de "em manutenção".</p>
@@ -533,7 +535,7 @@
 
         <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="maps">
-            <h2>9. Maps (Mapas Interativos)</h2>
+            <h2>11. Maps (Mapas Interativos)</h2>
 
             <div class="intro">
                 <p>Crie mapas OpenStreetMap com marcadores personalizados e áreas destacadas.</p>
@@ -555,19 +557,19 @@
             <h3>Como exibir</h3>
             <div class="example-box">
                 <h4>Exibir mapa</h4>
-                <pre><code>[map id="1"]
+                <pre><code class="code-label">HTML</code>[map id="1"]
 [map slug="meu-mapa"]</code></pre>
             </div>
 
             <div class="example-box">
                 <h4>Listar locais como cards</h4>
-                <pre><code>[list-locations id="1"]</code></pre>
+                <pre><code class="code-label">HTML</code>[list-locations id="1"]</code></pre>
             </div>
         </section>
 
         <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="menus">
-            <h2>10. Menus (Construtor de Menus)</h2>
+            <h2>12. Menus (Construtor de Menus)</h2>
 
             <div class="intro">
                 <p>Crie menus de navegação hierárquicos com sub-menus (dropdowns).</p>
@@ -597,7 +599,7 @@
             <h3>Como exibir</h3>
             <div class="example-box">
                 <h4>Via hook (se configurado)</h4>
-                <pre><code>&lt;x-hook name="public.main_menu" desc="Menu principal" /&gt;</code></pre>
+                <pre><code class="code-label">BLADE</code>&lt;x-hook name="public.main_menu" desc="Menu principal" /&gt;</pre>
             </div>
 
             <div class="tip">
@@ -608,7 +610,7 @@
 
         <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="populator">
-            <h2>11. Populator (Gerador de Conteúdo de Teste)</h2>
+            <h2>13. Populator (Gerador de Conteúdo de Teste)</h2>
 
             <div class="intro">
                 <p>Gera massa de dados fictícios de forma rápida para popular o site durante as etapas de desenvolvimento ou demonstração.</p>
@@ -618,7 +620,7 @@
             <ul class="features">
                 <li><strong>Usuários:</strong> Cria contas com nomes realistas brasileiros, atribuições de papéis (roles) randômicas e gera uma senha temporária exibida em tela.</li>
                 <li><strong>Posts e Páginas:</strong> Cria registros contendo títulos, resumos e parágrafos estruturados de Lorem Ipsum em português, mesclando listas e subtítulos.</li>
-                <li><strong>Tratamento de Imagens:</strong> Baixa e registra imagens de destaque (thumbnails) ou arquivos de galeria localmente via Picsum, e injeta tags <code>&lt;figure&gt;</code> com links externos no HTML do conteúdo.</li>
+                <li><strong>Tratamento de Imagens:</strong> Baixa e registra imagens de destaque localmente via Picsum.</li>
             </ul>
 
             <h3>Como usar</h3>
@@ -631,17 +633,13 @@
             </div>
             <div class="step">
                 <h4><span class="step-number">3</span>Configurar quantidade e mídia</h4>
-                <p>Escolha o número de itens, status (Publicado/Rascunho) e quantidade máxima de imagens internas ou de galeria.</p>
-            </div>
-
-            <div class="warning">
-                <strong>Aviso:</strong> A geração de posts/páginas com thumbnails ou imagens de galeria realiza requisições externas para baixar os arquivos de teste, o que pode demorar alguns segundos conforme sua conexão.
+                <p>Escolha o número de itens e execute a geração em lote.</p>
             </div>
         </section>
 
         <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="prismhighlight">
-            <h2>12. PrismHighlight (Syntax Highlighting)</h2>
+            <h2>14. PrismHighlight (Syntax Highlighting)</h2>
 
             <div class="intro">
                 <p>Exiba blocos de código formatados com destaque de sintaxe profissional usando Prism.js diretamente nos seus posts e páginas.</p>
@@ -650,48 +648,9 @@
             <h3>Como funciona</h3>
             <p>O plugin intercepta o shortcode <code>[code]</code> e o renderiza em um bloco vetorial estético, completo com barras de janela simulando macOS (bolinhas vermelha, amarela e verde) ou formato Plain limpo, suportando múltiplos temas visuais.</p>
 
-            <h3>Atributos do Shortcode `[code]`</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Atributo</th>
-                        <th>Valores Aceitos</th>
-                        <th>Padrão</th>
-                        <th>Descrição</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><code>lang</code></td>
-                        <td><code>php</code>, <code>javascript</code>, <code>vue</code>, <code>markup</code>, <code>css</code>, <code>scss</code>, <code>bash</code>, <code>sql</code>, <code>json</code></td>
-                        <td><code>php</code></td>
-                        <td>A linguagem de programação para aplicar a coloração de sintaxe correta.</td>
-                    </tr>
-                    <tr>
-                        <td><code>title</code></td>
-                        <td>Qualquer texto (ex: <code>app.php</code>)</td>
-                        <td>—</td>
-                        <td>Exibe o nome do arquivo no cabeçalho da janela do bloco de código.</td>
-                    </tr>
-                    <tr>
-                        <td><code>style</code></td>
-                        <td><code>mac</code>, <code>plain</code></td>
-                        <td><code>mac</code></td>
-                        <td>Estilo visual do contêiner (com botões de janela macOS ou formato minimalista).</td>
-                    </tr>
-                    <tr>
-                        <td><code>theme</code></td>
-                        <td><code>tomorrow</code>, <code>okaidia</code>, <code>dracula</code>, <code>one-dark</code>, <code>solarizedlight</code>, <code>default</code></td>
-                        <td><code>tomorrow</code></td>
-                        <td>Esquema de cores e tema visual do Prism.js.</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <h3>Exemplos de Uso</h3>
             <div class="example-box">
-                <h4>Bloco em PHP com Estilo Mac</h4>
-                <pre><code>[code lang="php" title="app.php" style="mac" theme="tomorrow"]
+                <h4>Exemplo de Shortcode [code]</h4>
+                <pre><code class="code-label">HTML</code>[code lang="php" title="app.php" style="mac" theme="tomorrow"]
 &lt;?php
 class WebMaker {
     public function manifesto() {
@@ -700,22 +659,11 @@ class WebMaker {
 }
 [/code]</code></pre>
             </div>
-
-            <div class="example-box">
-                <h4>Snippet de JavaScript em Tema Claro</h4>
-                <pre><code>[code lang="javascript" title="main.js" theme="solarizedlight"]
-console.log('Lunar Base v1.3.0 - Sem inchaço, sem complicações.');
-[/code]</code></pre>
-            </div>
-
-            <div class="tip">
-                <strong>Otimização de Carregamento:</strong> O plugin carrega os recursos do Prism.js de forma assíncrona (via CDN) apenas quando identifica que a página renderizada possui um bloco de código `[code]`.
-            </div>
         </section>
 
         <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="qrcode">
-            <h2>13. QrCode (Gerador de QR Code)</h2>
+            <h2>15. QrCode (Gerador de QR Code)</h2>
 
             <div class="intro">
                 <p>Gere imagens vetoriais (SVG) de QR Code para URLs, textos avulsos ou links diretos de artigos para fácil compartilhamento e impressão.</p>
@@ -723,53 +671,20 @@ console.log('Lunar Base v1.3.0 - Sem inchaço, sem complicações.');
 
             <h3>Como funciona</h3>
             <ul class="features">
-                <li><strong>Gerador Avulso no Painel:</strong> Ferramenta dedicada em <code>Admin → Ferramentas → Gerador QR Code</code> para criar códigos vetoriais personalizados com preview ao vivo e download em SVG de alta resolução.</li>
-                <li><strong>Integração com Posts e Páginas:</strong> Modais de visualização rápida acessíveis pelas tabelas de listagem e pelo cabeçalho do formulário de edição de publicações.</li>
-                <li><strong>Desempenho Vetorial:</strong> Utiliza o motor vetorial nativo em SVG (`BaconQrCode`), garantindo imagens nítidas em qualquer dimensão e zero acúmulo de arquivos estáticos temporários no banco ou disco.</li>
+                <li><strong>Gerador Avulso no Painel:</strong> Ferramenta dedicada em <code>Admin → Ferramentas → Gerador QR Code</code> com preview ao vivo e download em SVG.</li>
+                <li><strong>Integração com Posts e Páginas:</strong> Modais de visualização rápida acessíveis pelas tabelas de listagem e cabeçalhos de edição.</li>
+                <li><strong>Desempenho Vetorial:</strong> Utiliza o motor vetorial nativo em SVG (<code>BaconQrCode</code>), garantindo zero acúmulo de arquivos temporários no disco.</li>
             </ul>
 
-            <h3>Onde aparece no Painel</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Local</th>
-                        <th>Recurso / Comportamento</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Ferramentas → Gerador QR Code</td>
-                        <td>Gerador livre de texto, URL, PIX ou chaves com seletor de resolução e download em SVG</td>
-                    </tr>
-                    <tr>
-                        <td>Tabela de Posts e Páginas</td>
-                        <td>Ícone de ação rápida com botão de QR Code para abrir o modal com link público</td>
-                    </tr>
-                    <tr>
-                        <td>Header de Edição de Posts e Páginas</td>
-                        <td>Botão "QR Code" destacado no topo ao lado das ações do artigo</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <h3>Como usar no Tema ou Código PHP</h3>
             <div class="example-box">
                 <h4>Gerando SVG via Helper do Plugin</h4>
-                <pre><code>{!! \Plugins\QrCode\Helpers\QrCodeHelper::svg('https://seusite.com/post-1', 200) !!}</code></pre>
+                <pre><code class="code-label">PHP</code>{!! \Plugins\QrCode\Helpers\QrCodeHelper::svg('https://seusite.com/post-1', 200) !!}</code></pre>
             </div>
-
-            <h3>Hooks utilizados</h3>
-            <ul>
-                <li><code>admin.post_actions</code> - Coluna de ações na tabela de Posts</li>
-                <li><code>admin.page_actions</code> - Coluna de ações na tabela de Páginas</li>
-                <li><code>admin.edit_post_header_buttons</code> - Topo da tela de edição de Posts</li>
-                <li><code>admin.edit_page_header_buttons</code> - Topo da tela de edição de Páginas</li>
-            </ul>
         </section>
 
         <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="reactions">
-            <h2>14. Reactions (Curtidas e Engajamento)</h2>
+            <h2>16. Reactions (Curtidas e Engajamento)</h2>
 
             <div class="intro">
                 <p>Adiciona botões de reação (curtir/não curtir) ao final dos posts.</p>
@@ -783,58 +698,17 @@ console.log('Lunar Base v1.3.0 - Sem inchaço, sem complicações.');
                 <li>1 voto por IP (evita spam)</li>
             </ul>
 
-            <h3>Configurações</h3>
-            <p>Admin → Configurações → Leitura → Reactions:</p>
-            <ul>
-                <li>Ativar/desativar reações</li>
-                <li>Tipo: 👍 Legal, ❤️ Coração, ⭐ Estrela</li>
-                <li>Permitir reação negativa</li>
-                <li>Reação única por visitante</li>
-            </ul>
-
             <h3>Hook utilizado</h3>
             <pre><code>post.meta_end</code></pre>
         </section>
 
         <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="share">
-            <h2>15. Share (Compartilhamento Social)</h2>
+            <h2>17. Share (Compartilhamento Social)</h2>
 
             <div class="intro">
-                <p>Botões de compartilhamento nas redes sociais ao final dos posts.</p>
+                <p>Botões de compartilhamento nas redes sociais (WhatsApp, Facebook, X/Twitter, LinkedIn, E-mail) ao final dos posts.</p>
             </div>
-
-            <h3>Redes suportadas</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Rede</th>
-                        <th>Comportamento</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>WhatsApp</td>
-                        <td>Compartilhamento direto</td>
-                    </tr>
-                    <tr>
-                        <td>Facebook</td>
-                        <td>Dialog de compartilhamento</td>
-                    </tr>
-                    <tr>
-                        <td>X (Twitter)</td>
-                        <td>Composer com título+URL</td>
-                    </tr>
-                    <tr>
-                        <td>LinkedIn</td>
-                        <td>Compartilhamento profissional</td>
-                    </tr>
-                    <tr>
-                        <td>E-mail</td>
-                        <td>Abre cliente de e-mail</td>
-                    </tr>
-                </tbody>
-            </table>
 
             <h3>Como funciona</h3>
             <ul class="features">
@@ -843,11 +717,50 @@ console.log('Lunar Base v1.3.0 - Sem inchaço, sem complicações.');
                 <li>Cores de marca no hover</li>
             </ul>
 
-            <h3>Configurações</h3>
-            <p>Admin → Configurações → Redes Sociais → Compartilhamento de Posts</p>
-
             <h3>Hook utilizado</h3>
             <pre><code>post.after_content</code></pre>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="tracker">
+            <h2>18. Tracker (Estatísticas de Acesso)</h2>
+
+            <div class="intro">
+                <p>Monitoramento de tráfego, visualizações de páginas, origens de referrers, picos por horário e eventos de conversão, 100% nativo e focado em privacidade (sem cookies e aderente à LGPD).</p>
+            </div>
+
+            <h3>Como funciona</h3>
+            <ul class="features">
+                <li><strong>Privacidade Absoluta (Sem Cookies):</strong> O IP do visitante é transformado em um hash criptográfico diário, calculando visitantes únicos sem guardar dados sensíveis ou exigir banners intrusivos.</li>
+                <li><strong>Picos por Horário:</strong> Gráfico de linha que detalha o volume de tráfego distribuído pelas 24 horas do dia (00h às 23h).</li>
+                <li><strong>Rastreamento de Conversões (Eventos):</strong> Captura cliques em botões, links de WhatsApp ou downloads via <code>data-track-event</code> com a API <code>navigator.sendBeacon</code>.</li>
+                <li><strong>Geolocalização Opcional:</strong> Mapeia países e cidades de acesso integrando-se automaticamente com o pacote <code>stevebauman/location</code>.</li>
+            </ul>
+
+            <h3>Rastreando Cliques no Front-end</h3>
+            <div class="example-box">
+                <h4>Adicionando rastreamento a botões do tema</h4>
+                <pre><code class="code-label">HTML</code>&lt;!-- Rastreia clique no WhatsApp --&gt;
+&lt;a href="https://wa.me/5511999999999" data-track-event="Clique WhatsApp" data-track-category="Contato"&gt;
+    Fale Conosco
+&lt;/a&gt;
+
+&lt;!-- Rastreia submissão de formulário --&gt;
+&lt;button type="submit" data-track-event="Matrícula Concluída" data-track-category="Cursos"&gt;
+    Confirmar Inscrição
+&lt;/button&gt;</code></pre>
+            </div>
+
+            <h3>Configuração em <code>config/pluginSettings.php</code></h3>
+            <div class="example-box">
+                <pre><code class="code-label">PHP</code>'Tracker' => [
+    'dashboardDays'     => 30, // Período padrão do Dashboard (dias)
+    'topPagesLimit'     => 10, // Limite do card de páginas
+    'topReferrersLimit' => 5,  // Limite do card de origens
+    'topEventsLimit'    => 5,  // Limite do card de eventos
+    'hourlyDays'        => 30, // Período do gráfico de horários
+],</code></pre>
+            </div>
         </section>
 
         <!-- ══════════════════════════════════════════════════════════════ -->
@@ -857,43 +770,25 @@ console.log('Lunar Base v1.3.0 - Sem inchaço, sem complicações.');
             <h3>Referenciando assets</h3>
             <div class="example-box">
                 <h4>CSS/JS de plugins</h4>
-                <pre><code>&lt;link rel="stylesheet" href="{{ asset('plugins/comments/css/comments.css') }}"&gt;
+                <pre><code class="code-label">BLADE</code>&lt;link rel="stylesheet" href="{{ asset('plugins/comments/css/comments.css') }}"&gt;
 &lt;script src="{{ asset('plugins/comments/js/comments.js') }}"&gt;&lt;/script&gt;</code></pre>
             </div>
 
             <h3>Verificando se plugin está ativo</h3>
-
             <div class="example-box">
-                <h4>Verificando se está ativo</h4>
-                <pre><code>@if(\App\Models\Plugin::isPluginActive('Comments'))
+                <pre><code class="code-label">BLADE</code>@if(\App\Models\Plugin::isPluginActive('Comments'))
   {!! view('comments::comments-area', ['post' =&gt; $post])-&gt;render() !!}
 @endif</code></pre>
             </div>
 
-            <div class="example-box">
-                <h4>Verificando a view</h4>
-                <pre><code>@if(view()-&gt;exists('comments::comments-area'))
-  {!! view('comments::comments-area', ['post' =&gt; $post])-&gt;render() !!}
-@endif</code></pre>
-            </div>
-
-            <div class="example-box">
-                <h4>Verificando a classe</h4>
-                <pre><code>@if(class_exists('\Plugins\Avatars\Helpers\AvatarHelper'))
-  &lt;img src="{{ \Plugins\Avatars\Helpers\AvatarHelper::getUrl($user) }}"&gt;
-@endif</code></pre>
-            </div>
-
-            <h3>Prefira usar hooks</h3>
             <div class="tip">
-                <strong>Recomendado:</strong> use hooks para integração automática. Se o plugin for desativado, o hook
-                não renderiza nada - sem quebrar o tema.
+                <strong>Recomendado:</strong> Use hooks para integração automática nos seus temas. Se o plugin for desativado, o hook simplesmente não renderiza nada, sem quebrar o layout do site.
             </div>
         </section>
 
         <footer>
-            <p><strong>Manual de Plugins Oficiais - Lunar Base v1.12.0</strong></p>
-            <p data-footer-info>Última atualização: Agosto/2026 | &copy; 2026 Cau Guanabara</p>
+            <p><strong>Manual de Plugins Oficiais - Lunar Base v1.17.1</strong></p>
+            <p data-footer-info>Última atualização: Setembro/2026 | &copy; 2026 Cau Guanabara</p>
         </footer>
     </div>
 

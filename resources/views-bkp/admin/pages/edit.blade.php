@@ -1,0 +1,266 @@
+@extends('admin.layout')
+
+@section('header_title', 'Editar Página')
+@section('header_subtitle', 'Modifique o conteúdo da página')
+
+@section('content')
+<div class="admin-card">
+    <div class="admin-card-header">
+        <h2>
+            <x-lucide-file-text class="lucid-icon" />
+            Editar: {{ $page->title }}
+        </h2>
+        <div class="top-buttons">
+            <x-hook name="admin.edit_page_header_buttons" :params="['page' => $page]" desc="Botões no header da edição de página" />
+            <a href="{{ $page->url }}" class="admin-btn admin-btn-secondary" target="_blank">
+                <x-lucide-external-link class="lucid-icon" /> <span>Visitar</span>
+            </a>
+            <a href="{{ route('admin.pages.index') }}" class="admin-btn admin-btn-secondary">
+                <x-lucide-arrow-left class="lucid-icon" /> <span>Voltar</span>
+            </a>
+        </div>
+    </div>
+
+    <form method="POST" action="{{ route('admin.pages.update', $page->id) }}" id="edit_form">
+        @csrf
+        @method('PUT')
+
+        <div class="edit-page-inner">
+            <div class="main-column">
+                {{-- Título --}}
+                <div class="admin-form-row">
+                    <div class="form-group">
+                        <input type="text" name="title" id="title" value="{{ old('title', $page->title) }}" placeholder="Título da página" required>
+                        @error('title') <small class="error">{{ $message }}</small> @enderror
+                    </div>
+                </div>
+
+                {{-- Conteúdo (TinyMCE) --}}
+                <div class="form-group">
+                    <div class="editor-top">
+                        <label for="content">Conteúdo *</label>
+                        <div class="image-buttons">
+                            <button class="admin-btn admin-btn-secondary" type="button"
+                                    onclick="window.dispatchEvent(new CustomEvent('media:upload-open', { detail: { id: 'mainUploader', context: 'editor' } }))">
+                                <x-lucide-upload class="lucid-icon" /> Upload de imagem
+                            </button>
+                            <button class="admin-btn admin-btn-secondary" type="button"
+                                    onclick="window.dispatchEvent(new CustomEvent('modal-open', { detail: { id: 'selectorModal', context: 'editor' } }))">
+                                <x-lucide-image class="lucid-icon" /> Inserir imagem
+                            </button>
+                        </div>
+                    </div>
+                    <textarea name="content" id="content" rows="15" style="display: none;">{{ old('content', $page->content) }}</textarea>
+                    <div class="wait-editor">
+                        <div id="tiny-editor" class="tiny-editor"></div>
+                    </div>
+                    @error('content') <small class="error">{{ $message }}</small> @enderror
+                </div>
+
+                <div class="edit-box">
+                    <header>Descrição curta</header>
+                    <article>
+                        <div class="form-group excerpt">
+                            {{-- <label for="excerpt">Resumo / </label> --}}
+                            <textarea name="excerpt" id="excerpt" rows="4">{{ old('excerpt', $page->excerpt) }}</textarea>
+                            <small>Breve resumo da página (opcional)</small>
+                        </div>
+                    </article>
+                </div>
+
+                {{-- Taxonomias --}}
+                <x-render name="taxonomy_fields" :params="['type' => 'page', 'item' => $page]" />
+
+                @if(setting('navigation.show_meta_fields'))
+                <div class="edit-box">
+                    <header>Metadados</header>
+                    <article>
+                        <x-meta-editor
+                            name="meta"
+                            :existingKeys="$existingMetaKeys"
+                            :values="$page->meta ?? []"
+                        />
+                    </article>
+                </div>
+                @endif
+            </div>
+            <div class="aside-column">
+                <div class="edit-box">
+                    <header>Detalhes da página</header>
+                    <article>
+                        <div class="form-group">
+                            <label for="author_id">Autor</label>
+                            <select name="author_id" id="author_id">
+                                <option value="">-- Selecione um autor --</option>
+                                @foreach($users as $user)
+                                    <option value="{{ $user->id }}"
+                                        {{ old('author_id', $page->author_id ?? Auth::id()) == $user->id ? 'selected' : '' }}>
+                                        {{ $user->name }} ({{ $user->role }})
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('author_id') <small class="error">{{ $message }}</small> @enderror
+                        </div>
+
+                        <div class="form-group">
+                            <label for="status">Status *</label>
+                            <select name="status" id="status" required>
+                                <option value="draft" {{ old('status', $page->status) == 'draft' ? 'selected' : '' }}>Rascunho</option>
+                                <option value="published" {{ old('status', $page->status) == 'published' ? 'selected' : '' }}>Publicado</option>
+                                <option value="archived" {{ old('status', $page->status) == 'archived' ? 'selected' : '' }}>Arquivado</option>
+                            </select>
+                        </div>
+
+                        <div class="buttons">
+                            <button type="submit" class="admin-btn admin-btn-primary">
+                                <x-lucide-save class="lucid-icon" /> Atualizar
+                            </button>
+                        </div>
+                    </article>
+                </div>
+                <div class="edit-box">
+                    <header>Propriedades</header>
+                    <article>
+                        <div class="form-group">
+                            <label for="slug">Slug *</label>
+                            <input type="text" name="slug" id="slug" value="{{ old('slug', $page->slug) }}" required>
+                            <small>URL amigável (ex: termos-de-uso, politica-privacidade)</small>
+                            @error('slug') <small class="error">{{ $message }}</small> @enderror
+                        </div>
+
+                        <div class="form-group">
+                            <x-select-input
+                                name="namespace"
+                                label="Namespace opcional"
+                                :options="$namespaces"
+                                :value="old('namespace', $page->namespace)"
+                                placeholder="-- Nenhum (página geral) --"
+                                :allowInsert="true"
+                                insertLabel="Inserir novo..."
+                                insertPlaceholder="Digite o novo namespace"
+                                help="Defina um namespace para esta página"
+                            />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="template">Template da página</label>
+                            <select name="template" id="template">
+                                @foreach($templates as $value => $label)
+                                    <option value="{{ $value }}" {{ old('template', $page->template ?? config('pageTemplates.default')) == $value ? 'selected' : '' }}>
+                                        {{ $label }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <small>Define como a página será exibida publicamente</small>
+                            @error('template') <small class="error">{{ $message }}</small> @enderror
+                        </div>
+
+                        <div class="form-group">
+                            <label for="parent_id">Página mãe</label>
+                            <x-page-picker name="parent_id" id="parent_id" :selected="old('parent_id', $page->parent_id ?? '')" placeholder="-- Nenhuma --" :exclude="$page->id" />
+                            <small>Define a página mãe dessa página (opcional)</small>
+                            @error('parent_id') <small class="error">{{ $message }}</small> @enderror
+                        </div>
+                    </article>
+                </div>
+
+                @php
+                $thumbInitial = [
+                    'id' => old('thumbnail_id', $page->thumbnail_id),
+                    'url' => old('thumbnail_url', optional($page->thumbnail)->url ?? '')
+                ];
+                @endphp
+
+                <div class="edit-box" x-data='thumbnailManager({{ json_encode($thumbInitial) }})'>
+                    <header>Imagem da página</header>
+                    <article>
+                        <div class="form-group thumbnail">
+                            {{-- <label>Imagem de Destaque (Thumbnail)</label> --}}
+
+                            <div class="thumbnail-selector">
+                                <div class="thumbnail-preview"
+                                    :class="{ 'has-image': thumbnailUrl }"
+                                    @click="!thumbnailUrl && openSelector()">
+                                    <template x-if="thumbnailUrl">
+                                        <img :src="thumbnailUrl" alt="Preview" class="preview-image">
+                                    </template>
+                                    <template x-if="!thumbnailUrl">
+                                        <div class="preview-placeholder">
+                                            <x-lucide-image class="lucid-icon" />
+                                            <span>Clique para selecionar</span>
+                                        </div>
+                                    </template>
+
+                                    <button type="button"
+                                            x-show="thumbnailUrl"
+                                            @click.stop="clearMedia()"
+                                            class="preview-remove"
+                                            title="Remover imagem">
+                                        <x-lucide-x class="lucid-icon" />
+                                    </button>
+                                </div>
+
+                                <div class="thumbnail-actions" x-show="!thumbnailUrl">
+                                    <button type="button"
+                                            @click="$dispatch('media:upload-open', { id: 'mainUploader', context: 'thumbnail' })"
+                                            class="admin-btn admin-btn-secondary">
+                                        <x-lucide-upload class="lucid-icon" /> Upload
+                                    </button>
+                                    <button type="button"
+                                            @click="openSelector()"
+                                            class="admin-btn admin-btn-secondary">
+                                        <x-lucide-library class="lucid-icon" /> Biblioteca
+                                    </button>
+                                </div>
+
+                                <input type="hidden" name="thumbnail_id" x-model="thumbnailId">
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </div>
+
+        <div class="buttons bottom-buttons">
+            <button type="submit" class="admin-btn admin-btn-primary">
+                <x-lucide-save class="lucid-icon" /> Salvar
+            </button>
+        </div>
+
+    </form>
+</div>
+
+<x-lost-changes-warn selector="#edit_form" />
+
+{{-- Modal de seleção --}}
+<x-modal id="selectorModal" title="Selecionar Mídia" size="xl">
+    <x-media.grid
+        id="gridInsideModal"
+        :selectable="true"
+        :multiple="false"
+        :per-page="12"
+        initial-type="image"
+    />
+</x-modal>
+
+{{-- Upload Modal --}}
+<x-media.upload-modal
+    id="mainUploader"
+    folder="uploads"
+    accept="image/*,application/pdf"
+    :max-size="10240"
+/>
+
+@endsection
+
+@push('styles')
+<link rel="stylesheet" href="{{ asset('css/admin/page-media.css') }}">
+@endpush
+
+@push('scripts')
+<script src="{{ asset('js/tinymce/tinymce.min.js') }}"></script>
+<script src="{{ asset('js/page-media.js') }}"></script>
+<script>
+    window.LUNAR_SHORTCODES = @json(\App\Helpers\ContentHelper::getRegisteredShortcodes());
+</script>
+@endpush

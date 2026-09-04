@@ -1,0 +1,57 @@
+@php $path = ['path' => request()->path()]; @endphp
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <x-seo-meta />
+
+    @if(setting('general.cookies_consent'))
+    <x-cookie.scripts />
+    @endif
+
+    <x-hook name="main.head" :params="$path" desc="No elemento HEAD do site" />
+
+    <link rel="stylesheet" href="{{ asset('css/dialog.css') }}">
+
+    @headerAssets
+
+    <script src="{{ asset('js/dialog.js') }}"></script>
+    <link rel="stylesheet" href="{{ asset('css/public/site.css') }}">
+    <script src="{{ asset('js/site.js') }}"></script>
+    @stack('styles')
+</head>
+
+<body {!! $theme !!}>
+    @include('public.partials.header')
+
+    <x-hook name="main.before_content" :params="$path" desc="Antes do conteúdo principal do site" />
+
+    <main class="site-content">
+        <div class="container">
+            @if(setting('navigation.breadcrumbs'))
+            <x-breadcrumbs :icon="setting('navigation.breadcrumbs_icon')" />
+            @endif
+        </div>
+
+        <x-hook name="main.after_breadcrumbs" :params="$path" desc="Abaixo do menu breadcrumbs" />
+
+        @yield('content')
+    </main>
+
+    <x-hook name="main.after_content" :params="$path" desc="Abaixo do conteúdo principal do site" />
+
+    @include('public.partials.footer')
+
+    @if(setting('general.cookies_consent'))
+    <x-cookie.banner />
+    @endif
+
+    @footerAssets
+
+    @stack('footer-styles')
+    @stack('scripts')
+</body>
+</html>
