@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## [2.0.1] 2026-09-05
+
+### Fixed
+- editor-common.js faltando no componente x-editor
+
 ## [2.0.0] 2026-09-05
 
 ### Added

@@ -145,4 +145,5 @@
         };
         </script>
     @endif
+    <script src="{{ asset('js/editor-common.js') }}"></script>
 </div>
