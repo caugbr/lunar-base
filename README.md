@@ -12,52 +12,50 @@ O **Lunar Base** é um Starter Kit híbrido para Laravel 12, projetado com carac
 ## Addons
 O Lunar Base trabalha com o conceito de temas e plugins. Esse material está em um repositório separado,  que serve de base para baixar e atualizar através da própria interface. Veja no repositório: https://github.com/caugbr/lunar-base-addons.
 
-## Instalação
+## Principais Funcionalidades
 
-O projeto conta com o script `install.sh` para automatizar e guiar a instalação de forma interativa.
+### Gestão de Conteúdo & Edição
+* **Páginas e Posts:** Gerenciamento completo de publicações, rascunhos, agendamentos, autores e categorias.
+* **Editor de Blocos Moderno (Tiptap / Vue 3):** Edição estruturada em árvore JSON com salvamento duplo (JSON + HTML pré-renderizado de alta performance).
+* **Barra de Ferramentas Configurável:** Controle visual no painel administrativo para habilitar/desabilitar botões do editor e definir a paleta de cores da marca.
+* **Blocos Nativos Inclusos:** Caixas de aviso (Callouts), grid de colunas responsivo (2 a 4), cards de conteúdo, botões CTA, tabelas interativas, imagens com legenda/redimensionamento e bloco de código com realce de sintaxe.
+* **Sistema de Shortcodes Visual:** Badges coloridos no editor com formulários gerados dinamicamente com base no esquema de atributos do PHP.
+* **SEO Automático Inteligente:** Geração nativa de OpenGraph e meta tags com base em títulos, resumos e thumbnails.
+* **Importação e Exportação:** Backup, migração e transporte de conteúdos com facilidade.
 
-### Requisitos
+---
 
-- PHP >= 8.3
-- Composer
-- Ambiente Bash (Git Bash ou WSL se estiver no Windows)
+### Ecossistema de Temas & Plugins
+* **Marketplace Integrado:** Instalação, ativação e atualização de plugins e temas com 1 clique direto no painel administrativo.
+* **21 Plugins Prontos:** Ecossistema inicial com mais de duas dezenas de extensões funcionais prontas para uso.
+* **Extensibilidade Total:** Plugins e temas podem:
+  * Injetar novos blocos, ferramentas e botões na toolbar do editor em tempo de execução.
+  * Criar novos grupos e campos no painel de configurações.
+  * Injetar e substituir elementos em qualquer view Blade via **Sistema de Hooks** (`<x-hook />`).
+  * Adicionar itens e páginas no menu administrativo.
+  * Registrar **Rotas Dinâmicas** públicas em tempo de execução.
+  * Criar novos widgets para o Dashboard.
+  * Registrar shortcodes customizados com validação e interface.
 
-### Execução
+---
 
-```bash
-chmod +x install.sh
-./install.sh
-```
+### Engenharia, Persistência & Assets
+* **Atualização do Core em 1 Clique:** Atualização do núcleo do sistema diretamente pelo painel administrativo.
+* **Asset Pipeline Inteligente (AssetManager):** Enfileiramento de scripts e estilos (`add_style`, `add_script`) com controle de dependências, handles únicos, deduplicação e injeção inline.
+* **Settings & Options API:**
+  * *Settings:* Criação declarativa de formulários administrativos (switches, selects, number, color picker).
+  * *Options:* Armazenamento leve de chave/valor tipado (com casting automático para arrays e encriptação nativa).
+* **REST API Nativa:** Endpoints prontos para consumo de dados por aplicações externas.
+* **Ajuda Contextual Integrada:** Tutoriais e documentação de desenvolvedor acessíveis diretamente na interface administrativa.
+* **Logs de Ações (Audit Trail):** Rastreamento e auditoria de ações executadas pelos usuários no painel.
 
-### Opções do Script
+---
 
-| Flag | Descrição |
-| :--- | :--- |
-| `./install.sh --help` | Exibe a ajuda e o roteiro de execução |
-| `./install.sh --dry-run` | Executa apenas a coleta de dados e gera o JSON, sem instalar nada |
-
-### Coleta de Dados Interativa
-
-1. **Informações do site**: Nome e URL (padrões: `Lunar Base`, `http://localhost`)
-2. **Administrador principal**: Nome, e-mail e senha
-3. **Usuários de demonstração**: Senha padrão para perfis de testes (`role@dominio`)
-4. **Persistência de dados**: Opção de salvar credenciais em `storage/app/.install/default_users_data.json` para futuros seeds
-5. **Banco de dados**: Opção entre `sqlite` (padrão), `mysql`, `pgsql` ou `sqlsrv`
-
-### Etapas da Instalação Automática
-
-1. Geração do arquivo temporário com os usuários
-2. Instalação das dependências via `composer install`
-3. Criação do arquivo `.env` e geração da `APP_KEY`
-4. Atualização das variáveis no `.env` (`APP_NAME`, `APP_URL`, `DB_*`)
-5. Criação do arquivo de banco SQLite (se selecionado)
-6. Execução de migrações (`php artisan migrate --force`)
-7. Povoamento do banco (`php artisan db:seed --force`)
-8. Criação do link simbólico (`php artisan storage:link`)
-9. Limpeza e otimização dos caches do sistema
-10. Exibição do resumo final de credenciais criadas
-
-> **Fallback de Usuários:** Se o JSON de instalação não existir, a aplicação utilizará a configuração em `config/defaultUsers.php` gerando os acessos a partir das roles em `config/rolesPermissions.php` com a senha padrão `Pass#1029`.
+### Segurança & Controle de Acesso
+* **Controle de Acesso (Roles & Permissions):** Gestão de papéis e permissões para administradores, editores, autores e assinantes.
+* **2FA Nativo (TOTP):** Autenticação de dois fatores integrada com suporte ao Google Authenticator e Authy.
+* **Proteção CAPTCHA:** Suporte nativo ao Cloudflare Turnstile para proteção contra bots em formulários e login.
+* **Proteção de Formulários:** Alerta automático de alterações pendentes antes de fechar ou recarregar abas (`<x-lost-changes-warn />`).
 
 ---
 
@@ -74,11 +72,11 @@ chmod +x install.sh
 | **Plugins** | Gerenciador de extensões ativas e acesso ao *Marketplace de Plugins*. |
 | **Temas** | Gerenciador de temas visuais e acesso ao *Marketplace de Temas*. |
 | **Configurações** | Painel para parametrização de variáveis globais do sistema. |
-| **Ferramentas** | Exportar ou exportar posta, pages, taxonomias e outros. |
-| **Referências** | Documentação e auditoria técnica interna (*Hooks*, *Shortcodes*, *Permissões* e *Logs*). |
+| **Ferramentas** | Exportar ou exportar posta, páginas, taxonomias e outros. |
+| **Referências** | Documentação e auditoria técnica interna (*Hooks*, *Shortcodes*, *Permissões*, *Logs* e *Tutoriais*). |
 
 ---
 
 ## Licença
 
-Este projeto é licenciado sob a [MIT License](https://mit-license.org/).
+Projeto desenvolvido por [Cau Guanabara](https://cauguanabara.com.br) e licenciado sob a [MIT License](https://mit-license.org/).
