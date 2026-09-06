@@ -106,6 +106,10 @@
         <input type="email" name="{{ $inputName }}" id="{{ str_replace(['[', ']'], ['_', ''], $inputName) }}" value="{{ $inputValue }}" class="form-input" placeholder="{{ $def['placeholder'] ?? 'email@exemplo.com' }}" autocomplete="off">
         @break
 
+    @case('color')
+        <input type="color" name="{{ $inputName }}" id="{{ str_replace(['[', ']'], ['_', ''], $inputName) }}" value="{{ $inputValue ?? '#000000' }}" class="form-input">
+        @break
+
     @case('password')
         <div class="password-field">
             <input type="password" name="{{ $inputName }}" id="{{ str_replace(['[', ']'], ['_', ''], $inputName) }}" value="" class="form-input" placeholder="••••••••" autocomplete="new-password">

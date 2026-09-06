@@ -253,16 +253,16 @@
     }
 
     /* ===== Radio & Checkbox ===== */
-    .radio-group,
+    /* .radio-group,
     .checkbox-group {
         display: flex;
         flex-wrap: wrap;
         gap: 0.5rem;
-    }
+    } */
 
     .radio-label,
     .checkbox-label {
-        display: inline-flex;
+        display: flex !important;
         align-items: center;
         gap: 0.25rem;
         margin-right: 1rem;

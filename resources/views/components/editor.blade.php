@@ -8,6 +8,30 @@
 
 @php
     $isTiptap = $forceType === 'tiptap' || (!empty($json) || empty($value));
+
+    // 1. Lê as configurações do grupo 'editor' via helper nativo
+    $editorSettings = settingsGroup('editor');
+
+    // 2. Converte a string de cores separadas por vírgula em um array limpo
+    $rawPalette = $editorSettings['color_palette'] ?? '#0f172a, #64748b, #ef4444, #f97316, #eab308, #22c55e, #3b82f6, #a855f7, #ec4899';
+    $colorPalette = is_array($rawPalette)
+        ? $rawPalette
+        : array_values(array_filter(array_map('trim', explode(',', $rawPalette))));
+
+    // 3. Garante que a lista de ferramentas ativas seja um array
+    $rawTools = $editorSettings['toolbar_tools'] ?? [];
+    $toolbarTools = is_array($rawTools)
+        ? $rawTools
+        : (is_string($rawTools) ? array_values(array_filter(array_map('trim', explode(',', $rawTools)))) : []);
+
+    // 4. Monta o pacote de configuração para o Vue
+    $editorConfig = [
+        'tools'              => $toolbarTools,
+        'colors'             => $colorPalette,
+        'allow_custom_color' => (bool) ($editorSettings['allow_custom_color'] ?? true),
+    ];
+
+    $editorConfigJson = json_encode($editorConfig);
 @endphp
 
 <div class="lunar-editor-wrapper">
@@ -19,6 +43,7 @@
             id="lunar-tiptap-app"
             data-initial-json="{{ is_array($json) ? json_encode($json) : ($json ?? '') }}"
             data-initial-html="{{ $value }}"
+            data-editor-config="{{ $editorConfigJson }}"
         ></div>
 
         <input type="hidden" name="{{ $jsonName }}" id="lunar_content_json" value="{{ is_array($json) ? json_encode($json) : $json }}">
@@ -94,11 +119,12 @@
             const wrapper = document.querySelector('.lunar-editor-wrapper');
             if (!wrapper) return;
 
-            // 3. Substitui o HTML pelo container do Tiptap
+            // 3. Substitui o HTML pelo container do Tiptap com a configuração dinâmica injetada
             wrapper.innerHTML = `
                 <div
                     id="lunar-tiptap-app"
                     data-initial-html="${encodeURIComponent(currentHtml)}"
+                    data-editor-config="{{ $editorConfigJson }}"
                 ></div>
                 <input type="hidden" name="{{ $jsonName }}" id="lunar_content_json" value="">
                 <input type="hidden" name="{{ $name }}" id="lunar_content_html" value="">

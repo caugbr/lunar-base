@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## [2.1.0] 2026-09-06
+
+## Added
+- Toolbar do editor configurável via Settings
+- Dropdowns para cor de fonte e cor de fundo (marcação de texto) no editor
+
 ## [2.0.2] 2026-09-05
 
 ### Fixed
