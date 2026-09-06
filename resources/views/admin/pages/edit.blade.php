@@ -35,25 +35,14 @@
                     </div>
                 </div>
 
-                {{-- Conteúdo (TinyMCE) --}}
+                {{-- CONTEÚDO (COMPONENTE X-EDITOR) --}}
                 <div class="form-group">
-                    <div class="editor-top">
-                        <label for="content">Conteúdo *</label>
-                        <div class="image-buttons">
-                            <button class="admin-btn admin-btn-secondary" type="button"
-                                    onclick="window.dispatchEvent(new CustomEvent('media:upload-open', { detail: { id: 'mainUploader', context: 'editor' } }))">
-                                <x-lucide-upload class="lucid-icon" /> Upload de imagem
-                            </button>
-                            <button class="admin-btn admin-btn-secondary" type="button"
-                                    onclick="window.dispatchEvent(new CustomEvent('modal-open', { detail: { id: 'selectorModal', context: 'editor' } }))">
-                                <x-lucide-image class="lucid-icon" /> Inserir imagem
-                            </button>
-                        </div>
-                    </div>
-                    <textarea name="content" id="content" rows="15" style="display: none;">{{ old('content', $page->content) }}</textarea>
-                    <div class="wait-editor">
-                        <div id="tiny-editor" class="tiny-editor"></div>
-                    </div>
+                    <x-editor
+                        name="content"
+                        json-name="content_json"
+                        :value="old('content', $page->content)"
+                        :json="old('content_json', $page->content_json)"
+                    />
                     @error('content') <small class="error">{{ $message }}</small> @enderror
                 </div>
 
@@ -61,7 +50,6 @@
                     <header>Descrição curta</header>
                     <article>
                         <div class="form-group excerpt">
-                            {{-- <label for="excerpt">Resumo / </label> --}}
                             <textarea name="excerpt" id="excerpt" rows="4">{{ old('excerpt', $page->excerpt) }}</textarea>
                             <small>Breve resumo da página (opcional)</small>
                         </div>
@@ -84,6 +72,7 @@
                 </div>
                 @endif
             </div>
+
             <div class="aside-column">
                 <div class="edit-box">
                     <header>Detalhes da página</header>
@@ -118,6 +107,7 @@
                         </div>
                     </article>
                 </div>
+
                 <div class="edit-box">
                     <header>Propriedades</header>
                     <article>
@@ -175,8 +165,6 @@
                     <header>Imagem da página</header>
                     <article>
                         <div class="form-group thumbnail">
-                            {{-- <label>Imagem de Destaque (Thumbnail)</label> --}}
-
                             <div class="thumbnail-selector">
                                 <div class="thumbnail-preview"
                                     :class="{ 'has-image': thumbnailUrl }"
@@ -226,30 +214,17 @@
                 <x-lucide-save class="lucid-icon" /> Salvar
             </button>
         </div>
-
     </form>
 </div>
 
 <x-lost-changes-warn selector="#edit_form" />
 
-{{-- Modal de seleção --}}
+{{-- Modais --}}
 <x-modal id="selectorModal" title="Selecionar Mídia" size="xl">
-    <x-media.grid
-        id="gridInsideModal"
-        :selectable="true"
-        :multiple="false"
-        :per-page="12"
-        initial-type="image"
-    />
+    <x-media.grid id="gridInsideModal" :selectable="true" :multiple="false" :per-page="12" initial-type="image" />
 </x-modal>
 
-{{-- Upload Modal --}}
-<x-media.upload-modal
-    id="mainUploader"
-    folder="uploads"
-    accept="image/*,application/pdf"
-    :max-size="10240"
-/>
+<x-media.upload-modal id="mainUploader" folder="uploads" accept="image/*,application/pdf" :max-size="10240" />
 
 @endsection
 
@@ -258,8 +233,6 @@
 @endpush
 
 @push('scripts')
-<script src="{{ asset('js/tinymce/tinymce.min.js') }}"></script>
-<script src="{{ asset('js/page-media.js') }}"></script>
 <script>
     window.LUNAR_SHORTCODES = @json(\App\Helpers\ContentHelper::getRegisteredShortcodes());
 </script>

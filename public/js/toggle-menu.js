@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const buttonToggle = document.createElement('button');
     buttonToggle.className = 'admin-btn transparent-btn';
+    buttonToggle.id = 'toggle_menu';
     buttonToggle.type = 'button';
     buttonToggle.style.cssText = 'position: fixed; top: 95px; left: 267px; z-index: 999; transition: left 200ms ease-in-out 0s;';
     buttonToggle.innerHTML = closeSvg;

@@ -76,7 +76,8 @@ class PageController extends Controller
                     return $query->where('namespace', $request->namespace);
                 }),
             ],
-            'content' => 'required|string',
+            'content' => 'nullable|string',
+            'content_json' => 'nullable',
             'excerpt' => 'nullable|string',
             'namespace' => 'nullable|string',
             'is_main' => 'nullable|boolean',
@@ -152,7 +153,8 @@ class PageController extends Controller
                     return $query->where('namespace', $request->namespace);
                 })->ignore($page->id),
             ],
-            'content' => 'required|string',
+            'content' => 'nullable|string',
+            'content_json' => 'nullable',
             'excerpt' => 'nullable|string',
             'namespace' => 'nullable|string',
             'is_main' => 'nullable|boolean',

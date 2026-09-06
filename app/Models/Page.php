@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use App\Traits\HasMeta;
 
 class Page extends Model
@@ -17,6 +18,7 @@ class Page extends Model
         'title',
         'slug',
         'content',
+        'content_json',
         'excerpt',
         'namespace',
         'author_id',
@@ -31,6 +33,7 @@ class Page extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
+        'content_json' => 'array',
     ];
 
     // ==========================================
@@ -161,5 +164,12 @@ class Page extends Model
     public function adminEditUrl()
     {
         return route('admin.pages.edit', $this->id);
+    }
+
+    protected function contentJson(): Attribute
+    {
+        return Attribute::make(
+            set: fn ($value) => is_string($value) ? json_decode($value, true) : $value,
+        );
     }
 }

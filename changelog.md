@@ -2,7 +2,15 @@
 
 ## Unreleased
 
+## [2.0.0] 2026-09-05
+
 ### Added
+- Retrocompatibilidade com o TinyMCE, com aviso e conversão
+- Novo plugin Table of Contents - ação direta, unicamente no novo editor
+- Indrodução do EditorManager, que permite a temas e plugins interagir com o editor
+- Componente <x-lost-changes-warn> integrado ao novo editor
+- Novo componente <x-editor>
+- Novo editor de blocos baseado em Vue 3 + Tiptap
 - Plugin Tracker - subitens no menu
 - Plugin Tracker - adicionada ajuda contextual
 

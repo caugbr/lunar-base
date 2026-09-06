@@ -14,13 +14,15 @@
 
     <x-hook name="main.head" :params="$path" desc="No elemento HEAD do site" />
 
-    <link rel="stylesheet" href="{{ asset('css/dialog.css') }}">
-
     @headerAssets
 
-    <script src="{{ asset('js/dialog.js') }}"></script>
+    <link rel="stylesheet" href="{{ asset('css/dialog.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/editor-blocks.css') }}">
     <link rel="stylesheet" href="{{ asset('css/public/site.css') }}">
+
+    <script src="{{ asset('js/dialog.js') }}"></script>
     <script src="{{ asset('js/site.js') }}"></script>
+
     @stack('styles')
 </head>
 

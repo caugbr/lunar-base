@@ -25,23 +25,14 @@
                     </div>
                 </div>
 
-                {{-- Conteúdo (TinyMCE) --}}
+                {{-- CONTEÚDO (COMPONENTE X-EDITOR) --}}
                 <div class="form-group">
-                    <div class="editor-top">
-                        <label for="content">Conteúdo *</label>
-                        <div class="image-buttons">
-                            <button class="admin-btn admin-btn-secondary" type="button"
-                                    onclick="window.dispatchEvent(new CustomEvent('media:upload-open', { detail: { id: 'mainUploader', context: 'editor' } }))">
-                                <x-lucide-upload class="lucid-icon" /> Upload de imagem
-                            </button>
-                            <button class="admin-btn admin-btn-secondary" type="button"
-                                    onclick="window.dispatchEvent(new CustomEvent('modal-open', { detail: { id: 'selectorModal', context: 'editor' } }))">
-                                <x-lucide-image class="lucid-icon" /> Inserir imagem
-                            </button>
-                        </div>
-                    </div>
-                    <textarea name="content" id="content" rows="15" style="display: none;">{{ old('content') }}</textarea>
-                    <div id="tiny-editor" class="tiny-editor"></div>
+                    <x-editor
+                        name="content"
+                        json-name="content_json"
+                        :value="old('content')"
+                        :json="old('content_json')"
+                    />
                     @error('content') <small class="error">{{ $message }}</small> @enderror
                 </div>
 
@@ -69,8 +60,8 @@
                     </article>
                 </div>
                 @endif
-
             </div>
+
             <div class="aside-column">
                 <div class="edit-box">
                     <header>Detalhes do post</header>
@@ -113,6 +104,7 @@
                         </div>
                     </article>
                 </div>
+
                 <div class="edit-box">
                     <header>Propriedades</header>
                     <article>
@@ -153,6 +145,7 @@
                         </div>
                     </article>
                 </div>
+
                 <div class="edit-box" x-data='thumbnailManager({{ json_encode(["id" => old("thumbnail_id"), "url" => old("thumbnail_url")]) }})'>
                     <header>Imagem do post</header>
                     <article>
@@ -207,24 +200,12 @@
     </form>
 </div>
 
-{{-- Modal de seleção --}}
+{{-- Modais --}}
 <x-modal id="selectorModal" title="Selecionar Mídia" size="xl">
-    <x-media.grid
-        id="gridInsideModal"
-        :selectable="true"
-        :multiple="false"
-        :per-page="12"
-        initial-type="image"
-    />
+    <x-media.grid id="gridInsideModal" :selectable="true" :multiple="false" :per-page="12" initial-type="image" />
 </x-modal>
 
-{{-- Upload Modal --}}
-<x-media.upload-modal
-    id="mainUploader"
-    folder="uploads"
-    accept="image/*,application/pdf"
-    :max-size="10240"
-/>
+<x-media.upload-modal id="mainUploader" folder="uploads" accept="image/*,application/pdf" :max-size="10240" />
 
 @endsection
 
@@ -233,8 +214,6 @@
 @endpush
 
 @push('scripts')
-<script src="{{ asset('js/tinymce/tinymce.min.js') }}"></script>
-<script src="{{ asset('js/page-media.js') }}"></script>
 <script>
     window.LUNAR_SHORTCODES = @json(\App\Helpers\ContentHelper::getRegisteredShortcodes());
 </script>

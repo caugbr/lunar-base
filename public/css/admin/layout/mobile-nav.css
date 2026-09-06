@@ -84,4 +84,8 @@
     .admin-content {
         padding: 20px;
     }
+
+    #toggle_menu {
+        display: none;
+    }
 }

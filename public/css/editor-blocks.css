@@ -1,0 +1,340 @@
+/* ==========================================================================
+   LUNAR BASE - PUBLIC BLOCKS STYLESHEET
+   Estilos visuais de todos os blocos para o Front-end público
+   ========================================================================== */
+
+/* ==========================================================================
+   1. CAIXAS DE AVISO (CALLOUT)
+   ========================================================================== */
+.callout-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 1.5rem 0;
+  padding: 12px 16px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.callout-box.callout-info {
+  background: #f0f7ff;
+  border-color: #bfdbfe;
+  color: #1d4ed8;
+}
+
+.callout-box.callout-warning {
+  background: #fefce8;
+  border-color: #fef08a;
+  color: #a16207;
+}
+
+.callout-box.callout-success {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+  color: #15803d;
+}
+
+.callout-box p {
+  margin: 0 !important;
+}
+
+/* ==========================================================================
+   2. GRID DE COLUNAS (2, 3 E 4 COLUNAS)
+   ========================================================================== */
+.tiptap-columns {
+  display: grid;
+  gap: 24px;
+  margin: 1.75rem 0;
+  width: 100%;
+}
+
+.tiptap-column {
+  min-width: 0;
+}
+
+/* Responsividade: vira 1 coluna no celular automaticamente */
+@media (max-width: 768px) {
+  .tiptap-columns {
+    grid-template-columns: 1fr !important;
+    gap: 16px;
+  }
+}
+
+/* ==========================================================================
+   3. CARDS DE DESTAQUE (CONTAINERS)
+   ========================================================================== */
+.content-card {
+  margin: 1.75rem 0;
+  border-radius: 8px;
+  padding: 24px;
+  transition: all 0.2s ease;
+}
+
+.content-card.theme-bordered {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.content-card.theme-gray {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.content-card.theme-dark {
+  background: #0f172a;
+  color: #f8fafc;
+  border: 1px solid #1e293b;
+}
+
+.content-card.theme-dark h1,
+.content-card.theme-dark h2,
+.content-card.theme-dark h3,
+.content-card.theme-dark h4,
+.content-card.theme-dark strong {
+  color: #ffffff;
+}
+
+.content-card.theme-dark p {
+  color: #cbd5e1;
+}
+
+/* ==========================================================================
+   4. BOTÃO DE AÇÃO (CTA)
+   ========================================================================== */
+.cta-container {
+  margin: 1.75rem 0;
+  display: flex;
+}
+
+.cta-container.align-left { justify-content: flex-start; }
+.cta-container.align-center { justify-content: center; }
+.cta-container.align-right { justify-content: flex-end; }
+
+.cta-button {
+  display: inline-block;
+  padding: 12px 28px;
+  font-weight: 600;
+  font-size: 15px;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.cta-button.variant-primary {
+  background: #2563eb;
+  color: #ffffff !important;
+}
+.cta-button.variant-primary:hover {
+  background: #1d4ed8;
+}
+
+.cta-button.variant-success {
+  background: #16a34a;
+  color: #ffffff !important;
+}
+.cta-button.variant-success:hover {
+  background: #15803d;
+}
+
+.cta-button.variant-dark {
+  background: #0f172a;
+  color: #ffffff !important;
+}
+.cta-button.variant-dark:hover {
+  background: #1e293b;
+}
+
+.cta-button.variant-outline {
+  background: transparent;
+  color: #0f172a !important;
+  border: 2px solid #0f172a;
+}
+.cta-button.variant-outline:hover {
+  background: #0f172a;
+  color: #ffffff !important;
+}
+
+/* ==========================================================================
+   5. IMAGENS E FIGURAS COM LEGENDA
+   ========================================================================== */
+figure[data-type="figure-image"] {
+  margin: 2rem 0;
+  display: block;
+}
+
+figure[data-type="figure-image"] img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+  display: block;
+}
+
+figure[data-type="figure-image"].align-left {
+  float: left;
+  margin-right: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+figure[data-type="figure-image"].align-right {
+  float: right;
+  margin-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+figure[data-type="figure-image"].align-center {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+figure[data-type="figure-image"].align-center img {
+  margin: 0 auto;
+}
+
+figure[data-type="figure-image"] figcaption {
+  font-size: 13px;
+  color: #64748b;
+  margin-top: 8px;
+  text-align: center;
+  font-style: italic;
+}
+
+/* ==========================================================================
+   6. BLOCO DE CÓDIGO COM REALCE DE SINTAXE (TEMA DARK / VS CODE)
+   ========================================================================== */
+pre {
+  background: #0f172a;
+  color: #f8fafc;
+  font-family: 'JetBrains Mono', 'Fira Code', Consolas, Monaco, monospace;
+  padding: 1rem 1.25rem;
+  border-radius: 8px;
+  margin: 1.5rem 0;
+  overflow-x: auto;
+  font-size: 13.5px;
+  line-height: 1.6;
+  border: 1px solid #1e293b;
+  tab-size: 2;
+}
+
+pre code {
+  color: inherit;
+  background: none;
+  font-size: inherit;
+  padding: 0;
+}
+
+/* Cores de Sintaxe */
+.hljs-comment,
+.hljs-quote {
+  color: #64748b;
+  font-style: italic;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-subst {
+  color: #f43f5e;
+  font-weight: bold;
+}
+
+.hljs-number,
+.hljs-literal,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag .hljs-attr {
+  color: #fb923c;
+}
+
+.hljs-string,
+.hljs-doctag {
+  color: #10b981;
+}
+
+.hljs-title,
+.hljs-section,
+.hljs-selector-id {
+  color: #38bdf8;
+  font-weight: bold;
+}
+
+.hljs-title.class_,
+.hljs-class .hljs-title,
+.hljs-type {
+  color: #a855f7;
+}
+
+.hljs-built_in,
+.hljs-symbol,
+.hljs-bullet {
+  color: #eab308;
+}
+
+.hljs-tag,
+.hljs-name {
+  color: #38bdf8;
+}
+
+
+/* ==========================================================================
+   CITAÇÕES (BLOCKQUOTE) COM VISUAL EDITORIAL ELEGANTE
+   ========================================================================== */
+blockquote {
+  border-left: 4px solid #3b82f6; /* Barra lateral azul de destaque */
+  background: #f8fafc;           /* Fundo suave */
+  padding: 14px 20px;
+  margin: 1.75rem 0;
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  font-style: italic;
+  color: #334155;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  position: relative;
+}
+
+blockquote p {
+  margin: 0.25rem 0 !important;
+}
+
+
+/* ==========================================================================
+   TABELAS MODERNAS
+   ========================================================================== */
+table {
+  border-collapse: collapse;
+  margin: 1.75rem 0;
+  width: 100%;
+  table-layout: fixed;
+  overflow: hidden;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+}
+
+table td,
+table th {
+  min-width: 1em;
+  border: 1px solid #cbd5e1;
+  padding: 10px 14px;
+  vertical-align: top;
+  box-sizing: border-box;
+  position: relative;
+  font-size: 14px;
+}
+
+table th {
+  font-weight: 600;
+  text-align: left;
+  background-color: #f1f5f9;
+  color: #1e293b;
+}
+
+/* Remove a margem dos parágrafos dentro de células de tabela */
+table td p,
+table th p {
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 1.4;
+}

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Post extends Model
 {
@@ -16,6 +17,7 @@ class Post extends Model
         'title',
         'slug',
         'content',
+        'content_json',
         'excerpt',
         'author_id',
         'status',
@@ -33,6 +35,7 @@ class Post extends Model
         'published_at' => 'datetime',
         'featured' => 'boolean',
         'sticky' => 'boolean',
+        'content_json' => 'array',
     ];
 
     // ==========================================
@@ -312,5 +315,12 @@ class Post extends Model
     public function adminEditUrl()
     {
         return route('admin.posts.edit', $this->id);
+    }
+
+    protected function contentJson(): Attribute
+    {
+        return Attribute::make(
+            set: fn ($value) => is_string($value) ? json_decode($value, true) : $value,
+        );
     }
 }

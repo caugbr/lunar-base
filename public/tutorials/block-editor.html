@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estendendo o Editor de Blocos - Lunar Base v2.0.0</title>
+    <link rel="stylesheet" href="tutorials.css">
+</head>
+<body>
+    <header>
+        <h1>Estendendo o Editor de Blocos</h1>
+        <p data-subtitle>Lunar Base v2.0.0 - Desenvolvimento de Nós, NodeViews e Extensões Tiptap</p>
+    </header>
+
+    <div class="container">
+        <nav class="toc">
+            <a href="index.html" class="back-index">Voltar</a>
+            <h2>Sumário</h2>
+            <ul>
+                <li><a href="#intro">Introdução</a></li>
+                <li><a href="#ciclo-vida">O Modelo de Dados (JSON vs HTML)</a></li>
+                <li><a href="#anatomia">Anatomia de um Bloco Tiptap</a></li>
+                <li><a href="#node-views">Interfaces Reativas com Vue (NodeViews)</a></li>
+                <li><a href="#registro-api">Registrando no Editor (window.LunarEditor)</a></li>
+                <li><a href="#posicionamento">Posicionamento de Ações na Interface</a></li>
+                <li><a href="#exemplo-pratico">Exemplo Prático Completo</a></li>
+                <li><a href="#boas-praticas">Boas Práticas de Desenvolvimento</a></li>
+            </ul>
+        </nav>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="intro">
+            <h2>Introdução</h2>
+            <div class="intro">
+                <p>O editor de conteúdo do <span class="app-name">Lunar Base</span> é baseado em uma árvore de dados estruturados utilizando <strong>Tiptap (ProseMirror)</strong> e <strong>Vue 3</strong>. Diferente de editores tradicionais baseados em HTML bruto, o editor do Lunar Base trata cada elemento da página como um <strong>nó tipado e independente</strong> (parágrafos, cards, avisos, tabelas, colunas, imagens com legenda).</p>
+                <p>Plugins e temas podem injetar novas extensões em tempo de execução sem recompilar o núcleo do sistema, criando desde simples botões de formatação até componentes interativos complexos.</p>
+            </div>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>Árvore em JSON Limpa</h4>
+                    <p>Estrutura previsível de nós e atributos que pode ser consumida por APIs, aplicativos móveis ou exportadores.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Componentes Vue Nativos</h4>
+                    <p>Crie blocos visuais com botões de controle, estados reativos e seletores embutidos usando NodeViews.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Renderização Instantânea</h4>
+                    <p>O editor pré-compila HTML semântico ao salvar, garantindo que o front-end público não sofra atrasos de parsing.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="ciclo-vida">
+            <h2>O Modelo de Dados (JSON vs HTML)</h2>
+            <p>O editor opera com um fluxo bidirecional de dados automatizado pelo componente <code>&lt;x-editor /&gt;</code>:</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Campo no Banco</th>
+                        <th>Tipo</th>
+                        <th>Finalidade</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>content_json</code></td>
+                        <td>JSON / LongText</td>
+                        <td>A árvore de nós do ProseMirror. É carregada exclusivamente no painel admin para reabrir e editar os blocos.</td>
+                    </tr>
+                    <tr>
+                        <td><code>content</code></td>
+                        <td>LongText (HTML)</td>
+                        <td>O HTML semântico final pré-renderizado. É consumido diretamente pelas views públicas do tema (<code>{!! $post-&gt;content !!}</code>).</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="anatomia">
+            <h2>Anatomia de um Bloco Tiptap</h2>
+            <p>Um bloco customizado é criado através do método <code>Node.create()</code> exposto pelo motor global. Toda extensão possui 4 seções fundamentais:</p>
+
+            <pre><code class="code-label">JAVASCRIPT</code>const { Node, mergeAttributes } = window.LunarEditor;
+
+const MeuBlocoExtension = Node.create({
+    name: 'meuBloco',      // Identificador único do nó na árvore JSON
+    group: 'block',        // 'block' (bloco de linha inteira) ou 'inline' (dentro de texto)
+    content: 'block+',     // O que pode ser colocado dentro dele ('block+', 'inline*', ou vazio para átomos)
+    defining: true,        // Preserva a estrutura do bloco ao colar conteúdo
+    draggable: true,       // Permite arrastar e soltar o bloco
+
+    // 1. Atributos persistidos no JSON do nó
+    addAttributes() {
+        return {
+            tipo: { default: 'destaque' },
+            autor: { default: '' }
+        };
+    },
+
+    // 2. Como o Tiptap reconhece este bloco ao abrir um HTML existente
+    parseHTML() {
+        return [{ tag: 'div[data-type="meu-bloco"]' }];
+    },
+
+    // 3. Como este bloco é gravado no banco como HTML para o visitante
+    renderHTML({ HTMLAttributes }) {
+        return [
+            'div',
+            mergeAttributes(HTMLAttributes, { 'data-type': 'meu-bloco', class: 'lunar-meu-bloco' }),
+            0 // O número 0 indica onde o conteúdo editável interno será renderizado
+        ];
+    },
+
+    // 4. (Opcional) Vincula o visual do nó a um componente reativo do Vue
+    addNodeView() {
+        return VueNodeViewRenderer(MeuBlocoComponent);
+    }
+});</pre>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="node-views">
+            <h2>Interfaces Reativas com Vue (NodeViews)</h2>
+            <p>Se o seu bloco precisa de controles visuais durante a edição (como botões de exclusão, seletores de cor, abas ou inputs de configuração que não devem aparecer no site público), utilize uma <strong>NodeView</strong>:</p>
+
+            <div class="info">
+                <strong>Componentes Especiais da NodeView:</strong>
+                <ul>
+                    <li><code>NodeViewWrapper</code>: Container obrigatório que encapsula o nó no DOM do Vue.</li>
+                    <li><code>NodeViewContent</code>: Elemento que diz ao Tiptap onde o autor tem permissão para digitar texto dentro do bloco.</li>
+                    <li><code>updateAttributes()</code>: Função utilitária que altera os atributos do nó de forma reativa.</li>
+                </ul>
+            </div>
+
+            <div class="example-box">
+                <h4>Exemplo de Componente Vue em JavaScript Puro:</h4>
+                <pre><code class="code-label">JAVASCRIPT</code>const { NodeViewWrapper, NodeViewContent, Vue } = window.LunarEditor;
+const { h } = Vue;
+
+const CardComponent = {
+    props: ['node', 'updateAttributes', 'deleteNode'],
+    setup(props) {
+        return () => h(NodeViewWrapper, { class: `card-box card-${props.node.attrs.tipo}` }, [
+            // Barra de ferramentas administrativa (invisível no front-end)
+            h('div', { class: 'card-admin-bar', contenteditable: 'false' }, [
+                h('span', 'CARD PERSONALIZADO'),
+                h('button', {
+                    type: 'button',
+                    onClick: () => props.updateAttributes({ tipo: 'sucesso' })
+                }, 'Mudar para Verde'),
+                h('button', {
+                    type: 'button',
+                    class: 'btn-delete',
+                    onClick: () => props.deleteNode()
+                }, '🗑️')
+            ]),
+
+            // Área livre onde o autor digita o texto
+            h(NodeViewContent, { class: 'card-conteudo' })
+        ]);
+    }
+};</pre>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="registro-api">
+            <h2>Registrando no Editor (window.LunarEditor)</h2>
+            <p>O objeto global <code>window.LunarEditor</code> é a ponte de entrada para registrar extensões fornecidas pelo seu plugin:</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Método</th>
+                        <th>Parâmetros</th>
+                        <th>Descrição</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>registerBlock()</code></td>
+                        <td><code>blockConfig</code> (Object)</td>
+                        <td>Registra o bloco e cria o botão correspondente no Mega-Menu "Inserir Bloco".</td>
+                    </tr>
+                    <tr>
+                        <td><code>registerToolbarButton()</code></td>
+                        <td><code>buttonConfig</code> (Object)</td>
+                        <td>Adiciona um botão de acesso rápido diretamente na barra superior da Toolbar.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Configuração de Registro de Bloco (<code>registerBlock</code>):</h3>
+            <pre><code class="code-label">JAVASCRIPT</code>window.LunarEditor.registerBlock({
+    name: 'nomeDoNo',               // Nome declarado no Node.create()
+    category: 'Estrutura & Layout', // Categoria no Mega-Menu
+    title: 'Título do Botão',       // Título exibido no menu
+    description: 'Breve resumo',    // Descrição auxiliar do recurso
+    extension: MinhaExtensaoNode,   // A classe de extensão criada
+    action: (editor) => {           // Ação executada ao clicar no botão
+        editor.chain().focus().insertContent({
+            type: 'nomeDoNo',
+            attrs: { /* atributos iniciais */ },
+            content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Texto inicial...' }] }]
+        }).run();
+    }
+});</pre>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="posicionamento">
+            <h2>Posicionamento de Ações na Interface</h2>
+            <p>O Lunar Base permite que o plugin decida onde seus botões devem aparecer na tela de edição:</p>
+
+            <div class="example-box">
+                <h4>1. Inserir em Coluna Nativa Existente</h4>
+                <p>Use <code>category: 'Estrutura & Layout'</code> ou <code>category: 'Mídia & Conteúdo'</code> para agrupar o botão junto aos blocos padrão do sistema.</p>
+            </div>
+
+            <div class="example-box">
+                <h4>2. Criar Nova Coluna Temática</h4>
+                <p>Definir qualquer outro nome em <code>category</code> (ex: <code>'E-commerce'</code>, <code>'Formulários'</code>) cria uma nova coluna temática no Mega-Menu automaticamente.</p>
+            </div>
+
+            <div class="example-box">
+                <h4>3. Botão Direto na Barra Superior</h4>
+                <p>Para ferramentas globais de texto ou utilitários rápidos, utilize <code>registerToolbarButton()</code>:</p>
+                <pre><code class="code-label">JAVASCRIPT</code>window.LunarEditor.registerToolbarButton({
+    name: 'meu_utilitario',
+    title: 'Traduzir Texto',
+    icon: '🌐', // Texto, emoji ou caractere
+    action: (editor) => {
+        // Executa comandos no editor ativo
+        const textoSelecionado = editor.state.doc.textBetween(
+            editor.state.selection.from,
+            editor.state.selection.to
+        );
+        alert(`Texto selecionado: ${textoSelecionado}`);
+    }
+});</pre>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="exemplo-pratico">
+            <h2>Exemplo Prático Completo</h2>
+            <p>Este exemplo demonstra a criação de um plugin completo que adiciona um bloco de <strong>Caixa de Destaque com Autor</strong>.</p>
+
+            <h4>1. Service Provider do Plugin (<code>MeuPluginServiceProvider.php</code>):</h4>
+            <pre><code class="code-label">PHP</code>namespace Plugins\MeuDestaque;
+
+use Illuminate\Support\ServiceProvider;
+use App\Services\EditorManager;
+
+class MeuDestaqueServiceProvider extends ServiceProvider
+{
+    public function boot(): void
+    {
+        // 1. Injeta o script do editor no painel admin
+        EditorManager::registerScript(asset('plugins/meu-destaque/js/destaque-block.js'));
+
+        // 2. Injeta o CSS correspondente no painel admin
+        EditorManager::registerStyle(asset('plugins/meu-destaque/css/editor.css'));
+
+        // 3. Enfileira o CSS para exibição correta no site público
+        add_style('meu-destaque-front', asset('plugins/meu-destaque/css/front.css'), [], '1.0.0');
+    }
+}</pre>
+
+            <h4>2. Script do Bloco (<code>public/plugins/meu-destaque/js/destaque-block.js</code>):</h4>
+            <pre><code class="code-label">JAVASCRIPT</code>(function() {
+    'use strict';
+
+    if (!window.LunarEditor) return;
+
+    const { Node, mergeAttributes, VueNodeViewRenderer, NodeViewWrapper, NodeViewContent, Vue } = window.LunarEditor;
+    const { h } = Vue;
+
+    // Componente Vue da NodeView
+    const DestaqueComponent = {
+        props: ['node', 'updateAttributes'],
+        setup(props) {
+            return () => h(NodeViewWrapper, { class: 'plugin-destaque-box' }, [
+                h('div', { class: 'plugin-destaque-bar', contenteditable: 'false' }, [
+                    h('span', '⭐ DESTAQUE ESPECIAL'),
+                    h('button', {
+                        type: 'button',
+                        onClick: () => {
+                            const autor = prompt('Autor da frase:', props.node.attrs.autor);
+                            if (autor !== null) props.updateAttributes({ autor });
+                        }
+                    }, 'Definir Autor')
+                ]),
+                // Área onde o autor escreve o texto livre
+                h(NodeViewContent, { class: 'plugin-destaque-texto' }),
+                h('footer', { class: 'plugin-destaque-footer', contenteditable: 'false' }, `— ${props.node.attrs.autor || 'Anônimo'}`)
+            ]);
+        }
+    };
+
+    // Extensão do Nó Tiptap
+    const DestaqueExtension = Node.create({
+        name: 'caixaDestaque',
+        group: 'block',
+        content: 'block+',
+        defining: true,
+
+        addAttributes() {
+            return {
+                autor: { default: '' }
+            };
+        },
+
+        parseHTML() {
+            return [{ tag: 'div[data-type="caixa-destaque"]' }];
+        },
+
+        renderHTML({ HTMLAttributes }) {
+            return [
+                'div',
+                mergeAttributes(HTMLAttributes, {
+                    class: 'lunar-caixa-destaque',
+                    'data-type': 'caixa-destaque'
+                }),
+                ['div', { class: 'lunar-destaque-conteudo' }, 0],
+                HTMLAttributes.autor ? ['footer', { class: 'lunar-destaque-autor' }, `— ${HTMLAttributes.autor}`] : ''
+            ];
+        },
+
+        addNodeView() {
+            return VueNodeViewRenderer(DestaqueComponent);
+        }
+    });
+
+    // Registro no Menu de Blocos
+    window.LunarEditor.registerBlock({
+        name: 'caixaDestaque',
+        category: 'Estrutura & Layout',
+        title: 'Caixa de Destaque',
+        description: 'Citação destacada com identificação de autor',
+        extension: DestaqueExtension,
+        action: (editor) => {
+            editor.chain().focus().insertContent({
+                type: 'caixaDestaque',
+                attrs: { autor: 'Nome do Autor' },
+                content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Escreva a frase de destaque...' }] }]
+            }).run();
+        }
+    });
+})();</pre>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="boas-praticas">
+            <h2>Boas Práticas de Desenvolvimento</h2>
+
+            <div class="warning">
+                <strong>⚠️ Isolamento de CSS Obrigatório:</strong>
+                <p>Nunca aplique estilos genéricos soltos (ex: <code>p { ... }</code> ou <code>button { ... }</code>). Todas as regras de estilo de um plugin devem começar obrigatoriamente com a classe container do seu próprio bloco para não quebrar outros elementos do painel ou dos temas:</p>
+                <pre><code class="code-label">CSS</code>/* Correto: totalmente encapsulado pelo prefixo do plugin */
+.plugin-destaque-box {
+    background: #f8fafc;
+    border-left: 4px solid #3b82f6;
+    padding: 16px;
+    border-radius: 6px;
+}
+
+.plugin-destaque-box button {
+    background: #e2e8f0;
+    font-size: 11px;
+}</pre>
+            </div>
+
+            <ul class="steps">
+                <li><strong>Utilize <code>contenteditable="false"</code> em Elementos de Interface:</strong> Todo botão, cabeçalho de card, selo ou controle administrativo dentro da sua NodeView deve possuir o atributo <code>contenteditable="false"</code>. Isso impede que a digitação do autor invada os botões.</li>
+                <li><strong>Evite Tags HTML Fantasmas:</strong> No método <code>renderHTML()</code>, só gere tags secundárias (como <code>&lt;footer&gt;</code> ou <code>&lt;figcaption&gt;</code>) se os atributos correspondentes realmente possuírem valor preenchido.</li>
+                <li><strong>Transações Atômicas:</strong> Ao manipular a árvore de nós via comandos personalizados, agrupe as alterações em uma única transação do ProseMirror (<code>state.tr</code>) para manter a pilha de Desfazer/Refazer (Undo/Redo) consistente.</li>
+            </ul>
+        </section>
+
+        <footer>
+            <p><strong>Estendendo o Editor de Blocos - Lunar Base v2.0.0</strong></p>
+            <p data-footer-info>Última atualização: Setembro/2026 | &copy; 2026 Cau Guanabara</p>
+        </footer>
+    </div>
+</body>
+</html>
