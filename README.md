@@ -29,7 +29,7 @@ O Lunar Base trabalha com o conceito de temas e plugins. Esse material está em 
 
 ### Ecossistema de Temas & Plugins
 * **Marketplace Integrado:** Instalação, ativação e atualização de plugins e temas com 1 clique direto no painel administrativo.
-* **21 Plugins Prontos:** Ecossistema inicial com mais de duas dezenas de extensões funcionais prontas para uso.
+* **Mais de 20 Plugins Prontos:** Ecossistema inicial com mais de duas dezenas de extensões funcionais prontas para uso.
 * **Extensibilidade Total:** Plugins e temas podem:
   * Injetar novos blocos, ferramentas e botões na toolbar do editor em tempo de execução.
   * Criar novos grupos e campos no painel de configurações.
