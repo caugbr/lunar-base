@@ -3,6 +3,8 @@
 
 O **Lunar Base** é um Starter Kit híbrido para Laravel 12, projetado com características de CMS modular para servir como base sólida e flexível no desenvolvimento de aplicações web.
 
+*This is a work in progress*
+
 <p align="center">
   <img src="https://img.shields.io/badge/PHP-8.3+-777BB4?logo=php&logoColor=white" alt="PHP">
   <img src="https://img.shields.io/badge/Laravel-12.x-FF2D20?logo=laravel&logoColor=white" alt="Laravel">
@@ -31,7 +33,7 @@ O Lunar Base trabalha com o conceito de temas e plugins. Esse material está em 
 * **Extensibilidade Total:** Plugins e temas podem:
   * Injetar novos blocos, ferramentas e botões na toolbar do editor em tempo de execução.
   * Criar novos grupos e campos no painel de configurações.
-  * Injetar e substituir elementos em qualquer view Blade via **Sistema de Hooks** (`<x-hook />`).
+  * Injetar e substituir elementos em views Blade via **Sistema de Hooks** (`<x-hook />`).
   * Adicionar itens e páginas no menu administrativo.
   * Registrar **Rotas Dinâmicas** públicas em tempo de execução.
   * Criar novos widgets para o Dashboard.
