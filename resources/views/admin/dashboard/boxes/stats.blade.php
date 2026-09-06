@@ -52,7 +52,7 @@
     <div class="stats-users-section">
         <h4 class="stats-section-title">
             <x-lucide-users class="lucid-icon" />
-            {{ __(Usuários por Perfil) }}
+            {{ __('Usuários por Perfil') }}
         </h4>
 
         <div class="stats-users-list">

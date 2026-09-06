@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## [2.0.2] 2026-09-05
+
+### Fixed
+- Dashboard - erro na tradução
+
 ## [2.0.1] 2026-09-05
 
 ### Fixed

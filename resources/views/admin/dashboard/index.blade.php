@@ -1,4 +1,3 @@
-{{-- admin/dashboard/index.blade.php --}}
 @extends('admin.layout')
 
 @section('header_title', $config['title'])
