@@ -79,6 +79,4 @@ O Lunar Base trabalha com o conceito de temas e plugins. Esse material está em 
 
 ---
 
-## Licença
-
 Projeto desenvolvido por [Cau Guanabara](https://cauguanabara.com.br) e licenciado sob a [MIT License](https://mit-license.org/).
