@@ -16,20 +16,20 @@ O Lunar Base trabalha com o conceito de temas e plugins. Esse material está em 
 
 ## Principais Funcionalidades
 
-### Gestão de Conteúdo & Edição
+### Gestão de Conteúdo
 * **Páginas e Posts:** Gerenciamento completo de publicações, rascunhos, agendamentos, autores e categorias.
-* **Editor de Blocos Moderno (Tiptap / Vue 3):** Edição estruturada em árvore JSON com salvamento duplo (JSON + HTML pré-renderizado de alta performance).
-* **Barra de Ferramentas Configurável:** Controle visual no painel administrativo para habilitar/desabilitar botões do editor e definir a paleta de cores da marca.
+* **Editor de Blocos Moderno (Tiptap / Vue 3):** Edição estruturada em árvore JSON com salvamento duplo (JSON + HTML pré-renderizado).
+* **Editor com Barra de Ferramentas Configurável:** Controle visual no painel administrativo para habilitar/desabilitar botões do editor e definir a paleta de cores.
 * **Blocos Nativos Inclusos:** Caixas de aviso (Callouts), grid de colunas responsivo (2 a 4), cards de conteúdo, botões CTA, tabelas interativas, imagens com legenda/redimensionamento e bloco de código com realce de sintaxe.
-* **Sistema de Shortcodes Visual:** Badges coloridos no editor com formulários gerados dinamicamente com base no esquema de atributos do PHP.
+* **Sistema de Shortcodes:** Inspirado nos shortcodes do WP, mas com um box de suporte no editor.
 * **SEO Automático Inteligente:** Geração nativa de OpenGraph e meta tags com base em títulos, resumos e thumbnails.
 * **Importação e Exportação:** Backup, migração e transporte de conteúdos com facilidade.
 
 ---
 
 ### Ecossistema de Temas & Plugins
-* **Marketplace Integrado:** Instalação, ativação e atualização de plugins e temas com 1 clique direto no painel administrativo.
-* **Mais de 20 Plugins Prontos:** Ecossistema inicial com mais de duas dezenas de extensões funcionais prontas para uso.
+* **Repositório GitHub usado como Marketplace:** Instalação, ativação e atualização de plugins e temas com 1 clique direto no painel administrativo.
+* **Mais de 20 Plugins Prontos:** Ecossistema inicial com extensões funcionais prontas para uso.
 * **Extensibilidade Total:** Plugins e temas podem:
   * Injetar novos blocos, ferramentas e botões na toolbar do editor em tempo de execução.
   * Criar novos grupos e campos no painel de configurações.
@@ -37,27 +37,26 @@ O Lunar Base trabalha com o conceito de temas e plugins. Esse material está em 
   * Adicionar itens e páginas no menu administrativo.
   * Registrar **Rotas Dinâmicas** públicas em tempo de execução.
   * Criar novos widgets para o Dashboard.
-  * Registrar shortcodes customizados com validação e interface.
+  * Registrar shortcodes customizados.
 
 ---
 
-### Engenharia, Persistência & Assets
+### Segurança
+* **Logs de Ações (Audit Trail):** Rastreamento e auditoria de ações executadas pelos usuários na admin.
+* **Controle de Acesso (Roles & Permissions):** Gestão de papéis e permissões, originalmente para administradores, editores, autores e assinantes, mas novos roles e permissions podem ser criados facilmente.
+* **2FA Nativo (TOTP):** Autenticação de dois fatores integrada.
+* **Proteção CAPTCHA:** Suporte nativo ao Cloudflare Turnstile para proteção contra bots no login.
+
+---
+
+### Outros
 * **Atualização do Core em 1 Clique:** Atualização do núcleo do sistema diretamente pelo painel administrativo.
-* **Asset Pipeline Inteligente (AssetManager):** Enfileiramento de scripts e estilos (`add_style`, `add_script`) com controle de dependências, handles únicos, deduplicação e injeção inline.
+* **Asset Pipeline Inteligente (AssetManager):** Enfileiramento de scripts e estilos (`add_style`, `add_script`).
 * **Settings & Options API:**
-  * *Settings:* Criação declarativa de formulários administrativos (switches, selects, number, color picker).
+  * *Settings:* Criação declarativa de elementos como switches, selects, number, color picker e outros para as configurações na administração.
   * *Options:* Armazenamento leve de chave/valor tipado (com casting automático para arrays e encriptação nativa).
-* **REST API Nativa:** Endpoints prontos para consumo de dados por aplicações externas.
-* **Ajuda Contextual Integrada:** Tutoriais e documentação de desenvolvedor acessíveis diretamente na interface administrativa.
-* **Logs de Ações (Audit Trail):** Rastreamento e auditoria de ações executadas pelos usuários no painel.
-
----
-
-### Segurança & Controle de Acesso
-* **Controle de Acesso (Roles & Permissions):** Gestão de papéis e permissões para administradores, editores, autores e assinantes.
-* **2FA Nativo (TOTP):** Autenticação de dois fatores integrada com suporte ao Google Authenticator e Authy.
-* **Proteção CAPTCHA:** Suporte nativo ao Cloudflare Turnstile para proteção contra bots em formulários e login.
-* **Proteção de Formulários:** Alerta automático de alterações pendentes antes de fechar ou recarregar abas (`<x-lost-changes-warn />`).
+* **REST API Básica:** Endpoints prontos para consumo de dados por aplicações externas.
+* **Ajuda Contextual Integrada:** Tutoriais de uso acessíveis diretamente na interface administrativa.
 
 ---
 
@@ -79,4 +78,5 @@ O Lunar Base trabalha com o conceito de temas e plugins. Esse material está em 
 
 ---
 
-Projeto desenvolvido por [Cau Guanabara](https://cauguanabara.com.br) e licenciado sob a [MIT License](https://mit-license.org/).
+Projeto desenvolvido por [Cau Guanabara](https://cauguanabara.com.br)
+Licenciado sob a [MIT License](https://mit-license.org/).
