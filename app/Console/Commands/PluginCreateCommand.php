@@ -55,8 +55,10 @@ class PluginCreateCommand extends Command
         }
 
         if ($hasViews) {
-            $this->generateViews($pluginPath, $studlyName, $slugName);
+            $this->generateViews($pluginPath, $studlyName);
         }
+
+        $this->generateHelpView($pluginPath, $studlyName);
 
         $this->info("--------------------------------------------------");
         $this->info("Plugin '{$studlyName}' criado com sucesso!");
@@ -215,15 +217,9 @@ class PluginCreateCommand extends Command
         File::put($path . "/database/migrations/{$datePrefix}_create_{$tableName}_table.php", $content);
     }
 
-    protected function generateViews(string $path, string $name, string $slugName): void
+    protected function generateHelpView(string $path, string $name): void
     {
         $headlineName = Str::headline($name);
-        $content = "<div>\n" .
-            "    <h3>Welcome to {$headlineName} Plugin</h3>\n" .
-            "</div>\n";
-
-        File::put($path . "/resources/views/index.blade.php", $content);
-
         $help = '
 <div class="plugin-help-content">
     <header>
@@ -241,5 +237,15 @@ class PluginCreateCommand extends Command
 </div>';
 
         File::put($path . "/resources/help-views/help.blade.php", $help);
+    }
+
+    protected function generateViews(string $path, string $name): void
+    {
+        $headlineName = Str::headline($name);
+        $content = "<div>\n" .
+            "    <h3>Welcome to {$headlineName} Plugin</h3>\n" .
+            "</div>\n";
+
+        File::put($path . "/resources/views/index.blade.php", $content);
     }
 }

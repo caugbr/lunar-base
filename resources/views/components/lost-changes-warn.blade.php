@@ -19,8 +19,9 @@
             });
         }
 
-        // Tiptap
-        window.addEventListener('editor:dirty', () => isDirty = true);
+        window.addEventListener('editor:dirty', () => {
+            isDirty = true;
+        });
 
         form.addEventListener('submit', () => {
             isDirty = false;

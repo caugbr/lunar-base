@@ -2,8 +2,18 @@
 
 ## Unreleased
 
-## Changed
+## [2.2.0] 2026-09-07
+
+### Added
+- Plugin Countdown
+- Plugin Article Reader
+
+### Changed
+- Comando plugin:create atualizado para gerar sempre a view help
 - README atualizado
+
+### Fixed
+- Componente <x-lost-changes-warn> corrigido para funcionar com o novo editor
 
 ## [2.1.0] 2026-09-06
 
