@@ -5,6 +5,7 @@
 ## [2.3.0] 2026-09-08
 
 ### Added
+- Posição e duração do toast configuráveis via Settings
 - Plugin Sitemap
 - Componente Toasts na admin
 - Plugin Redirects

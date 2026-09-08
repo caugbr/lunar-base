@@ -362,6 +362,27 @@ return [
                     'inactive' => 'Não usar',
                 ],
                 [
+                    'key' => 'toast_position',
+                    'type' => 'select',
+                    'label' => 'Posição do Toast',
+                    'description' => 'Selecione a posição que os avisos tipo toast devem aparecer.',
+                    'default' => 'top-right',
+                    'options' => [
+                        'top-right' => 'Em cima, à direita',
+                        'bottom-right' => 'Embaixo, à direita',
+                        'top-left' => 'Em cima, à esquerda',
+                        'bottom-left' => 'Embaixo, à esquerda',
+                    ]
+                ],
+                [
+                    'key' => 'toast_delay',
+                    'type' => 'number',
+                    'label' => 'Duração da mensagem (milissegundos)',
+                    'description' => 'Tempo até a mensagem sumir sozinha.',
+                    'default' => 5000,
+                    'attributes' => ['min' => 2000, 'max' => 20000, 'step' => 1000]
+                ],
+                [
                     'type' => 'subtitle',
                     'icon' => 'lock-open',
                     'label' => 'Frontend'
@@ -724,15 +745,6 @@ return [
             'description' => 'Controle de ferramentas visíveis na barra e paleta de cores',
             'icon' => 'pencil',
             'fields' => [
-                // [
-                //     'type' => 'subtitle',
-                //     'icon' => 'layout',
-                //     'label' => 'Barra de Ferramentas (Toolbar)',
-                // ],
-                // [
-                //     'type' => 'paragraph',
-                //     'text' => 'Marque as ferramentas e botões que devem estar disponíveis para os autores.',
-                // ],
                 [
                     'key' => 'toolbar_tools',
                     'type' => 'checkbox',

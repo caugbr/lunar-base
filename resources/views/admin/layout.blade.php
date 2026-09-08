@@ -118,6 +118,10 @@
     <script src="{{ asset('js/toggle-menu.js') }}"></script>
     @endif
     <x-hook name="admin.after_all" :params="$path" desc="Final do elemento BODY na admin" />
-    <x-toast />
+    @php
+        $position = setting('navigation.toast_position', 'top-right');
+        $delay = setting('navigation.toast_delay', 5000);
+    @endphp
+    <x-toast :position="$position" :delay="$delay" />
 </body>
 </html>

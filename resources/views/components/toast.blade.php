@@ -1,4 +1,8 @@
-{{-- resources/views/components/toast.blade.php --}}
+@props([
+    'position' => 'top-right',
+    'delay' => 5000
+])
+
 <div
     x-data="{
         get items() { return window.Alpine && Alpine.store('toasts') ? Alpine.store('toasts').items : [] },
@@ -74,29 +78,27 @@
         background: var(--color-bg-card, #ffffff);
         border-left: 4px solid transparent;
 
-        /* Estado inicial ao nascer (fora da janela, à direita) */
+        /* Estado inicial ao nascer (usa a variável de direção injetada no container) */
         opacity: 1;
-        transform: translateX(110%);
+        transform: translateX(calc(110% * var(--slide-dir, 1)));
         animation: lunarSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
-    /* Estado quando o toast está indo embora (escorregando para fora) */
+    /* Estado quando o toast está indo embora */
     .lunar-toast-item.is-closing {
-        /* animation: lunarSlideOut 0.3s cubic-bezier(0.4, 0, 1, 1) forwards; */
         animation: lunarSlideOut 0.7s cubic-bezier(0.4, 0, 1, 1) forwards;
     }
 
-    /* Keyframes de Entrada (De fora para dentro) */
+    /* Keyframes Dinâmicos baseados no sentido (--slide-dir) */
     @keyframes lunarSlideIn {
         from {
-            transform: translateX(110%);
+            transform: translateX(calc(110% * var(--slide-dir, 1)));
         }
         to {
             transform: translateX(0);
         }
     }
 
-    /* Keyframes de Saída (De dentro para fora) */
     @keyframes lunarSlideOut {
         0% {
             transform: translateX(0);
@@ -104,7 +106,7 @@
             margin-bottom: 0px;
         }
         50% {
-            transform: translateX(110%);
+            transform: translateX(calc(110% * var(--slide-dir, 1)));
             max-height: 100px;
             margin-bottom: 0px;
         }
@@ -165,25 +167,33 @@
 </style>
 
 <script>
+    const toastPosition = '{{ $position }}';
+    const toastDelay = {{ $delay }};
     (function() {
         const initToastStore = () => {
             if (window.Alpine && !Alpine.store('toasts')) {
                 Alpine.store('toasts', {
                     items: [],
-                    position: 'top-right',
+                    // position: 'top-right',
+                    position: toastPosition,
 
                     get positionStyle() {
                         switch(this.position) {
-                            case 'top-left': return 'top: 0; left: 0; align-items: flex-start;';
-                            case 'bottom-right': return 'bottom: 0; right: 0; align-items: flex-end; flex-direction: column-reverse;';
-                            case 'bottom-left': return 'bottom: 0; left: 0; align-items: flex-start; flex-direction: column-reverse;';
-                            case 'top-center': return 'top: 0; left: 50%; transform: translateX(-50%); align-items: center;';
+                            case 'top-left':
+                                return 'top: 0; left: 0; align-items: flex-start; --slide-dir: -1;';
+                            case 'bottom-left':
+                                return 'bottom: 0; left: 0; align-items: flex-start; flex-direction: column-reverse; --slide-dir: -1;';
+                            case 'bottom-right':
+                                return 'bottom: 0; right: 0; align-items: flex-end; flex-direction: column-reverse; --slide-dir: 1;';
+                            case 'top-center':
+                                return 'top: 0; left: 50%; transform: translateX(-50%); align-items: center; --slide-dir: 1;';
                             case 'top-right':
-                            default: return 'top: 0; right: 0; align-items: flex-end;';
+                            default:
+                                return 'top: 0; right: 0; align-items: flex-end; --slide-dir: 1;';
                         }
                     },
 
-                    add(message, type = 'info', title = '', duration = 4000) {
+                    add(message, type = 'info', title = '', duration = toastDelay) {
                         const id = Date.now() + Math.random();
                         const toast = { id, title, message, type, closing: false, duration, timer: null };
 
@@ -215,10 +225,10 @@
                             // Marca como fechando para disparar a animação de saída via classe .is-closing
                             this.items[index].closing = true;
 
-                            // Remove do array de fato somente após o término da animação CSS (300ms)
-                            // setTimeout(() => {
-                            //     this.items = this.items.filter(t => t.id !== id);
-                            // }, 300);
+                            // Reativado: Remove do array de fato após o término da animação (700ms)
+                            setTimeout(() => {
+                                this.items = this.items.filter(t => t.id !== id);
+                            }, 700);
                         }
                     }
                 });
