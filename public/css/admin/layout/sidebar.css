@@ -198,7 +198,7 @@
    MOBILE: submenu sempre visível, sem animação
    ============================================ */
 
-@media (max-width: 1023px) {
+@media (max-width: 768px) {
     .admin-nav-submenu {
         max-height: none !important;
         opacity: 1 !important;
