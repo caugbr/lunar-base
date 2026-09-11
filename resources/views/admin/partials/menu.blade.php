@@ -95,7 +95,6 @@
         {{-- Itens da seção --}}
         @foreach($group['items'] ?? [] as $item)
             @php
-            print_r($item);
                 // Suporte a setting 'navigation.show_references'
                 if ($item['label'] === 'Referências' && !setting('navigation.show_references')) {
                     continue;
