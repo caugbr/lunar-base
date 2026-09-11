@@ -2,20 +2,21 @@
 
 ## Unreleased
 
-## [2.4.0] 2026-09-10
+## [2.4.1] 2026-09-10
 
 ### Added
 - Novo plugin Before After no editor de blocos
 - Comando user:quick-create para criar um user pelo terminal
+- Função JS para abrir a janela de  <x-media.grid-modal> com configurações (openGridModal)
 - Novo componente <x-media.grid-modal> unificando grid + modal para mídia
-- Função JS global para abrir a janela de mídia com configurações (openGridModal)
-- Janela de mídia: imagens pré selecionadas, multiple, labels com eventos para mudar via Alpine
+- Janela de mídia: pré selecionadas, multiple, labels com eventos para mudar via Alpine
 
 ### Changed
 - Views create e edit de posts e pages agora usam <x-media.grid-modal>
 - Clicar no thumbnail agora abre a janela de mídia nas views de posts e pages
 
 ### Fixed
+- Ajuste no CSS do plugin Before After
 - Corrigido o z-index do header (9999)
 - Correção no salvamento do json em posts e páginas
 
