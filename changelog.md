@@ -5,7 +5,7 @@
 ## [2.4.0] 2026-09-10
 
 ### Added
-- Novo plugin Befare After no editor de blocos
+- Novo plugin Before After no editor de blocos
 - Comando user:quick-create para criar um user pelo terminal
 - Novo componente <x-media.grid-modal> unificando grid + modal para mídia
 - Função JS global para abrir a janela de mídia com configurações (openGridModal)
