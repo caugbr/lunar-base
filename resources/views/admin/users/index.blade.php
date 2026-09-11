@@ -6,11 +6,39 @@
 @section('content')
 <div class="admin-card">
     <div class="admin-card-header">
-        <h2><x-lucide-users class="lucid-icon" /> Usuários</h2>
+        <h2><x-lucide-users class="lucid-icon" /> Usuários ({{ count($users) }})</h2>
         <a href="{{ route('admin.users.create') }}" class="admin-btn admin-btn-primary">
             <x-lucide-plus class="lucid-icon" /> <span>Novo Usuário</span>
         </a>
     </div>
+
+    <!-- Filtros -->
+    <form method="GET" action="{{ route('admin.users.index') }}" class="admin-filters">
+        <div class="admin-filters-row">
+            <div class="admin-filter-group">
+                <input type="text" name="name" value="{{ request('name') }}" class="admin-filter-input" placeholder="Buscar por nome...">
+            </div>
+            <div class="admin-filter-group">
+                <input type="text" name="email" value="{{ request('email') }}" class="admin-filter-input" placeholder="Buscar por email...">
+            </div>
+            <div class="admin-filter-group">
+                <select name="role" class="admin-filter-select">
+                    <option value="">Todos os perfis</option>
+                    @foreach($roles as $role_id => $role)
+                    <option value="{{ $role_id }}"{{ request('role') == $role_id ? ' selected' : '' }}>{{ $role['name'] }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="admin-filter-actions">
+                <button type="submit" class="admin-btn admin-btn-primary">
+                    <x-lucide-filter class="lucid-icon" /> Filtrar
+                </button>
+                <a href="{{ route('admin.users.index') }}" class="admin-btn admin-btn-secondary">
+                    <x-lucide-brush-cleaning class="lucid-icon" /> Limpar
+                </a>
+            </div>
+        </div>
+    </form>
 
     <div class="table-wrap">
         <table class="admin-table">

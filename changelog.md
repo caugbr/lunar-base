@@ -1,6 +1,12 @@
 # Changelog
 
-## Unreleased
+## [2.5.0] 2026-09-11
+
+### Added
+- Helper para Filters - add_filter() e apply_filters()
+- Filters no PHP - filtro para variáveis, abre para plugins modificarem
+- Esconder item 'Temas' nas settings - 'navigation.hide_themes'
+- Adicionado um form de busca na index de users, na admin
 
 ## [2.4.1] 2026-09-10
 

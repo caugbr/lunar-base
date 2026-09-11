@@ -9,12 +9,36 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public function index()
+    // public function index()
+    // {
+    //     $users = User::whereIn('role', ['admin', 'editor'])
+    //         ->orderBy('created_at', 'desc')
+    //         ->paginate(setting('reading.pagination_max_items'));
+    //     $roles = config('rolesPermissions.roles');
+    //     return view('admin.users.index', compact('users', 'roles'));
+    // }
+    public function index(Request $request)
     {
-        $users = User::whereIn('role', ['admin', 'editor'])
-            ->orderBy('created_at', 'desc')
-            ->paginate(setting('reading.pagination_max_items'));
-        return view('admin.users.index', compact('users'));
+        $users = User::query()
+            // Filtro por Nome (busca parcial)
+            ->when($request->filled('name'), function ($query) use ($request) {
+                $query->where('name', 'like', '%' . $request->name . '%');
+            })
+            // Filtro por Email (busca parcial)
+            ->when($request->filled('email'), function ($query) use ($request) {
+                $query->where('email', 'like', '%' . $request->email . '%');
+            })
+            // Filtro por Perfil/Role (busca exata)
+            ->when($request->filled('role'), function ($query) use ($request) {
+                $query->where('role', $request->role);
+            })
+            ->latest() // Equivalente a ->orderBy('created_at', 'desc')
+            ->paginate(setting('reading.pagination_max_items', 15))
+            ->withQueryString(); // Mantém os filtros ativos ao navegar entre as páginas
+
+        $roles = config('rolesPermissions.roles', []);
+
+        return view('admin.users.index', compact('users', 'roles'));
     }
 
     public function create()

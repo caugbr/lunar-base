@@ -79,6 +79,9 @@
                 }
             }
         }
+
+        // Abre para plugins modificarem o array
+        $menuGroups = apply_filters('adminMenuGroups', $menuGroups);
     @endphp
 
     @foreach($menuGroups as $group)
@@ -92,6 +95,16 @@
         {{-- Itens da seção --}}
         @foreach($group['items'] ?? [] as $item)
             @php
+            print_r($item);
+                // Suporte a setting 'navigation.show_references'
+                if ($item['label'] === 'Referências' && !setting('navigation.show_references')) {
+                    continue;
+                }
+                // Suporte a setting 'navigation.hide_themes'
+                if ($item['label'] === 'Temas' && setting('navigation.hide_themes')) {
+                    continue;
+                }
+
                 // Mescla sub-itens injetados para este item pai
                 $parentLabel = $item['label'];
                 $subInjections = $injectedSubItems[$parentLabel] ?? [];
@@ -102,10 +115,6 @@
                 $childrenActive = $hasChildren ? $hasActiveChild($item['items']) : false;
                 $isOpen = $isActive || $childrenActive;
                 $childCount = count($item['items'] ?? []);
-
-                if ($item['label'] === 'Referências' && !setting('navigation.show_references')) {
-                    continue;
-                }
             @endphp
 
             @if($hasChildren)

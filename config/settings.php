@@ -344,6 +344,15 @@ return [
                     'inactive' => 'Esconder',
                 ],
                 [
+                    'key' => 'hide_themes',
+                    'type' => 'switch',
+                    'label' => 'Esconder Temas no menu',
+                    'description' => 'Nem sempre a seção de temas é útil. Se você não pretende mudar o layout, esconda o item  no menu.',
+                    'default' => false,
+                    'active' => 'Esconder',
+                    'inactive' => 'Mostrar',
+                ],
+                [
                     'key' => 'show_references',
                     'type' => 'switch',
                     'label' => 'Referências no menu',
