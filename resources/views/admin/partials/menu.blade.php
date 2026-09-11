@@ -5,7 +5,7 @@
         $injectedItems = \App\Support\AdminMenu::getInjectedItems();
         $injectedSubItems = \App\Support\AdminMenu::getInjectedSubItems();
 
-        // 1. Processa novas seções (grupos) injetadas
+        // Processa novas seções (grupos) injetadas
         foreach ($injectedSections as $section) {
             $title = $section['title'];
             $items = $section['items'] ?? [];
@@ -65,7 +65,7 @@
             return false;
         };
 
-        // 2. Injeta itens de primeiro nível no grupo/seção correto (pelo groupIndex)
+        // Injeta itens de primeiro nível no grupo/seção correto (pelo groupIndex)
         foreach ($injectedItems as $injection) {
             $gIndex = $injection['groupIndex'] ?? 0;
 

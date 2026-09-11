@@ -3,42 +3,43 @@
     'title' => '',
     'size' => 'md', // sm, md, lg, xl
     'showFooter' => true,
+    'closeLabel' => 'Fechar'
 ])
 
 <div
-    x-data="modalComponent('{{ $id }}')"
+    x-data="modalComponent('{{ $id }}', '{{ $title }}', '{{ $closeLabel }}')"
     @modal-open.window="if ($event.detail?.id === id) open()"
     @modal-close.window="if ($event.detail?.id === id) close()"
+    @modal-set-title.window="if ($event.detail?.id === id || !$event.detail?.id) title = $event.detail.title"
+    @modal-set-close-label.window="if ($event.detail?.id === id || !$event.detail?.id) closeLabel = $event.detail.closeLabel"
     x-cloak
     class="modal-overlay"
     role="dialog"
     aria-modal="true"
 >
-    {{-- Backdrop (Efeito de fade-in escurecido suave) --}}
+    {{-- Backdrop --}}
     <div
         x-show="isOpen"
-        x-transition.opacity.duration.300ms {{-- 💡 Transição nativa de opacidade sem Tailwind! --}}
+        x-transition.opacity.duration.300ms
         @click="close()"
         class="modal-backdrop"
     ></div>
 
-    {{-- Modal Box (Efeito de escala e fade-in suave) --}}
+    {{-- Modal Box --}}
     <div
         x-show="isOpen"
-        x-transition.duration.300ms {{-- 💡 Transição nativa de escala e fade sem Tailwind! --}}
+        x-transition.duration.300ms
         @click.stop
         class="modal-box"
         :class="modalSizeClass"
     >
-        {{-- Header --}}
-        @if($title)
-        <div class="modal-header">
-            <h3 class="modal-title">{{ $title }}</h3>
+        {{-- Header (Exibido se houver título na prop do Blade ou via JS) --}}
+        <div class="modal-header" x-show="title">
+            <h3 class="modal-title" x-text="title"></h3>
             <button @click="close()" class="modal-close" aria-label="Fechar">
                 <x-lucide-x class="lucid-icon" />
             </button>
         </div>
-        @endif
 
         {{-- Body --}}
         <div class="modal-body">
@@ -49,16 +50,14 @@
         @if($showFooter)
         <div class="modal-footer">
             {{ $footer ?? '' }}
-            <button @click="close()" class="admin-btn admin-btn-secondary">
-                Fechar
-            </button>
+            {{-- 💡 Corrigido x-tezt para x-text e adicionado x-text no conteúdo do botão --}}
+            <button @click="close()" class="admin-btn admin-btn-secondary" x-text="closeLabel"></button>
         </div>
         @endif
     </div>
 </div>
 
 @once
-{{-- @push('styles') --}}
 <style>
     [x-cloak] { display: none !important; }
 
@@ -152,14 +151,15 @@
         background: #f9fafb;
     }
 </style>
-{{-- @endpush --}}
 
 @push('scripts')
 <script>
-function modalComponent(id) {
+function modalComponent(id, initialTitle, initialCloseLabel) {
     return {
         id: id,
         isOpen: false,
+        title: initialTitle || '',       // 💡 Pega o valor enviado pelo Blade
+        closeLabel: initialCloseLabel || 'Fechar', // 💡 Pega o valor enviado pelo Blade
 
         open() {
             this.isOpen = true;

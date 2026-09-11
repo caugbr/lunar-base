@@ -325,7 +325,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const searchInput = wrapper.querySelector('.search-input');
         const gridItems = wrapper.querySelectorAll('.icon-grid-item');
 
-        // 1. Abrir o Modal
+        // Abrir o Modal
         if (chooseBtn && modal) {
             chooseBtn.addEventListener('click', () => {
                 // 💡 Modificado: Agora adicionamos a classe 'is-open'
@@ -347,7 +347,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // 2. Fechar o Modal
+        // Fechar o Modal
         const closeModal = () => {
             // 💡 Modificado: Agora removemos a classe 'is-open'
             if (modal) modal.classList.remove('is-open');
@@ -363,7 +363,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // 3. Filtrar os ícones em Tempo Real
+        // Filtrar os ícones em Tempo Real
         if (searchInput) {
             searchInput.addEventListener('input', function() {
                 const query = this.value.toLowerCase().trim();
@@ -379,7 +379,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // 4. Selecionar o Ícone
+        // Selecionar o Ícone
         gridItems.forEach(item => {
             item.addEventListener('click', () => {
                 const icon = item.dataset.icon;

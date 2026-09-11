@@ -55,14 +55,14 @@ class TwoFactorSetupController extends Controller
 
         $isAuthenticated = false;
 
-        // 1. Tentar validar via E-mail (se houver código ativo e o código bater)
+        // Tentar validar via E-mail (se houver código ativo e o código bater)
         if ($setting->otp_code && $setting->otp_expires_at && now()->lessThan($setting->otp_expires_at)) {
             if (\Illuminate\Support\Facades\Hash::check($request->code, $setting->otp_code)) {
                 $isAuthenticated = true;
             }
         }
 
-        // 2. Se não foi e-mail, tentar via Google Authenticator
+        // Se não foi e-mail, tentar via Google Authenticator
         if (!$isAuthenticated && $setting->secret) {
             $validTotp = $this->google2fa->verifyKey($setting->secret, $request->code, \App\Support\TwoFactorConfig::windowPeriods());
             if ($validTotp) {

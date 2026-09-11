@@ -6,7 +6,7 @@
 ])
 
 @php
-    // 1. Resolve os parâmetros de rota de forma dinâmica
+    // Resolve os parâmetros de rota de forma dinâmica
     $route = request()->route();
     $baseParam = $route?->parameter('base');
     $namespaceParam = $route?->parameter('namespace');
@@ -16,7 +16,7 @@
     $pagesBase = setting('navigation.pages_base', 'page');
     $blogBase = setting('navigation.blog_base', 'blog');
 
-    // 2. A página atual pode vir da prop, do compartilhamento ou resolvida pela rota
+    // A página atual pode vir da prop, do compartilhamento ou resolvida pela rota
     $currentPage = $page ?? view()->shared('page');
 
     if (!$currentPage) {
@@ -59,7 +59,7 @@
         }
     }
 
-    // 3. Busca apenas as subpáginas publicadas associadas a esta página
+    // Busca apenas as subpáginas publicadas associadas a esta página
     $subpages = $currentPage ? $currentPage->children()->published()->get() : collect();
 @endphp
 

@@ -7,14 +7,14 @@ class Dialog {
      */
     static show({ type = 'alert', title = '', message = '', defaultValue = '', confirmText = 'Confirmar', cancelText = 'Cancelar' }) {
         return new Promise((resolve) => {
-            // 1. Cria o overlay container do modal
+            // Cria o overlay container do modal
             const overlay = document.createElement('div');
             overlay.className = 'dialog-modal-overlay';
             overlay.style.pointerEvents = 'auto';
             overlay.style.opacity = '0';
             overlay.style.transition = 'opacity 0.2s ease';
 
-            // 2. Prepara os botões e campos específicos com as classes do dialog.css
+            // Prepara os botões e campos específicos com as classes do dialog.css
             const isAlert = type === 'alert';
             const inputHtml = type === 'prompt'
                 ? `<input type="text" id="dialog-prompt-input" class="dialog-input" value="${defaultValue}" />`
@@ -27,7 +27,7 @@ class Dialog {
                     <button id="dialog-btn-confirm" class="dialog-btn dialog-btn-primary">${confirmText}</button>
                 `;
 
-            // 3. Monta a árvore de elementos internos
+            // Monta a árvore de elementos internos
             overlay.innerHTML = `
                 <div class="dialog-modal-backdrop" style="opacity: 0; transition: opacity 0.2s ease;"></div>
                 <div class="dialog-modal-box sm" style="transform: scale(0.95); opacity: 0; transition: transform 0.2s ease, opacity 0.2s ease;">
@@ -50,7 +50,7 @@ class Dialog {
             // Bloqueia a rolagem do corpo da página
             document.body.style.overflow = 'hidden';
 
-            // 4. Executa a animação de entrada no frame seguinte
+            // Executa a animação de entrada no frame seguinte
             requestAnimationFrame(() => {
                 overlay.style.opacity = '1';
                 const backdrop = overlay.querySelector('.dialog-modal-backdrop');
@@ -70,7 +70,7 @@ class Dialog {
                 }
             });
 
-            // 5. Função de encerramento e remoção com transição suave
+            // Função de encerramento e remoção com transição suave
             const closeWithResult = (result) => {
                 const backdrop = overlay.querySelector('.dialog-modal-backdrop');
                 const box = overlay.querySelector('.dialog-modal-box');
@@ -92,7 +92,7 @@ class Dialog {
                 }, 200);
             };
 
-            // 6. Listeners para ações do usuário
+            // Listeners para ações do usuário
             overlay.querySelector('#dialog-btn-confirm').addEventListener('click', () => {
                 if (type === 'prompt') {
                     const value = overlay.querySelector('#dialog-prompt-input').value;
@@ -156,7 +156,7 @@ window.Dialog = Dialog;
 
 document.addEventListener('DOMContentLoaded', function () {
 
-    // 1. Intercepta o envio de formulários
+    // Intercepta o envio de formulários
     document.addEventListener('submit', async function (event) {
         const form = event.target;
         const confirmMessage = form.getAttribute('data-confirm');
@@ -176,7 +176,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // 2. Intercepta cliques em links de navegação/exclusão (tags <a>)
+    // Intercepta cliques em links de navegação/exclusão (tags <a>)
     document.addEventListener('click', async function (event) {
         const link = event.target.closest('a[data-confirm]');
 

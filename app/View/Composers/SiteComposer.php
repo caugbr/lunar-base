@@ -30,12 +30,12 @@ class SiteComposer
         $currentUrl = request()->url();
 
         foreach ($rawMenu as $item) {
-            // 1. Filtro de Visibilidade por Domínio/Namespace
+            // Filtro de Visibilidade por Domínio/Namespace
             if (!$this->isItemVisibleForCurrentDomain($item)) {
                 continue;
             }
 
-            // 2. Trata rotas nomeadas
+            // Trata rotas nomeadas
             if (!empty($item['route'])) {
                 $item['href'] = route($item['route']);
                 $item['current_class'] = $item['href'] === $currentUrl ? ' active' : '';
@@ -43,7 +43,7 @@ class SiteComposer
                 continue;
             }
 
-            // 3. Trata caminhos/URLs diretas
+            // Trata caminhos/URLs diretas
             if (!empty($item['path'])) {
                 $item['href'] = url($item['path']);
                 $item['current_class'] = $item['href'] === $currentUrl ? ' active' : '';
@@ -51,7 +51,7 @@ class SiteComposer
                 continue;
             }
 
-            // 4. Trata Páginas por Slug (Busca Inteligente)
+            // Trata Páginas por Slug (Busca Inteligente)
             $page = false;
             if (!empty($item['slug'])) {
                 // Se o item do menu especificou um namespace explicitamente no array, usa ele

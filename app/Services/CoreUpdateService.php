@@ -108,7 +108,7 @@ class CoreUpdateService
         File::ensureDirectoryExists(storage_path('app/temp'));
 
         try {
-            // 1. Baixa o arquivo ZIP da release no GitHub
+            // Baixa o arquivo ZIP da release no GitHub
             $response = Http::timeout(120)
                 ->withHeaders(['User-Agent' => 'Lunar-Base-Updater'])
                 ->get($info['download_url']);
@@ -119,7 +119,7 @@ class CoreUpdateService
 
             File::put($tempZip, $response->body());
 
-            // 2. Extrai o arquivo ZIP
+            // Extrai o arquivo ZIP
             $zip = new ZipArchive();
             if ($zip->open($tempZip) !== true) {
                 throw new Exception("Não foi possível abrir o arquivo ZIP baixado.");
@@ -129,18 +129,18 @@ class CoreUpdateService
             $zip->extractTo($tempExtract);
             $zip->close();
 
-            // 3. Normaliza a subpasta interna criada automaticamente pelo GitHub
+            // Normaliza a subpasta interna criada automaticamente pelo GitHub
             $subDirs = File::directories($tempExtract);
             $sourcePath = count($subDirs) === 1 ? $subDirs[0] : $tempExtract;
 
-            // 4. Backup do banco SQLite se existir em database/database.sqlite
+            // Backup do banco SQLite se existir em database/database.sqlite
             $sqliteFile = base_path('database/database.sqlite');
             $sqliteBackup = storage_path('app/temp/database_sqlite_backup.sqlite');
             if (File::exists($sqliteFile)) {
                 File::copy($sqliteFile, $sqliteBackup);
             }
 
-            // 5. Atualiza as pastas de código do Core esvaziando antes (ELIMINA ARQUIVOS FANTASMA)
+            // Atualiza as pastas de código do Core esvaziando antes (ELIMINA ARQUIVOS FANTASMA)
             $coreFoldersToReplace = ['app', 'routes', 'resources', 'database'];
             foreach ($coreFoldersToReplace as $folder) {
                 $src  = $sourcePath . '/' . $folder;
@@ -158,7 +158,7 @@ class CoreUpdateService
                 File::delete($sqliteBackup);
             }
 
-            // 6. Atualiza a pasta CONFIG de forma ADITIVA (Só copia arquivos novos!)
+            // Atualiza a pasta CONFIG de forma ADITIVA (Só copia arquivos novos!)
             if (File::exists($sourcePath . '/config')) {
                 $configFiles = File::files($sourcePath . '/config');
 
@@ -172,17 +172,17 @@ class CoreUpdateService
                 }
             }
 
-            // 7. Atualiza o arquivo de versão na raiz do projeto (VERSION)
+            // Atualiza o arquivo de versão na raiz do projeto (VERSION)
             if (File::exists($sourcePath . '/VERSION')) {
                 File::copy($sourcePath . '/VERSION', base_path('VERSION'));
             }
 
-            // 8. Atualiza os assets da pasta public sem apagar uploads do usuário
+            // Atualiza os assets da pasta public sem apagar uploads do usuário
             if (File::exists($sourcePath . '/public')) {
                 File::copyDirectory($sourcePath . '/public', base_path('public'));
             }
 
-            // 9. VERIFICA E ATUALIZA PACOTES DO COMPOSER (Apenas se o composer.lock mudou!)
+            // VERIFICA E ATUALIZA PACOTES DO COMPOSER (Apenas se o composer.lock mudou!)
             $oldLock = base_path('composer.lock');
             $newLock = $sourcePath . '/composer.lock';
             $needsComposerUpdate = false;
@@ -211,7 +211,7 @@ class CoreUpdateService
                 }
             }
 
-            // 10. Roda migrações do banco e limpa os caches do Laravel
+            // Roda migrações do banco e limpa os caches do Laravel
             Artisan::call('migrate', ['--force' => true]);
             Artisan::call('optimize:clear');
 

@@ -123,7 +123,7 @@ class GenericApiController extends Controller
             ], 404);
         }
 
-        // 1. Fonte de dados customizada (Closure) para dados que não usam Eloquent (ex: Options)
+        // Fonte de dados customizada (Closure) para dados que não usam Eloquent (ex: Options)
         if (isset($config['source']) && is_callable($config['source'])) {
             $rawSource = call_user_func($config['source'], $request);
             $transformed = array_map(fn($item) => $this->transformItem($item, $config['schema']), $rawSource);
@@ -134,7 +134,7 @@ class GenericApiController extends Controller
             ]);
         }
 
-        // 2. Consulta padrão via Model Eloquent
+        // Consulta padrão via Model Eloquent
         $modelClass = $config['model'];
         $query = $modelClass::query();
 

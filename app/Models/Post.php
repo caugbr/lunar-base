@@ -35,7 +35,6 @@ class Post extends Model
         'published_at' => 'datetime',
         'featured' => 'boolean',
         'sticky' => 'boolean',
-        'content_json' => 'array',
     ];
 
     // ==========================================
@@ -320,7 +319,8 @@ class Post extends Model
     protected function contentJson(): Attribute
     {
         return Attribute::make(
-            set: fn ($value) => is_string($value) ? json_decode($value, true) : $value,
+            get: fn ($value) => is_string($value) ? json_decode($value, true) : $value,
+            set: fn ($value) => is_array($value) ? json_encode($value) : $value,
         );
     }
 }

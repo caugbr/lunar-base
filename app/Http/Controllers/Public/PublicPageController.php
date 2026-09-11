@@ -13,7 +13,7 @@ class PublicPageController extends Controller
      */
     public function show($slug)
     {
-        // 1. Tenta página global (sem widget)
+        // Tenta página global (sem widget)
         $page = Page::where('slug', $slug)
             ->whereNull('namespace')
             ->where('status', 'published')

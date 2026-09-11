@@ -40,7 +40,7 @@ class ContentImportService
 
         DB::beginTransaction();
         try {
-            // 1. IMPORTA TAXONOMIAS E TERMOS PRIMEIRO
+            // IMPORTA TAXONOMIAS E TERMOS PRIMEIRO
             $termMap = []; // Guarda [old_term_id => new_term_id] para reconectar relacionamentos
 
             if (!empty($data['taxonomies'])) {
@@ -81,7 +81,7 @@ class ContentImportService
                 }
             }
 
-            // 2. IMPORTA O CONTEÚDO (POSTS, PÁGINAS, ETC.)
+            // IMPORTA O CONTEÚDO (POSTS, PÁGINAS, ETC.)
             $allTypes = PublicationTypes::all();
 
             if (!empty($data['content'])) {

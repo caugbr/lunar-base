@@ -135,13 +135,13 @@ class PluginServiceProvider extends ServiceProvider
     {
         $filesToInclude = [];
 
-        // 1. Suporte a arquivo helper.php solto na raiz do plugin
+        // Suporte a arquivo helper.php solto na raiz do plugin
         $rootHelper = "{$pluginPath}/helper.php";
         if (File::exists($rootHelper)) {
             $filesToInclude[] = $rootHelper;
         }
 
-        // 2. Suporte a todos os arquivos .php dentro da pasta /Helpers
+        // Suporte a todos os arquivos .php dentro da pasta /Helpers
         $helpersDir = "{$pluginPath}/Helpers";
         if (File::isDirectory($helpersDir)) {
             $filesToInclude = array_merge($filesToInclude, File::glob("{$helpersDir}/*.php"));

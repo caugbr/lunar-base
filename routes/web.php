@@ -14,12 +14,12 @@ if (dbAvailable('settings') && setting('auth.2fa_enabled', false)) {
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 if (dbAvailable('settings') && setting('auth.verify_email', false)) {
-    // 1. Rota da tela de aviso para verificar e-mail
+    // Rota da tela de aviso para verificar e-mail
     Route::get('/email/verify', function () {
         return view('auth.verify-email');
     })->middleware('auth')->name('verification.notice');
 
-    // 2. Rota que processa o clique no link do e-mail
+    // Rota que processa o clique no link do e-mail
     Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
         $request->fulfill();
 
@@ -27,7 +27,7 @@ if (dbAvailable('settings') && setting('auth.verify_email', false)) {
             ->with('success', 'Seu e-mail foi confirmado com sucesso!');
     })->middleware(['auth', 'signed'])->name('verification.verify');
 
-    // 3. Rota para re-enviar o e-mail caso não tenha chegado
+    // Rota para re-enviar o e-mail caso não tenha chegado
     Route::post('/email/verification-notification', function (Request $request) {
         $request->user()->sendEmailVerificationNotification();
 

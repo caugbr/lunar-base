@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
-class PluginCreateCommand extends Command
+class PluginCreate extends Command
 {
     protected $signature = 'plugin:create {name : The name of the plugin} {description? : An optional description}';
     protected $description = 'Gera a estrutura completa de um plugin (diretórios, assets e manifest)';
@@ -15,10 +15,10 @@ class PluginCreateCommand extends Command
     {
         $inputName = $this->argument('name');
 
-        // 1. Gera o slug limpo (ex: "FAQ" -> "faq" | "Prism Highlight" -> "prism-highlight")
+        // Gera o slug limpo (ex: "FAQ" -> "faq" | "Prism Highlight" -> "prism-highlight")
         $slugName = Str::slug($inputName);
 
-        // 2. Gera o StudlyCase limpo para pastas e classes PHP (ex: "faq" -> "Faq" | "prism-highlight" -> "PrismHighlight")
+        // Gera o StudlyCase limpo para pastas e classes PHP (ex: "faq" -> "Faq" | "prism-highlight" -> "PrismHighlight")
         $studlyName = Str::studly($slugName);
 
         $singularName = Str::singular($studlyName);
@@ -37,10 +37,10 @@ class PluginCreateCommand extends Command
 
         $description = $this->argument('description') ?? "Plugin {$studlyName} for Lunar Base.";
 
-        // 1. Criação da estrutura de diretórios
+        // Criação da estrutura de diretórios
         $this->createDirectories($pluginPath, $hasDatabase, $hasController, $hasViews);
 
-        // 2. Geração de arquivos
+        // Geração de arquivos
         $this->generateManifest($pluginPath, $inputName, $description);
         $this->generateServiceProvider($pluginPath, $studlyName, $singularName, $slugName, $hasDatabase, $hasController, $hasViews);
 

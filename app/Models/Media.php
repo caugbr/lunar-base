@@ -171,12 +171,12 @@ class Media extends Model
         parent::boot();
 
         static::deleting(function (Media $media) {
-            // 1. Remove a imagem original física
+            // Remove a imagem original física
             if (Storage::disk('public')->exists($media->path)) {
                 Storage::disk('public')->delete($media->path);
             }
 
-            // 2. Limpa as variações associadas em cache (_thumb, _large) de forma segura
+            // Limpa as variações associadas em cache (_thumb, _large) de forma segura
             if (function_exists('deleteMediaVariants')) {
                 $pathParts = explode('/', $media->path);
                 $folder = $pathParts[1] ?? 'uploads';

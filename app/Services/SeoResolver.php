@@ -17,10 +17,10 @@ class SeoResolver
             return $this->fallback();
         }
 
-        // 1. Lê a entidade que o controlador já resolveu e pendurou na rota
+        // Lê a entidade que o controlador já resolveu e pendurou na rota
         $entity = $route->parameter('resolved_entity');
 
-        // 2. Formata o SEO de forma limpa e direta
+        // Formata o SEO de forma limpa e direta
         if ($entity instanceof Page) {
             return $this->formatPageSeo($entity);
         }
@@ -33,7 +33,7 @@ class SeoResolver
             return $this->fromBlog();
         }
 
-        // 3. Fallback para rotas estáticas nomeadas do core (como 'home', etc.)
+        // Fallback para rotas estáticas nomeadas do core (como 'home', etc.)
         return match ($route->getName()) {
             'home' => $this->fromHome(),
             default => $this->fallback(),

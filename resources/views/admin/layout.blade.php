@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="{{ asset('css/admin/admin.css') }}">
     <link rel="stylesheet" href="{{ asset('css/dialog.css') }}">
 
-    <script src="{{ asset('js/dialog.js') }}"></script>
+    <script src="{{ asset('js/dialog2.js') }}"></script>
     <script src="{{ asset('js/admin.js') }}"></script>
 
     @if(setting('navigation.save_search_params'))

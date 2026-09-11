@@ -23,10 +23,10 @@
  * Exemplo para [box title="Aviso"] Conteúdo [/box]:
  *
  *    private static function renderBox($attributes, $content = null) {
- *        // 1. Processa dados
+ *        // Processa dados
  *        $title = $attributes['title'] ?? 'Informação';
  *
- *        // 2. Despacha para uma View Blade (Recomendado para manter HTML Vanilla)
+ *        // Despacha para uma View Blade (Recomendado para manter HTML Vanilla)
  *        return view('components.shortcodes.box', [
  *            'title'   => $title,
  *            'content' => $content

@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // 1. Slug automático
+    // Slug automático
     const titleInput = document.getElementById('title');
     if (titleInput) {
         titleInput.addEventListener('input', debounce(function() {
@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 2000));
     }
 
-    // 2. Widget + is_main
+    // Widget + is_main
     const widgetSelect = document.getElementById('widget_slug');
     const isMainSwitch = document.querySelector('input[name="is_main"]');
 
@@ -41,16 +41,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// 3. Alpine data para thumbnail
+// Alpine data para thumbnail
 function thumbnailManager(initial = {}) {
     return {
         thumbnailId: initial.id || null,
         thumbnailUrl: initial.url || '',
 
         openSelector() {
-            window.dispatchEvent(new CustomEvent('modal-open', {
-                detail: { id: 'selectorModal', context: 'thumbnail' }
-            }));
+            openGridModal('thumbnail', false, initial.id || null);
         },
 
         setMedia(media) {
@@ -65,15 +63,58 @@ function thumbnailManager(initial = {}) {
     }
 }
 
-// 4. Eventos globais de Thumbnail e Upload
+window.gridIsMultiple = false;
+window.openGridModal = function(
+    context,
+    multiple = window.gridIsMultiple,
+    selected = [],
+    labels = {},
+    details = {}
+) {
+
+    labels = {
+        ...{
+            title: 'Selecionar Mídia',
+            insert: 'Inserir',
+            bulkInsert: 'Inserir selecionados',
+            clear: 'Limpar',
+            close: 'Fechar'
+        },
+        ...labels
+    };
+    window.dispatchEvent(new CustomEvent('media:set-labels', { detail: { labels } }));
+    window.dispatchEvent(new CustomEvent('modal-set-title', {
+        detail: { id: 'selectorModal', title: labels.title }
+    }));
+    window.dispatchEvent(new CustomEvent('modal-set-close-label', {
+        detail: { id: 'selectorModal', closeLabel: labels.close }
+    }));
+
+    // Guarda a última opção ao abrir o modal
+    window.gridIsMultiple = multiple;
+
+    // Configura o grid para aceitar ou não seleção múltipla
+    window.dispatchEvent(new CustomEvent('media:set-multiple', { detail: { multiple } }));
+
+    // Configura o grid para mostrar imagens já seleionadas
+    window.dispatchEvent(new CustomEvent('media:set-selected', { detail: { selected } }));
+
+    // Abre o modal padrão do seletor
+    window.dispatchEvent(new CustomEvent('modal-open', {
+        detail: { id: 'selectorModal', context, ...details }
+    }));
+};
+
+// Eventos globais de Thumbnail e Upload
 window.addEventListener('media:uploaded', (e) => {
     window.dispatchEvent(new CustomEvent('modal-close', { detail: { id: 'mainUploader' } }));
 });
 
 window.addEventListener('media:updated', (e) => {
-    window.dispatchEvent(new CustomEvent('modal-open', {
-        detail: { id: 'selectorModal', context: e.detail.source }
-    }));
+    openGridModal(e.detail.source);
+    // window.dispatchEvent(new CustomEvent('modal-open', {
+    //     detail: { id: 'selectorModal', context: e.detail.source }
+    // }));
 });
 
 window.addEventListener('media:inserted', (e) => {

@@ -10,7 +10,7 @@
     // 💡 Toda trilha começa pelo Início (Home)
     $crumbs[] = ['title' => 'Início', 'url' => route('home')];
 
-    // 1. Tenta obter o $page e $post de forma flexível (passado ou compartilhado)
+    // Tenta obter o $page e $post de forma flexível (passado ou compartilhado)
     $currentPage = $page ?? view()->shared('page');
     $currentPost = $post ?? view()->shared('post');
 
@@ -19,7 +19,7 @@
     $postsBase = setting('navigation.posts_base', 'post');
     $blogBase = setting('navigation.blog_base', 'blog');
 
-    // 2. Auto-resolução por rota para evitar o fallback de segmentos em páginas dinâmicas
+    // Auto-resolução por rota para evitar o fallback de segmentos em páginas dinâmicas
     if (!$currentPage && !$currentPost) {
         $route = request()->route();
         $slug = $route?->parameter('slug') ?? $route?->parameter('base');

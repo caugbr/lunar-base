@@ -1,15 +1,25 @@
 @props([
     'id' => 'mediaGrid-' . Str::random(6),
-    'selectable' => false,
+    'selectable' => true,
     'context' => null,
-    'multiple' => true,
+    'multiple' => false,
     'onSelect' => null,
     'perPage' => 20,
     'initialLinked' => '',
     'initialType' => '',
     'csrfToken' => csrf_token(),
     'mediaable' => null,
+    'selected' => '',
+    'buttonLabel' => 'Inserir',
+    'bulkButtonLabel' => 'Inserir selecionados',
+    'clearButtonLabel' => 'Limpar'
 ])
+
+@php
+    $selected = is_string($selected) && !empty(trim($selected))
+        ? array_map('intval', explode(',', $selected))
+        : (is_array($selected) ? $selected : []);
+@endphp
 
 <div
     x-data="mediaGridComponent({
@@ -20,10 +30,17 @@
         perPage: {{ $perPage }},
         initialType: '{{ $initialType }}',
         initialLinked: '{{ $initialLinked }}',
-        csrfToken: '{{ $csrfToken }}'
+        csrfToken: '{{ $csrfToken }}',
+        selected: @json($selected),
+        buttonLabel: '{{ $buttonLabel }}',
+        bulkButtonLabel: '{{ $bulkButtonLabel }}',
+        clearButtonLabel: '{{ $clearButtonLabel }}'
     })"
     x-init="init()"
     @media:updated.window="loadData()"
+    @media:set-multiple.window="multiple = $event.detail.multiple;"
+    @media:set-selected.window="selectedIds = Array.isArray($event.detail.selected) ? [...$event.detail.selected] : [$event.detail.selected].filter(Boolean);"
+    @media:set-labels.window="buttonLabel = $event.detail.labels.insert; bulkButtonLabel = $event.detail.labels.bulkInsert; clearButtonLabel = $event.detail.labels.clear;"
     {{ $attributes->merge(['class' => 'media-grid-container']) }}
 >
     {{-- Filtros --}}
@@ -65,10 +82,10 @@
     {{-- Grid --}}
     <div class="media-grid" x-show="!loading && media.length > 0">
         <template x-for="item in media" :key="item.id">
-            <div class="media-card" :class="{ 'is-image': item.is_image, 'selectable': selectable }">
+            <div class="media-card" :class="{ 'is-image': item.is_image, 'selectable': selectable, 'selected': isSelected(item.id) }">
 
                 {{-- Checkbox de seleção (apenas em modo selectable) --}}
-                <template x-if="selectable">
+                <template x-if="multiple">
                     <label class="media-select">
                         <input type="checkbox"
                                x-model="selectedIds"
@@ -110,9 +127,10 @@
                     </template>
 
                     {{-- Ação: modo seleção (inserir) --}}
-                    <template x-if="selectable && isSelected(item.id)">
+                    <template x-if="!multiple && selectable && isSelected(item.id)">
                         <button @click="insertSelected([item])" class="admin-btn admin-btn-primary">
-                            <x-lucide-check class="lucid-icon" /> Inserir
+                            <x-lucide-check class="lucid-icon" />
+                            <span x-text="buttonLabel"></span>
                         </button>
                     </template>
                 </div>
@@ -140,9 +158,14 @@
 
     {{-- Barra de seleção múltipla (apenas modo selectable) --}}
     <div x-show="selectable && multiple && selectedIds.length > 0" class="media-selection-bar">
-        <span x-text="selectedIds.length + ' item(ns) selecionado(s)'"></span>
-        <button @click="insertSelected()" class="admin-btn admin-btn-primary">Inserir selecionados</button>
-        <button @click="clearSelection()" class="admin-btn admin-btn-secondary">Limpar</button>
+        <span x-text="'Selecionados: ' + selectedIds.length"></span>
+        <button @click="insertSelected()" class="admin-btn admin-btn-primary">
+            <x-lucide-check class="lucid-icon" />
+            <span x-text="bulkButtonLabel"></span>
+        </button>
+        <button @click="clearSelection()" class="admin-btn admin-btn-secondary">
+            <span x-text="clearButtonLabel"></span>
+        </button>
     </div>
 </div>
 
@@ -176,6 +199,9 @@
         border-radius: 9999px;
         padding: 0.25rem;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .media-card.selected {
+        border: 2px solid #1075ce;
     }
     .media-thumb {
         height: 140px;
@@ -256,7 +282,8 @@ function mediaGridComponent(config) {
         media: [],
         loading: false,
         selectedIds: [],
-        currentContext: config.context || 'grid', // Padrão 'grid'
+        currentContext: config.context || 'grid', // Padrão 'grid',
+        modalOpenDetail: {},
 
         // Config
         id: config.id,
@@ -265,6 +292,11 @@ function mediaGridComponent(config) {
         onSelect: config.onSelect,
         perPage: config.perPage,
         csrfToken: config.csrfToken,
+        selected: config.selected,
+        buttonLabel: config.buttonLabel,
+        bulkButtonLabel: config.bulkButtonLabel,
+        clearButtonLabel: config.clearButtonLabel,
+        closeButtonLabel: config.closeButtonLabel,
 
         // Filtros e paginação
         filters: {
@@ -278,10 +310,12 @@ function mediaGridComponent(config) {
         init() {
             this.loadData();
 
+            this.selectedIds = Array.isArray(this.selected) ? [...this.selected] : [this.selected].filter(Boolean);
+
             // Escuta o modal abrir para definir o contexto
             window.addEventListener('modal-open', (e) => {
-                // console.log('init', e.detail?.context)
                 this.currentContext = e.detail?.context || 'grid';
+                this.modalOpenDetail = e.detail || {};
             });
         },
 
@@ -382,7 +416,8 @@ function mediaGridComponent(config) {
                 window.dispatchEvent(new CustomEvent('media:inserted', {
                     detail: {
                         media: selected.length === 1 ? selected[0] : selected,
-                        source: this.currentContext
+                        source: this.currentContext,
+                        ...this.modalOpenDetail
                     }
                 }));
             }

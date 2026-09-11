@@ -19,10 +19,10 @@ class LinkPluginAssets extends Command
     {
         $pluginArg = $this->argument('plugin');
 
-        // 1. Gera o SLUG limpo para o atalho público (ex: "Prism Highlight" -> "prism-highlight" | "FAQ" -> "faq")
+        // Gera o SLUG limpo para o atalho público (ex: "Prism Highlight" -> "prism-highlight" | "FAQ" -> "faq")
         $pluginSlug = Str::slug(preg_replace('/([a-z0-9])([A-Z])/', '$1-$2', $pluginArg));
 
-        // 2. Busca a pasta física em /plugins/
+        // Busca a pasta física em /plugins/
         // Opção A: Nome em StudlyCase a partir do slug (ex: "PrismHighlight" ou "Faq")
         $pluginStudly = Str::studly($pluginSlug);
         $targetDir    = base_path("plugins/{$pluginStudly}/resources/assets");
@@ -110,7 +110,7 @@ class LinkPluginAssets extends Command
         // Normaliza barras para o padrão do SO
         $normalizedPath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $path);
 
-        // 1. Se for Windows
+        // Se for Windows
         if (PHP_OS_FAMILY === 'Windows') {
             // No Windows, links de diretório são removidos com rmdir do PHP ou rmdir do CMD
             if (is_dir($normalizedPath)) {
@@ -125,7 +125,7 @@ class LinkPluginAssets extends Command
             return;
         }
 
-        // 2. Se for Linux / MacOS
+        // Se for Linux / MacOS
         if (is_link($normalizedPath)) {
             File::delete($normalizedPath);
         } elseif (is_dir($normalizedPath)) {

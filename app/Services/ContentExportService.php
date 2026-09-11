@@ -32,12 +32,12 @@ class ContentExportService
             'content'    => [],
         ];
 
-        // 1. Exporta Taxonomias e seus Termos (se selecionado)
+        // Exporta Taxonomias e seus Termos (se selecionado)
         if (in_array('taxonomies', $selectedTypes, true)) {
             $exportData['taxonomies'] = Taxonomy::with('terms')->get()->toArray();
         }
 
-        // 2. Exporta cada Tipo de Publicação registrado (Posts, Páginas, Cursos, etc.)
+        // Exporta cada Tipo de Publicação registrado (Posts, Páginas, Cursos, etc.)
         $allTypes = PublicationTypes::all();
 
         foreach ($selectedTypes as $typeKey) {
@@ -54,7 +54,7 @@ class ContentExportService
             }
         }
 
-        // 3. Salva o arquivo JSON na pasta temporária de storage
+        // Salva o arquivo JSON na pasta temporária de storage
         $filename = 'lunar-content-export-' . date('Y-m-d_H-i-s') . '.json';
         $exportPath = storage_path('app/temp/' . $filename);
 

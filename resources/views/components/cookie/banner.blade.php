@@ -171,7 +171,7 @@
 
         const storageKey = 'lgpd_cookie_consent_categories';
 
-        // 1. Verifica se já existe um consentimento salvo
+        // Verifica se já existe um consentimento salvo
         const preferences = localStorage.getItem(storageKey);
 
         if (preferences) {
@@ -182,7 +182,7 @@
             setTimeout(() => { banner.style.display = 'block'; }, 1000);
         }
 
-        // 2. Eventos de abertura/fechamento do Modal
+        // Eventos de abertura/fechamento do Modal
         if (customizeBtn) {
             customizeBtn.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -196,7 +196,7 @@
             });
         }
 
-        // 3. Ação: "Aceitar Todos" (Tanto no banner quanto no modal)
+        // Ação: "Aceitar Todos" (Tanto no banner quanto no modal)
         const aceitarTodos = () => {
             const allPreferences = {};
 
@@ -211,7 +211,7 @@
         if (acceptAllBtn) acceptAllBtn.addEventListener('click', aceitarTodos);
         if (acceptAllModalBtn) acceptAllModalBtn.addEventListener('click', aceitarTodos);
 
-        // 4. Ação: "Salvar Preferências" (Seleção granular no modal)
+        // Ação: "Salvar Preferências" (Seleção granular no modal)
         if (savePreferencesBtn) {
             savePreferencesBtn.addEventListener('click', (e) => {
                 e.preventDefault();

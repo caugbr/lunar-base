@@ -21,20 +21,20 @@ class EmbedService
             return '';
         }
 
-        // 1. EXCEÇÃO MANUAL: GitHub Gist
+        // EXCEÇÃO MANUAL: GitHub Gist
         if (str_contains($url, 'gist.github.com')) {
             $urlClean = preg_replace('/\.js$/', '', $url);
             return '<script src="' . e($urlClean) . '.js"></script>';
         }
 
-        // 2. EXCEÇÃO MANUAL: Google Maps
+        // EXCEÇÃO MANUAL: Google Maps
         if (str_contains($url, 'google.com/maps') || str_contains($url, 'maps.app.goo.gl')) {
             return '<div class="embed-wrapper embed-maps" style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;margin:1.5rem 0;">' .
                    '<iframe src="' . e($url) . '" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allowfullscreen="" loading="lazy"></iframe>' .
                    '</div>';
         }
 
-        // 3. MOTOR PRINCIPAL: oEmbed através da biblioteca "embed/embed" (v4) com Caching
+        // MOTOR PRINCIPAL: oEmbed através da biblioteca "embed/embed" (v4) com Caching
         try {
             $cacheKey = 'embed_' . md5($url);
 

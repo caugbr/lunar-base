@@ -110,14 +110,14 @@ class MediaController extends Controller
      */
     public function destroy(Media $media)
     {
-        // 1. Extrai a pasta do path (ex: "media/settings/original" → "settings")
+        // Extrai a pasta do path (ex: "media/settings/original" → "settings")
         $pathParts = explode('/', $media->path);
         $folder = $pathParts[1] ?? 'uploads'; // Padrão: 'uploads'
 
-        // 2. Chama o helper para deletar arquivos físicos (original + variações)
+        // Chama o helper para deletar arquivos físicos (original + variações)
         deleteImage($media->path, $folder, 'public');
 
-        // 3. Deleta o registro do banco
+        // Deleta o registro do banco
         $media->delete(); // ou forceDelete() se quiser exclusão permanente
 
         return request()->wantsJson()

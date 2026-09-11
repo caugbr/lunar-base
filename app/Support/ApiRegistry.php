@@ -45,7 +45,7 @@ class ApiRegistry
     {
         if (self::$booted) return;
 
-        // 1. SCHEMA DE POSTS
+        // SCHEMA DE POSTS
         self::register('posts', [
             'model'      => Post::class,
             'scope'      => fn($q) => $q->published()->feedOrder(),
@@ -86,7 +86,7 @@ class ApiRegistry
             ]
         ]);
 
-        // 2. SCHEMA DE PÁGINAS (Com suporte a Thumbnails completos e Taxonomias)
+        // SCHEMA DE PÁGINAS (Com suporte a Thumbnails completos e Taxonomias)
         self::register('pages', [
             'model'      => Page::class,
             'scope'      => fn($q) => $q->published(),
@@ -126,7 +126,7 @@ class ApiRegistry
             ]
         ]);
 
-        // 3. SCHEMA DE TAXONOMIAS (CATEGORIAS, TAGS E OUTROS TERMOS)
+        // SCHEMA DE TAXONOMIAS (CATEGORIAS, TAGS E OUTROS TERMOS)
         self::register('taxonomies', [
             'model'      => Taxonomy::class,
             'key_column' => 'slug',

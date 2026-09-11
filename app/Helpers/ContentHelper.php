@@ -45,7 +45,7 @@ class ContentHelper
      */
     public static function getRegisteredShortcodes(): array
     {
-        // 1. Definição estática com atributos estruturados para os shortcodes do Core (fixos)
+        // Definição estática com atributos estruturados para os shortcodes do Core (fixos)
         $coreShortcodes = [
             'embed' => [
                 'type'        => 'Core',
@@ -110,7 +110,7 @@ class ContentHelper
             ],
         ];
 
-        // 2. Mapeia os shortcodes dinâmicos que foram ativados por plugins
+        // Mapeia os shortcodes dinâmicos que foram ativados por plugins
         $pluginShortcodes = [];
         foreach (self::$registeredShortcodes as $tag => $data) {
             $pluginShortcodes[$tag] = [
@@ -121,7 +121,7 @@ class ContentHelper
             ];
         }
 
-        // 3. Mescla e ordena alfabeticamente
+        // Mescla e ordena alfabeticamente
         $all = array_merge($coreShortcodes, $pluginShortcodes);
         ksort($all);
 
@@ -182,19 +182,19 @@ class ContentHelper
     {
         $tag = strtolower($tag);
 
-        // 1. Verifica se existe um shortcode registrado por um plugin
+        // Verifica se existe um shortcode registrado por um plugin
         if (isset(self::$registeredShortcodes[$tag])) {
             // 💡 AJUSTE: Agora busca o callback dentro da nova estrutura de array do registro
             return call_user_func(self::$registeredShortcodes[$tag]['callback'], $attributes, $content);
         }
 
-        // 2. Fallback para métodos da Trait (Core)
+        // Fallback para métodos da Trait (Core)
         $method = "render" . Str::studly($tag);
         if (method_exists(self::class, $method)) {
             return self::{$method}($attributes, $content);
         }
 
-        // 3. Fallback para views no core
+        // Fallback para views no core
         $viewPath = "components.shortcodes." . $tag;
         if (view()->exists($viewPath)) {
             return view($viewPath, [
@@ -215,13 +215,13 @@ class ContentHelper
     {
         if (empty($content)) return '';
 
-        // 1. Remove parágrafos que contêm apenas espaços, quebras de linha ou &nbsp;
+        // Remove parágrafos que contêm apenas espaços, quebras de linha ou &nbsp;
         $content = preg_replace('/<p>(&nbsp;|\s)*<\/p>/i', '', $content);
 
-        // 2. Remove parágrafos que envolvem apenas shortcodes
+        // Remove parágrafos que envolvem apenas shortcodes
         $content = preg_replace('/<p>\s*(\[[^\]]+\])\s*<\/p>/i', '$1', $content);
 
-        // 3. Remove espaços em branco nas extremidades
+        // Remove espaços em branco nas extremidades
         $content = trim($content);
 
         return $content;

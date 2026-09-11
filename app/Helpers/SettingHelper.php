@@ -21,7 +21,7 @@ if (! function_exists('getSettingsDefinitions')) {
         $injectedGroups = \App\Support\Settings::getInjectedGroups();
         $injectedItems  = \App\Support\Settings::getInjectedItems();
 
-        // 1. Adiciona grupos novos declarados por plugins
+        // Adiciona grupos novos declarados por plugins
         foreach ($injectedGroups as $groupKey => $meta) {
             // Se o grupo já existe no config, o plugin NÃO deve redeclarar
             if (isset($definitions[$groupKey])) {
@@ -31,7 +31,7 @@ if (! function_exists('getSettingsDefinitions')) {
             $definitions[$groupKey] = $meta;
         }
 
-        // 2. Injeta campos nos grupos
+        // Injeta campos nos grupos
         foreach ($injectedItems as $injection) {
             $group = $injection['group'];
             $item  = $injection['item'];

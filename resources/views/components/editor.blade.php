@@ -9,22 +9,22 @@
 @php
     $isTiptap = $forceType === 'tiptap' || (!empty($json) || empty($value));
 
-    // 1. Lê as configurações do grupo 'editor' via helper nativo
+    // Lê as configurações do grupo 'editor' via helper nativo
     $editorSettings = settingsGroup('editor');
 
-    // 2. Converte a string de cores separadas por vírgula em um array limpo
+    // Converte a string de cores separadas por vírgula em um array limpo
     $rawPalette = $editorSettings['color_palette'] ?? '#0f172a, #64748b, #ef4444, #f97316, #eab308, #22c55e, #3b82f6, #a855f7, #ec4899';
     $colorPalette = is_array($rawPalette)
         ? $rawPalette
         : array_values(array_filter(array_map('trim', explode(',', $rawPalette))));
 
-    // 3. Garante que a lista de ferramentas ativas seja um array
+    // Garante que a lista de ferramentas ativas seja um array
     $rawTools = $editorSettings['toolbar_tools'] ?? [];
     $toolbarTools = is_array($rawTools)
         ? $rawTools
         : (is_string($rawTools) ? array_values(array_filter(array_map('trim', explode(',', $rawTools)))) : []);
 
-    // 4. Monta o pacote de configuração para o Vue
+    // Monta o pacote de configuração para o Vue
     $editorConfig = [
         'tools'              => $toolbarTools,
         'colors'             => $colorPalette,
@@ -106,12 +106,12 @@
                 return;
             }
 
-            // 1. Pega o HTML atual do TinyMCE
+            // Pega o HTML atual do TinyMCE
             const currentHtml = (typeof tinymce !== 'undefined' && tinymce.activeEditor)
                 ? tinymce.activeEditor.getContent()
                 : (document.getElementById('content')?.value || '');
 
-            // 2. Destrói o TinyMCE e remove os botões legados
+            // Destrói o TinyMCE e remove os botões legados
             if (typeof tinymce !== 'undefined' && tinymce.activeEditor) {
                 tinymce.activeEditor.destroy();
             }
@@ -119,7 +119,7 @@
             const wrapper = document.querySelector('.lunar-editor-wrapper');
             if (!wrapper) return;
 
-            // 3. Substitui o HTML pelo container do Tiptap com a configuração dinâmica injetada
+            // Substitui o HTML pelo container do Tiptap com a configuração dinâmica injetada
             wrapper.innerHTML = `
                 <div
                     id="lunar-tiptap-app"
@@ -130,7 +130,7 @@
                 <input type="hidden" name="{{ $name }}" id="lunar_content_html" value="">
             `;
 
-            // 4. Injeta o CSS do Tiptap dinamicamente
+            // Injeta o CSS do Tiptap dinamicamente
             if (!document.querySelector('link[href*="tiptap-editor.css"]')) {
                 const link = document.createElement('link');
                 link.rel = 'stylesheet';
@@ -148,7 +148,7 @@
                 }
             @endforeach
 
-            // 5. Função para carregar scripts em sequência
+            // Função para carregar scripts em sequência
             const loadScript = (src) => {
                 return new Promise((resolve) => {
                     const script = document.createElement('script');
@@ -159,7 +159,7 @@
                 });
             };
 
-            // 6. Carrega o script do Tiptap e Plugins
+            // Carrega o script do Tiptap e Plugins
             loadScript('{{ asset("js/tiptap-editor.js") }}').then(() => {
                 @foreach(\App\Services\EditorManager::getScripts() as $pluginScript)
                     loadScript('{{ $pluginScript }}');

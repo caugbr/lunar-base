@@ -65,7 +65,7 @@ class TwoFactorChallengeController extends Controller
         $inputCode = $request->input('code');
         $isAuthenticated = false;
 
-        // 1. Tentar validar via E-mail (se houver código ativo)
+        // Tentar validar via E-mail (se houver código ativo)
         if ($setting->otp_code && $setting->otp_expires_at && now()->lessThan($setting->otp_expires_at)) {
             if (\Illuminate\Support\Facades\Hash::check($inputCode, $setting->otp_code)) {
                 $isAuthenticated = true;
@@ -74,7 +74,7 @@ class TwoFactorChallengeController extends Controller
             }
         }
 
-        // 2. Se não validou por e-mail, tentar via Google Authenticator (TOTP)
+        // Se não validou por e-mail, tentar via Google Authenticator (TOTP)
         if (!$isAuthenticated) {
             $validTotp = $this->google2fa->verifyKey(
                 $setting->secret,
@@ -87,7 +87,7 @@ class TwoFactorChallengeController extends Controller
             }
         }
 
-        // 3. Resultado final
+        // Resultado final
         if (!$isAuthenticated) {
             TwoFactorRateLimiter::hit($userId);
             $remaining = TwoFactorRateLimiter::remaining($userId);

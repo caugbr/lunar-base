@@ -167,10 +167,10 @@ class CaminhoServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
-        // 1. Cria a seção "Ensino" na primeira posição do menu (índice 0)
+        // Cria a seção "Ensino" na primeira posição do menu (índice 0)
         AdminMenu::addSection('Ensino', [], 0);
 
-        // 2. Injeta os itens dentro da seção de índice 0 ("Ensino")
+        // Injeta os itens dentro da seção de índice 0 ("Ensino")
         AdminMenu::add([
             'label'      => 'Cursos',
             'icon'       => 'book-open',

@@ -33,7 +33,6 @@ class Page extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
-        'content_json' => 'array',
     ];
 
     // ==========================================
@@ -169,7 +168,8 @@ class Page extends Model
     protected function contentJson(): Attribute
     {
         return Attribute::make(
-            set: fn ($value) => is_string($value) ? json_decode($value, true) : $value,
+            get: fn ($value) => is_string($value) ? json_decode($value, true) : $value,
+            set: fn ($value) => is_array($value) ? json_encode($value) : $value,
         );
     }
 }

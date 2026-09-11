@@ -149,7 +149,7 @@
                                     :class="{ 'has-image': thumbnailUrl }"
                                     @click="!thumbnailUrl && openSelector()">
                                     <template x-if="thumbnailUrl">
-                                        <img :src="thumbnailUrl" alt="Preview" class="preview-image">
+                                        <img :src="thumbnailUrl" alt="Preview" class="preview-image" @click="openSelector()">
                                     </template>
                                     <template x-if="!thumbnailUrl">
                                         <div class="preview-placeholder">
@@ -197,9 +197,7 @@
 </div>
 
 {{-- Modais --}}
-<x-modal id="selectorModal" title="Selecionar Mídia" size="xl">
-    <x-media.grid id="gridInsideModal" :selectable="true" :multiple="false" :per-page="12" initial-type="image" />
-</x-modal>
+<x-media.grid-modal />
 
 <x-media.upload-modal id="mainUploader" folder="uploads" accept="image/*,application/pdf" :max-size="10240" />
 

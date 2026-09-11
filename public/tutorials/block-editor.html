@@ -94,7 +94,7 @@ const MeuBlocoExtension = Node.create({
     defining: true,        // Preserva a estrutura do bloco ao colar conteúdo
     draggable: true,       // Permite arrastar e soltar o bloco
 
-    // 1. Atributos persistidos no JSON do nó
+    // Atributos persistidos no JSON do nó
     addAttributes() {
         return {
             tipo: { default: 'destaque' },
@@ -102,12 +102,12 @@ const MeuBlocoExtension = Node.create({
         };
     },
 
-    // 2. Como o Tiptap reconhece este bloco ao abrir um HTML existente
+    // Como o Tiptap reconhece este bloco ao abrir um HTML existente
     parseHTML() {
         return [{ tag: 'div[data-type="meu-bloco"]' }];
     },
 
-    // 3. Como este bloco é gravado no banco como HTML para o visitante
+    // Como este bloco é gravado no banco como HTML para o visitante
     renderHTML({ HTMLAttributes }) {
         return [
             'div',
@@ -116,7 +116,7 @@ const MeuBlocoExtension = Node.create({
         ];
     },
 
-    // 4. (Opcional) Vincula o visual do nó a um componente reativo do Vue
+    // (Opcional) Vincula o visual do nó a um componente reativo do Vue
     addNodeView() {
         return VueNodeViewRenderer(MeuBlocoComponent);
     }
@@ -261,13 +261,13 @@ class MeuDestaqueServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
-        // 1. Injeta o script do editor no painel admin
+        // Injeta o script do editor no painel admin
         EditorManager::registerScript(asset('plugins/meu-destaque/js/destaque-block.js'));
 
-        // 2. Injeta o CSS correspondente no painel admin
+        // Injeta o CSS correspondente no painel admin
         EditorManager::registerStyle(asset('plugins/meu-destaque/css/editor.css'));
 
-        // 3. Enfileira o CSS para exibição correta no site público
+        // Enfileira o CSS para exibição correta no site público
         add_style('meu-destaque-front', asset('plugins/meu-destaque/css/front.css'), [], '1.0.0');
     }
 }</pre>

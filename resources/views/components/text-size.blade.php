@@ -49,14 +49,14 @@
         const stepValue = {{ $step }};
         let currentStep = 0; // Passo atual: 0 (original) até maxVariation
 
-        // 1. Salva o tamanho original calculado de cada elemento
+        // Salva o tamanho original calculado de cada elemento
         textElements.forEach(elem => {
             const computedSize = window.getComputedStyle(elem).fontSize;
             elem.dataset.originalSize = parseFloat(computedSize) || 16;
             elem.dataset.sizeUnit = computedSize.match(/[a-zA-Z%]+$/)?.[0] || 'px';
         });
 
-        // 2. Controla o clique do botão único (ciclo: 0 -> 1 -> 2 -> 0)
+        // Controla o clique do botão único (ciclo: 0 -> 1 -> 2 -> 0)
         const toggleBtn = document.getElementById('text-size-toggle');
         if (toggleBtn) {
             toggleBtn.addEventListener('click', event => {
@@ -72,7 +72,7 @@
             });
         }
 
-        // 3. Aplica o novo tamanho
+        // Aplica o novo tamanho
         function updateSizes() {
             textElements.forEach(elem => {
                 const original = parseFloat(elem.dataset.originalSize);

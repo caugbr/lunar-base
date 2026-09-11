@@ -166,7 +166,7 @@ function closeThemePreview() {
     const modal = document.getElementById('preview-modal');
     const iframe = document.getElementById('preview-iframe');
 
-    // 1. Limpa a sessão no backend via AJAX
+    // Limpa a sessão no backend via AJAX
     fetch('{{ route("admin.themes.clear_preview") }}', {
         method: 'POST',
         headers: {
@@ -174,7 +174,7 @@ function closeThemePreview() {
             'Content-Type': 'application/json'
         }
     }).finally(() => {
-        // 2. Limpa o iframe e fecha o modal
+        // Limpa o iframe e fecha o modal
         iframe.src = 'about:blank';
         modal.style.display = 'none';
         document.body.style.overflow = '';

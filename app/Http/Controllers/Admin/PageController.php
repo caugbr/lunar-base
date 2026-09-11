@@ -231,7 +231,7 @@ class PageController extends Controller
      */
     public function getNamespaces(): array
     {
-        // 1. Pega os namespaces mapeados em Domínios no Settings (via helper siteDomains())
+        // Pega os namespaces mapeados em Domínios no Settings (via helper siteDomains())
         $domainNamespaces = collect(siteDomains())
             ->pluck('namespace')
             ->filter()
@@ -240,7 +240,7 @@ class PageController extends Controller
             ->values()
             ->toArray();
 
-        // 2. Pega os namespaces já em uso fisicamente na tabela pages
+        // Pega os namespaces já em uso fisicamente na tabela pages
         $dbNamespaces = Page::select('namespace')
             ->distinct()
             ->whereNotNull('namespace')
@@ -249,13 +249,13 @@ class PageController extends Controller
             ->map(fn($ns) => trim($ns))
             ->toArray();
 
-        // 3. Unifica e ordena todos os namespaces sem duplicados
+        // Unifica e ordena todos os namespaces sem duplicados
         $allNamespaces = collect(array_merge($domainNamespaces, $dbNamespaces))
             ->unique()
             ->sort()
             ->values();
 
-        // 4. Monta o array associativo ['valor' => 'Rótulo']
+        // Monta o array associativo ['valor' => 'Rótulo']
         $options = [];
         foreach ($allNamespaces as $ns) {
             $isDomain = in_array($ns, $domainNamespaces, true);

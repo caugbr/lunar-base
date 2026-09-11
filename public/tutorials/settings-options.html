@@ -120,17 +120,17 @@ Settings::addGroup('meu_grupo', [
             </div>
 
             <h4>Métodos Globais de Controle:</h4>
-            <pre><code class="code-label">PHP</code>// 1. Criando ou atualizando um registro (converte arrays em JSON automaticamente)
+            <pre><code class="code-label">PHP</code>// Criando ou atualizando um registro (converte arrays em JSON automaticamente)
 setOption('faq_geral_dados', ['titulo' => 'FAQ Geral', 'itens' => []]);
 
-// 2. Recuperando o valor convertido de volta de forma tipada
+// Recuperando o valor convertido de volta de forma tipada
 $faq = getOption('faq_geral_dados'); // Retorna o array PHP
 
-// 3. Salvando dados criptografados (senhas de API, chaves privadas)
+// Salvando dados criptografados (senhas de API, chaves privadas)
 setOption('api_token', 'chave-super-secreta', 'password'); // Encripta no banco via Crypt()
 $token = getOption('api_token'); // Retorna a chave descriptografada automaticamente
 
-// 4. Buscando coleções por prefixo (Reduz queries)
+// Buscando coleções por prefixo (Reduz queries)
 $faqs = getPrefixedOptions('faq_'); // Retorna todas as chaves que começam com "faq_"</pre>
         </section>
 

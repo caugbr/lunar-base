@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
-class ThemeCreateCommand extends Command
+class ThemeCreate extends Command
 {
     protected $signature = 'theme:create {name : O nome do tema} {description? : Uma descrição opcional}';
     protected $description = 'Gera a estrutura base de um novo tema';
@@ -15,10 +15,10 @@ class ThemeCreateCommand extends Command
     {
         $inputName = $this->argument('name');
 
-        // 1. Gera o slug limpo (ex: "Dark Mode" -> "dark-mode" | "FAQ Theme" -> "faq-theme")
+        // Gera o slug limpo (ex: "Dark Mode" -> "dark-mode" | "FAQ Theme" -> "faq-theme")
         $slugName = Str::slug($inputName);
 
-        // 2. Gera o StudlyCase limpo para a pasta (ex: "dark-mode" -> "DarkMode" | "faq-theme" -> "FaqTheme")
+        // Gera o StudlyCase limpo para a pasta (ex: "dark-mode" -> "DarkMode" | "faq-theme" -> "FaqTheme")
         $studlyName = Str::studly($slugName);
 
         $themePath = base_path("themes/{$studlyName}");
@@ -31,7 +31,7 @@ class ThemeCreateCommand extends Command
         $description = $this->argument('description') ?? "Um tema customizado para Lunar Base.";
         $this->info("Gerando tema '{$studlyName}'...");
 
-        // 1. Criação de diretórios
+        // Criação de diretórios
         $directories = [
             $themePath,
             $themePath . '/resources/assets',
@@ -46,7 +46,7 @@ class ThemeCreateCommand extends Command
             File::ensureDirectoryExists($dir, 0755, true);
         }
 
-        // 2. Criar arquivo theme.json
+        // Criar arquivo theme.json
         $manifest = [
             'name'        => Str::headline($inputName),
             'description' => $description,
@@ -56,7 +56,7 @@ class ThemeCreateCommand extends Command
         ];
         File::put($themePath . '/theme.json', json_encode($manifest, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
 
-        // 3. Clonar a estrutura de views originais
+        // Clonar a estrutura de views originais
         $sourceViews = resource_path('views/public');
         $destinationViews = $themePath . '/resources/views/public';
 
@@ -67,7 +67,7 @@ class ThemeCreateCommand extends Command
             $this->warn("Aviso: O diretório original 'resources/views/public' não foi encontrado.");
         }
 
-        // 4. Copiar os CSSs públicos originais para o tema
+        // Copiar os CSSs públicos originais para o tema
         $sourceCss = public_path('css/public');
         $destinationBaseCss = $themePath . '/resources/assets/css';
         $destinationCss = $destinationBaseCss . '/public';
@@ -95,7 +95,7 @@ class ThemeCreateCommand extends Command
             }
         }
 
-        // 5. Reescrever as referências de asset nas views do tema
+        // Reescrever as referências de asset nas views do tema
         if (File::exists($destinationViews)) {
             $this->rewriteAssetPaths($destinationViews, $slugName);
             $this->info("Referências de asset atualizadas nas views do tema.");

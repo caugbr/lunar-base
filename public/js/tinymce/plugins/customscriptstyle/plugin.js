@@ -10,7 +10,7 @@
       return decodeURIComponent(escape(atob(str)));
     }
 
-    // 1. ANTES DE CARREGAR: Comentários -> Placeholders visuais
+    // ANTES DE CARREGAR: Comentários -> Placeholders visuais
     editor.on('BeforeSetContent', function(e) {
       e.content = e.content.replace(/<!--(script|style)([^>]*)>([\s\S]*?)<\/\1-->/gi, function(match, type, attrs, body) {
         var encoded = encodeContent(body.trim());
@@ -19,7 +19,7 @@
       });
     });
 
-    // 2. ANTES DE SALVAR: Placeholders -> Comentários
+    // ANTES DE SALVAR: Placeholders -> Comentários
     editor.on('GetContent', function(e) {
       if (e.format === 'html') {
         e.content = e.content.replace(/<span[^>]*class="tmce-custom-placeholder"[^>]*data-type="(script|style)"[^>]*data-attrs="([^"]*)"[^>]*data-content="([^"]*)"[^>]*>[\s\S]*?<\/span>/gi, function(match, type, attrs, encoded) {
@@ -29,7 +29,7 @@
       }
     });
 
-    // 3. CLIQUE NO PLACEHOLDER: Abre diálogo de edição
+    // CLIQUE NO PLACEHOLDER: Abre diálogo de edição
     editor.on('Click', function(e) {
       var node = editor.dom.getParent(e.target, 'span.tmce-custom-placeholder');
       if (node) {
@@ -62,7 +62,7 @@
       }
     });
 
-    // 4. BOTÃO NA TOOLBAR: Inserir novo bloco
+    // BOTÃO NA TOOLBAR: Inserir novo bloco
     editor.ui.registry.addButton('customscriptstyle', {
       text: '[+ Script/Style]',
       tooltip: 'Inserir bloco de script ou estilo',

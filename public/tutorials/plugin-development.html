@@ -252,7 +252,7 @@ class TrackerServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        // 1. Registra as rotas durante o register()
+        // Registra as rotas durante o register()
         $routesFile = __DIR__ . '/routes.php';
         if (file_exists($routesFile)) {
             $this->loadRoutesFrom($routesFile);
@@ -261,11 +261,11 @@ class TrackerServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        // 2. Carrega Migrations e Views com Namespace exclusivo
+        // Carrega Migrations e Views com Namespace exclusivo
         $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
         $this->loadViewsFrom(__DIR__ . '/resources/views', 'tracker');
 
-        // 3. Registra o Item na Sidebar da Administração
+        // Registra o Item na Sidebar da Administração
         AdminMenu::add([
             'label'      => 'Tráfego',
             'icon'       => 'activity',
@@ -274,7 +274,7 @@ class TrackerServiceProvider extends ServiceProvider
             'permission' => 'view-dashboard',
         ], 'Temas', 1);
 
-        // 4. Injeta Middleware no Grupo 'web'
+        // Injeta Middleware no Grupo 'web'
         $this->app['router']->pushMiddlewareToGroup('web', TrackPageViews::class);
     }
 }</pre>

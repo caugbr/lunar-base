@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // 1. Adiciona em POSTS
+        // Adiciona em POSTS
         Schema::table('posts', function (Blueprint $table) {
             $table->longText('content_json')->nullable()->after('content');
         });
 
-        // 2. Adiciona em PAGES
+        // Adiciona em PAGES
         Schema::table('pages', function (Blueprint $table) {
             $table->longText('content_json')->nullable()->after('content');
         });

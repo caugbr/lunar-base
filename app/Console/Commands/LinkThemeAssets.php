@@ -19,10 +19,10 @@ class LinkThemeAssets extends Command
     {
         $themeArg = $this->argument('theme');
 
-        // 1. Gera o SLUG limpo para o atalho público (ex: "FJS Theme" -> "fjs-theme" | "Lunar Apps" -> "lunar-apps")
+        // Gera o SLUG limpo para o atalho público (ex: "FJS Theme" -> "fjs-theme" | "Lunar Apps" -> "lunar-apps")
         $themeSlug = Str::slug(preg_replace('/([a-z0-9])([A-Z])/', '$1-$2', $themeArg));
 
-        // 2. Busca a pasta física em /themes/
+        // Busca a pasta física em /themes/
         // Opção A: Nome em StudlyCase a partir do slug (ex: "FjsTheme" ou "LunarApps")
         $themeStudly = Str::studly($themeSlug);
         $targetDir   = base_path("themes/{$themeStudly}/resources/assets");
@@ -145,7 +145,7 @@ class LinkThemeAssets extends Command
         // Normaliza barras para o padrão do SO
         $normalizedPath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $path);
 
-        // 1. Se for Windows
+        // Se for Windows
         if (PHP_OS_FAMILY === 'Windows') {
             // No Windows, links de diretório são removidos com rmdir do PHP ou rmdir do CMD
             if (is_dir($normalizedPath)) {
@@ -160,7 +160,7 @@ class LinkThemeAssets extends Command
             return;
         }
 
-        // 2. Se for Linux / MacOS
+        // Se for Linux / MacOS
         if (is_link($normalizedPath)) {
             File::delete($normalizedPath);
         } elseif (is_dir($normalizedPath)) {

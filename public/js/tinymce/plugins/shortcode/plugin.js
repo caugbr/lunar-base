@@ -333,7 +333,7 @@
 
                         let attrsString = '';
 
-                        // 1. Processa os atributos mapeados do esquema
+                        // Processa os atributos mapeados do esquema
                         Object.keys(d).forEach(key => {
                             if (key.startsWith('attr_')) {
                                 const attrName = key.replace('attr_', '');
@@ -346,7 +346,7 @@
                             }
                         });
 
-                        // 2. Processa os atributos personalizados dinâmicos [Chave] = [Valor]
+                        // Processa os atributos personalizados dinâmicos [Chave] = [Valor]
                         for (let i = 1; i <= currentCustomAttrCount; i++) {
                             const key = d[`custom_key_${i}`];
                             const val = d[`custom_val_${i}`];
@@ -355,7 +355,7 @@
                             }
                         }
 
-                        // 3. Monta o shortcode final
+                        // Monta o shortcode final
                         let shortcode = `[${finalTag}${attrsString}]`;
                         if ((d.content && d.content.trim()) || !['link', 'form'].includes(finalTag)) {
                             shortcode += `${(d.content || '').trim()}[/${finalTag}]`;
