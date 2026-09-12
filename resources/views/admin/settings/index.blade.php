@@ -9,32 +9,29 @@
         @csrf
 
         @php
-            $useTabs = setting('navigation.settings_in_tabs', false);
             $groupKeys = array_keys($groups);
             $activeTab = old('_active_tab', $groupKeys[0] ?? '');
         @endphp
 
-        @if($useTabs)
-            {{-- Navegação por Tabs --}}
-            <div class="settings-tabs">
-                @foreach($groups as $groupKey => $group)
-                    <button type="button"
-                        class="settings-tab {{ $loop->first ? 'active' : '' }}"
-                        data-tab="{{ $groupKey }}"
-                        onclick="switchTab('{{ $groupKey }}')">
-                        @if(isset($group['icon']))
-                            <x-dynamic-component component="lucide-{{ $group['icon'] }}" class="lucid-icon" />
-                        @endif
-                        {{ $group['tab'] ?? $group['title'] }}
-                    </button>
-                @endforeach
-            </div>
-            <input type="hidden" name="_active_tab" id="_active_tab" value="{{ $activeTab }}">
-        @endif
+        {{-- Navegação por Tabs --}}
+        <div class="settings-tabs">
+            @foreach($groups as $groupKey => $group)
+                <button type="button"
+                    class="settings-tab {{ $loop->first ? 'active' : '' }}"
+                    data-tab="{{ $groupKey }}"
+                    onclick="switchTab('{{ $groupKey }}')">
+                    @if(isset($group['icon']))
+                        <x-dynamic-component component="lucide-{{ $group['icon'] }}" class="lucid-icon" />
+                    @endif
+                    {{ $group['tab'] ?? $group['title'] }}
+                </button>
+            @endforeach
+        </div>
+        <input type="hidden" name="_active_tab" id="_active_tab" value="{{ $activeTab }}">
 
         {{-- Loop sobre os GRUPOS (nível 1) --}}
         @foreach($groups as $groupKey => $group)
-            <div class="settings-group {{ $useTabs ? 'tab-panel' : '' }} {{ $loop->first || !$useTabs ? 'active' : '' }}"
+            <div class="settings-group tab-panel {{ $loop->first ? 'active' : '' }}"
                  data-panel="{{ $groupKey }}">
 
                 {{-- Cabeçalho do Grupo --}}

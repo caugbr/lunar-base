@@ -338,3 +338,195 @@ table th p {
   padding: 0 !important;
   line-height: 1.4;
 }
+
+
+
+
+
+/* ==========================================================================
+   BLOCO MÍDIA E TEXTO (FRONTEND & EDITOR)
+   ========================================================================== */
+.lunar-media-text {
+  display: grid;
+  gap: 2rem;
+  margin: 2rem 0;
+  width: 100%;
+}
+
+.lunar-media-text.align-start  { align-items: start; }
+.lunar-media-text.align-center { align-items: center; }
+.lunar-media-text.align-end    { align-items: end; }
+
+.lunar-media-text .media-text-media img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  display: block;
+}
+
+/* Responsividade Mobile: empilha tudo em 1 coluna */
+@media (max-width: 768px) {
+  .lunar-media-text,
+  .media-text-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.25rem !important;
+  }
+
+  /* No celular, a imagem sempre fica em cima */
+  .lunar-media-text .media-text-media,
+  .media-text-grid .media-column {
+    order: 1 !important;
+  }
+
+  .lunar-media-text .media-text-content,
+  .media-text-grid .content-column {
+    order: 2 !important;
+  }
+}
+
+
+/* ==========================================================================
+   CAPA / BANNER COM FUNDO (FRONTEND)
+   ========================================================================== */
+.lunar-cover {
+  position: relative;
+  overflow: hidden;
+  border-radius: 10px;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 2.5rem 0;
+  width: 100%;
+}
+
+.lunar-cover .lunar-cover-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.lunar-cover .lunar-cover-inner {
+  position: relative;
+  z-index: 2;
+  padding: 3rem 2rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.lunar-cover.align-center .lunar-cover-inner {
+  text-align: center;
+  margin: 0 auto;
+  max-width: 720px;
+}
+
+.lunar-cover.align-left .lunar-cover-inner {
+  text-align: left;
+  margin-right: auto;
+  max-width: 650px;
+}
+
+/* Tipografia em contraste sobre a imagem */
+.lunar-cover h1,
+.lunar-cover h2,
+.lunar-cover h3,
+.lunar-cover p,
+.lunar-cover strong {
+  color: #ffffff !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.lunar-cover p {
+  font-size: 1.15rem;
+  line-height: 1.6;
+  opacity: 0.95;
+  margin-top: 0.75rem;
+}
+
+/* Responsivo para celulares */
+@media (max-width: 768px) {
+  .lunar-cover {
+    min-height: 280px !important;
+  }
+  .lunar-cover .lunar-cover-inner {
+    padding: 2rem 1.25rem !important;
+  }
+}
+
+
+/* ==========================================================================
+   CITAÇÃO EM DESTAQUE / PULLQUOTE (FRONTEND)
+   ========================================================================== */
+.lunar-pullquote {
+  margin: 3rem 0;
+  padding: 0;
+  width: 100%;
+}
+
+.lunar-pullquote .pullquote-content {
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+}
+
+.lunar-pullquote .pullquote-content p {
+  font-size: 1.45rem !important;
+  line-height: 1.5 !important;
+  font-style: italic;
+  font-weight: 500;
+  color: #0f172a;
+  margin: 0 0 10px 0 !important;
+}
+
+.lunar-pullquote .pullquote-author {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #64748b;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+/* Alinhamentos */
+.lunar-pullquote.align-center {
+  text-align: center;
+}
+
+.lunar-pullquote.align-left {
+  text-align: left;
+}
+
+/* Temas Visuais */
+/* 1. Bordas superior e inferior */
+.lunar-pullquote.theme-borders {
+  border-top: 3px solid #0f172a;
+  border-bottom: 3px solid #0f172a;
+  padding: 2rem 1rem;
+}
+
+/* 2. Aspas gigantes */
+.lunar-pullquote.theme-quote-marks {
+  position: relative;
+  padding-top: 1.5rem;
+}
+
+.lunar-pullquote.theme-quote-marks::before {
+  content: "“";
+  font-size: 5rem;
+  line-height: 1;
+  font-family: Georgia, serif;
+  color: #3b82f6;
+  opacity: 0.5;
+  display: block;
+  margin-bottom: -1rem;
+}
+
+/* 3. Fundo suave */
+.lunar-pullquote.theme-solid {
+  background: #f8fafc;
+  border-left: 6px solid #2563eb;
+  padding: 1.75rem 2rem;
+  border-radius: 0 8px 8px 0;
+}

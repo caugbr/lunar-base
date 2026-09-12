@@ -1,10 +1,28 @@
 # Changelog
 
+## Unreleased
+
+## [2.6.0] 2026-09-12
+
+### Added
+- Filtros por tag na index de plugins
+- Comando para editar tags dos plugin: php artisan plugin:edit-tags
+- Sistema de tags para os plugins, permite selecionar por tag na admin
+- Novos blocos no editor: 'Citação em destaque', 'Mídia e Texto' e 'Capa / Banner'
+- Novo botão no editor: 'Espaçador vertical'
+- Novo plugin File Download para o editor de blocos
+
+## Changed
+- Tags em todos os plugins
+- Comando plugin:create agora pergunta pelas tags do plugin
+- Estilos para os novos blocos em editor-block.css
+- Configurações só aparecem em abas, opção em settings removida
+
 ## [2.5.0] 2026-09-11
 
 ### Added
 - Helper para Filters - add_filter() e apply_filters()
-- Filters no PHP - filtro para variáveis, abre para plugins modificarem
+- Filters no PHP. Filtro para variáveis, abre para plugins modificarem
 - Esconder item 'Temas' nas settings - 'navigation.hide_themes'
 - Adicionado um form de busca na index de users, na admin
 

@@ -35,51 +35,13 @@ class PluginCreate extends Command
         $hasController = $this->confirm('Requer Controller e Rotas?', true);
         $hasViews      = $this->confirm('Requer Views?', true);
 
-        // 1. Carrega as categorias do config('pluginSettings.categories')
-        $categoriesConfig = config('pluginSettings.categories', []);
-        $choices = [];
-        $slugMap = [];
-
-        $cnt = 1;
-        foreach ($categoriesConfig as $slug => $category) {
-            $label   = $category['name'] ?? ucfirst($slug);
-            $desc    = !empty($category['description']) ? " - {$category['description']}" : "";
-            $display = $label . $desc;
-
-            $choices[$cnt]     = $display; // Começa a contagem do 1
-            $slugMap[$display] = $slug;    // Mapeia o texto exato que o choice() vai retornar
-            $cnt++;
-        }
-
-        // 2. Seleção clássica por números (iniciando em 1)
-        $selectedLabels = [];
-        if (!empty($choices)) {
-            $selectedLabels = $this->choice(
-                'Selecione as categorias/tags (digite os números separados por vírgula, ex: 1,3):',
-                $choices,
-                null,  // default
-                null,  // attempts
-                true   // multiple
-            );
-        }
-
-        // 3. Converte os textos selecionados de volta para os slugs ('editor', 'marketing', etc.)
-        $selectedTags = [];
-        if (is_array($selectedLabels)) {
-            foreach ($selectedLabels as $selectedText) {
-                if (isset($slugMap[$selectedText])) {
-                    $selectedTags[] = $slugMap[$selectedText];
-                }
-            }
-        }
-
         $description = $this->argument('description') ?? "Plugin {$studlyName} for Lunar Base.";
 
         // Criação da estrutura de diretórios
         $this->createDirectories($pluginPath, $hasDatabase, $hasController, $hasViews);
 
-        // Geração de arquivos com as tags salvas
-        $this->generateManifest($pluginPath, $inputName, $description, $selectedTags);
+        // Geração de arquivos
+        $this->generateManifest($pluginPath, $inputName, $description);
         $this->generateServiceProvider($pluginPath, $studlyName, $singularName, $slugName, $hasDatabase, $hasController, $hasViews);
 
         if ($hasController) {
@@ -102,7 +64,6 @@ class PluginCreate extends Command
         $this->info("Plugin '{$studlyName}' criado com sucesso!");
         $this->info("Path: plugins/{$studlyName}");
         $this->info("Namespace de Views: {$slugName}::view-name");
-        $this->info("Tags associadas: " . (empty($selectedTags) ? 'Nenhuma' : implode(', ', $selectedTags)));
         $this->info("--------------------------------------------------");
 
         return Command::SUCCESS;
@@ -127,13 +88,12 @@ class PluginCreate extends Command
         }
     }
 
-    protected function generateManifest(string $path, string $inputName, string $description, array $tags = []): void
+    protected function generateManifest(string $path, string $inputName, string $description): void
     {
         $content = json_encode([
             'name'        => Str::headline($inputName),
             'description' => $description,
             'version'     => '1.0.0',
-            'tags'        => $tags,
             'provider'    => "Plugins\\" . Str::studly(Str::slug($inputName)) . "\\" . Str::studly(Str::slug($inputName)) . "ServiceProvider",
         ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 

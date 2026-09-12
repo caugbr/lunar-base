@@ -32,10 +32,27 @@ class PluginController extends Controller
             $plugin->download_url   = $remote['download_url'] ?? null;
             $plugin->changelog      = $remote['changelog'] ?? null;
 
+            // 1. Lê o plugin.json diretamente do disco
+            $manifestPath = base_path("plugins/{$plugin->folder_name}/plugin.json");
+
+            // Fallback caso a pasta use StudlyCase
+            if (!File::exists($manifestPath)) {
+                $manifestPath = base_path("plugins/{$folderName}/plugin.json");
+            }
+
+            if (File::exists($manifestPath)) {
+                $manifest = json_decode(File::get($manifestPath), true) ?? [];
+                $plugin->tags = (array) ($manifest['tags'] ?? []);
+            } else {
+                $plugin->tags = [];
+            }
+
             return $plugin;
         });
 
-        return view('admin.plugins.index', compact('plugins'));
+        $tags = config('pluginSettings.categories', []);
+
+        return view('admin.plugins.index', compact('plugins', 'tags'));
     }
 
     /**
