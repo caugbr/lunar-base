@@ -29,9 +29,47 @@ class ThemeCreate extends Command
         }
 
         $description = $this->argument('description') ?? "Um tema customizado para Lunar Base.";
-        $this->info("Gerando tema '{$studlyName}'...");
+        $this->info("Iniciando setup para o tema '{$studlyName}'...");
 
-        // Criação de diretórios
+        // 1. Carrega as tags/categorias de temas do config('addons.tags.theme')
+        $themeTagsConfig = config('addons.tags.theme', []);
+        $choices = [];
+        $slugMap = [];
+
+        $cnt = 1;
+        foreach ($themeTagsConfig as $slug => $category) {
+            $label   = $category['name'] ?? ucfirst($slug);
+            $desc    = !empty($category['description']) ? " - {$category['description']}" : "";
+            $display = $label . $desc;
+
+            $choices[$cnt]     = $display;
+            $slugMap[$display] = $slug;
+            $cnt++;
+        }
+
+        // 2. Seleção clássica por números (iniciando em 1, compatível com qualquer terminal)
+        $selectedLabels = [];
+        if (!empty($choices)) {
+            $selectedLabels = $this->choice(
+                'Selecione as categorias/tags do tema (digite os números separados por vírgula, ex: 1,3):',
+                $choices,
+                null,
+                null,
+                true // Permite seleção múltipla
+            );
+        }
+
+        // 3. Converte os textos selecionados de volta para os slugs ('blog', 'corporate', etc.)
+        $selectedTags = [];
+        if (is_array($selectedLabels)) {
+            foreach ($selectedLabels as $selectedText) {
+                if (isset($slugMap[$selectedText])) {
+                    $selectedTags[] = $slugMap[$selectedText];
+                }
+            }
+        }
+
+        // 4. Criação de diretórios
         $directories = [
             $themePath,
             $themePath . '/resources/assets',
@@ -46,17 +84,22 @@ class ThemeCreate extends Command
             File::ensureDirectoryExists($dir, 0755, true);
         }
 
-        // Criar arquivo theme.json
+        // 5. Criar arquivo theme.json com as tags
         $manifest = [
             'name'        => Str::headline($inputName),
             'description' => $description,
             'version'     => '1.0.0',
             'author'      => 'Lunar Developer',
+            'tags'        => array_values(array_unique($selectedTags)),
             'screenshot'  => 'resources/assets/images/screenshot.png'
         ];
-        File::put($themePath . '/theme.json', json_encode($manifest, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
 
-        // Clonar a estrutura de views originais
+        File::put(
+            $themePath . '/theme.json',
+            json_encode($manifest, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
+        );
+
+        // 6. Clonar a estrutura de views originais
         $sourceViews = resource_path('views/public');
         $destinationViews = $themePath . '/resources/views/public';
 
@@ -67,7 +110,7 @@ class ThemeCreate extends Command
             $this->warn("Aviso: O diretório original 'resources/views/public' não foi encontrado.");
         }
 
-        // Copiar os CSSs públicos originais para o tema
+        // 7. Copiar os CSSs públicos originais para o tema
         $sourceCss = public_path('css/public');
         $destinationBaseCss = $themePath . '/resources/assets/css';
         $destinationCss = $destinationBaseCss . '/public';
@@ -95,7 +138,7 @@ class ThemeCreate extends Command
             }
         }
 
-        // Reescrever as referências de asset nas views do tema
+        // 8. Reescrever as referências de asset nas views do tema
         if (File::exists($destinationViews)) {
             $this->rewriteAssetPaths($destinationViews, $slugName);
             $this->info("Referências de asset atualizadas nas views do tema.");
@@ -104,6 +147,7 @@ class ThemeCreate extends Command
         $this->info("--------------------------------------------------");
         $this->info("Tema '{$studlyName}' criado com sucesso!");
         $this->warn("Path: themes/{$studlyName}");
+        $this->info("Tags associadas: " . (empty($selectedTags) ? 'Nenhuma' : implode(', ', $selectedTags)));
         $this->info("--------------------------------------------------");
 
         return Command::SUCCESS;

@@ -13,13 +13,49 @@
         </a>
     </div>
 
-    <p>
+    <p style="padding: 0 24px; margin-top: 12px; color: var(--color-text-muted, #6B6880); font-size: 0.9rem;">
         O sistema não precisa de um tema instalado, o site já tem seu próprio frontend. Um tema pode sobrescrever a formatação ao criar views para partes do site ou para o site inteiro.
     </p>
 
+    <!-- ABAS DE FILTRO POR CATEGORIAS/TAGS -->
+    <div class="theme-filters-bar">
+        @php
+            $themesCollection = collect($themes);
+            $totalCount = $themesCollection->count();
+        @endphp
+
+        <button type="button" class="theme-filter-btn active" data-filter="all">
+            Todos <span class="filter-count">{{ $totalCount }}</span>
+        </button>
+
+        @foreach($tags as $slug => $category)
+            @php
+                $count = $themesCollection->filter(function($t) use ($slug) {
+                    return in_array($slug, (array) ($t->tags ?? []));
+                })->count();
+            @endphp
+
+            @if($count > 0)
+                <button type="button" class="theme-filter-btn" data-filter="{{ $slug }}">
+                    @if(!empty($category['icon']))
+                        <x-dynamic-component :component="'lucide-' . $category['icon']" class="lucid-icon-sm" />
+                    @endif
+                    {{ $category['name'] ?? ucfirst($slug) }}
+                    <span class="filter-count">{{ $count }}</span>
+                </button>
+            @endif
+        @endforeach
+    </div>
+
     <div class="theme-grid">
         @forelse($themes as $theme)
-            <div class="theme-card {{ $theme->is_active ? 'theme-active' : '' }}">
+            @php
+                $themeTags = (array) ($theme->tags ?? []);
+            @endphp
+            <div
+                class="theme-card {{ $theme->is_active ? 'theme-active' : '' }}"
+                data-tags="{{ implode(',', $themeTags) }}"
+            >
 
                 <!-- Theme Preview Area: Exibe imagem se existir, ou fallback textual elegante -->
                 @if($theme->screenshot)
@@ -34,7 +70,30 @@
 
                 <div class="theme-details">
                     <div class="theme-header-row">
-                        <h3 class="theme-name">{{ $theme->name }}</h3>
+                        <div class="theme-title-area">
+                            <h3 class="theme-name">{{ $theme->name }}</h3>
+
+                            {{-- ÍCONES CIRCULARES DE TAGS COM TOOLTIP --}}
+                            @if(!empty($themeTags))
+                                <div class="theme-tags-container">
+                                    @foreach($themeTags as $t)
+                                        @if(isset($tags[$t]))
+                                            <span
+                                                class="theme-tag-pill"
+                                                title="{{ $tags[$t]['name'] }}{{ !empty($tags[$t]['description']) ? ' — ' . $tags[$t]['description'] : '' }}"
+                                            >
+                                                @if(!empty($tags[$t]['icon']))
+                                                    <x-dynamic-component :component="'lucide-' . $tags[$t]['icon']" class="lucid-icon-xs" />
+                                                @else
+                                                    {{ substr($tags[$t]['name'], 0, 2) }}
+                                                @endif
+                                            </span>
+                                        @endif
+                                    @endforeach
+                                </div>
+                            @endif
+                        </div>
+
                         <span class="admin-badge {{ $theme->is_active ? 'admin-badge-active' : 'admin-badge-suspended' }}">
                             {{ $theme->is_active ? 'Ativo' : 'Inativo' }}
                         </span>
@@ -44,11 +103,6 @@
                         {{ $theme->description ?? 'Nenhuma descrição fornecida para este tema.' }}
                     </p>
 
-                    {{-- <div class="theme-meta">
-                        <span><strong>Versão:</strong> {{ $theme->version }}</span>
-                        <span><strong>Autor:</strong> {{ $theme->author }}</span>
-                        <span><strong>Pasta:</strong> themes/{{ $theme->folder_name }}</span>
-                    </div> --}}
                     <div class="theme-meta">
                         <span>
                             <strong>Versão:</strong> v{{ $theme->version }}
@@ -62,20 +116,6 @@
                         <span><strong>Pasta:</strong> themes/{{ $theme->folder_name }}</span>
                     </div>
 
-
-                    {{-- <div class="theme-footer">
-                        <form method="POST" action="{{ route('admin.themes.toggle', $theme->id) }}">
-                            @csrf
-                            <x-switch
-                                name="is_active"
-                                id="theme_{{ $theme->id }}"
-                                :checked="$theme->is_active"
-                                active="Ativo"
-                                inactive="Inativo"
-                                onChange="this.form.submit()"
-                            />
-                        </form>
-                    </div> --}}
                     <div class="theme-footer" style="display: flex; justify-content: space-between; align-items: center;">
                         @if(!$theme->is_active)
                         <div>
@@ -115,7 +155,7 @@
                 </div>
             </div>
         @empty
-            <div class="admin-empty-list">
+            <div class="admin-empty-list" style="grid-column: 1 / -1;">
                 <div>
                     <x-lucide-circle-off class="lucid-icon" />
                 </div>
@@ -127,12 +167,16 @@
                 </p>
             </div>
         @endforelse
+
+        <!-- Mensagem se o filtro não encontrar nenhum tema correspondente -->
+        <div id="no-filter-match-theme" class="admin-empty-list" style="display: none; grid-column: 1 / -1; padding: 2rem;">
+            <p style="color: #64748b;">Nenhum tema encontrado nesta categoria.</p>
+        </div>
     </div>
 </div>
 
 <!-- Modal de Tela Cheia com iframe -->
 <div id="preview-modal" style="display: none; position: fixed; inset: 0; z-index: 99999; background: rgba(0,0,0,0.8);">
-    <!-- Barra superior do Preview -->
     <div style="background: #1e293b; color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center;">
         <span id="preview-title" style="font-weight: 600;">Modo de Visualização</span>
         <div style="display: flex; gap: 10px;">
@@ -141,22 +185,50 @@
             </button>
         </div>
     </div>
-
-    <!-- Iframe que carrega o site -->
     <iframe id="preview-iframe" src="" style="width: 100%; height: calc(100vh - 52px); border: none; background: white;"></iframe>
 </div>
 
 @once
 @push('scripts')
 <script>
+// Filtro interativo instantâneo por categorias
+document.addEventListener('DOMContentLoaded', () => {
+    const filterButtons = document.querySelectorAll('.theme-filter-btn');
+    const cards = document.querySelectorAll('.theme-card');
+    const noMatchMessage = document.getElementById('no-filter-match-theme');
+
+    filterButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            filterButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const filter = btn.getAttribute('data-filter');
+            let visibleCount = 0;
+
+            cards.forEach(card => {
+                const tags = card.getAttribute('data-tags') ? card.getAttribute('data-tags').split(',') : [];
+
+                if (filter === 'all' || tags.includes(filter)) {
+                    card.style.display = 'flex';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            if (noMatchMessage) {
+                noMatchMessage.style.display = (visibleCount === 0 && cards.length > 0) ? 'block' : 'none';
+            }
+        });
+    });
+});
+
 function openThemePreview(themeFolder) {
     const modal = document.getElementById('preview-modal');
     const iframe = document.getElementById('preview-iframe');
     const title = document.getElementById('preview-title');
 
     title.innerText = `Visualizando Tema: ${themeFolder}`;
-
-    // Abre o iframe passando o tema via GET (que seta a sessão)
     iframe.src = `/?preview_theme=${themeFolder}`;
     modal.style.display = 'block';
     document.body.style.overflow = 'hidden';
@@ -166,7 +238,6 @@ function closeThemePreview() {
     const modal = document.getElementById('preview-modal');
     const iframe = document.getElementById('preview-iframe');
 
-    // Limpa a sessão no backend via AJAX
     fetch('{{ route("admin.themes.clear_preview") }}', {
         method: 'POST',
         headers: {
@@ -174,7 +245,6 @@ function closeThemePreview() {
             'Content-Type': 'application/json'
         }
     }).finally(() => {
-        // Limpa o iframe e fecha o modal
         iframe.src = 'about:blank';
         modal.style.display = 'none';
         document.body.style.overflow = '';
@@ -182,8 +252,103 @@ function closeThemePreview() {
 }
 </script>
 @endpush
+
 @push('styles')
 <style>
+    /* BARRA DE FILTRO POR ABAS */
+    .theme-filters-bar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 24px;
+        border-bottom: 1px solid var(--color-border, #e2e8f0);
+        overflow-x: auto;
+        white-space: nowrap;
+        background: #f8fafc;
+    }
+
+    .theme-filter-btn {
+        background: #ffffff;
+        border: 1px solid var(--color-border, #cbd5e1);
+        color: #475569;
+        font-size: 0.815rem;
+        font-weight: 500;
+        padding: 5px 12px;
+        border-radius: 20px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.15s ease;
+    }
+
+    .theme-filter-btn:hover {
+        background: #f1f5f9;
+        color: #0f172a;
+        border-color: #94a3b8;
+    }
+
+    .theme-filter-btn.active {
+        background: #0f172a;
+        border-color: #0f172a;
+        color: #ffffff;
+    }
+
+    .filter-count {
+        background: rgba(0, 0, 0, 0.08);
+        padding: 1px 6px;
+        border-radius: 10px;
+        font-size: 0.72rem;
+        font-weight: 600;
+    }
+
+    .theme-filter-btn.active .filter-count {
+        background: rgba(255, 255, 255, 0.25);
+        color: #ffffff;
+    }
+
+    .lucid-icon-sm {
+        width: 14px;
+        height: 14px;
+    }
+
+    /* TAGS CIRCULARES NO CARD */
+    .theme-title-area {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .theme-tags-container {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .theme-tag-pill {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #eff6ff;
+        color: #2563eb;
+        border: 1px solid #dbeafe;
+        cursor: help;
+        transition: transform 0.15s ease;
+    }
+
+    .theme-tag-pill:hover {
+        transform: scale(1.15);
+    }
+
+    .lucid-icon-xs {
+        width: 12px;
+        height: 12px;
+    }
+
     /* --- Estilização da Galeria de Temas (Lunar Base UI) --- */
     .theme-grid {
         display: grid;
@@ -192,7 +357,6 @@ function closeThemePreview() {
         padding: 24px;
     }
 
-    /* Alterado para priorizar fundo mais claro e melhor contraste */
     .theme-card {
         background-color: var(--color-bg-card, #ffffff);
         border: 1px solid var(--color-border, #e5e7eb);
@@ -212,7 +376,6 @@ function closeThemePreview() {
         box-shadow: 0 0 15px var(--color-glow, rgba(123, 95, 199, 0.08));
     }
 
-    /* CSS para Exibição de Screenshot */
     .theme-preview-image {
         height: 160px;
         overflow: hidden;
@@ -229,7 +392,6 @@ function closeThemePreview() {
         object-fit: cover;
     }
 
-    /* CSS Placeholder para o Fallback de Preview do Tema */
     .theme-preview-placeholder {
         background: linear-gradient(135deg, var(--color-bg-dark, #F5F3FA), var(--color-bg-card-hover, #F0EDF8));
         height: 160px;
@@ -257,8 +419,9 @@ function closeThemePreview() {
 
     .theme-header-row {
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         justify-content: space-between;
+        gap: 8px;
         margin-bottom: 0.75rem;
     }
 
@@ -293,20 +456,6 @@ function closeThemePreview() {
         align-items: center;
         justify-content: flex-end;
         height: 38px;
-    }
-
-    .theme-active-text {
-        font-size: 0.875rem;
-        font-weight: 600;
-        color: var(--color-primary-dark, #5E3FAE);
-        display: inline-flex;
-        align-items: center;
-        gap: 0.35rem;
-    }
-
-    .theme-active-text .lucid-icon {
-        width: 16px;
-        height: 16px;
     }
 
     .switch-label {

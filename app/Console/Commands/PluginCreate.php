@@ -35,8 +35,8 @@ class PluginCreate extends Command
         $hasController = $this->confirm('Requer Controller e Rotas?', true);
         $hasViews      = $this->confirm('Requer Views?', true);
 
-        // 1. Carrega as categorias do config('pluginSettings.categories')
-        $categoriesConfig = config('pluginSettings.categories', []);
+        // 1. Carrega as categorias do config('addons.tags.plugin')
+        $categoriesConfig = config('addons.tags.plugin', []);
         $choices = [];
         $slugMap = [];
 

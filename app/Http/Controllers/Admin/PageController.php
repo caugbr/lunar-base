@@ -15,9 +15,41 @@ use Illuminate\Validation\Rule;
 
 class PageController extends Controller
 {
-    public function index(Request $request)
+    // public function index(Request $request)
+    // {
+    //     $query = Page::with(['author', 'terms']);
+
+    //     if ($request->filled('title')) {
+    //         $query->where('title', 'like', '%' . $request->input('title') . '%');
+    //     }
+
+    //     if ($request->filled('namespace')) {
+    //         $query->where('namespace', 'like', '%' . $request->input('namespace') . '%');
+    //     }
+
+    //     if ($request->filled('status')) {
+    //         $query->where('status', $request->input('status'));
+    //     }
+
+    //     if ($request->filled('author_id')) {
+    //         $query->where('author_id', $request->input('author_id'));
+    //     }
+
+    //     $pages = $query->orderBy('created_at', 'desc')->paginate(setting('reading.pagination_max_items'));
+    //     $namespaces = $this->getNamespaces();
+    //     $authors = User::whereIn('role', ['admin', 'editor'])->orderBy('name')->get();
+
+    //     return view('admin.pages.index', compact('pages', 'namespaces', 'authors'));
+    // }
+public function index(Request $request)
     {
-        $query = Page::with(['author', 'terms']);
+        $isTrash = $request->get('view') === 'trash';
+
+        if ($isTrash) {
+            $query = Page::onlyTrashed()->with(['author', 'terms']);
+        } else {
+            $query = Page::with(['author', 'terms']);
+        }
 
         if ($request->filled('title')) {
             $query->where('title', 'like', '%' . $request->input('title') . '%');
@@ -27,7 +59,7 @@ class PageController extends Controller
             $query->where('namespace', 'like', '%' . $request->input('namespace') . '%');
         }
 
-        if ($request->filled('status')) {
+        if (!$isTrash && $request->filled('status')) {
             $query->where('status', $request->input('status'));
         }
 
@@ -35,11 +67,70 @@ class PageController extends Controller
             $query->where('author_id', $request->input('author_id'));
         }
 
-        $pages = $query->orderBy('created_at', 'desc')->paginate(setting('reading.pagination_max_items'));
+        $pages = $query->orderBy('created_at', 'desc')
+                       ->paginate(setting('reading.pagination_max_items'))
+                       ->withQueryString();
+
+        $counts = [
+            'all'       => Page::count(),
+            'published' => Page::where('status', 'published')->count(),
+            'draft'     => Page::where('status', 'draft')->count(),
+            'trash'     => Page::onlyTrashed()->count(),
+        ];
+
         $namespaces = $this->getNamespaces();
         $authors = User::whereIn('role', ['admin', 'editor'])->orderBy('name')->get();
 
-        return view('admin.pages.index', compact('pages', 'namespaces', 'authors'));
+        return view('admin.pages.index', compact('pages', 'namespaces', 'authors', 'counts', 'isTrash'));
+    }
+
+    public function destroy(Page $page)
+    {
+        $page->delete();
+
+        log_admin("Página movida para a lixeira: {$page->title}", "pages");
+
+        return redirect()->route('admin.pages.index')
+            ->with('success', 'Página movida para a lixeira com sucesso!');
+    }
+
+    public function restore($id)
+    {
+        $page = Page::onlyTrashed()->findOrFail($id);
+        $page->restore();
+
+        log_admin("Página restaurada da lixeira: {$page->title}", "pages");
+
+        return redirect()->back()
+            ->with('success', 'Página restaurada com sucesso!');
+    }
+
+    public function purge($id)
+    {
+        $page = Page::onlyTrashed()->findOrFail($id);
+        $title = $page->title;
+
+        $page->terms()->detach();
+        $page->forceDelete();
+
+        log_admin("Página excluída definitivamente: {$title}", "pages");
+
+        return redirect()->back()
+            ->with('success', 'Página excluída definitivamente!');
+    }
+
+    public function emptyTrash()
+    {
+        $trashed = Page::onlyTrashed()->get();
+        foreach ($trashed as $page) {
+            $page->terms()->detach();
+            $page->forceDelete();
+        }
+
+        log_admin("Lixeira de páginas esvaziada.", "pages");
+
+        return redirect()->route('admin.pages.index', ['view' => 'trash'])
+            ->with('success', 'Lixeira esvaziada com sucesso!');
     }
 
     public function create()
@@ -80,7 +171,6 @@ class PageController extends Controller
             'content_json' => 'nullable',
             'excerpt' => 'nullable|string',
             'namespace' => 'nullable|string',
-            // 'is_main' => 'nullable|boolean',
             'author_id' => 'required|exists:users,id',
             'parent_id' => 'nullable|exists:pages,id',
             'status' => 'required|in:draft,published,archived',
@@ -157,7 +247,6 @@ class PageController extends Controller
             'content_json' => 'nullable',
             'excerpt' => 'nullable|string',
             'namespace' => 'nullable|string',
-            // 'is_main' => 'nullable|boolean',
             'author_id' => 'required|exists:users,id',
             'parent_id' => 'nullable|exists:pages,id|not_in:' . $page->id,
             'status' => 'required|in:draft,published,archived',
@@ -204,25 +293,6 @@ class PageController extends Controller
             ->with('success', 'Página atualizada com sucesso!');
     }
 
-    public function destroy(Page $page)
-    {
-        $page->delete();
-
-        log_admin("Página criada: {$page->title}", "pages");
-
-        return redirect()->route('admin.pages.index')
-            ->with('success', 'Página removida com sucesso!');
-    }
-
-    // public function getNamespaces()
-    // {
-    //     return Page::select('namespace')
-    //         ->distinct()
-    //         ->whereNotNull('namespace')
-    //         ->where('namespace', '!=', '')
-    //         ->orderBy('namespace')
-    //         ->pluck('namespace');
-    // }
     /**
      * Retorna todos os namespaces únicos (das páginas e dos domínios configurados).
      * Sinaliza os namespaces que pertencem a domínios ativos.

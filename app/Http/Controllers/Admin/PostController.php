@@ -16,17 +16,63 @@ use Illuminate\Validation\Rule;
 
 class PostController extends Controller
 {
-    public function index(Request $request)
+    // public function index(Request $request)
+    // {
+    //     $query = Post::with(['author', 'terms'])->published()->feedOrder();
+
+    //     // Filtro por título
+    //     if ($request->filled('title')) {
+    //         $query->where('title', 'like', '%' . $request->input('title') . '%');
+    //     }
+
+    //     // Filtro por status
+    //     if ($request->filled('status')) {
+    //         $query->where('status', $request->input('status'));
+    //     }
+
+    //     // Filtro por autor
+    //     if ($request->filled('author_id')) {
+    //         $query->where('author_id', $request->input('author_id'));
+    //     }
+
+    //     // Filtro por destaque
+    //     if ($request->filled('featured')) {
+    //         $query->where('featured', $request->boolean('featured'));
+    //     }
+
+    //     // Filtro por fixado
+    //     if ($request->filled('sticky')) {
+    //         $query->where('sticky', $request->boolean('sticky'));
+    //     }
+
+    //     $posts = $query->orderBy('sticky', 'desc')
+    //                    ->orderBy('published_at', 'desc')
+    //                    ->paginate(setting('reading.pagination_max_items'));
+
+    //     // Dados para os selects dos filtros
+    //     $authors = User::whereIn('role', ['admin', 'editor'])->orderBy('name')->get();
+
+    //     return view('admin.posts.index', compact('posts', 'authors'));
+    // }
+public function index(Request $request)
     {
-        $query = Post::with(['author', 'terms'])->published()->feedOrder();
+        $isTrash = $request->get('view') === 'trash';
+
+        // Se estiver na aba da lixeira, pega apenas os deletados
+        if ($isTrash) {
+            $query = Post::onlyTrashed()->with(['author', 'terms']);
+        } else {
+            // Caso contrário, pega os normais (repare que tirei o published() para o admin ver rascunhos também)
+            $query = Post::with(['author', 'terms']);
+        }
 
         // Filtro por título
         if ($request->filled('title')) {
             $query->where('title', 'like', '%' . $request->input('title') . '%');
         }
 
-        // Filtro por status
-        if ($request->filled('status')) {
+        // Filtro por status (apenas se não estiver na lixeira)
+        if (!$isTrash && $request->filled('status')) {
             $query->where('status', $request->input('status'));
         }
 
@@ -46,13 +92,77 @@ class PostController extends Controller
         }
 
         $posts = $query->orderBy('sticky', 'desc')
-                       ->orderBy('published_at', 'desc')
-                       ->paginate(setting('reading.pagination_max_items'));
+                       ->orderBy('created_at', 'desc')
+                       ->paginate(setting('reading.pagination_max_items'))
+                       ->withQueryString();
 
-        // Dados para os selects dos filtros
+        // Contagens para as abas
+        $counts = [
+            'all'       => Post::count(),
+            'published' => Post::where('status', 'published')->count(),
+            'draft'     => Post::where('status', 'draft')->count(),
+            'trash'     => Post::onlyTrashed()->count(),
+        ];
+
         $authors = User::whereIn('role', ['admin', 'editor'])->orderBy('name')->get();
 
-        return view('admin.posts.index', compact('posts', 'authors'));
+        return view('admin.posts.index', compact('posts', 'authors', 'counts', 'isTrash'));
+    }
+
+    // Move para a Lixeira (Soft Delete)
+    public function destroy(Post $post)
+    {
+        $post->delete();
+
+        log_admin("Post movido para a lixeira: {$post->title}", "posts");
+
+        return redirect()->route('admin.posts.index')
+            ->with('success', 'Post movido para a lixeira!');
+    }
+
+    // Restaura da Lixeira
+    public function restore($id)
+    {
+        $post = Post::onlyTrashed()->findOrFail($id);
+        $post->restore();
+
+        log_admin("Post restaurado da lixeira: {$post->title}", "posts");
+
+        return redirect()->back()
+            ->with('success', 'Post restaurado com sucesso!');
+    }
+
+    // Exclui Definitivamente do Banco (Purge)
+    public function purge($id)
+    {
+        $post = Post::onlyTrashed()->findOrFail($id);
+        $title = $post->title;
+
+        // Remove relações antes de apagar definitivo
+        $post->terms()->detach();
+        $post->meta()->delete();
+        $post->forceDelete();
+
+        log_admin("Post excluído definitivamente: {$title}", "posts");
+
+        return redirect()->back()
+            ->with('success', 'Post excluído definitivamente!');
+    }
+
+    // Esvazia toda a lixeira
+    public function emptyTrash()
+    {
+        $trashed = Post::onlyTrashed()->get();
+        foreach ($trashed as $post) {
+            $post->terms()->detach();
+            $post->meta()->delete();
+            $post->forceDelete();
+        }
+
+        log_admin("Lixeira de posts esvaziada.", "posts");
+
+        return redirect()->route('admin.posts.index', ['view' => 'trash'])
+            ->with('success', 'Lixeira esvaziada com sucesso!');
     }
 
     public function create()
@@ -232,15 +342,5 @@ class PostController extends Controller
 
         return redirect()->route('admin.posts.edit', $post->id)
             ->with('success', 'Post atualizado com sucesso!');
-    }
-
-    public function destroy(Post $post)
-    {
-        $post->delete();
-
-        log_admin("Post removido: {$post->title}", "posts");
-
-        return redirect()->route('admin.posts.index')
-            ->with('success', 'Post removido com sucesso!');
     }
 }

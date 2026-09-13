@@ -164,3 +164,50 @@ class Dialog {
 }
 
 window.Dialog = Dialog;
+
+// ==========================================================================
+// Interceptadores Globais de Confirmação (data-confirm)
+// ==========================================================================
+
+document.addEventListener('DOMContentLoaded', function () {
+
+    // Intercepta o envio de formulários
+    document.addEventListener('submit', async function (event) {
+        const form = event.target;
+        const confirmMessage = form.getAttribute('data-confirm');
+
+        if (confirmMessage) {
+            // Impede o formulário de ser enviado imediatamente
+            event.preventDefault();
+
+            // Aguarda a resposta do seu modal customizado
+            const confirmed = await Dialog.confirm(confirmMessage);
+
+            if (confirmed) {
+                // Remove temporariamente o atributo para não cair no interceptador de novo
+                form.removeAttribute('data-confirm');
+                form.submit();
+            }
+        }
+    });
+
+    // Intercepta cliques em links de navegação/exclusão (tags <a>)
+    document.addEventListener('click', async function (event) {
+        const link = event.target.closest('a[data-confirm]');
+
+        if (link) {
+            // Impede o redirecionamento imediato do link
+            event.preventDefault();
+
+            const confirmMessage = link.getAttribute('data-confirm');
+
+            // Aguarda a resposta do seu modal customizado
+            const confirmed = await Dialog.confirm(confirmMessage);
+
+            if (confirmed) {
+                window.location.href = link.href;
+            }
+        }
+    });
+});
+

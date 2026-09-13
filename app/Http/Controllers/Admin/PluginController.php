@@ -50,7 +50,7 @@ class PluginController extends Controller
             return $plugin;
         });
 
-        $tags = config('pluginSettings.categories', []);
+        $tags = config('addons.tags.plugin', []);
 
         return view('admin.plugins.index', compact('plugins', 'tags'));
     }

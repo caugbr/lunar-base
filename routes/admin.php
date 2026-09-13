@@ -127,9 +127,19 @@ Route::middleware($middlewares)->prefix('admin')->name('admin.')->group(function
     // Logs
     Route::get('reference/logs', [ReferenceController::class, 'logs'])->name('logs');
 
+    // Rotas da Lixeira de Páginas
+    Route::post('pages/{id}/restore', [PageController::class, 'restore'])->name('pages.restore');
+    Route::delete('pages/{id}/purge', [PageController::class, 'purge'])->name('pages.purge');
+    Route::delete('pages/empty-trash', [PageController::class, 'emptyTrash'])->name('pages.empty_trash');
+
     // Páginas
     Route::resource('pages', PageController::class)
         ->middleware('permission:manage-pages');
+
+    // Rotas da Lixeira de Posts
+    Route::post('posts/{id}/restore', [PostController::class, 'restore'])->name('posts.restore');
+    Route::delete('posts/{id}/purge', [PostController::class, 'purge'])->name('posts.purge');
+    Route::delete('posts/empty-trash', [PostController::class, 'emptyTrash'])->name('posts.empty_trash');
 
     // Posts
     Route::resource('posts', PostController::class)

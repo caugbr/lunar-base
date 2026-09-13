@@ -1,6 +1,17 @@
 # Changelog
 
-## Unreleased
+## [2.7.0] 2026-09-13
+
+### Added
+- Plugin Archive Vault - preserva publicações deletadas
+- Implementado o conceito de Lixeira para posts e páginas
+- Filtros por tag na index de temas
+- Comando para editar tags dos tema: php artisan theme:edit-tags
+- Sistema de tags para os temas, permite selecionar por tag na admin
+- Script persistenDialog adicionado
+
+### Changed
+- A classe Dialog agora conta com eventos Dialog.on('evName')
 
 ## [2.6.0] 2026-09-12
 

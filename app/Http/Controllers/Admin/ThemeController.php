@@ -31,10 +31,27 @@ class ThemeController extends Controller
             $theme->has_update     = $remote['has_update'] ?? false;
             $theme->download_url   = $remote['download_url'] ?? null;
 
+            // 1. Lê o plugin.json diretamente do disco
+            $manifestPath = base_path("themes/{$theme->folder_name}/theme.json");
+
+            // Fallback caso a pasta use StudlyCase
+            if (!File::exists($manifestPath)) {
+                $manifestPath = base_path("themes/{$folderName}/theme.json");
+            }
+
+            if (File::exists($manifestPath)) {
+                $manifest = json_decode(File::get($manifestPath), true) ?? [];
+                $theme->tags = (array) ($manifest['tags'] ?? []);
+            } else {
+                $theme->tags = [];
+            }
+
             return $theme;
         });
 
-        return view('admin.themes.index', compact('themes'));
+        $tags = config('addons.tags.theme', []);
+
+        return view('admin.themes.index', compact('themes', 'tags'));
     }
 
     /**
