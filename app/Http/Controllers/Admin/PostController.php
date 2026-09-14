@@ -16,45 +16,7 @@ use Illuminate\Validation\Rule;
 
 class PostController extends Controller
 {
-    // public function index(Request $request)
-    // {
-    //     $query = Post::with(['author', 'terms'])->published()->feedOrder();
-
-    //     // Filtro por título
-    //     if ($request->filled('title')) {
-    //         $query->where('title', 'like', '%' . $request->input('title') . '%');
-    //     }
-
-    //     // Filtro por status
-    //     if ($request->filled('status')) {
-    //         $query->where('status', $request->input('status'));
-    //     }
-
-    //     // Filtro por autor
-    //     if ($request->filled('author_id')) {
-    //         $query->where('author_id', $request->input('author_id'));
-    //     }
-
-    //     // Filtro por destaque
-    //     if ($request->filled('featured')) {
-    //         $query->where('featured', $request->boolean('featured'));
-    //     }
-
-    //     // Filtro por fixado
-    //     if ($request->filled('sticky')) {
-    //         $query->where('sticky', $request->boolean('sticky'));
-    //     }
-
-    //     $posts = $query->orderBy('sticky', 'desc')
-    //                    ->orderBy('published_at', 'desc')
-    //                    ->paginate(setting('reading.pagination_max_items'));
-
-    //     // Dados para os selects dos filtros
-    //     $authors = User::whereIn('role', ['admin', 'editor'])->orderBy('name')->get();
-
-    //     return view('admin.posts.index', compact('posts', 'authors'));
-    // }
-public function index(Request $request)
+    public function index(Request $request)
     {
         $isTrash = $request->get('view') === 'trash';
 

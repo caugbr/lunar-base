@@ -8,6 +8,22 @@ class AssetManager
     protected array $scripts = [];
     protected array $inlineStyles = [];
     protected array $inlineScripts = [];
+    protected array $renderedAssets = [];
+
+    /**
+     * Verifica se um asset já foi carregado e o registra.
+     * Retorna true se for a primeira vez (pode carregar).
+     * Retorna false se for duplicado (bloquear).
+     */
+    public function once(string $handle): bool
+    {
+        if (in_array($handle, $this->renderedAssets, true)) {
+            return false;
+        }
+
+        $this->renderedAssets[] = $handle;
+        return true;
+    }
 
     /**
      * Enfileira uma folha de estilo CSS

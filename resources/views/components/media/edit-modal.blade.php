@@ -10,7 +10,7 @@
     x-cloak
     class="modal-overlay"
 >
-    <!-- Overlay (💡 Adicionado x-transition de opacidade) -->
+    <!-- Overlay (Adicionado x-transition de opacidade) -->
     <div
         x-show="open"
         x-transition.opacity.duration.250ms
@@ -18,7 +18,7 @@
         class="modal-backdrop"
     ></div>
 
-    <!-- Modal (💡 Adicionado x-transition padrão: fade + escala suave) -->
+    <!-- Modal (Adicionado x-transition padrão: fade + escala suave) -->
     <div
         x-show="open"
         x-transition.duration.250ms

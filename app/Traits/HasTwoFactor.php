@@ -12,10 +12,6 @@ trait HasTwoFactor
         return $this->hasOne(TwoFactorSetting::class);
     }
 
-    // public function hasTwoFactorEnabled(): bool
-    // {
-    //     return $this->twoFactorSetting && $this->twoFactorSetting->isActive();
-    // }
     public function hasTwoFactorEnabled(): bool
     {
         $setting = $this->twoFactorSetting()->first();

@@ -65,13 +65,13 @@
     &lt;!-- CSS nativo do layout --&gt;
     &lt;link rel="stylesheet" href="{{ asset('css/style.css') }}"&gt;
 
-    &lt;!-- 💡 Renderiza todas as tags &lt;link&gt; e scripts síncronos do cabeçalho --&gt;
+    &lt;!-- Renderiza todas as tags &lt;link&gt; e scripts síncronos do cabeçalho --&gt;
     @headerAssets
 &lt;/head&gt;
 &lt;body&gt;
     @yield('content')
 
-    &lt;!-- 💡 Renderiza todas as tags &lt;script&gt; e scripts inline no final do &lt;body&gt; --&gt;
+    &lt;!-- Renderiza todas as tags &lt;script&gt; e scripts inline no final do &lt;body&gt; --&gt;
     @footerAssets
 &lt;/body&gt;
 &lt;/html&gt;</pre>

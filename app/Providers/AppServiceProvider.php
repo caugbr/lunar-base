@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\View;
 use App\View\Composers\SiteComposer;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Pagination\Paginator;
-use App\Helpers\ContentHelper;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Http\Request;
@@ -38,11 +37,9 @@ class AppServiceProvider extends ServiceProvider
 
             /**
              * Diretiva @onceAsset($id)
-             * Funciona como o @once nativo do Laravel, mas baseada no nosso ContentHelper
-             * permitindo que o controle persista mesmo em conteúdos renderizados manualmente.
              */
-            Blade::if('onceAsset', function ($id) {
-                return ContentHelper::once($id);
+            Blade::if('onceAsset', function (string $id) {
+                return app(AssetManager::class)->once($id);
             });
 
             RateLimiter::for('api', function (Request $request) {

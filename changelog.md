@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.8.0] 2026-09-14
+
+### Added
+- Gerenciamento de dependências no core
+- Plugin Revisions - revisões para posts e páginas
+
+### Fixed
+- Método once() movido de ContentHelper para AssetManager
+- Admin alerts ajustado para usar flex / align-items center
+- Plugins e temas agora geram os links corretamente, independente dos nomes
+- Settings voltou a ter o tipo 'image'
+
 ## [2.7.0] 2026-09-13
 
 ### Added

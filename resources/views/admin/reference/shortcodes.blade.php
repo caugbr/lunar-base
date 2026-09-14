@@ -75,7 +75,7 @@
                     <td class="shortcode-description">
                         <p class="description-text">{{ $data['description'] }}</p>
 
-                        {{-- 💡 NOVO: Renderização dinâmica do esquema de atributos suportados --}}
+                        {{-- NOVO: Renderização dinâmica do esquema de atributos suportados --}}
                         @if(!empty($data['attributes']))
                         <div class="shortcode-attributes-list">
                             <strong>Atributos suportados:</strong>
@@ -204,7 +204,7 @@
         padding: 30px;
     }
 
-    /* 💡 NOVOS ESTILOS: Lista de Atributos do Shortcode */
+    /* NOVOS ESTILOS: Lista de Atributos do Shortcode */
     .description-text {
         margin: 0;
         line-height: 1.5;

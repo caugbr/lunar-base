@@ -1,7 +1,7 @@
 <?php
 
 return [
-    // 💡 Nível 1: Necessários (Sempre ativos, não dão direito de recusa)
+    // Nível 1: Necessários (Sempre ativos, não dão direito de recusa)
     'essenciais' => [
         'title' => "Necessários",
         'description' => "Essenciais para o funcionamento básico do site, segurança, validação de formulários e recursos de acessibilidade.",
@@ -27,7 +27,7 @@ return [
         ]
     ],
 
-    // 💡 Nível 2: Analíticos (Opcionais)
+    // Nível 2: Analíticos (Opcionais)
     'analytics' => [
         'title' => "Estatísticas e Desempenho",
         'description' => "Nos ajudam a entender como os visitantes interagem com o site, coletando dados de navegação de forma anônima.",
@@ -41,7 +41,7 @@ return [
         ]
     ],
 
-    // 💡 Nível 3: Marketing (Opcionais)
+    // Nível 3: Marketing (Opcionais)
     'marketing' => [
         'title' => "Marketing e Publicidade",
         'description' => "Utilizados para exibir anúncios relevantes de acordo com seus interesses e medir o retorno de campanhas publicitárias.",

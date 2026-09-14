@@ -58,7 +58,7 @@
                                     <tr>
                                         <td>
                                             <code>
-                                                <!-- 💡 Se for o marcador de sessão do Laravel, busca o nome do cookie dinamicamente na renderização -->
+                                                <!-- Se for o marcador de sessão do Laravel, busca o nome do cookie dinamicamente na renderização -->
                                                 @if($item['name'] === '[session_cookie]')
                                                     {{ config('session.cookie') }}
                                                 @else
@@ -217,7 +217,7 @@
                 e.preventDefault();
                 const preferences = {};
 
-                // 💡 Seleciona dinamicamente todos os checkboxes de consentimento
+                // Seleciona dinamicamente todos os checkboxes de consentimento
                 // que começam com o id "consent_" (usando o seletor ^= do CSS)
                 const checkboxes = document.querySelectorAll('input[id^="consent_"]');
 
@@ -239,7 +239,7 @@
             // Salva as novas preferências do usuário
             localStorage.setItem(storageKey, JSON.stringify(preferencesMap));
 
-            // 💡 VERIFICAÇÃO DE MUDANÇA DE DECISÃO (OPT-OUT):
+            // VERIFICAÇÃO DE MUDANÇA DE DECISÃO (OPT-OUT):
             // Se o usuário desativou alguma categoria que antes estava ativa (estava true e virou false)
             let reloadNeeded = false;
             Object.entries(preferencesMap).forEach(([category, isAccepted]) => {
@@ -290,7 +290,7 @@
             });
         }
 
-        // 💡 Permite que o usuário reabra o painel a qualquer momento pelo rodapé
+        // Permite que o usuário reabra o painel a qualquer momento pelo rodapé
         const openPreferencesLink = document.getElementById('open-cookie-preferences-link');
         if (openPreferencesLink) {
             openPreferencesLink.addEventListener('click', (e) => {

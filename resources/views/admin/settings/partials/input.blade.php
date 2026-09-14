@@ -86,6 +86,41 @@
         />
         @break
 
+    @case('image')
+        <div class="image-type">
+            @if($value)
+                <div class="image-preview">
+                    <img src="{{ $value }}" alt="{{ $def['label'] }}">
+                </div>
+            @endif
+
+            <div class="image-input">
+                <x-upload-area name="{{ $def['key'] }}" />
+
+                @if($value)
+                    <label class="remove-image-label">
+                        <input type="checkbox"
+                            name="remove_settings[{{ $def['key'] }}]"
+                            value="1"
+                        >
+                        Remover imagem
+                    </label>
+                @endif
+
+                <input type="hidden"
+                    name="{{ $def['key'] }}_current"
+                    value="{{ $def['path'] ?? $value }}">
+            </div>
+        </div>
+        <small class="image-help">
+            @if($value)
+                Marque "Remover imagem" para apagar, ou selecione um novo arquivo para substituir.
+            @else
+                Selecione uma imagem para enviar.
+            @endif
+        </small>
+        @break
+
     @case('number')
         <input type="number"
             name="{{ $inputName }}"

@@ -60,6 +60,8 @@
                     </article>
                 </div>
                 @endif
+
+                <x-hook name="admin.create_post_main_boxes" :params="['post' => $post]" desc="Dentro da coluna principal na criação de post" />
             </div>
 
             <div class="aside-column">
@@ -189,6 +191,8 @@
                         </div>
                     </article>
                 </div>
+
+                <x-hook name="admin.create_post_side_boxes" :params="['post' => $post]" desc="Dentro da coluna lateral na criação de post" />
             </div>
         </div>
 

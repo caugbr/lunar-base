@@ -87,7 +87,7 @@
         </button>
     </div>
 
-    {{-- Modal de Seleção (Popup) - 💡 Removido o display:none em linha --}}
+    {{-- Modal de Seleção (Popup) - Removido o display:none em linha --}}
     <div class="icon-modal-overlay">
         <div class="icon-modal-backdrop"></div>
 
@@ -169,13 +169,13 @@
         align-items: center;
         justify-content: center;
 
-        /* 💡 ESTADO FECHADO (Invisível) */
+        /* ESTADO FECHADO (Invisível) */
         opacity: 0;
         visibility: hidden;
         transition: opacity 0.2s ease, visibility 0.2s ease;
     }
 
-    /* 💡 ESTADO ABERTO (Transição ativada) */
+    /* ESTADO ABERTO (Transição ativada) */
     .icon-modal-overlay.is-open {
         opacity: 1;
         visibility: visible;
@@ -202,13 +202,13 @@
         border: 1px solid #e5e7eb;
         overflow: hidden;
 
-        /* 💡 ESCALA/OPACIDADE PADRÃO (Início do efeito) */
+        /* ESCALA/OPACIDADE PADRÃO (Início do efeito) */
         transform: scale(0.95);
         opacity: 0;
         transition: transform 0.2s ease, opacity 0.2s ease;
     }
 
-    /* 💡 ESCALA/OPACIDADE QUANDO ABERTO */
+    /* ESCALA/OPACIDADE QUANDO ABERTO */
     .icon-modal-overlay.is-open .icon-modal-box {
         transform: scale(1);
         opacity: 1;
@@ -328,7 +328,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Abrir o Modal
         if (chooseBtn && modal) {
             chooseBtn.addEventListener('click', () => {
-                // 💡 Modificado: Agora adicionamos a classe 'is-open'
+                // Modificado: Agora adicionamos a classe 'is-open'
                 modal.classList.add('is-open');
 
                 if (searchInput) {
@@ -349,7 +349,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Fechar o Modal
         const closeModal = () => {
-            // 💡 Modificado: Agora removemos a classe 'is-open'
+            // Modificado: Agora removemos a classe 'is-open'
             if (modal) modal.classList.remove('is-open');
         };
 
@@ -357,7 +357,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (backdrop) backdrop.addEventListener('click', closeModal);
 
         document.addEventListener('keydown', (e) => {
-            // 💡 Modificado: Verificação da classe 'is-open' ativa
+            // Modificado: Verificação da classe 'is-open' ativa
             if (e.key === 'Escape' && modal.classList.contains('is-open')) {
                 closeModal();
             }

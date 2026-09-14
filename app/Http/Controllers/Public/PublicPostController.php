@@ -39,7 +39,7 @@ class PublicPostController extends Controller
             ->where('slug', $slug)
             ->firstOrFail();
 
-        // 💡 Injeta o modelo de post diretamente na rota ativa
+        // Injeta o modelo de post diretamente na rota ativa
         request()->route()->setParameter('resolved_entity', $post);
 
         $post->content = ContentHelper::parseShortcodes($post->content);

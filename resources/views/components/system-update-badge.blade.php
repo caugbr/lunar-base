@@ -55,7 +55,7 @@
 </style>
 {{-- @endpush --}}
 
-{{-- 💡 O 'display: none !important' direto no atributo style impede qualquer ocupação de espaço na página --}}
+{{-- O 'display: none !important' direto no atributo style impede qualquer ocupação de espaço na página --}}
 <div id="system-update-backdrop" class="system-update-overlay" style="display: none !important;">
     <div class="system-update-spinner"></div>
     <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; color: #fff;">Atualizando o Lunar Base...</h2>

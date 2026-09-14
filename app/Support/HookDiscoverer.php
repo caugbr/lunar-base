@@ -128,7 +128,7 @@ class HookDiscoverer
             $desc   = $attrs['desc'] ?? $attrs['description'] ?? null;
             $params = $attrs['params'] ?? $attrs[':params'] ?? null;
 
-            // 💡 CORREÇÃO: Usamos apenas empty(trim()) para preservar tags HTML de ícones como conteúdo válido!
+            // CORREÇÃO: Usamos apenas empty(trim()) para preservar tags HTML de ícones como conteúdo válido!
             $type = empty(trim($innerContent)) ? 'action' : 'filter';
 
             // Evita duplicidade se o mesmo gancho for declarado em arquivos diferentes

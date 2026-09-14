@@ -153,6 +153,11 @@ Route::middleware($middlewares)->prefix('admin')->name('admin.')->group(function
     Route::resource('taxonomies', TaxonomyController::class);
     Route::resource('terms', TermController::class);
 
+    // Dependency management
+    Route::post('addons/install-dependency', [App\Http\Controllers\Admin\AddonDependencyController::class, 'install'])
+        ->name('addons.install_dependency')
+        ->middleware('auth');
+
 });
 
 // ========== ROTAS ADMIN APENAS ==========

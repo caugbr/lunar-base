@@ -59,6 +59,8 @@
                     </article>
                 </div>
                 @endif
+
+                <x-hook name="admin.create_page_main_boxes" :params="['page' => $page]" desc="Dentro da coluna principal na criação de página" />
             </div>
 
             <div class="aside-column">
@@ -185,6 +187,8 @@
                         </div>
                     </article>
                 </div>
+
+                <x-hook name="admin.create_page_side_boxes" :params="['page' => $page]" desc="Dentro da coluna lateral na criação de página" />
             </div>
         </div>
 

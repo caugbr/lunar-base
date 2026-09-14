@@ -26,7 +26,9 @@ $app = Application::configure(basePath: dirname(__DIR__))
             'permission' => \App\Http\Middleware\CheckPermission::class,
         ]);
 
-        // ✅ EXCLUIR ROTAS API DO CSRF
+        $middleware->appendToGroup('web', \App\Http\Middleware\CheckAddonDependencies::class);
+
+        // EXCLUIR ROTAS API DO CSRF
         $middleware->validateCsrfTokens(except: [
             'api/*',
             'api/v1/*',

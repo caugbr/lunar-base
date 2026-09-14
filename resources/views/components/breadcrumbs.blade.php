@@ -7,7 +7,7 @@
 @php
     $crumbs = [];
 
-    // 💡 Toda trilha começa pelo Início (Home)
+    // Toda trilha começa pelo Início (Home)
     $crumbs[] = ['title' => 'Início', 'url' => route('home')];
 
     // Tenta obter o $page e $post de forma flexível (passado ou compartilhado)

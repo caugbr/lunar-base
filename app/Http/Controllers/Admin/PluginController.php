@@ -106,7 +106,7 @@ class PluginController extends Controller
      */
     protected function setPluginAssetLink(Plugin $plugin, bool $enable): void
     {
-        $pluginIdentifier = Str::kebab($plugin->slug ?? $plugin->name);
+        $pluginIdentifier = Str::slug($plugin->slug ?? $plugin->name);
 
         if ($enable) {
             // Garante que o link será criado.

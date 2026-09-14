@@ -67,6 +67,8 @@
                     </article>
                 </div>
                 @endif
+
+                <x-hook name="admin.edit_post_main_boxes" :params="['post' => $post]" desc="Dentro da coluna principal na edição de post" />
             </div>
 
             <div class="aside-column">
@@ -205,6 +207,8 @@
                         </div>
                     </article>
                 </div>
+
+                <x-hook name="admin.edit_post_side_boxes" :params="['post' => $post]" desc="Dentro da coluna lateral na edição de post" />
             </div>
         </div>
 

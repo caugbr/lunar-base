@@ -9,8 +9,6 @@ class ContentHelper
 {
     use Shortcodes;
 
-    // Guarda os IDs de assets que já foram renderizados nesta requisição
-    protected static $renderedAssets = [];
     protected static $registeredShortcodes = [];
 
     /**
@@ -21,7 +19,7 @@ class ContentHelper
         callable $callback,
         string $description = '',
         string $example = '',
-        array $attributes = [] // 💡 Novo parâmetro adicionado!
+        array $attributes = [] // Novo parâmetro adicionado!
     ) {
         $tag = strtolower($tag);
         if (isset(self::$registeredShortcodes[$tag])) {
@@ -33,7 +31,7 @@ class ContentHelper
             'callback'    => $callback,
             'description' => $description,
             'example'     => $example,
-            'attributes'  => $attributes, // 💡 Gravado aqui!
+            'attributes'  => $attributes, // Gravado aqui!
         ];
 
         return true;
@@ -117,7 +115,7 @@ class ContentHelper
                 'type'        => 'Plugin',
                 'description' => $data['description'] ?: 'Sem descrição fornecida.',
                 'example'     => $data['example'] ?: "[{$tag}]",
-                'attributes'  => $data['attributes'] ?? [], // 💡 Mapeia o esquema de atributos do plugin!
+                'attributes'  => $data['attributes'] ?? [], // Mapeia o esquema de atributos do plugin!
             ];
         }
 
@@ -129,28 +127,13 @@ class ContentHelper
     }
 
     /**
-     * Verifica se um asset já foi carregado e o registra.
-     * Retorna true se for a primeira vez (pode carregar).
-     * Retorna false se for duplicado (bloquear).
-     */
-    public static function once($id)
-    {
-        if (in_array($id, self::$renderedAssets)) {
-            return false;
-        }
-
-        self::$renderedAssets[] = $id;
-        return true;
-    }
-
-    /**
      * Processa o conteúdo em busca de shortcodes no formato [tag] ou [tag]conteúdo[/tag]
      */
     public static function parseShortcodes($content)
     {
         if (empty($content)) return '';
 
-        // 💡 CORREÇÃO: Remove parágrafos que envolvem shortcodes (suporta fechamento e auto-fechados)
+        // Remove parágrafos que envolvem shortcodes (suporta fechamento e auto-fechados)
         $content = preg_replace('/<p>\s*(\[[^\]]+\](?:.*?\[\/[^\]]+\])?)\s*<\/p>/is', '$1', $content);
 
         $pattern = '/\[([a-zA-Z0-9_\-]+)((?:\s+[a-zA-Z0-9_\-]+=(?:"[^"]*"|\'[^\']*\'))*)\s*\](?:(.*?)\[\/\1\])?/is';
@@ -184,7 +167,7 @@ class ContentHelper
 
         // Verifica se existe um shortcode registrado por um plugin
         if (isset(self::$registeredShortcodes[$tag])) {
-            // 💡 AJUSTE: Agora busca o callback dentro da nova estrutura de array do registro
+            // AJUSTE: Agora busca o callback dentro da nova estrutura de array do registro
             return call_user_func(self::$registeredShortcodes[$tag]['callback'], $attributes, $content);
         }
 

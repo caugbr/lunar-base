@@ -130,7 +130,7 @@
                 </p>
             </div>
             <div class="reference-card-footer">
-                {{-- 💡 Nota: Ajuste os nomes das rotas abaixo de acordo com seu arquivo de rotas --}}
+                {{-- Nota: Ajuste os nomes das rotas abaixo de acordo com seu arquivo de rotas --}}
                 <a href="{{ route('admin.hooks') }}" class="admin-btn admin-btn-secondary">
                     Ver Hooks
                 </a>

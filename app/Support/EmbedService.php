@@ -14,7 +14,7 @@ class EmbedService
      */
     public static function resolve(string $url): string
     {
-        // 💡 CORREÇÃO: Remove tags HTML (como links <a> injetados por editores visuais)
+        // CORREÇÃO: Remove tags HTML (como links <a> injetados por editores visuais)
         $url = trim(strip_tags($url));
 
         if (empty($url)) {
@@ -58,7 +58,7 @@ class EmbedService
                            '</div>';
                 }
 
-                // 💡 CORREÇÃO: Adicionada a classe auxiliar 'embed-responsive' para os vídeos
+                // CORREÇÃO: Adicionada a classe auxiliar 'embed-responsive' para os vídeos
                 return '<div class="embed-wrapper embed-responsive embed-' . e($embedData['provider']) . '" style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;margin:1.5rem 0;">' .
                        $embedData['code'] .
                        '</div>';

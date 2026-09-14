@@ -255,7 +255,7 @@ class GenericApiController extends Controller
         $result = [];
 
         foreach ($schema as $jsonKey => $source) {
-            // 💡 Troque is_callable($source) por $source instanceof \Closure
+            // Troque is_callable($source) por $source instanceof \Closure
             if ($source instanceof \Closure) {
                 $result[$jsonKey] = $source($item);
             } elseif (is_array($source)) {

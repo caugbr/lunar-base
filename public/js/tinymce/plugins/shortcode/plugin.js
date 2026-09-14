@@ -284,7 +284,7 @@
             let selectedType = initialData.type || '';
 
             /**
-             * 💡 SOLUÇÃO: Função que gera a configuração unificada do diálogo.
+             * SOLUÇÃO: Função que gera a configuração unificada do diálogo.
              * Garante que os métodos onChange, onAction e onSubmit persistam após cada redial().
              */
             function getDialogConfig() {

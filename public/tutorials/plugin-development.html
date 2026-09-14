@@ -80,15 +80,15 @@
     │   │   ├── css/
     │   │   └── js/
     │   ├── help-views/
-    │   │   └── help.blade.php              {{-- 💡 Obrigatório: Manual do plugin --}}
+    │   │   └── help.blade.php              {{-- Obrigatório: Manual do plugin --}}
     │   └── views/
-    │       ├── help/                       {{-- 💡 Ajuda contextual por rota da admin --}}
+    │       ├── help/                       {{-- Ajuda contextual por rota da admin --}}
     │       │   └── admin-meuplugin-index.blade.php
     │       └── index.blade.php
-    ├── CHANGELOG.md                        {{-- 💡 Histórico de versões e novidades --}}
-    ├── plugin.json                         {{-- 💡 Manifesto e parâmetros configuráveis --}}
-    ├── MeuPluginServiceProvider.php        {{-- 💡 Provedor de inicialização --}}
-    └── routes.php                          {{-- 💡 Rotas web e administrativas --}}</code></pre>
+    ├── CHANGELOG.md                        {{-- Histórico de versões e novidades --}}
+    ├── plugin.json                         {{-- Manifesto e parâmetros configuráveis --}}
+    ├── MeuPluginServiceProvider.php        {{-- Provedor de inicialização --}}
+    └── routes.php                          {{-- Rotas web e administrativas --}}</code></pre>
         </section>
 
         <!-- ═══════════════════════════════════════════════════════════════ -->
@@ -165,10 +165,10 @@ $limit = (int) setting('pluginSettings.Tracker.topPagesLimit', 10);</pre>
     &lt;h4&gt;Como funciona&lt;/h4&gt;
     &lt;p&gt;O plugin captura pageviews no front-end de forma anônima e sem cookies.&lt;/p&gt;
 
-    &lt;!-- 💡 Gera o bloco PHP de config/pluginSettings.php baseado no plugin.json --&gt;
+    &lt;!-- Gera o bloco PHP de config/pluginSettings.php baseado no plugin.json --&gt;
     &lt;x-configurable-plugin-values plugin="Tracker" /&gt;
 
-    &lt;!-- 💡 Checa se as dependências do Composer e PHP estão instaladas no vendor --&gt;
+    &lt;!-- Checa se as dependências do Composer e PHP estão instaladas no vendor --&gt;
     &lt;x-plugin-dependencies plugin="Tracker" /&gt;
 &lt;/div&gt;</pre>
         </section>

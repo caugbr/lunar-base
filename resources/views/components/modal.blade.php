@@ -50,7 +50,7 @@
         @if($showFooter)
         <div class="modal-footer">
             {{ $footer ?? '' }}
-            {{-- 💡 Corrigido x-tezt para x-text e adicionado x-text no conteúdo do botão --}}
+            {{-- Corrigido x-tezt para x-text e adicionado x-text no conteúdo do botão --}}
             <button @click="close()" class="admin-btn admin-btn-secondary" x-text="closeLabel"></button>
         </div>
         @endif
@@ -158,8 +158,8 @@ function modalComponent(id, initialTitle, initialCloseLabel) {
     return {
         id: id,
         isOpen: false,
-        title: initialTitle || '',       // 💡 Pega o valor enviado pelo Blade
-        closeLabel: initialCloseLabel || 'Fechar', // 💡 Pega o valor enviado pelo Blade
+        title: initialTitle || '',       // Pega o valor enviado pelo Blade
+        closeLabel: initialCloseLabel || 'Fechar', // Pega o valor enviado pelo Blade
 
         open() {
             this.isOpen = true;

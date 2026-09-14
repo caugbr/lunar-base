@@ -21,24 +21,30 @@ if (!function_exists('addLinkIcon')) {
 @if($msg = $type == 'success' ? $message : session('success'))
     <div class="admin-alert admin-alert-success">
         <x-lucide-circle-check class="lucid-icon" />
-        {!! $msg !!}
-        {!! addLinkIcon($msg) !!}
+        <span>
+            {!! $msg !!}
+            {!! addLinkIcon($msg) !!}
+        </span>
     </div>
 @endif
 
 @if($msg = $type == 'warning' ? $message : session('warning'))
     <div class="admin-alert admin-alert-warning">
         <x-lucide-circle-alert class="lucid-icon" />
-        {!! $msg !!}
-        {!! addLinkIcon($msg) !!}
+        <span>
+            {!! $msg !!}
+            {!! addLinkIcon($msg) !!}
+        </span>
     </div>
 @endif
 
 @if($msg = $type == 'info' ? $message : session('info'))
     <div class="admin-alert admin-alert-info">
         <x-lucide-info class="lucid-icon" />
-        {!! $msg !!}
-        {!! addLinkIcon($msg) !!}
+        <span>
+            {!! $msg !!}
+            {!! addLinkIcon($msg) !!}
+        </span>
     </div>
 @endif
 
@@ -49,7 +55,9 @@ $error = $type == 'error' ? $message : ($errors->any() ? $errors->first() : sess
 @if($error)
     <div class="admin-alert admin-alert-error">
         <x-lucide-circle-x class="lucid-icon" />
-        {!! $error !!}
-        {!! addLinkIcon($error) !!}
+        <span>
+            {!! $error !!}
+            {!! addLinkIcon($error) !!}
+        </span>
     </div>
 @endif

@@ -116,7 +116,7 @@ class ThemeController extends Controller
     protected function setThemeAssetLink(Theme $theme, bool $enable): void
     {
         // Identificador do tema (slug ou nome)
-        $themeIdentifier = Str::lower($theme->slug ?? $theme->name);
+        $themeIdentifier = Str::slug($theme->slug ?? $theme->name);
 
         if ($enable) {
             Artisan::call('theme:link', [
