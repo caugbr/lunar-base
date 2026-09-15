@@ -51,6 +51,10 @@ class AuthController extends Controller
 
             log_admin("Login realizado com sucesso", "auth");
 
+            if ($request->filled('interim')) {
+                return view('auth.interim-success');
+            }
+
             if ($user->role === 'subscriber') {
                 return redirect()->intended('/');
             }

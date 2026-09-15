@@ -24,8 +24,20 @@
             </div>
         @endif
 
+        {{-- Mensagem contextual de Reautenticação --}}
+        @if(request()->filled('interim'))
+            <div class="interim-notice" style="background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; padding: 12px; border-radius: 6px; margin-bottom: 16px;">
+                <strong>Sua sessão expirou por inatividade.</strong><br>
+                Faça login novamente e continue de onde parou.
+            </div>
+        @endif
+
         <form method="POST" action="{{ route('login') }}">
             @csrf
+
+            @if(request()->filled('interim'))
+                <input type="hidden" name="interim" value="1">
+            @endif
 
             <div class="form-group">
                 <label for="email"><x-lucide-mail class="lucid-icon" /> E-mail</label>

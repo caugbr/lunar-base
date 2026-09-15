@@ -123,5 +123,36 @@
         $delay = setting('navigation.toast_delay', 5000);
     @endphp
     <x-toast :position="$position" :delay="$delay" />
+
+    <!-- Janela de Reautenticação (Interim Login) -->
+    <style>
+        #heartbeat-auth-overlay {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 250ms ease-in 0s;
+            position: fixed;
+            top: 12px;
+            right: 12px;
+            bottom: 12px;
+            left: 12px;
+            z-index: 999999;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 0 0 100vmax rgba(15, 23, 42, 0.7), 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+        #heartbeat-auth-overlay.visible {
+            opacity: 1;
+            pointer-events: all;
+        }
+    </style>
+    <div id="heartbeat-auth-overlay">
+        <iframe
+            id="interim-login-frame"
+            src="about:blank"
+            style="width: 100%; height: 100%; border: none; display: block;">
+        </iframe>
+    </div>
+    <script src="{{ asset('js/heartbeat.js') }}"></script>
 </body>
 </html>

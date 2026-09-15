@@ -51,6 +51,32 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+// Quando o Heartbeat avisa que perdeu a auth:
+document.addEventListener('heartbeat-auth-lost', function () {
+    const iframe = document.getElementById('interim-login-frame');
+    // Só carrega o src na hora que precisar
+    if (!iframe.src || iframe.src === 'about:blank') {
+        iframe.src = '/login?interim=1';
+    }
+
+    // Abre o login
+    document.getElementById('heartbeat-auth-overlay').classList.add('visible');
+});
+
+// Escuta a mensagem enviada de dentro do iframe avisando que logou
+window.addEventListener('message', function (event) {
+    if (event.data && event.data.type === 'heartbeat-auth-success') {
+        // 1. Fecha o x-modal
+        document.getElementById('heartbeat-auth-overlay').classList.remove('visible');
+
+        // 2. Limpa o iframe
+        document.getElementById('interim-login-frame').src = 'about:blank';
+
+        // 3. Retoma os batimentos do Heartbeat!
+        window.Heartbeat.resume();
+    }
+});
+
 function debounce(func, delay) {
     let timeoutId;
 

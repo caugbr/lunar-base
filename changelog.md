@@ -1,5 +1,8 @@
 # Changelog
 
+### Added
+-Heartbeat na admin, com login para reconectar sem sair da página
+
 ## [2.8.0] 2026-09-14
 
 ### Added

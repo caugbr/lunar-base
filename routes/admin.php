@@ -9,8 +9,6 @@ use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\TaxonomyController;
 use App\Http\Controllers\Admin\TermController;
-// use App\Http\Controllers\Admin\AdminLogController;
-// use App\Http\Controllers\Admin\RolesPermissionsController;
 use App\Http\Controllers\Admin\ReferenceController;
 use App\Http\Controllers\Admin\PluginController;
 use App\Http\Controllers\Admin\PluginMarketplaceController;
@@ -20,6 +18,7 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\ProfileController as EditorProfileController;
 use App\Http\Controllers\Admin\UpdateController;
 use App\Http\Controllers\Admin\ContentTransferController;
+use App\Http\Controllers\Admin\HeartbeatController;
 use App\Models\Theme;
 use Illuminate\Support\Facades\Artisan;
 
@@ -104,6 +103,9 @@ Route::middleware($middlewares)->prefix('admin')->name('admin.')->group(function
     Route::get('tools/content-transfer', [ContentTransferController::class, 'index'])->name('tools.content-transfer.index');
     Route::post('tools/content-transfer/export', [ContentTransferController::class, 'export'])->name('tools.content-transfer.export');
     Route::post('tools/content-transfer/import', [ContentTransferController::class, 'import'])->name('tools.content-transfer.import');
+
+    // Heartbeat
+    Route::post('/heartbeat', [HeartbeatController::class, 'pulse'])->name('heartbeat');
 });
 
 
