@@ -186,7 +186,7 @@ class CoreUpdateService
             }
 
             // 7. Sincroniza arquivos utilitários da raiz
-            $rootFiles = ['VERSION', '.env.example', 'usecomposer.sh'];
+            $rootFiles = ['VERSION', '.env.example', 'usecomposer.sh', 'install.sh'];
             foreach ($rootFiles as $rFile) {
                 $sourceRFile = $sourcePath . '/' . $rFile;
                 if (File::exists($sourceRFile)) {
