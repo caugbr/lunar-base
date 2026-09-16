@@ -19,6 +19,7 @@ use App\Http\Controllers\ProfileController as EditorProfileController;
 use App\Http\Controllers\Admin\UpdateController;
 use App\Http\Controllers\Admin\ContentTransferController;
 use App\Http\Controllers\Admin\HeartbeatController;
+use App\Http\Controllers\Admin\ContentLockController;
 use App\Models\Theme;
 use Illuminate\Support\Facades\Artisan;
 
@@ -106,6 +107,10 @@ Route::middleware($middlewares)->prefix('admin')->name('admin.')->group(function
 
     // Heartbeat
     Route::post('/heartbeat', [HeartbeatController::class, 'pulse'])->name('heartbeat');
+
+    // Rotas de controle de bloqueio de conteúdo
+    Route::post('/content-lock/takeover', [ContentLockController::class, 'takeOver'])->name('content-lock.takeover');
+    Route::post('/content-lock/release', [ContentLockController::class, 'release'])->name('content-lock.release');
 });
 
 

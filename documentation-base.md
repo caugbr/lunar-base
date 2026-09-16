@@ -25,13 +25,14 @@
 ### Database
 - dbAvailable - checa se a database é acessível ou se uma tabela existe
 
-### Filters no PHP
+### Hooks no PHP
+- add_action - adiciona uma action
+- do_action - dispara uma action no código
 - add_filter - adiciona um filtro a uma variável
 - apply_filters - aplica os filtros registrados a uma variável
 
-### Hooks
+### Hooks nas views
 - hook - renderiza um hook Blade
-- do_action - dispara programaticamente uma action/hook no PHP
 - get_discovered_hooks - lista todos os hooks encontrados no código
 - render_hooks_select - renderiza um select com todos os hooks disponíveis
 
@@ -101,16 +102,6 @@
 - Shortcodes - parser e renderizador de shortcodes em strings de texto
 
 ## Componentes com Classe PHP (app/View/Components/)
-- Hook (<x-hook>) - renderiza os callbacks registrados via HookManager
-- Render (<x-render>) - orquestrador que injeta blocos estruturais de components/rendered/*
-- PagePicker (<x-page-picker>) - seletor hierárquico de páginas com exclusão do item atual
-- PostPicker (<x-post-picker>) - seletor de posts com ordenação feedOrder e badges visuais
-- SeoMeta (<x-seo-meta>) - gera tags <meta> e OpenGraph para o cabeçalho <head>
-- QrCode (<x-qr-code>) - gera e renderiza a imagem vetorial SVG do QR Code
-- UploadArea (<x-upload-area>) - área interativa de upload drag-and-drop
-- PasswordField (<x-password-field>) - campo de senha com alternância de visibilidade e medidor de força
-- ConfigurablePluginValues (<x-configurable-plugin-values>) - formata bloco de ajuda para config/pluginSettings.php
-- PluginDependencies (<x-plugin-dependencies>) - diagnóstico de versão do PHP e pacotes do Composer
 
 ## Componentes Blade Reutilizáveis por Addons (resources/views/components/)
 - <x-switch> - interruptor deslizante liga/desliga com suporte a onChange
@@ -120,26 +111,39 @@
 - <x-toast> - notificações flutuantes temporárias disparadas via showToast()
 - <x-copy-text> - container monoespaçado com botão de cópia rápida para o clipboard
 - <x-chart> - renderizador declarativo de gráficos de barras, linhas ou pizza com Chart.js
-- <x-media.grid-modal> - modal completo da biblioteca de mídia com suporte a openGridModal()
-- <x-media.upload-modal> - modal de upload direto de mídia com barra de progresso
+
+## Componentes Blade disponíveis para uso
+- <x-hook> - renderiza os callbacks registrados via HookManager
+- <x-page-picker> - seletor hierárquico de páginas com exclusão do item atual
+- <x-post-picker> - seletor de posts com ordenação feedOrder e badges visuais
+- <x-qr-code> - gera e renderiza a imagem vetorial SVG do QR Code
+- <x-upload-area> - área interativa de upload drag-and-drop
+- <x-password-field> - campo de senha com alternância de visibilidade e medidor de força
 - <x-breadcrumbs> - trilha de navegação com resolução automática de rotas e taxonomias
 - <x-assessibility> - barra flutuante de acessibilidade unificada
 - <x-switch-theme> - alternador visual de tema claro/escuro
 - <x-text-size> - botão cíclico de controle dinâmico do tamanho do texto
 - <x-vlibras> - botão integrado ao widget oficial do VLibras
-- <x-cookie.banner> e <x-cookie.scripts> - gestão de consentimento LGPD e injeção condicional de scripts
+- <x-cookie.banner>  - modal de gestão de consentimento LGPD
+- <x-cookie.scripts> - injeção condicional de scripts com base no consentimento
+
+## Componentes Blade do Core que podem ser usados por plugins e temas
+- <x-editor> - decide entre o TipTap ou o TinyMCE legado pelo conteúdo editado e renderiza o editor
+- <x-lost-changes-warn> - aviso de segurança no fechamento ou saída acidental de formulários alterados
+- <x-moon-loader> - spinner de carregamento da marca Lunar Base
+- <x-media.grid-modal> - modal completo da biblioteca de mídia com suporte a openGridModal()
+- <x-media.upload-modal> - modal de upload direto de mídia com barra de progresso
 
 ## Componentes Blade Exclusivos do Core
+- <x-render> - orquestrador que injeta blocos estruturais de components/rendered/*
+- <x-seo-meta> - gera tags <meta> e OpenGraph para o cabeçalho <head>
+- <x-configurable-plugin-values> - formata bloco de ajuda para config/pluginSettings.php
+- <x-plugin-dependencies> - exigências de pacotes do Composer para plugins
 - <x-admin-alert> - exibição central das mensagens flash da sessão (success, warning, error, info)
 - <x-admin-help> - botão e modal de ajuda contextual acoplado à rota ativa
-- <x-editor> - container mestre que decide a renderização entre o TipTap ou o TinyMCE legado
-- <x-lost-changes-warn> - trava de segurança contra fechamento ou saída acidental de formulários alterados
 - <x-system-update-badge> - indicador e modal com trava de tela para atualização do núcleo via GitHub
-- <x-moon-loader> - spinner de carregamento da marca Lunar Base
 - <x-meta-editor> - editor repetível de chave/valor para o campo JSON meta
-- <x-rendered.admin.taxonomy-fields> - campos de taxonomia para o formulário de posts/páginas
-- <x-rendered.public.featured-posts> - grade de posts em destaque para a home pública
-- <x-shortcodes.*> - submódulos de shortcodes estruturais ([link], [script], [style], [subpages])
+- <x-render> - tipo de hook exclusivo do core, para evitar repetição de código, onde pode haver <x-hook>
 
 ## Camada JavaScript (Frontend da Admin & Utilitários)
 - Dialog.js - classe autônoma para diálogos modais (alert, confirm, prompt) com suporte a data-confirm
@@ -165,7 +169,7 @@
   - CtaButton (Botão de chamada para ação com alinhamento e cores)
   - Table (Tabelas modernas com manipulador de linhas/colunas e seletor quadriculado)
 
-## Arquivos em /config
+## Arquivos do Lunar Base em /config
 - addons - taxonomia unificada de tags e requisitos de temas e plugins
 - admin - configurações da área administrativa (menu, dashboard, skin)
 - defaultUsers - perfis e credenciais iniciais para seeds de instalação

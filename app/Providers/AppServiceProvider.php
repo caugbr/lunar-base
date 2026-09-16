@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Auth\Notifications\VerifyEmail; // Adicionado
 use Illuminate\Notifications\Messages\MailMessage; // Adicionado
 use App\Services\AssetManager;
+use App\Services\ContentLockService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -76,6 +77,10 @@ class AppServiceProvider extends ServiceProvider
                 // Evita quebrar comandos Artisan caso o banco ainda não tenha sido migrado
             }
 
+            // Conecta o ContentLock ao barramento do Heartbeat
+            add_filter('heartbeat_pulse', function ($response, $clientData, $user) {
+                return ContentLockService::handleHeartbeat($response, $clientData, $user);
+            });
         }
 
         // Diretivas Blade estilo WordPress

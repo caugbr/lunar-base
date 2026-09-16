@@ -1,7 +1,15 @@
 # Changelog
 
+## [2.9.0] 2026-09-15
+
 ### Added
--Heartbeat na admin, com login para reconectar sem sair da página
+- ContentLock - posts e páginas só podem ser editadas por 1 user
+- Heartbeat pode ser usado por plugins
+- Heartbeat na admin, com login para reconectar sem sair da página
+
+### Fixed
+- Update agora usa a global appVersion()
+- Update inclui agora install.sh, usecomposer.sh, além app e providers em bootstrap
 
 ## [2.8.0] 2026-09-14
 

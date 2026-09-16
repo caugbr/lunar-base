@@ -124,7 +124,7 @@
     @endphp
     <x-toast :position="$position" :delay="$delay" />
 
-    <!-- Janela de Reautenticação (Interim Login) -->
+    {{-- Janela de Reautenticação (Interim Login) --}}
     <style>
         #heartbeat-auth-overlay {
             opacity: 0;
@@ -154,5 +154,20 @@
         </iframe>
     </div>
     <script src="{{ asset('js/heartbeat.js') }}"></script>
+
+    {{-- Content Lock --}}
+    @php
+        $lockData = null;
+
+        if (isset($post) && $post?->exists) {
+            $lockData = ['type' => 'post', 'id' => $post->id];
+        } elseif (isset($page) && $page?->exists) {
+            $lockData = ['type' => 'page', 'id' => $page->id];
+        }
+    @endphp
+
+    @if($lockData)
+        @include('admin.partials.content-lock', ['lockData' => $lockData])
+    @endif
 </body>
 </html>
