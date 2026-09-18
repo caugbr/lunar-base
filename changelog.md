@@ -1,11 +1,14 @@
 # Changelog
 
-## Unreleased
+## [2.11.1] 2026-09-18
+- VERSION atualizado
+
+## [2.11.0] 2026-09-18
 
 ### Changed
 - Ao fazer upload de uma imagem, agora o user pode definir o ponto focal para o corte
 
-## [2.10.0] - 2026-09-17
+## [2.10.0] 2026-09-17
 
 ### Added
 - Novo Plugin RoleSwitcher - Sistema de alternância de papéis sem alterar o banco de dados
