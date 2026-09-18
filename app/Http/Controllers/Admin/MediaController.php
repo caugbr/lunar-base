@@ -67,18 +67,44 @@ class MediaController extends Controller
             'caption' => $request->input('caption'),
         ]);
 
-        // Garante que o author_id seja associado ao registro criado pelo helper
+        // Garante autor e metadados padrão para o registro criado
         if (isset($result['media']) && $result['media'] instanceof Media) {
-            if (empty($result['media']->author_id)) {
-                $result['media']->update(['author_id' => auth()->id()]);
+            $mediaRecord = $result['media'];
+
+            if (empty($mediaRecord->author_id)) {
+                $mediaRecord->author_id = auth()->id();
             }
+
+            // Define o ponto focal padrão (centro: 50% / 50%) se for imagem
+            if ($mediaRecord->is_image && !$mediaRecord->hasMeta('focal_x')) {
+                $mediaRecord->setMeta([
+                    'focal_x' => 50,
+                    'focal_y' => 50,
+                ]);
+            }
+
+            $mediaRecord->save();
         }
 
         // Resposta JSON para Alpine/AJAX
+        // if ($request->wantsJson()) {
+        //     return response()->json([
+        //         'success' => true,
+        //         'data' => $result['media'] ?? null,
+        //         'url' => $result['url'] ?? null,
+        //         'thumbnail_url' => $result['thumbnail_url'] ?? null,
+        //     ]);
+        // }
         if ($request->wantsJson()) {
+            $mediaRecord = $result['media'] ?? null;
+
             return response()->json([
                 'success' => true,
-                'data' => $result['media'] ?? null,
+                'data' => $mediaRecord ? array_merge($mediaRecord->toArray(), [
+                    'is_image' => $mediaRecord->is_image,
+                    'size_formatted' => $mediaRecord->size_formatted,
+                    'url' => $result['url'] ?? $mediaRecord->url,
+                ]) : null,
                 'url' => $result['url'] ?? null,
                 'thumbnail_url' => $result['thumbnail_url'] ?? null,
             ]);
@@ -89,43 +115,77 @@ class MediaController extends Controller
     }
 
     /**
-     * Atualiza metadados (alt, caption, nome, meta)
+     * Atualiza metadados (alt, caption, nome, ponto focal e meta genérico)
      */
     public function update(Request $request, Media $media)
     {
         abort_unless($media->canBeManagedBy(), 403, 'Você não tem permissão para editar esta mídia.');
 
         $validated = $request->validate([
-            'name' => 'nullable|string|max:255',
-            'alt' => 'nullable|string|max:255',
-            'caption' => 'nullable|string|max:500',
-            'meta' => 'nullable|array',
+            'name'           => 'nullable|string|max:255',
+            'alt'            => 'nullable|string|max:255',
+            'caption'        => 'nullable|string|max:500',
+            'focal_x'        => 'nullable|numeric|min:0|max:100',
+            'focal_y'        => 'nullable|numeric|min:0|max:100',
+            'meta'           => 'nullable|array',
             'meta.alignment' => 'nullable|string|in:left,center,right,float-left,float-right',
         ]);
 
-        // Merge do meta existente com o novo, preservando outras chaves
+        // Atualiza campos de texto direto
+        $media->fill(collect($validated)->only(['name', 'alt', 'caption'])->toArray());
+
+        // Se veio array 'meta' genérico, faz merge usando a trait HasMeta
         if (isset($validated['meta'])) {
-            $validated['meta'] = array_merge(
-                $media->meta ?? [],
-                $validated['meta']
-            );
+            $media->setMeta($validated['meta']);
         }
 
-        $media->update($validated);
+        // Processa alteração do Ponto Focal
+        $focalChanged = false;
+        if ($request->has(['focal_x', 'focal_y'])) {
+            $newFocalX = (int) round($request->input('focal_x'));
+            $newFocalY = (int) round($request->input('focal_y'));
+
+            $currentFocalX = (int) $media->getMeta('focal_x', 50);
+            $currentFocalY = (int) $media->getMeta('focal_y', 50);
+
+            // Verifica se as coordenadas realmente mudaram
+            if ($newFocalX !== $currentFocalX || $newFocalY !== $currentFocalY) {
+                $focalChanged = true;
+                $media->setMeta([
+                    'focal_x' => $newFocalX,
+                    'focal_y' => $newFocalY,
+                ]);
+            }
+        }
+
+        $media->save();
+
+        // Se for imagem e o ponto focal foi alterado, regenera todas as variações em cache
+        if ($focalChanged && $media->is_image) {
+            $pathParts = explode('/', $media->path);
+            $folder = $pathParts[1] ?? 'uploads';
+
+            if (function_exists('deleteMediaVariants') && function_exists('generateMediaVariants')) {
+                deleteMediaVariants($media->path, $folder);
+                generateMediaVariants($media->path, $folder, [
+                    'focal_x' => $media->getMeta('focal_x', 50),
+                    'focal_y' => $media->getMeta('focal_y', 50),
+                ]);
+            }
+        }
 
         return $request->wantsJson()
             ? response()->json(['success' => true, 'data' => $media->fresh()])
-            : redirect()->back()->with('success', 'Metadados atualizados.');
+            : redirect()->back()->with('success', 'Metadados atualizados com sucesso.');
     }
 
     /**
-     * Remove mídia (Soft Delete + limpeza física via model boot)
+     * Remove mídia (Soft Delete + limpeza física via helpers)
      */
     public function destroy(Media $media)
     {
         abort_unless($media->canBeManagedBy(), 403, 'Você não tem permissão para excluir esta mídia.');
 
-        // Extrai a pasta do path (ex: "media/settings/original" → "settings")
         $pathParts = explode('/', $media->path);
         $folder = $pathParts[1] ?? 'uploads';
 
@@ -145,13 +205,11 @@ class MediaController extends Controller
 
     /**
      * Endpoint AJAX para Alpine/Modal
-     * Retorna JSON paginado com suporte a busca, filtro e URLs formatadas
      */
     public function data(Request $request)
     {
         abort_unless(auth()->user()->hasPermission(['manage-media', 'manage-own-media']), 403);
 
-        // Aplica o escopo forCurrentUser() para que no modal o autor só veja o que é dele
         $query = Media::forCurrentUser()->with(['mediaable', 'postThumbnail', 'pageThumbnail']);
 
         // Filtro de vínculo
@@ -189,7 +247,7 @@ class MediaController extends Controller
         $perPage = $request->integer('per_page', setting('reading.media_pagination_max_items'));
         $media = $query->latest()->paginate($perPage);
 
-        // Transforma a coleção adicionando dados úteis para o frontend
+        // Transforma a coleção adicionando metadados úteis para o modal Alpine
         $media->getCollection()->transform(function ($item) {
             if (str_starts_with($item->mime_type, 'image/svg')) {
                 $thumbnailUrl = $item->url;
@@ -219,19 +277,19 @@ class MediaController extends Controller
             $thumbnailInfo = $item->thumbnail_of;
 
             return [
-                'id' => $item->id,
-                'name' => $item->name,
-                'url' => $item->url,
-                'thumbnail_url' => $thumbnailUrl,
-                'alt' => $item->alt,
-                'caption' => $item->caption,
-                'meta' => $item->meta ?? [],
+                'id'             => $item->id,
+                'name'           => $item->name,
+                'url'            => $item->url,
+                'thumbnail_url'  => $thumbnailUrl,
+                'alt'            => $item->alt,
+                'caption'        => $item->caption,
+                'meta'           => $item->meta ?? [],
                 'size_formatted' => $item->size_formatted,
-                'is_image' => $item->is_image,
-                'mime_type' => $item->mime_type,
-                'created_at' => $item->created_at->format('d/m/Y H:i'),
-                'linked_to'    => $mediaableInfo,
-                'thumbnail_of' => $thumbnailInfo,
+                'is_image'       => $item->is_image,
+                'mime_type'      => $item->mime_type,
+                'created_at'     => $item->created_at->format('d/m/Y H:i'),
+                'linked_to'      => $mediaableInfo,
+                'thumbnail_of'   => $thumbnailInfo,
             ];
         });
 

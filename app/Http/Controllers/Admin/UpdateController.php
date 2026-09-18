@@ -35,7 +35,7 @@ class UpdateController extends Controller
         $info = $updater->checkForUpdates();
 
         return back()->with('info', $info['has_update']
-            ? "Nova versão v{$info['latest_version']} encontrada!"
+            ? "Nova versão {$info['latest_version']} encontrada!"
             : "O sistema já está na versão mais recente.");
     }
 }

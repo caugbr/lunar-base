@@ -165,6 +165,13 @@ class Media extends Model
             ?? 'Sem título';
     }
 
+    public function getFocalPositionAttribute(): string
+    {
+        $x = $this->getMeta('focal_x', 50);
+        $y = $this->getMeta('focal_y', 50);
+        return "{$x}% {$y}%";
+    }
+
     /**
      * Verifica se esta mídia é thumbnail de algum Post
      */

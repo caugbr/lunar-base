@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+- Ao fazer upload de uma imagem, agora o user pode definir o ponto focal para o corte
+
 ## [2.10.0] - 2026-09-17
 
 ### Added

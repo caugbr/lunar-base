@@ -180,5 +180,18 @@
 - rolesPermissions - matriz de papéis, permissões e capacidades
 - scripts - categorias e inventário de scripts externos para consentimento de cookies (LGPD)
 - settings - catálogo mestre de definições de formulários da API Settings
-- site - dados públicos fundamentais (menu padrão, textos de login, branding)
+- site - dados públicos fundamentais (menu padrão, texto na tela de login, branding)
 - tutorials - regras e padrões para o atualizador automatizado de tutoriais
+
+-----------------------
+
+## Processos a documentar (tutoriais)
+- Dashboard widgets
+- Admin contextual help
+- AddonDependency - Gerenciamento de dependências
+- Admin logs deve ser usado em plugins
+- ContentLock
+- DynamicRoutes
+- Shortcodes
+- Adicionar novos perfis de usuário
+- Criar novos tamanhos de imagem
