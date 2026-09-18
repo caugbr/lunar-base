@@ -60,6 +60,7 @@
     </div>
 
     {{-- Links rápidos --}}
+    @permission('manage-settings')
     <div class="welcome-actions">
         <a href="{{ route('admin.settings.index') }}" class="welcome-action-btn">
             <x-lucide-settings class="lucid-icon" />
@@ -95,8 +96,8 @@
             <x-lucide-image class="lucid-icon" />
             <span>Mídia</span>
         </a> --}}
-
     </div>
+    @endpermission
 
     {{-- Dica do dia
     @php

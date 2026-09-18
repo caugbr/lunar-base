@@ -15,40 +15,17 @@ use Illuminate\Validation\Rule;
 
 class PageController extends Controller
 {
-    // public function index(Request $request)
-    // {
-    //     $query = Page::with(['author', 'terms']);
-
-    //     if ($request->filled('title')) {
-    //         $query->where('title', 'like', '%' . $request->input('title') . '%');
-    //     }
-
-    //     if ($request->filled('namespace')) {
-    //         $query->where('namespace', 'like', '%' . $request->input('namespace') . '%');
-    //     }
-
-    //     if ($request->filled('status')) {
-    //         $query->where('status', $request->input('status'));
-    //     }
-
-    //     if ($request->filled('author_id')) {
-    //         $query->where('author_id', $request->input('author_id'));
-    //     }
-
-    //     $pages = $query->orderBy('created_at', 'desc')->paginate(setting('reading.pagination_max_items'));
-    //     $namespaces = $this->getNamespaces();
-    //     $authors = User::whereIn('role', ['admin', 'editor'])->orderBy('name')->get();
-
-    //     return view('admin.pages.index', compact('pages', 'namespaces', 'authors'));
-    // }
-public function index(Request $request)
+    public function index(Request $request)
     {
+        abort_unless(auth()->user()->hasPermission(['manage-pages', 'manage-own-pages']), 403);
+
         $isTrash = $request->get('view') === 'trash';
+        $user = auth()->user();
 
         if ($isTrash) {
-            $query = Page::onlyTrashed()->with(['author', 'terms']);
+            $query = Page::onlyTrashed()->forCurrentUser()->with(['author', 'terms']);
         } else {
-            $query = Page::with(['author', 'terms']);
+            $query = Page::forCurrentUser()->with(['author', 'terms']);
         }
 
         if ($request->filled('title')) {
@@ -63,7 +40,8 @@ public function index(Request $request)
             $query->where('status', $request->input('status'));
         }
 
-        if ($request->filled('author_id')) {
+        // Filtro por autor só é aplicado se ele puder gerenciar páginas de outros
+        if ($user->hasPermission('manage-pages') && $request->filled('author_id')) {
             $query->where('author_id', $request->input('author_id'));
         }
 
@@ -72,20 +50,25 @@ public function index(Request $request)
                        ->withQueryString();
 
         $counts = [
-            'all'       => Page::count(),
-            'published' => Page::where('status', 'published')->count(),
-            'draft'     => Page::where('status', 'draft')->count(),
-            'trash'     => Page::onlyTrashed()->count(),
+            'all'       => Page::forCurrentUser()->count(),
+            'published' => Page::forCurrentUser()->where('status', 'published')->count(),
+            'draft'     => Page::forCurrentUser()->where('status', 'draft')->count(),
+            'trash'     => Page::onlyTrashed()->forCurrentUser()->count(),
         ];
 
         $namespaces = $this->getNamespaces();
-        $authors = User::whereIn('role', ['admin', 'editor'])->orderBy('name')->get();
+
+        $authors = $user->hasPermission('manage-pages')
+            ? User::whereIn('role', ['admin', 'editor', 'author'])->orderBy('name')->get()
+            : collect([$user]);
 
         return view('admin.pages.index', compact('pages', 'namespaces', 'authors', 'counts', 'isTrash'));
     }
 
     public function destroy(Page $page)
     {
+        abort_unless($page->canBeManagedBy(), 403, 'Você não tem permissão para excluir esta página.');
+
         $page->delete();
 
         log_admin("Página movida para a lixeira: {$page->title}", "pages");
@@ -97,6 +80,8 @@ public function index(Request $request)
     public function restore($id)
     {
         $page = Page::onlyTrashed()->findOrFail($id);
+        abort_unless($page->canBeManagedBy(), 403, 'Você não tem permissão para restaurar esta página.');
+
         $page->restore();
 
         log_admin("Página restaurada da lixeira: {$page->title}", "pages");
@@ -108,6 +93,8 @@ public function index(Request $request)
     public function purge($id)
     {
         $page = Page::onlyTrashed()->findOrFail($id);
+        abort_unless($page->canBeManagedBy(), 403, 'Você não tem permissão para excluir definitivamente esta página.');
+
         $title = $page->title;
 
         $page->terms()->detach();
@@ -121,7 +108,10 @@ public function index(Request $request)
 
     public function emptyTrash()
     {
-        $trashed = Page::onlyTrashed()->get();
+        abort_unless(auth()->user()->hasPermission(['manage-pages', 'manage-own-pages']), 403);
+
+        $trashed = Page::onlyTrashed()->forCurrentUser()->get();
+
         foreach ($trashed as $page) {
             $page->terms()->detach();
             $page->forceDelete();
@@ -135,8 +125,15 @@ public function index(Request $request)
 
     public function create()
     {
-        $users = User::whereIn('role', ['admin', 'editor'])->orderBy('name')->get();
-        $currentUserId = Auth::id();
+        abort_unless(auth()->user()->hasPermission(['manage-pages', 'manage-own-pages']), 403);
+
+        $user = auth()->user();
+
+        $users = $user->hasPermission('manage-pages')
+            ? User::whereIn('role', ['admin', 'editor', 'author'])->orderBy('name')->get()
+            : collect([$user]);
+
+        $currentUserId = $user->id;
         $templates = Config::get('pageTemplates.templates', []);
         $taxonomies = Taxonomy::forType('page')->with('terms')->get();
         $namespaces = $this->getNamespaces();
@@ -157,6 +154,15 @@ public function index(Request $request)
 
     public function store(Request $request)
     {
+        abort_unless(auth()->user()->hasPermission(['manage-pages', 'manage-own-pages']), 403);
+
+        $user = auth()->user();
+
+        // Se for autor restrito, força o author_id para o próprio usuário
+        if (!$user->hasPermission('manage-pages')) {
+            $request->merge(['author_id' => $user->id]);
+        }
+
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'slug' => [
@@ -211,7 +217,14 @@ public function index(Request $request)
 
     public function edit(Page $page)
     {
-        $users = User::whereIn('role', ['admin', 'editor'])->orderBy('name')->get();
+        abort_unless($page->canBeManagedBy(), 403, 'Você não tem permissão para editar esta página.');
+
+        $user = auth()->user();
+
+        $users = $user->hasPermission('manage-pages')
+            ? User::whereIn('role', ['admin', 'editor', 'author'])->orderBy('name')->get()
+            : collect([$page->author ?? $user]);
+
         $templates = Config::get('pageTemplates.templates', []);
         $taxonomies = Taxonomy::forType('page')->with('terms')->get();
         $selectedTermIds = $page->terms->pluck('id')->toArray();
@@ -233,6 +246,15 @@ public function index(Request $request)
 
     public function update(Request $request, Page $page)
     {
+        abort_unless($page->canBeManagedBy(), 403, 'Você não tem permissão para editar esta página.');
+
+        $user = auth()->user();
+
+        // Se for autor restrito, impede a alteração do author_id
+        if (!$user->hasPermission('manage-pages')) {
+            $request->merge(['author_id' => $user->id]);
+        }
+
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'slug' => [

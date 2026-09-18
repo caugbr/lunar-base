@@ -9,7 +9,7 @@ use App\Models\Taxonomy;
 use App\Models\Media;
 use App\Models\PostMeta;
 use App\Helpers\ContentHelper;
-// use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Validation\Rule;
@@ -18,15 +18,15 @@ class PostController extends Controller
 {
     public function index(Request $request)
     {
-        abort_unless(auth()->user()->hasPermission(['manage-posts', 'manage-own-posts']), 403);
-
         $isTrash = $request->get('view') === 'trash';
-        $user = auth()->user();
 
-        // Query base já com o escopo do usuário atual aplicado
-        $query = $isTrash
-            ? Post::onlyTrashed()->forCurrentUser()->with(['author', 'terms'])
-            : Post::forCurrentUser()->with(['author', 'terms']);
+        // Se estiver na aba da lixeira, pega apenas os deletados
+        if ($isTrash) {
+            $query = Post::onlyTrashed()->with(['author', 'terms']);
+        } else {
+            // Caso contrário, pega os normais (repare que tirei o published() para o admin ver rascunhos também)
+            $query = Post::with(['author', 'terms']);
+        }
 
         // Filtro por título
         if ($request->filled('title')) {
@@ -38,8 +38,8 @@ class PostController extends Controller
             $query->where('status', $request->input('status'));
         }
 
-        // Filtro por autor (só aplicado se o usuário tiver permissão para ver outros autores)
-        if ($user->hasPermission('manage-posts') && $request->filled('author_id')) {
+        // Filtro por autor
+        if ($request->filled('author_id')) {
             $query->where('author_id', $request->input('author_id'));
         }
 
@@ -58,35 +58,79 @@ class PostController extends Controller
                        ->paginate(setting('reading.pagination_max_items'))
                        ->withQueryString();
 
-        // Contagens para as abas (respeitam automaticamente o escopo do autor via Model)
+        // Contagens para as abas
         $counts = [
-            'all'       => Post::forCurrentUser()->count(),
-            'published' => Post::forCurrentUser()->where('status', 'published')->count(),
-            'draft'     => Post::forCurrentUser()->where('status', 'draft')->count(),
-            'trash'     => Post::onlyTrashed()->forCurrentUser()->count(),
+            'all'       => Post::count(),
+            'published' => Post::where('status', 'published')->count(),
+            'draft'     => Post::where('status', 'draft')->count(),
+            'trash'     => Post::onlyTrashed()->count(),
         ];
 
-        // Lista de autores no select do filtro:
-        // Se puder gerenciar todos, lista quem tem papéis adequados. Se for apenas autor, lista apenas ele mesmo.
-        $authors = $user->hasPermission('manage-posts')
-            ? User::whereIn('role', ['admin', 'editor', 'author'])->orderBy('name')->get()
-            : collect([$user]);
+        $authors = User::whereIn('role', ['admin', 'editor'])->orderBy('name')->get();
 
         return view('admin.posts.index', compact('posts', 'authors', 'counts', 'isTrash'));
     }
 
+    // Move para a Lixeira (Soft Delete)
+    public function destroy(Post $post)
+    {
+        $post->delete();
+
+        log_admin("Post movido para a lixeira: {$post->title}", "posts");
+
+        return redirect()->route('admin.posts.index')
+            ->with('success', 'Post movido para a lixeira!');
+    }
+
+    // Restaura da Lixeira
+    public function restore($id)
+    {
+        $post = Post::onlyTrashed()->findOrFail($id);
+        $post->restore();
+
+        log_admin("Post restaurado da lixeira: {$post->title}", "posts");
+
+        return redirect()->back()
+            ->with('success', 'Post restaurado com sucesso!');
+    }
+
+    // Exclui Definitivamente do Banco (Purge)
+    public function purge($id)
+    {
+        $post = Post::onlyTrashed()->findOrFail($id);
+        $title = $post->title;
+
+        // Remove relações antes de apagar definitivo
+        $post->terms()->detach();
+        $post->meta()->delete();
+        $post->forceDelete();
+
+        log_admin("Post excluído definitivamente: {$title}", "posts");
+
+        return redirect()->back()
+            ->with('success', 'Post excluído definitivamente!');
+    }
+
+    // Esvazia toda a lixeira
+    public function emptyTrash()
+    {
+        $trashed = Post::onlyTrashed()->get();
+        foreach ($trashed as $post) {
+            $post->terms()->detach();
+            $post->meta()->delete();
+            $post->forceDelete();
+        }
+
+        log_admin("Lixeira de posts esvaziada.", "posts");
+
+        return redirect()->route('admin.posts.index', ['view' => 'trash'])
+            ->with('success', 'Lixeira esvaziada com sucesso!');
+    }
+
     public function create()
     {
-        abort_unless(auth()->user()->hasPermission(['manage-posts', 'manage-own-posts']), 403);
-
-        $user = auth()->user();
-
-        // Se for autor restrito, só pode atribuir o post a si mesmo
-        $users = $user->hasPermission('manage-posts')
-            ? User::whereIn('role', ['admin', 'editor', 'author'])->orderBy('name')->get()
-            : collect([$user]);
-
-        $currentUserId = $user->id;
+        $users = User::whereIn('role', ['admin', 'editor'])->orderBy('name')->get();
+        $currentUserId = Auth::id();
         $templates = Config::get('postTemplates.templates', []);
         $taxonomies = Taxonomy::forType('post')->with('terms')->get();
         $existingMetaKeys = PostMeta::select('meta_key')
@@ -100,15 +144,6 @@ class PostController extends Controller
 
     public function store(Request $request)
     {
-        abort_unless(auth()->user()->hasPermission(['manage-posts', 'manage-own-posts']), 403);
-
-        $user = auth()->user();
-
-        // Se tiver apenas permissão para os próprios posts, força o author_id para o ID dele
-        if (!$user->hasPermission('manage-posts')) {
-            $request->merge(['author_id' => $user->id]);
-        }
-
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'slug' => 'required|string|max:255|unique:posts,slug',
@@ -128,7 +163,7 @@ class PostController extends Controller
             'gallery_ids.*' => 'exists:media,id',
         ]);
 
-        $validated['content'] = ContentHelper::sanitizeForStorage($request->content);
+         $validated['content'] = ContentHelper::sanitizeForStorage($request->content);
 
         // Se status published mas sem published_at, define agora
         if ($validated['status'] === 'published' && empty($validated['published_at'])) {
@@ -139,7 +174,7 @@ class PostController extends Controller
 
         $post->terms()->sync(array_filter($validated['term_ids'] ?? []));
 
-        $post->meta()->delete();
+        $post->meta()->delete(); // Limpa tudo e reinsere (simples)
 
         if ($request->has('meta') && is_array($request->input('meta'))) {
             foreach ($request->input('meta') as $pair) {
@@ -173,18 +208,15 @@ class PostController extends Controller
 
     public function edit(Post $post)
     {
-        abort_unless($post->canBeManagedBy(), 403, 'Você não tem permissão para editar este post.');
-
-        $user = auth()->user();
-
-        // Se for autor restrito, só vê a si mesmo no select
-        $users = $user->hasPermission('manage-posts')
-            ? User::whereIn('role', ['admin', 'editor', 'author'])->orderBy('name')->get()
-            : collect([$post->author ?? $user]);
-
+        $users = User::whereIn('role', ['admin', 'editor'])->orderBy('name')->get();
         $templates = Config::get('postTemplates.templates', []);
+
+        // Carrega taxonomias e termos para o formulário
         $taxonomies = Taxonomy::forType('post')->with('terms')->get();
+        // IDs dos termos já associados ao post
         $selectedTermIds = $post->terms->pluck('id')->toArray();
+
+        // Carrega metas do post para o formulário
         $postMeta = $post->meta->pluck('meta_value', 'meta_key')->toArray();
 
         $existingMetaKeys = PostMeta::select('meta_key')
@@ -201,15 +233,6 @@ class PostController extends Controller
 
     public function update(Request $request, Post $post)
     {
-        abort_unless($post->canBeManagedBy(), 403, 'Você não tem permissão para editar este post.');
-
-        $user = auth()->user();
-
-        // Se for autor restrito, garante que não troque o author_id
-        if (!$user->hasPermission('manage-posts')) {
-            $request->merge(['author_id' => $user->id]);
-        }
-
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'slug' => [
@@ -234,6 +257,7 @@ class PostController extends Controller
             'gallery_ids.*' => 'exists:media,id',
         ]);
 
+        // Se publicou agora e não tem published_at, define
         if ($validated['status'] === 'published' && empty($validated['published_at'])) {
             $validated['published_at'] = now();
         }
@@ -242,7 +266,7 @@ class PostController extends Controller
 
         $post->terms()->sync(array_filter($validated['term_ids'] ?? []));
 
-        $post->meta()->delete();
+        $post->meta()->delete(); // Limpa tudo e reinsere (simples)
 
         if ($request->has('meta') && is_array($request->input('meta'))) {
             foreach ($request->input('meta') as $pair) {
@@ -280,68 +304,5 @@ class PostController extends Controller
 
         return redirect()->route('admin.posts.edit', $post->id)
             ->with('success', 'Post atualizado com sucesso!');
-    }
-
-    public function destroy(Post $post)
-    {
-        abort_unless($post->canBeManagedBy(), 403, 'Você não tem permissão para excluir este post.');
-
-        $post->delete();
-
-        log_admin("Post movido para a lixeira: {$post->title}", "posts");
-
-        return redirect()->route('admin.posts.index')
-            ->with('success', 'Post movido para a lixeira!');
-    }
-
-    public function restore($id)
-    {
-        $post = Post::onlyTrashed()->findOrFail($id);
-
-        abort_unless($post->canBeManagedBy(), 403, 'Você não tem permissão para restaurar este post.');
-
-        $post->restore();
-
-        log_admin("Post restaurado da lixeira: {$post->title}", "posts");
-
-        return redirect()->back()
-            ->with('success', 'Post restaurado com sucesso!');
-    }
-
-    public function purge($id)
-    {
-        $post = Post::onlyTrashed()->findOrFail($id);
-
-        abort_unless($post->canBeManagedBy(), 403, 'Você não tem permissão para excluir definitivamente este post.');
-
-        $title = $post->title;
-
-        $post->terms()->detach();
-        $post->meta()->delete();
-        $post->forceDelete();
-
-        log_admin("Post excluído definitivamente: {$title}", "posts");
-
-        return redirect()->back()
-            ->with('success', 'Post excluído definitivamente!');
-    }
-
-    public function emptyTrash()
-    {
-        abort_unless(auth()->user()->hasPermission(['manage-posts', 'manage-own-posts']), 403);
-
-        // O escopo forCurrentUser garante que o autor só esvazie os posts que eram dele!
-        $trashed = Post::onlyTrashed()->forCurrentUser()->get();
-
-        foreach ($trashed as $post) {
-            $post->terms()->detach();
-            $post->meta()->delete();
-            $post->forceDelete();
-        }
-
-        log_admin("Lixeira de posts esvaziada.", "posts");
-
-        return redirect()->route('admin.posts.index', ['view' => 'trash'])
-            ->with('success', 'Lixeira esvaziada com sucesso!');
     }
 }

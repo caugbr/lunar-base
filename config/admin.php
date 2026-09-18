@@ -108,30 +108,25 @@ return [
      */
     'menu' => [
         [
-            // 'title' => '',
             'items' => [
                 [
                     'label' => 'Dashboard',
                     'icon' => 'layout-dashboard',
                     'route' => 'admin.dashboard.index',
                     'active' => 'admin.dashboard.index',
+                    'permission' => 'view-dashboard',
                 ]
             ]
         ],
         [
             'title' => 'Sistema',
             'items' => [
-                // [
-                //     'label' => 'Dashboard',
-                //     'icon' => 'layout-dashboard',
-                //     'route' => 'admin.dashboard.index',
-                //     'active' => 'admin.dashboard.index',
-                // ],
                 [
                     'label' => 'Páginas',
                     'icon' => 'file',
                     'route' => 'admin.pages.index',
                     'active' => 'admin.pages.*',
+                    'permission' => 'manage-pages,manage-own-pages',
                     'items' => [
                         [
                             'label' => 'Nova página',
@@ -146,6 +141,7 @@ return [
                     'icon' => 'files',
                     'route' => 'admin.posts.index',
                     'active' => 'admin.posts.*',
+                    'permission' => 'manage-posts,manage-own-posts',
                     'items' => [
                         [
                             'label' => 'Novo post',
@@ -160,28 +156,35 @@ return [
                     'icon' => 'image',
                     'route' => 'admin.media.index',
                     'active' => 'admin.media.*',
-                    'permission' => 'manage-media',
+                    'permission' => 'manage-media,manage-own-media',
+                ],
+                [
+                    'label' => 'Termos',
+                    'icon' => 'tags',
+                    'route' => 'admin.terms.index',
+                    'active' => 'admin.terms.*',
+                    'permission' => 'manage-tax-terms,!manage-taxonomies',
                 ],
                 [
                     'label' => 'Taxonomias',
                     'icon' => 'tags',
                     'route' => 'admin.taxonomies.index',
                     'active' => 'admin.taxonomies.*',
-                    'permission' => 'manage-pages',
+                    'permission' => 'manage-taxonomies',
                     'items' => [
                         [
                             'label'  => 'Nova Taxonomia',
                             'icon'   => 'tag-plus',
                             'route'  => 'admin.taxonomies.create',
                             'active' => 'admin.taxonomies.create',
-                            'permission' => 'manage-pages',
+                            'permission' => 'manage-taxonomies',
                         ],
                         [
                             'label'  => 'Novo Termo',
                             'icon'   => 'plus',
                             'route'  => 'admin.terms.create',
                             'active' => 'admin.terms.create',
-                            'permission' => 'manage-pages',
+                            'permission' => 'manage-taxonomies',
                         ]
                     ]
                 ],
@@ -190,6 +193,7 @@ return [
                     'icon' => 'users',
                     'route' => 'admin.users.index',
                     'active' => 'admin.users.*',
+                    'role'   => 'admin',
                     'items' => [
                         [
                             'label'  => 'Novo usuário',
@@ -205,6 +209,7 @@ return [
                     'icon' => 'puzzle',
                     'route' => 'admin.plugins.index',
                     'active' => 'admin.plugins.*',
+                    'role'   => 'admin',
                     'items' => [
                         [
                             'label'  => 'Instalar plugin',
@@ -220,6 +225,7 @@ return [
                     'icon' => 'palette',
                     'route' => 'admin.themes.index',
                     'active' => 'admin.themes.*',
+                    'role'   => 'admin',
                     'items' => [
                         [
                             'label'  => 'Instalar tema',
@@ -242,6 +248,7 @@ return [
                     'icon'       => 'wrench',
                     'route'      => 'admin.tools.index',
                     'active'     => 'admin.tools.*',
+                    'role' => 'admin',
                     'items'      => [
                         [
                             'label'      => 'Exportar / Importar',

@@ -158,16 +158,15 @@
     {{-- Content Lock --}}
     @php
         $lockData = null;
-
-        if (isset($post) && $post?->exists) {
+        if (request()->routeIs('admin.posts.edit')) {
             $lockData = ['type' => 'post', 'id' => $post->id];
-        } elseif (isset($page) && $page?->exists) {
+        } elseif (request()->routeIs('admin.pages.edit')) {
             $lockData = ['type' => 'page', 'id' => $page->id];
         }
     @endphp
 
     @if($lockData)
-        @include('admin.partials.content-lock', ['lockData' => $lockData])
+        @include('admin.partials.content-lock-modal', ['lockData' => $lockData])
     @endif
 </body>
 </html>

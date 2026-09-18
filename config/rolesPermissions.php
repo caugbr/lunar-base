@@ -6,7 +6,7 @@
  * =============================================================================
  *
  * Este arquivo é a FONTE DA VERDADE para todo o controle de acesso do sistema.
- * Define quem pode fazer o quê, organizado em perfis hierárquicos.
+ * Define quem pode fazer o quê, organizado em perfis e permissões granulares.
  *
  * ESTRUTURA GERAL:
  * ----------------
@@ -29,12 +29,12 @@
  *
  * Perfis padrão do sistema:
  * - 'admin'       => Acesso total. Gerencia usuários, configurações, visibilidade completa.
- * - 'editor'      => Gerencia todas as publicações. Cria e edita páginas e posts de qualquer autor.
- * - 'author'      => Gerencia próprias publicações. Cria e edita apenas conteúdo de sua autoria.
+ * - 'editor'      => Gerencia todas as publicações, termos, mídias e páginas de qualquer autor.
+ * - 'author'      => Cria e edita apenas conteúdo de sua autoria (posts, páginas, mídias) e termos.
  * - 'subscriber'  => Acesso mínimo. Apenas visualiza dashboard e edita próprio perfil.
  *
- * DICA: Novos roles podem ser adicionados aqui, mas precisam ser referenciados
- * em 'permissionsByRole' para ter permissões atribuídas.
+ * DICA: Novos roles podem ser adicionados por plugins em tempo de execução via:
+ * config(['rolesPermissions.roles.meu_papel' => [...]])
  *
  * =============================================================================
  *
@@ -42,12 +42,6 @@
  * -----------------------------------------------
  *
  * Mapeia cada role para um array de permissões que ele possui.
- *
- * 'nome_do_role' => [
- *     'nome-da-permissao',
- *     'outra-permissao',
- *     // ...
- * ],
  *
  * REGRAS IMPORTANTES:
  * - O role 'admin' DEVE conter TODAS as permissões listadas em 'permissionGroups'.
@@ -57,22 +51,24 @@
  * PERMISSÕES EXISTENTES:
  * ----------------------
  *
- * 'view-dashboard'       => Acessar o painel principal.
+ * 'view-dashboard'       => Acessar o painel principal administrativo.
  * 'manage-users'         => Criar, editar, excluir qualquer usuário.
  * 'view-reports'         => Ver relatórios e estatísticas gerais.
  * 'edit-profile'         => Alterar dados do próprio perfil.
  * 'manage-settings'      => Modificar configurações globais do sistema.
  * 'manage-pages'         => Criar e editar PÁGINAS de qualquer autor.
  * 'manage-posts'         => Criar e editar POSTS de qualquer autor.
- * 'manage-own-pages'     => Criar e editar apenas PRÓPRIAS páginas.
- * 'manage-own-posts'     => Criar e editar apenas PRÓPRIOS posts.
+ * 'manage-own-pages'     => Criar e editar apenas as PRÓPRIAS páginas.
+ * 'manage-own-posts'     => Criar e editar apenas os PRÓPRIOS posts.
+ * 'manage-media'         => Fazer upload e gerenciar TODOS os arquivos da biblioteca de mídia.
+ * 'manage-own-media'     => Fazer upload e gerenciar apenas os PRÓPRIOS arquivos de mídia.
+ * 'manage-taxonomies'    => Criar, editar e excluir a estrutura de taxonomias e termos.
+ * 'manage-tax-terms'     => Criar e gerenciar apenas termos/categorias/tags das taxonomias existentes.
  *
  * DIFERENÇA CRÍTICA:
  * ------------------
- * 'manage-pages'     => Acesso a TODAS as páginas (editor/admin).
- * 'manage-own-pages' => Acesso apenas às próprias páginas (author).
- *
- * Mesma lógica para 'manage-posts' vs 'manage-own-posts'.
+ * 'manage-...'     => Acesso irrestrito a registros de todos os usuários (admin/editor).
+ * 'manage-own-...' => Acesso escopado exclusivamente aos registros criados pelo próprio usuário (author).
  *
  * =============================================================================
  *
@@ -82,50 +78,32 @@
  * Agrupa permissões por área funcional. Usado na interface de gerenciamento
  * de permissões para organizar visualmente o que cada role pode fazer.
  *
- * 'nome_do_grupo' => [
- *     'nome-da-permissao' => 'Label Descritivo',
- *     // ...
- * ],
- *
  * GRUPOS EXISTENTES:
  * ------------------
  *
- * 'dashboard'     => Acesso ao painel.
+ * 'dashboard'     => Acesso ao painel de controle.
  * 'users'         => Gerenciamento de usuários.
- * 'settings'      => Configurações globais.
+ * 'settings'      => Configurações globais do sistema.
  * 'reports'       => Relatórios e estatísticas.
  * 'publications'  => Criação e edição de conteúdo (páginas e posts).
+ * 'media'         => Gestão e uploads na biblioteca de arquivos de mídia.
+ * 'taxonomies'    => Gestão estrutural de taxonomias e termos.
  * 'profile'       => Edição do próprio perfil.
- *
- * DICA: Ao criar nova permissão, adicione-a em TRES lugares:
- * 1. Em 'permissionGroups' (no grupo adequado, com label descritivo).
- * 2. No array de 'admin' em 'permissionsByRole' (admin deve ter tudo).
- * 3. Nos outros roles que precisam dessa permissão.
  *
  * =============================================================================
  *
  * COMO USAR NO CÓDIGO:
  * --------------------
  *
- * Verificar se usuário tem permissão:
- *     if (auth()->user()->permission('manage-pages')) {
- *         // permite ação...
- *     }
+ * Verificar se usuário tem permissão (aceita string única, array ou separada por vírgula):
+ *     if (auth()->user()->hasPermission('manage-posts')) { ... }
+ *     if (auth()->user()->hasPermission(['manage-posts', 'manage-own-posts'])) { ... }
  *
  * Verificar se usuário tem role:
- *     if (auth()->user()->hasRole('admin')) {
- *         // permite ação...
- *     }
+ *     if (auth()->user()->hasRole('admin')) { ... }
  *
- * Proteger rota por permissão:
- *     Route::middleware('permission:manage-users')->group(function () {
- *         // rotas protegidas...
- *     });
- *
- * Proteger rota por role:
- *     Route::middleware('role:admin')->group(function () {
- *         // rotas protegidas...
- *     });
+ * Proteger rota por permissão (Middleware):
+ *     Route::middleware('permission:manage-posts,manage-own-posts')->group(...);
  *
  * =============================================================================
  */
@@ -133,7 +111,7 @@
 return [
     /*
     |--------------------------------------------------------------------------
-    | Roles
+    | Roles (Perfis de Usuário)
     |--------------------------------------------------------------------------
     */
     'roles' => [
@@ -143,15 +121,15 @@ return [
         ],
         'editor' => [
             'name' => 'Editor',
-            'description' => 'Gerencia publicações, cria e edita páginas e posts.'
+            'description' => 'Gerencia publicações, mídias, taxonomias e edita páginas e posts de qualquer autor.'
         ],
         'author' => [
             'name' => 'Autor',
-            'description' => 'Gerencia publicações, cria e edita páginas e posts de sua autoria.'
+            'description' => 'Gerencia publicações, mídias e páginas de sua autoria, além de gerenciar termos e categorias.'
         ],
         'subscriber' => [
             'name' => 'Assinante',
-            'description' => 'Acesso somente ao seu perfil.'
+            'description' => 'Acesso básico somente para visualização do painel e edição do próprio perfil.'
         ],
     ],
 
@@ -176,6 +154,14 @@ return [
             // Publicações
             'manage-pages',
             'manage-posts',
+            'manage-own-pages',
+            'manage-own-posts',
+            // Mídia
+            'manage-media',
+            'manage-own-media',
+            // Taxonomias e Termos
+            'manage-taxonomies',
+            'manage-tax-terms',
         ],
 
         'editor' => [
@@ -184,6 +170,8 @@ return [
             'edit-profile',
             'manage-pages',
             'manage-posts',
+            'manage-media',
+            'manage-taxonomies',
         ],
 
         'author' => [
@@ -191,22 +179,24 @@ return [
             'edit-profile',
             'manage-own-pages',
             'manage-own-posts',
+            'manage-own-media',
+            'manage-tax-terms',
         ],
 
         'subscriber' => [
             'view-dashboard',
             'edit-profile',
-        ]
+        ],
     ],
 
     /*
     |--------------------------------------------------------------------------
-    | Grupos de Permissions
+    | Grupos de Permissions (Exibição e Documentação)
     |--------------------------------------------------------------------------
     */
     'permissionGroups' => [
         'dashboard' => [
-            'view-dashboard' => 'Ver painel de controle',
+            'view-dashboard' => 'Ver painel de controle administrativo',
         ],
 
         'users' => [
@@ -222,14 +212,24 @@ return [
         ],
 
         'publications' => [
-            'manage-pages' => 'Criar e editar todas as páginas',
-            'manage-posts' => 'Criar e editar todos os posts',
+            'manage-pages'     => 'Criar e editar todas as páginas',
+            'manage-posts'     => 'Criar e editar todos os posts',
             'manage-own-pages' => 'Criar e editar suas próprias páginas',
             'manage-own-posts' => 'Criar e editar seus próprios posts',
         ],
 
+        'media' => [
+            'manage-media'     => 'Gerenciar toda a biblioteca de mídia e uploads',
+            'manage-own-media' => 'Gerenciar apenas os próprios uploads de mídia',
+        ],
+
+        'taxonomies' => [
+            'manage-taxonomies' => 'Gerenciar estrutura completa de taxonomias e termos',
+            'manage-tax-terms'  => 'Gerenciar apenas termos de taxonomias',
+        ],
+
         'profile' => [
-            'edit-profile' => 'Editar dados do próprio perfil',
+            'edit-profile' => 'Editar dados e senha do próprio perfil',
         ],
     ],
 ];

@@ -94,5 +94,15 @@ class AppServiceProvider extends ServiceProvider
         Blade::directive('footerAssets', function () {
             return "<?php echo app(\\App\Services\\AssetManager::class)->renderScripts(true); ?>";
         });
+
+        // Registra a diretiva @permission(...)
+        Blade::if('permission', function ($permissions) {
+            return auth()->check() && auth()->user()->hasPermission($permissions);
+        });
+
+        // Registra a diretiva @isRole(...)
+        Blade::if('isRole', function ($role) {
+            return auth()->check() && auth()->user()->hasRole($role);
+        });
     }
 }

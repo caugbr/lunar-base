@@ -27,6 +27,7 @@
                 <li><a href="#publication-types">Registro de Tipos de Publicação (PublicationTypes)</a></li>
                 <li><a href="#provedor">Ciclo de Vida (ServiceProvider)</a></li>
                 <li><a href="#db">Banco de Dados (Migrations & Models)</a></li>
+                <li><a href="#helpers">Helpers e Funções Utilitárias</a></li>
                 <li><a href="#boas-praticas">Boas Práticas de Organização</a></li>
             </ul>
         </nav>
@@ -65,6 +66,10 @@
             <p>Os plugins residem na pasta <code>/plugins</code> na raiz do projeto:</p>
             <pre><code>plugins/
 └── MeuPlugin/
+    ├── HelperFunctions/                    {{-- Funções globais procedurais (auto-carregadas) --}}
+    │   └── MeuPluginFunctions.php
+    ├── Helpers/                            {{-- Classes estáticas utilitárias (PSR-4 autoload) --}}
+    │   └── MeuPluginHelper.php
     ├── Http/
     │   ├── Controllers/
     │   │   └── MeuPluginController.php
@@ -303,12 +308,56 @@ class TrackerSettings extends Model
         </section>
 
         <!-- ═══════════════════════════════════════════════════════════════ -->
+        <section id="helpers">
+            <h2>Helpers e Funções Utilitárias</h2>
+            <div class="intro">
+                <p>O ecossistema do <span class="app-name">Lunar Base</span> divide os utilitários de plugins em duas categorias estritas para manter o equilíbrio perfeito entre performance de memória e ergonomia de desenvolvimento:</p>
+            </div>
+
+            <h4>1. Classes Utilitárias (Helpers)</h4>
+            <p>Devem residir na pasta <code>plugins/MeuPlugin/Helpers/</code>. São classes tipadas com namespace, carregadas sob demanda (lazy-loading) pelo Composer via PSR-4:</p>
+            <pre><code class="code-label">PHP</code>namespace Plugins\Tracker\Helpers;
+
+class TrackerMetrics
+{
+    public static function calculateBounceRate(int $visits, int $bounces): float
+    {
+        return $visits > 0 ? round(($bounces / $visits) * 100, 2) : 0.0;
+    }
+}</pre>
+            <p>Uso em Controllers ou Services: <code>use Plugins\Tracker\Helpers\TrackerMetrics;</code></p>
+
+            <h4>2. Funções Globais (HelperFunctions)</h4>
+            <p>Devem residir na pasta <code>plugins/MeuPlugin/HelperFunctions/</code>. São arquivos procedurais contendo funções utilitárias que precisam estar acessíveis globalmente em templates Blade, rotas e controladores.</p>
+
+            <div class="tip">
+                <strong>Auto-Descoberta do Core:</strong> Qualquer arquivo <code>*.php</code> criado dentro de <code>plugins/*/HelperFunctions/</code> é incluído automaticamente pelo <code>app/helpers.php</code> durante a inicialização do sistema, <strong>dispensando chamadas de <code>require</code> manuais</strong> no seu ServiceProvider.
+            </div>
+
+            <h4>Regra Obrigatória para Funções Globais:</h4>
+            <p>Sempre envolva suas funções em <code>if (!function_exists('...'))</code> para evitar erros de redeclaração:</p>
+
+            <pre><code class="code-label">PHP</code>// plugins/MeuPlugin/HelperFunctions/string_helpers.php
+
+if (!function_exists('tracker_format_currency')) {
+    /**
+     * Formata valores para o padrão monetário brasileiro.
+     */
+    function tracker_format_currency(float $value): string
+    {
+        return 'R$ ' . number_format($value, 2, ',', '.');
+    }
+}</pre>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="boas-praticas">
             <h2>Boas Práticas de Organização</h2>
             <ul class="steps">
                 <li><strong>Nomenclatura Única:</strong> Use PascalCase para pastas e namespaces (ex: <code>Plugins\Tracker</code>).</li>
                 <li><strong>Namespaces de Views:</strong> Sempre defina um namespace exclusivo e em minúsculas (ex: <code>'tracker'</code>) no <code>loadViewsFrom()</code> para evitar conflitos de templates.</li>
-                <li><strong>Isolamento de Assets:</strong> Injete estilos e scripts usando <code>add_script()</code> e <code>add_inline_script()</code> no `@footerAssets`, mantendo o código JS em arquivos estáticos separados.</li>
+                <li><strong>Isolamento de Assets:</strong> Injete estilos e scripts usando <code>add_script()</code> e <code>add_inline_script()</code> no <code>@footerAssets</code>, mantendo o código JS em arquivos estáticos separados.</li>
+                <li><strong>Separação de Funções e Classes:</strong> Não misture funções soltas em <code>Helpers/</code>. Use <code>HelperFunctions/</code> exclusivamente para funções procedurais globais.</li>
                 <li><strong>Checagem de Dependências:</strong> Use <code>class_exists()</code> para verificar pacotes opcionais antes de executar métodos que possam falhar caso o pacote não esteja no <code>vendor/</code>.</li>
             </ul>
         </section>

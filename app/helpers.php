@@ -1,13 +1,20 @@
 <?php
 
 /**
- * Carregador Mestre de Helpers do Core do Lunar Base.
- * Varre e carrega automaticamente qualquer arquivo dentro de app/Helpers/*.php
+ * Carregador Mestre de Helpers do Core e Plugins do Lunar Base.
  */
-$helpersDir = __DIR__ . '/Helpers';
 
-if (is_dir($helpersDir)) {
-    foreach (glob($helpersDir . '/*.php') as $helperFile) {
-        require_once $helperFile;
-    }
+// Carrega automaticamente todos os helpers do Core (app/Helpers/*.php)
+$coreHelpersDir = __DIR__ . '/Helpers';
+
+foreach (glob($coreHelpersDir . '/*.php') as $helperFile) {
+    require_once $helperFile;
+}
+
+// Carrega automaticamente os helpers de todos os plugins (/plugins/*/Helpers/*.php)
+$projectRoot = dirname(__DIR__);
+$pluginsHelpersPattern = $projectRoot . '/plugins/*/HelperFunctions/*.php';
+
+foreach (glob($pluginsHelpersPattern) as $helperFile) {
+    require_once $helperFile;
 }

@@ -38,9 +38,32 @@ class User extends Authenticatable implements MustVerifyEmail // Adicionado 'imp
         return $config['permissionsByRole'][$this->role] ?? [];
     }
 
-    public function hasPermission(string $permission): bool
+    // public function hasPermission(string $permission): bool
+    // {
+    //     return in_array($permission, $this->permissions, true);
+    // }
+    public function hasPermission(string|array $permissions): bool
     {
-        return in_array($permission, $this->permissions, true);
+        // Se for string com vírgula (ex: "manage-posts,manage-own-posts"), converte para array
+        if (is_string($permissions)) {
+            $permissions = array_map('trim', explode(',', $permissions));
+        }
+
+        // Se o usuário for admin, já tem todas as permissões
+        if ($this->role === 'admin') {
+            return true;
+        }
+
+        $userPermissions = $this->permissions;
+
+        // Lógica OR: Se tiver QUALQUER UMA das permissões fornecidas, retorna true
+        foreach ($permissions as $permission) {
+            if (in_array($permission, $userPermissions, true)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function isAdmin()

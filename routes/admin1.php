@@ -57,42 +57,39 @@ Route::post('/admin/themes/clear-preview', function () {
     return response()->json(['success' => true]);
 })->name('admin.themes.clear_preview');
 
-$middlewares = ['auth', 'permission:view-dashboard'];
+$middlewares = ['auth'];
 if (dbAvailable('settings') && setting('auth.verify_email', false)) {
-    $middlewares[] = 'verified';
+    $middlewares = ['auth', 'verified'];
 }
-
-// ========== ROTAS PROTEGIDAS DA ADMIN ==========
+// ========== ROTAS PROTEGIDAS ==========
 Route::middleware($middlewares)->prefix('admin')->name('admin.')->group(function () {
     // Perfil (ambos editam seu próprio perfil)
     Route::get('/profile', [EditorProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [EditorProfileController::class, 'update'])->name('profile.update');
 
-    // Plugins (Apenas Admin)
-    Route::middleware(['role:admin'])->group(function () {
-        Route::get('plugins', [PluginController::class, 'index'])->name('plugins.index');
-        Route::post('plugins/{plugin}/toggle', [PluginController::class, 'toggle'])->name('plugins.toggle');
-        Route::post('plugins/toggle-all/{status}', [PluginController::class, 'toggleAll'])
-            ->name('plugins.toggle_all')
-            ->where('status', '0|1');
+    // Plugins
+    Route::get('plugins', [PluginController::class, 'index'])->name('plugins.index');
+    Route::post('plugins/{plugin}/toggle', [PluginController::class, 'toggle'])->name('plugins.toggle');
+    Route::post('plugins/toggle-all/{status}', [PluginController::class, 'toggleAll'])
+        ->name('plugins.toggle_all')
+        ->where('status', '0|1');
 
-        // Marketplace de Plugins
-        Route::get('plugins/marketplace', [PluginMarketplaceController::class, 'index'])->name('plugins.marketplace.index');
-        Route::post('plugins/marketplace/install', [PluginMarketplaceController::class, 'installBatch'])->name('plugins.marketplace.install');
-        Route::post('plugins/marketplace/refresh', [PluginMarketplaceController::class, 'refresh'])->name('plugins.marketplace.refresh');
-        Route::delete('plugins/marketplace/remove/{folder}', [PluginMarketplaceController::class, 'remove'])->name('plugins.marketplace.remove');
+    // Marketplace de Plugins
+    Route::get('plugins/marketplace', [PluginMarketplaceController::class, 'index'])->name('plugins.marketplace.index');
+    Route::post('plugins/marketplace/install', [PluginMarketplaceController::class, 'installBatch'])->name('plugins.marketplace.install');
+    Route::post('plugins/marketplace/refresh', [PluginMarketplaceController::class, 'refresh'])->name('plugins.marketplace.refresh');
+    Route::delete('plugins/marketplace/remove/{folder}', [PluginMarketplaceController::class, 'remove'])->name('plugins.marketplace.remove');
 
-        // Temas
-        Route::get('themes', [ThemeController::class, 'index'])->name('themes.index');
-        Route::post('themes/{theme}/toggle', [ThemeController::class, 'toggle'])->name('themes.toggle');
-        Route::get('themes/{theme}/screenshot', [ThemeController::class, 'screenshot'])->name('themes.screenshot');
+    // Temas
+    Route::get('themes', [ThemeController::class, 'index'])->name('themes.index');
+    Route::post('themes/{theme}/toggle', [ThemeController::class, 'toggle'])->name('themes.toggle');
+    Route::get('themes/{theme}/screenshot', [ThemeController::class, 'screenshot'])->name('themes.screenshot');
 
-        // Marketplace de Temas
-        Route::get('themes/marketplace', [ThemeMarketplaceController::class, 'index'])->name('themes.marketplace.index');
-        Route::post('themes/marketplace/install', [ThemeMarketplaceController::class, 'installBatch'])->name('themes.marketplace.install');
-        Route::post('themes/marketplace/refresh', [ThemeMarketplaceController::class, 'refresh'])->name('themes.marketplace.refresh');
-        Route::delete('themes/marketplace/remove/{folder}', [ThemeMarketplaceController::class, 'remove'])->name('themes.marketplace.remove');
-    });
+    // Marketplace de Temas
+    Route::get('themes/marketplace', [ThemeMarketplaceController::class, 'index'])->name('themes.marketplace.index');
+    Route::post('themes/marketplace/install', [ThemeMarketplaceController::class, 'installBatch'])->name('themes.marketplace.install');
+    Route::post('themes/marketplace/refresh', [ThemeMarketplaceController::class, 'refresh'])->name('themes.marketplace.refresh');
+    Route::delete('themes/marketplace/remove/{folder}', [ThemeMarketplaceController::class, 'remove'])->name('themes.marketplace.remove');
 
     // Dashboard
     Route::get('/dashboard', [AdminDashboard::class, 'index'])->name('dashboard.index');
@@ -103,13 +100,10 @@ Route::middleware($middlewares)->prefix('admin')->name('admin.')->group(function
         Route::post('update/check', [UpdateController::class, 'check'])->name('update.check');
     });
 
-    // Tools
-    Route::middleware(['role:admin'])->group(function () {
-        Route::view('tools', 'admin.tools.index')->name('tools.index');
-        Route::get('tools/content-transfer', [ContentTransferController::class, 'index'])->name('tools.content-transfer.index');
-        Route::post('tools/content-transfer/export', [ContentTransferController::class, 'export'])->name('tools.content-transfer.export');
-        Route::post('tools/content-transfer/import', [ContentTransferController::class, 'import'])->name('tools.content-transfer.import');
-    });
+    Route::view('tools', 'admin.tools.index')->name('tools.index');
+    Route::get('tools/content-transfer', [ContentTransferController::class, 'index'])->name('tools.content-transfer.index');
+    Route::post('tools/content-transfer/export', [ContentTransferController::class, 'export'])->name('tools.content-transfer.export');
+    Route::post('tools/content-transfer/import', [ContentTransferController::class, 'import'])->name('tools.content-transfer.import');
 
     // Heartbeat
     Route::post('/heartbeat', [HeartbeatController::class, 'pulse'])->name('heartbeat');
@@ -117,19 +111,28 @@ Route::middleware($middlewares)->prefix('admin')->name('admin.')->group(function
     // Rotas de controle de bloqueio de conteúdo
     Route::post('/content-lock/takeover', [ContentLockController::class, 'takeOver'])->name('content-lock.takeover');
     Route::post('/content-lock/release', [ContentLockController::class, 'release'])->name('content-lock.release');
+});
 
-    // Referências (Apenas Admin)
-    Route::middleware(['role:admin'])->group(function () {
-        Route::get('reference', [ReferenceController::class, 'index'])
-            ->name('reference.index');
-        Route::get('reference/shortcodes', [ReferenceController::class, 'shortcodes'])
-            ->name('shortcodes');
-        Route::get('reference/hooks', [ReferenceController::class, 'hooks'])
-            ->name('hooks');
-        Route::get('reference/roles-permissions', [ReferenceController::class, 'permissions'])
-            ->name('roles-permissions');
-        Route::get('reference/logs', [ReferenceController::class, 'logs'])->name('logs');
-    });
+
+$middlewares = ['auth', 'permission:view-dashboard'];
+if (dbAvailable('settings') && setting('auth.verify_email', false)) {
+    $middlewares = ['auth', 'permission:view-dashboard', 'verified'];
+}
+// ========== ROTAS PROTEGIDAS (ADMIN + EDITOR) ==========
+Route::middleware($middlewares)->prefix('admin')->name('admin.')->group(function () {
+    // Referências
+    Route::get('reference', [ReferenceController::class, 'index'])
+        ->name('reference.index');
+    Route::get('reference/shortcodes', [ReferenceController::class, 'shortcodes'])
+        ->name('shortcodes');
+    Route::get('reference/hooks', [ReferenceController::class, 'hooks'])
+        ->name('hooks');
+
+    // Permissões
+    Route::get('reference/roles-permissions', [ReferenceController::class, 'permissions'])
+        ->name('roles-permissions');
+    // Logs
+    Route::get('reference/logs', [ReferenceController::class, 'logs'])->name('logs');
 
     // Rotas da Lixeira de Páginas
     Route::post('pages/{id}/restore', [PageController::class, 'restore'])->name('pages.restore');
@@ -150,31 +153,31 @@ Route::middleware($middlewares)->prefix('admin')->name('admin.')->group(function
         ->middleware('permission:manage-posts,manage-own-posts');
 
     // Media Manager
-    Route::get('media/data', [MediaController::class, 'data'])
-        ->name('media.data')
-        ->middleware('permission:manage-media,manage-own-media');
-    Route::resource('media', MediaController::class)->except(['create', 'show'])
-        ->parameters(['media' => 'media'])
-        ->middleware('permission:manage-media,manage-own-media');
+    Route::get('media/data', [MediaController::class, 'data'])->name('media.data');
+    Route::resource('media', MediaController::class)->except(['create', 'show'])->parameters(['media' => 'media']);
 
     // Taxonomias
-    Route::resource('taxonomies', TaxonomyController::class)
-        ->middleware('permission:manage-taxonomies');
-    Route::resource('terms', TermController::class)
-        ->middleware('permission:manage-taxonomies,manage-tax-terms');
+    Route::resource('taxonomies', TaxonomyController::class);
+    Route::resource('terms', TermController::class);
 
     // Dependency management
     Route::post('addons/install-dependency', [App\Http\Controllers\Admin\AddonDependencyController::class, 'install'])
         ->name('addons.install_dependency')
         ->middleware('auth');
 
-    // Rotas restritas ao Administrador
-    Route::middleware(['role:admin'])->group(function () {
-        // CRUD de usuários (só admin)
-        Route::resource('users', UserController::class);
+});
 
-        // Configurações
-        Route::get('settings', [SettingController::class, 'index'])->name('settings.index');
-        Route::post('settings', [SettingController::class, 'update'])->name('settings.update');
-    });
+// ========== ROTAS ADMIN APENAS ==========
+
+$middlewares = ['auth', 'role:admin'];
+if (dbAvailable('settings') && setting('auth.verify_email', false)) {
+    $middlewares = ['auth', 'role:admin', 'verified'];
+}
+Route::middleware($middlewares)->prefix('admin')->name('admin.')->group(function () {
+    // CRUD de usuários (só admin)
+    Route::resource('users', UserController::class);
+
+    // Configurações
+    Route::get('settings', [SettingController::class, 'index'])->name('settings.index');
+    Route::post('settings', [SettingController::class, 'update'])->name('settings.update');
 });

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Post extends Model
@@ -36,6 +37,42 @@ class Post extends Model
         'featured' => 'boolean',
         'sticky' => 'boolean',
     ];
+
+
+    /**
+     * Escopo que filtra automaticamente posts visíveis pelo usuário logado
+     */
+    public function scopeForCurrentUser(Builder $query): Builder
+    {
+        $user = auth()->user();
+
+        // Se não tiver logado ou se tiver permissão plena, não filtra nada
+        if (!$user || $user->hasPermission('manage-posts')) {
+            return $query;
+        }
+
+        // Se só gerencia os próprios posts, isola pelo autor
+        if ($user->hasPermission('manage-own-posts')) {
+            return $query->where('author_id', $user->id);
+        }
+
+        // Se não tiver nenhuma permissão, barra tudo
+        return $query->whereRaw('1 = 0');
+    }
+
+    /**
+     * Helper para saber se o usuário pode gerenciar este post específico
+     */
+    public function canBeManagedBy(?User $user = null): bool
+    {
+        $user = $user ?? auth()->user();
+        if (!$user) return false;
+
+        if ($user->hasPermission('manage-posts')) return true;
+        if ($user->hasPermission('manage-own-posts')) return $this->author_id === $user->id;
+
+        return false;
+    }
 
     // ==========================================
     // RELACIONAMENTOS

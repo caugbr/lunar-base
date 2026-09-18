@@ -14,9 +14,7 @@ class MediaController extends Controller
      */
     public function index(Request $request)
     {
-        abort_unless(auth()->user()->hasPermission(['manage-media', 'manage-own-media']), 403);
-
-        $query = Media::forCurrentUser()->with('mediaable');
+        $query = Media::with('mediaable');
 
         // Filtros
         if ($request->filled('type')) {
@@ -44,8 +42,6 @@ class MediaController extends Controller
      */
     public function store(Request $request)
     {
-        abort_unless(auth()->user()->hasPermission(['manage-media', 'manage-own-media']), 403);
-
         $request->validate([
             'file' => 'required|file|mimes:jpg,jpeg,png,gif,webp,svg,pdf,doc,docx|max:10240', // 10MB
             'folder' => 'nullable|string|max:50',
@@ -56,7 +52,7 @@ class MediaController extends Controller
         $file = $request->file('file');
         $folder = $request->input('folder', 'uploads');
 
-        // Upload da imagem
+        // Usa seu helper já adaptado
         $result = uploadImage($file, $folder, [
             'save_original' => true,
             'create_media_record' => true,
@@ -66,13 +62,6 @@ class MediaController extends Controller
             'alt' => $request->input('alt'),
             'caption' => $request->input('caption'),
         ]);
-
-        // Garante que o author_id seja associado ao registro criado pelo helper
-        if (isset($result['media']) && $result['media'] instanceof Media) {
-            if (empty($result['media']->author_id)) {
-                $result['media']->update(['author_id' => auth()->id()]);
-            }
-        }
 
         // Resposta JSON para Alpine/AJAX
         if ($request->wantsJson()) {
@@ -93,8 +82,6 @@ class MediaController extends Controller
      */
     public function update(Request $request, Media $media)
     {
-        abort_unless($media->canBeManagedBy(), 403, 'Você não tem permissão para editar esta mídia.');
-
         $validated = $request->validate([
             'name' => 'nullable|string|max:255',
             'alt' => 'nullable|string|max:255',
@@ -123,17 +110,15 @@ class MediaController extends Controller
      */
     public function destroy(Media $media)
     {
-        abort_unless($media->canBeManagedBy(), 403, 'Você não tem permissão para excluir esta mídia.');
-
         // Extrai a pasta do path (ex: "media/settings/original" → "settings")
         $pathParts = explode('/', $media->path);
-        $folder = $pathParts[1] ?? 'uploads';
+        $folder = $pathParts[1] ?? 'uploads'; // Padrão: 'uploads'
 
         // Chama o helper para deletar arquivos físicos (original + variações)
         deleteImage($media->path, $folder, 'public');
 
         // Deleta o registro do banco
-        $media->delete();
+        $media->delete(); // ou forceDelete() se quiser exclusão permanente
 
         return request()->wantsJson()
             ? response()->json([
@@ -149,20 +134,22 @@ class MediaController extends Controller
      */
     public function data(Request $request)
     {
-        abort_unless(auth()->user()->hasPermission(['manage-media', 'manage-own-media']), 403);
-
-        // Aplica o escopo forCurrentUser() para que no modal o autor só veja o que é dele
-        $query = Media::forCurrentUser()->with(['mediaable', 'postThumbnail', 'pageThumbnail']);
+        // $query = Media::query()->with('mediaable');
+        $query = Media::with(['mediaable', 'postThumbnail', 'pageThumbnail']);
 
         // Filtro de vínculo
         if ($request->filled('linked')) {
             if ($request->linked === 'orphan') {
+                // Só o que NÃO tem vínculo
                 $query->whereNull('mediaable_id');
+
             } elseif ($request->linked === 'linked') {
                 if ($request->filled('mediaable_id')) {
+                    // Contexto específico (ex: edição de página)
                     $query->where('mediaable_id', $request->mediaable_id)
                         ->where('mediaable_type', $request->mediaable_type);
                 } else {
+                    // 👈 Contexto geral (admin/media): só o que JÁ tem vínculo
                     $query->whereNotNull('mediaable_id');
                 }
             }
@@ -191,18 +178,21 @@ class MediaController extends Controller
 
         // Transforma a coleção adicionando dados úteis para o frontend
         $media->getCollection()->transform(function ($item) {
+            // SVG não tem thumbnail, usa a própria imagem
             if (str_starts_with($item->mime_type, 'image/svg')) {
                 $thumbnailUrl = $item->url;
             } else {
+                // Gera URL da thumbnail de forma segura para qualquer extensão
                 $pathInfo = pathinfo($item->path);
                 $thumbName = $pathInfo['filename'] . '_thumb.' . $pathInfo['extension'];
                 $thumbPath = rtrim($pathInfo['dirname'], '/') . '/' . $thumbName;
 
                 $thumbnailUrl = Storage::disk('public')->exists($thumbPath)
                     ? Storage::disk('public')->url($thumbPath)
-                    : $item->url;
+                    : $item->url; // Fallback para a original se não houver thumb
             }
 
+            // 👇 VÍNCULO 1: via mediaable (polimórfico original)
             $mediaableInfo = null;
             if ($item->mediaable) {
                 $mediaableInfo = [
@@ -216,6 +206,7 @@ class MediaController extends Controller
                 ];
             }
 
+            // 👇 VÍNCULO 2: via thumbnail_id
             $thumbnailInfo = $item->thumbnail_of;
 
             return [
@@ -230,8 +221,8 @@ class MediaController extends Controller
                 'is_image' => $item->is_image,
                 'mime_type' => $item->mime_type,
                 'created_at' => $item->created_at->format('d/m/Y H:i'),
-                'linked_to'    => $mediaableInfo,
-                'thumbnail_of' => $thumbnailInfo,
+                'linked_to'    => $mediaableInfo,   // 👈 vínculo polimórfico
+                'thumbnail_of' => $thumbnailInfo,   // 👈 vínculo como thumbnail
             ];
         });
 

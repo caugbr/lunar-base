@@ -56,12 +56,12 @@ window.Heartbeat = (function () {
             'X-Requested-With': 'XMLHttpRequest'
         };
 
-        // 1. Tenta pegar da Meta Tag (se existir)
+        // Tenta pegar da Meta Tag (se existir)
         const metaTag = document.querySelector('meta[name="csrf-token"]');
         if (metaTag && metaTag.getAttribute('content')) {
             headers['X-CSRF-TOKEN'] = metaTag.getAttribute('content');
         } else {
-            // 2. Se não existir meta tag, pega do Cookie oficial do Laravel!
+            // Se não existir meta tag, pega do Cookie oficial do Laravel!
             const xsrfToken = getCookie('XSRF-TOKEN');
             if (xsrfToken) {
                 headers['X-XSRF-TOKEN'] = xsrfToken;

@@ -1,5 +1,27 @@
 # Changelog
 
+## [2.10.0] - 2026-09-17
+
+### Added
+- Novo Plugin RoleSwitcher - Sistema de alternância de papéis sem alterar o banco de dados
+- Novas Diretivas Blade - @permission(...) e @isRole(...)
+- Permissões Granulares de Mídia - Adicionadas manage-media e manage-own-media ao sistema de ACL
+- Permissões Granulares de Taxonomia - Adicionadas manage-taxonomies e manage-tax-terms
+- Migration em Mídia - Adicionado campo author_id à tabela media
+
+### Changed
+- O app/helpers.php do Core agora descobre e carrega automaticamente arquivos de plugins /HelperFunctions
+- Sintaxe Avançada no Menu Administrativo: O parser de navegação agora suporta negações de permissão com prefixo ! (ex: manage-tax-terms,!manage-taxonomies) e lógica disjuntiva (OR) para listas de permissões
+- Ajuste na Guarda Global da Admin: A entrada do prefixo /admin agora utiliza a guarda semântica escalável permission:view-dashboard em vez de papéis fixos
+- Limpeza no Model Student: Adequação do $fillable para persistência correta de user_id, name, email e dados de vínculo com a tabela users
+
+### Fixed
+- Isolamento de Conteúdo para Autores (manage-own-*):
+  - Implementação de scopeForCurrentUser() e canBeManagedBy() nos models Post, Page e Media
+  - Correção das listagens, lixeiras e contadores nas abas para refletir apenas os registros pertencentes ao autor autenticado
+- Correção do vazamento da variável de loop $page/$post que disparava indevidamente o modal de ContentLock em listagens
+- O método User::hasPermission agora suporta também arrays e strings separadas por vírgula
+
 ## [2.9.0] 2026-09-15
 
 ### Added

@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     let isLockedByOther = false;
 
-    // 1. ANTES DE CADA PULSO: Diz pro Heartbeat incluir nosso lock
+    // ANTES DE CADA PULSO: Diz pro Heartbeat incluir nosso lock
     document.addEventListener('heartbeat-send', function (e) {
         e.detail.enqueue('content_lock', {
             type: contentType,
@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // 2. NA RESPOSTA DO PULSO: Analisa o status do lock
+    // NA RESPOSTA DO PULSO: Analisa o status do lock
     document.addEventListener('heartbeat-tick', function (e) {
         const response = e.detail.content_lock;
         if (!response) return;
@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // 3. AÇÃO DE TAKE OVER (Assumir o controle)
+    // AÇÃO DE TAKE OVER (Assumir o controle)
     const btnTakeover = document.getElementById('btn-lock-takeover');
     if (btnTakeover) {
         btnTakeover.addEventListener('click', function () {
@@ -118,7 +118,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // 4. LIBERAR LOCK AO FECHAR OU NAVEGAR
+    // LIBERAR LOCK AO FECHAR OU NAVEGAR
     window.addEventListener('beforeunload', function () {
         if (!isLockedByOther) {
             navigator.sendBeacon('/admin/content-lock/release', new Blob([JSON.stringify({

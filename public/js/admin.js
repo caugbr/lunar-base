@@ -66,13 +66,13 @@ document.addEventListener('heartbeat-auth-lost', function () {
 // Escuta a mensagem enviada de dentro do iframe avisando que logou
 window.addEventListener('message', function (event) {
     if (event.data && event.data.type === 'heartbeat-auth-success') {
-        // 1. Fecha o x-modal
+        // Fecha o x-modal
         document.getElementById('heartbeat-auth-overlay').classList.remove('visible');
 
-        // 2. Limpa o iframe
+        // Limpa o iframe
         document.getElementById('interim-login-frame').src = 'about:blank';
 
-        // 3. Retoma os batimentos do Heartbeat!
+        // Retoma os batimentos do Heartbeat!
         window.Heartbeat.resume();
     }
 });

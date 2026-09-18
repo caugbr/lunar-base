@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use App\Traits\HasMeta;
 
@@ -34,6 +35,41 @@ class Page extends Model
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
     ];
+
+    /**
+     * Escopo que filtra automaticamente pages visíveis pelo usuário logado
+     */
+    public function scopeForCurrentUser(Builder $query): Builder
+    {
+        $user = auth()->user();
+
+        // Se não tiver logado ou se tiver permissão plena, não filtra nada
+        if (!$user || $user->hasPermission('manage-pages')) {
+            return $query;
+        }
+
+        // Se só gerencia as próprias pages, isola pelo autor
+        if ($user->hasPermission('manage-own-pages')) {
+            return $query->where('author_id', $user->id);
+        }
+
+        // Se não tiver nenhuma permissão, barra tudo
+        return $query->whereRaw('1 = 0');
+    }
+
+    /**
+     * Helper para saber se o usuário pode gerenciar este post específico
+     */
+    public function canBeManagedBy(?User $user = null): bool
+    {
+        $user = $user ?? auth()->user();
+        if (!$user) return false;
+
+        if ($user->hasPermission('manage-pages')) return true;
+        if ($user->hasPermission('manage-own-pages')) return $this->author_id === $user->id;
+
+        return false;
+    }
 
     // ==========================================
     // RELACIONAMENTOS
