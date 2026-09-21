@@ -1,6 +1,21 @@
 # Changelog
 
+## [2.12.0] 2026-09-20
+
+### Added
+- Botão no marketplace de plugin e temas para excluir todos os plugins inativos
+- Função JS emit() - shorthand para emitir eventos
+
+### Changed
+- Os temas sem imagem agora assumem uma imagem padrão do sistema como screenshot
+- O menu admin agora é feito via <x-render> e pode ser substituído no hook 'admin.menu'
+
+### Fixed
+- Nova página e novo post corrigidos (o hook tentava mandar um objeto que não existe)
+
 ## [2.11.1] 2026-09-18
+
+### Fixed
 - VERSION atualizado
 
 ## [2.11.0] 2026-09-18

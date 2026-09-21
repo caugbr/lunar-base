@@ -58,7 +58,7 @@
             >
 
                 <!-- Theme Preview Area: Exibe imagem se existir, ou fallback textual elegante -->
-                @if($theme->screenshot)
+                {{-- @if($theme->screenshot)
                     <div class="theme-preview-image">
                         <img src="{{ route('admin.themes.screenshot', $theme->id) }}" alt="{{ $theme->name }}">
                     </div>
@@ -66,7 +66,10 @@
                     <div class="theme-preview-placeholder">
                         <span>{{ strtoupper($theme->name) }}</span>
                     </div>
-                @endif
+                @endif --}}
+                <div class="theme-preview-image">
+                    <img src="{{ $theme->screenshot_url }}" alt="{{ $theme->name }}">
+                </div>
 
                 <div class="theme-details">
                     <div class="theme-header-row">

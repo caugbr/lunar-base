@@ -14,6 +14,45 @@ class ThemeController extends Controller
     /**
      * Display the theme gallery and synchronize with directories.
      */
+    // public function index(AddonMarketplaceService $marketplace)
+    // {
+    //     $this->syncThemes();
+
+    //     $themes = Theme::orderBy('name')->get();
+
+    //     // Busca informações do GitHub para comparar versões na lista local
+    //     $remoteThemes = collect($marketplace->getAvailableThemes())->keyBy('folder');
+
+    //     $themes->transform(function ($theme) use ($remoteThemes) {
+    //         $folderName = Str::studly($theme->folder_name);
+    //         $remote     = $remoteThemes->get($folderName);
+
+    //         $theme->remote_version = $remote['remote_version'] ?? null;
+    //         $theme->has_update     = $remote['has_update'] ?? false;
+    //         $theme->download_url   = $remote['download_url'] ?? null;
+
+    //         // 1. Lê o plugin.json diretamente do disco
+    //         $manifestPath = base_path("themes/{$theme->folder_name}/theme.json");
+
+    //         // Fallback caso a pasta use StudlyCase
+    //         if (!File::exists($manifestPath)) {
+    //             $manifestPath = base_path("themes/{$folderName}/theme.json");
+    //         }
+
+    //         if (File::exists($manifestPath)) {
+    //             $manifest = json_decode(File::get($manifestPath), true) ?? [];
+    //             $theme->tags = (array) ($manifest['tags'] ?? []);
+    //         } else {
+    //             $theme->tags = [];
+    //         }
+
+    //         return $theme;
+    //     });
+
+    //     $tags = config('addons.tags.theme', []);
+
+    //     return view('admin.themes.index', compact('themes', 'tags'));
+    // }
     public function index(AddonMarketplaceService $marketplace)
     {
         $this->syncThemes();
@@ -31,7 +70,7 @@ class ThemeController extends Controller
             $theme->has_update     = $remote['has_update'] ?? false;
             $theme->download_url   = $remote['download_url'] ?? null;
 
-            // 1. Lê o plugin.json diretamente do disco
+            // 1. Lê o theme.json diretamente do disco
             $manifestPath = base_path("themes/{$theme->folder_name}/theme.json");
 
             // Fallback caso a pasta use StudlyCase
@@ -45,6 +84,15 @@ class ThemeController extends Controller
             } else {
                 $theme->tags = [];
             }
+
+            // 2. Valida se o arquivo físico do screenshot realmente existe no disco
+            $screenshotRelative = $theme->screenshot ?: 'resources/assets/images/screenshot.png';
+            $screenshotPath     = base_path("themes/{$folderName}/" . ltrim($screenshotRelative, '/'));
+
+            // Se o arquivo físico existir, usa a rota; caso contrário, entrega a imagem padrão
+            $theme->screenshot_url = File::exists($screenshotPath)
+                ? route('admin.themes.screenshot', $theme->id)
+                : asset('images/no-image-theme.png');
 
             return $theme;
         });
@@ -176,16 +224,39 @@ class ThemeController extends Controller
     /**
      * Serve the theme screenshot safely from the internal folder.
      */
+    // public function screenshot(Theme $theme)
+    // {
+    //     if ($theme->screenshot) {
+    //         $path = base_path("themes/{$theme->folder_name}/{$theme->screenshot}");
+
+    //         if (File::exists($path)) {
+    //             return response()->file($path);
+    //         }
+    //     }
+
+    //     abort(404);
+    // }
     public function screenshot(Theme $theme)
     {
         if ($theme->screenshot) {
-            $path = base_path("themes/{$theme->folder_name}/{$theme->screenshot}");
+            $folderName = Str::studly($theme->folder_name);
+            $screenshotRelative = ltrim($theme->screenshot, '/');
 
+            // 1. Tenta o caminho com StudlyCase
+            $path = base_path("themes/{$folderName}/{$screenshotRelative}");
+
+            // 2. Fallback com o nome exato gravado no banco
+            if (! File::exists($path)) {
+                $path = base_path("themes/{$theme->folder_name}/{$screenshotRelative}");
+            }
+
+            // Se o arquivo físico existir no disco, entrega a imagem real
             if (File::exists($path)) {
                 return response()->file($path);
             }
         }
 
-        abort(404);
+        // Se não existir ou o arquivo estiver quebrado, entrega a imagem padrão
+        return response()->file(public_path('images/no-image-theme.png'));
     }
 }

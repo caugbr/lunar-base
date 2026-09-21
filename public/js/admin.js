@@ -88,3 +88,24 @@ function debounce(func, delay) {
         }, delay);
     };
 }
+
+/**
+ * Dispara tanto eventos nativos do DOM ('input', 'change')
+ * quanto eventos customizados da aplicação ('media:updated')
+ */
+function emit(eventName, target = window, detail = null, options = {}) {
+    const eventOptions = {
+        bubbles: true,
+        cancelable: true,
+        composed: true,
+        ...options
+    };
+
+    // Se houver dados, cria CustomEvent; caso contrário, cria Event nativo
+    const event = (detail !== null && detail !== undefined)
+        ? new CustomEvent(eventName, { ...eventOptions, detail })
+        : new Event(eventName, eventOptions);
+
+    target.dispatchEvent(event);
+    return event;
+}

@@ -86,37 +86,97 @@ class PluginMarketplaceController extends Controller
     }
 
     /**
-     * Remove completamente a pasta do plugin do disco e do banco.
+     * Remove completamente a pasta de um único plugin do disco e do banco.
      */
-    public function remove(string $folder, AddonMarketplaceService $marketplace)
+    public function remove(string $folderName, AddonMarketplaceService $marketplace)
     {
-        // Sanitiza o nome da pasta em StudlyCase por segurança
-        $folderName = Str::studly($folder);
-
-        if (empty($folderName)) {
+        if (! $this->deletePlugin($folderName)) {
             return back()->with('error', 'Nome de plugin inválido.');
         }
-
-        $pluginPath = base_path("plugins/{$folderName}");
-
-        // Apaga a pasta física do plugin
-        if (File::exists($pluginPath)) {
-            File::deleteDirectory($pluginPath);
-        }
-
-        // Apaga o link simbólico de public/plugins/{kebab}
-        Artisan::call('plugin:link', [
-            'plugin' => Str::kebab($folderName),
-            '--unlink' => true,
-        ]);
-
-        // Apaga o registro do banco de dados (se cadastrado)
-        Plugin::where('folder_name', $folderName)->delete();
 
         // Limpa o cache do catálogo do marketplace para recalcular os status
         $marketplace->clearCache();
 
-        return redirect()->action([PluginController::class, 'index'])->with('success', "Plugin '{$folderName}' foi removido com sucesso!");
-        return back()->with('success', "Plugin '{$folderName}' foi removido com sucesso!");
+        return redirect()->action([PluginController::class, 'index'])
+            ->with('success', "Plugin '{$folderName}' foi removido com sucesso!");
+    }
+
+    /**
+     * Remove todos os plugins inativos em lote (apenas os disponíveis no catálogo).
+     */
+    public function removeInactive(AddonMarketplaceService $marketplace)
+    {
+        // 1. Mapeia os plugins remotos que realmente podem ser baixados novamente
+        $downloadablePlugins = collect($marketplace->getAvailablePlugins())
+            ->filter(fn ($item) => ! empty($item['download_url']))
+            ->keyBy(fn ($item) => str_replace(' ', '', $item['folder'] ?? $item['name'] ?? ''));
+
+        // 2. Busca todos os plugins inativos no banco
+        $inactivePlugins = Plugin::where('is_active', false)->get();
+
+        if ($inactivePlugins->isEmpty()) {
+            return back()->with('info', 'Nenhum plugin inativo encontrado para remoção.');
+        }
+
+        $deletedCount  = 0;
+        $skippedCustom = 0;
+
+        foreach ($inactivePlugins as $plugin) {
+            $folderName = $plugin->folder_name;
+
+            // Trava de segurança: se não está no catálogo ou não tem download_url, é próprio/local. Não toque!
+            if (! $downloadablePlugins->has($folderName)) {
+                $skippedCustom++;
+                continue;
+            }
+
+            if ($this->deletePlugin($plugin->folder_name)) {
+                $deletedCount++;
+            }
+        }
+
+        // Limpa o cache do catálogo apenas se algo foi deletado
+        if ($deletedCount > 0) {
+            $marketplace->clearCache();
+        }
+
+        if ($deletedCount === 0 && $skippedCustom > 0) {
+            return back()->with('info', 'Nenhum plugin foi excluído. Os plugins inativos presentes são locais/próprios e foram preservados.');
+        }
+
+        $message = "{$deletedCount} plugin(s) inativo(s) excluído(s) com sucesso!";
+        if ($skippedCustom > 0) {
+            $message .= " ({$skippedCustom} plugin(s) próprio(s) preservado(s)).";
+        }
+
+        return back()->with('success', $message);
+    }
+
+    /**
+     * Executa a limpeza física da pasta, link simbólico e registro no banco de dados.
+     */
+    protected function deletePlugin(string $folderName): bool
+    {
+        if (empty($folderName)) {
+            return false;
+        }
+
+        $pluginPath = base_path("plugins/{$folderName}");
+
+        // 1. Apaga a pasta física do plugin
+        if (File::exists($pluginPath)) {
+            File::deleteDirectory($pluginPath);
+        }
+
+        // 2. Apaga o link simbólico de assets públicos
+        Artisan::call('plugin:link', [
+            'plugin'   => Str::kebab($folderName),
+            '--unlink' => true,
+        ]);
+
+        // 3. Apaga o registro do banco de dados (se cadastrado)
+        Plugin::where('folder_name', $folderName)->delete();
+
+        return true;
     }
 }

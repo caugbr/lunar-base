@@ -52,7 +52,7 @@
             </div>
 
             <x-hook name="admin.before_menu" :params="$path" desc="Antes do menu" />
-            @include('admin.partials.menu')
+            <x-render name="admin_menu" />
             <x-hook name="admin.after_menu" :params="$path" desc="Depois do menu" />
 
 
@@ -67,7 +67,10 @@
                 </div>
                 <div class="admin-header-user">
                     <x-hook name="admin.header_user_start" :params="['user' => auth()->user()]" desc="Header, no início do menu de usuário" />
-                    <a href="{{ route('admin.profile.edit') }}">
+                    @php
+                        $href = apply_filters('profile_link', route('admin.profile.edit'));
+                    @endphp
+                    <a href="{{ $href }}">
                         <x-hook name="admin.header_user_avatar" :params="['user' => auth()->user()]" desc="Substitui o avatar do usuário">
                             <x-lucide-user-pen class="lucid-icon" style="vertical-align: baseline" />
                         </x-hook>

@@ -17,6 +17,7 @@ class RenderServiceProvider extends ServiceProvider
 
     public function registerBlocks(): void
     {
+        // Posts em destaque na home
         RenderManager::register('featured_posts', function ($params = []) {
             $amount = setting('reading.max_featured_posts', 5);
             $featuredPosts = Post::published()->featured()->feedOrder()->take($amount)->get();
@@ -29,6 +30,7 @@ class RenderServiceProvider extends ServiceProvider
             return view($view, compact('featuredPosts'))->render();
         });
 
+        // Bloco para editar taxonomias em posts e páginas
         RenderManager::register('taxonomy_fields', function ($params = []) {
             $type = $params['type'] ?? 'post';
             $item = $params['item'] ?? null;
@@ -40,6 +42,11 @@ class RenderServiceProvider extends ServiceProvider
             $selectedTermIds = $item ? $item->terms->pluck('id')->toArray() : [];
 
             return view('components.rendered.admin.taxonomy-fields', compact('taxonomies', 'selectedTermIds', 'type'))->render();
+        });
+
+        // Menu da admin
+        RenderManager::register('admin_menu', function () {
+            return view('components.rendered.admin.menu')->render();
         });
     }
 }

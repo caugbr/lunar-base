@@ -32,6 +32,11 @@
         </div>
     </div>
 
+    <form method="POST" action="{{ route('admin.themes.marketplace.remove-inactive') }}" style="display: none;" data-confirm="ATENÇÃO: Todos os temas inativos serão excluídos permanentemente do disco. Deseja continuar?" id="remove_inactive">
+        @csrf
+        @method('DELETE')
+    </form>
+
     {{-- Formulário Principal de Instalação em Lote --}}
     <form id="batch-install-theme-form" method="POST" action="{{ route('admin.themes.marketplace.install') }}">
         @csrf
@@ -46,7 +51,14 @@
                         <th>Nome</th>
                         <th>Descrição</th>
                         <th>Versão</th>
-                        <th>Status</th>
+                        <th style="display: flex; justify-content: space-between;">
+                            Status
+                            <div class="check-all">
+                                <button type="submit" class="transparent-btn remove-theme trash-inactive" title="Excluir inativos" form="remove_inactive">
+                                    <x-lucide-trash-2 class="lucid-icon" />
+                                </button>
+                            </div>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -110,7 +122,7 @@
 
 @push('styles')
 <style>
-a.remove-theme {
+.remove-theme {
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
@@ -127,13 +139,13 @@ a.remove-theme {
     line-height: 1.2;
 }
 
-a.remove-theme:hover {
+.remove-theme:hover {
     background-color: var(--color-danger, #ef4444);
     color: #ffffff;
     border-color: var(--color-danger, #ef4444);
 }
 
-a.remove-theme .lucid-icon {
+.remove-theme .lucid-icon {
     width: 13px;
     height: 13px;
 }
