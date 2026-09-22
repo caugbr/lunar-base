@@ -3,29 +3,6 @@
         $user = auth()->user();
 
         // Função universal de checagem de permissão e role
-        // $canAccess = function(array $node) use ($user): bool {
-        //     if (!$user) return false;
-
-        //     // 1. Checagem por role (aceita string única ou array de roles)
-        //     if (isset($node['role'])) {
-        //         $allowedRoles = (array) $node['role'];
-        //         if (!in_array($user->role, $allowedRoles, true)) {
-        //             return false;
-        //         }
-        //     }
-
-        //     // 2. Checagem por permission (via Gates do Laravel)
-        //     if (isset($node['permission'])) {
-        //         $requiredPermissions = (array) $node['permission'];
-        //         foreach ($requiredPermissions as $perm) {
-        //             if (!$user->hasPermission($perm)) {
-        //                 return false;
-        //             }
-        //         }
-        //     }
-
-        //     return true;
-        // };
         $canAccess = function(array $node) use ($user): bool {
             if (!$user) return false;
 
@@ -34,8 +11,6 @@
                 $allowedRoles = is_array($node['role'])
                     ? $node['role']
                     : array_map('trim', explode(',', $node['role']));
-                // print "ROLE:\n";
-                // print_r($allowedRoles);
 
                 if (!in_array($user->role, $allowedRoles, true)) {
                     return false;

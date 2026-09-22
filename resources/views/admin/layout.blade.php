@@ -16,14 +16,16 @@
     <link rel="stylesheet" href="{{ asset('css/admin/admin.css') }}">
     <link rel="stylesheet" href="{{ asset('css/dialog.css') }}">
 
-    <script src="{{ asset('js/dialog2.js') }}"></script>
+    <script src="{{ asset('js/dialog.js') }}"></script>
     <script src="{{ asset('js/admin.js') }}"></script>
 
     @if(setting('navigation.save_search_params'))
     <script src="{{ asset('js/preserve-search.js') }}"></script>
     @endif
 
-    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+    <x-hook name="admin.favicon" desc="Permite substituir o favicon">
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+    </x-hook>
 
     {{-- Alpine CDN --}}
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>

@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.12.1] 2026-09-21
+
+### Added
+- Admin favicon agora usa o hook 'admin.favicon' e pode ser substituída
+
 ## [2.12.0] 2026-09-20
 
 ### Added
