@@ -15,6 +15,15 @@
         />
         @break
 
+    @case('publication_types')
+        <x-publication-types
+            name="{{ $inputName }}"
+            id="{{ str_replace(['[', ']'], ['_', ''], $inputName) }}"
+            :value="$inputValue"
+            :unique="$def['unique'] ?? false"
+        />
+        @break
+
     @case('page')
         <x-page-picker
             name="{{ $inputName }}"

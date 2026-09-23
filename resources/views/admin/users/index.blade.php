@@ -98,6 +98,8 @@
                                 </button>
                             </form>
                             @endif
+
+                            <x-hook name="admin.user_list_actions" :params="['user' => $user]" desc="Botões de ação na listagem de usuários" />
                         </div>
                     </td>
                 </tr>

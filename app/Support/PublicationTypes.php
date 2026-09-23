@@ -13,26 +13,20 @@ class PublicationTypes
     /**
      * Registra um tipo de publicação no sistema.
      *
-     * @param string       $key       Identificador único (ex: 'post', 'page', 'course')
-     * @param array|string $data      Rótulo exibido (ex: 'Cursos') OU Array de configuração
-     * @param string|null  $model     Classe do Model Eloquent (opcional)
-     * @param array        $relations Relacionamentos para incluir na exportação (opcional)
+     * @param string $key  Identificador único (ex: 'post', 'page', 'course')
+     * @param array  $data Configurações do tipo
      */
-    public static function register(string $key, array|string $data, ?string $model = null, array $relations = []): void
+    public static function register(string $key, array $data = []): void
     {
-        if (is_string($data)) {
-            $label = $data;
-        } else {
-            $label     = $data['label'] ?? ucfirst($key);
-            $model     = $data['model'] ?? $model;
-            $relations = $data['relations'] ?? $relations;
-        }
-
         self::$types[$key] = [
-            'key'       => $key,
-            'label'     => $label,
-            'model'     => $model,
-            'relations' => $relations,
+            'key'           => $key,
+            'label'         => $data['label'] ?? ucfirst($key),
+            'model'         => $data['model'] ?? null,
+            'relations'     => $data['relations'] ?? [],
+            'search_fields' => $data['search_fields'] ?? ['title', 'content'],
+            'title_field'   => $data['title_field'] ?? 'title',
+            // Permite que qualquer dado extra de plugins também seja preservado
+            'extra'         => $data['extra'] ?? [],
         ];
     }
 
@@ -42,9 +36,22 @@ class PublicationTypes
     public static function all(): array
     {
         if (!self::$booted) {
-            // Tipos nativos do Core do Lunar Base registrados com rótulos explícitos
-            self::register('post', 'Posts (Blog)', Post::class, ['author', 'thumbnail', 'terms']);
-            self::register('page', 'Páginas', Page::class, ['author', 'thumbnail', 'terms']);
+            // Registro dos tipos nativos do Core do Lunar Base
+            self::register('post', [
+                'label'         => 'Posts (Blog)',
+                'model'         => Post::class,
+                'relations'     => ['author', 'thumbnail', 'terms'],
+                'search_fields' => ['title', 'content'],
+                'title_field'   => 'title',
+            ]);
+
+            self::register('page', [
+                'label'         => 'Páginas',
+                'model'         => Page::class,
+                'relations'     => ['author', 'thumbnail', 'terms'],
+                'search_fields' => ['title', 'content'],
+                'title_field'   => 'title',
+            ]);
 
             self::$booted = true;
         }
@@ -54,7 +61,7 @@ class PublicationTypes
 
     /**
      * Retorna um array associativo simples [key => label]
-     * Útil para renderizar checkboxes e dropdowns na Admin
+     * Útil para checkboxes e dropdowns na Admin
      */
     public static function labels(): array
     {

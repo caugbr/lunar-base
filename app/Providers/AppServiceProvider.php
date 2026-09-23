@@ -15,6 +15,7 @@ use Illuminate\Auth\Notifications\VerifyEmail; // Adicionado
 use Illuminate\Notifications\Messages\MailMessage; // Adicionado
 use App\Services\AssetManager;
 use App\Services\ContentLockService;
+// use App\Support\ConfigTranslator;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -104,5 +105,8 @@ class AppServiceProvider extends ServiceProvider
         Blade::if('isRole', function ($role) {
             return auth()->check() && auth()->user()->hasRole($role);
         });
+
+        // // Aplica a tradução para o idioma atual do site
+        // ConfigTranslator::apply();
     }
 }

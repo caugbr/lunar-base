@@ -408,6 +408,14 @@ return [
                     'default' => '',
                 ],
                 [
+                    'key'     => 'searchable_types',
+                    'label'   => 'Tipos incluídos na busca',
+                    'type'    => 'publication_types',
+                    'description' => 'Selecione os tipos de publicação que devem aparecer nos resultados de buscas no frontend.',
+                    'unique'  => false,
+                    'default' => ['post', 'page'],
+                ],
+                [
                     'type' => 'subtitle',
                     'icon' => 'link',
                     'label' => 'Montagem dos links dinâmicos'

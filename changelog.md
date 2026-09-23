@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.13.0] 2026-09-23
+
+### Added
+- Hook admin.user_list_actions na listagem de usuários
+- Plugin User Switcher - permite a um admin assumir a identidade de outro usuário
+- Comando config:lang para gerar arquivos JSON a partir das strings encontradas
+- Arquivo config/translatable.php com as regras para achar strings traduzíveis
+- Chamada ao ConfigTranslator em AppServiceProvider
+- Support/ConfigTranslator - tradução para itens de arquivos config em tempo de execução
+- Componente de busca para o front <x-search />
+- Controller para executar e view para exibir os resultados da busca
+
+### Changed
+- PublicationTypes atualizado para guardar campos de conteúdo para as buscas
+
 ## [2.12.1] 2026-09-21
 
 ### Added

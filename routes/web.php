@@ -1,6 +1,7 @@
 <?php
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\SearchController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 
@@ -12,6 +13,9 @@ if (dbAvailable('settings') && setting('auth.2fa_enabled', false)) {
 
 // home
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
+// Busca
+Route::get('/busca', [SearchController::class, 'index'])->name('search');
 
 if (dbAvailable('settings') && setting('auth.verify_email', false)) {
     // Rota da tela de aviso para verificar e-mail
