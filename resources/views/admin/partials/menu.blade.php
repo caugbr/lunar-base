@@ -52,6 +52,10 @@
         };
 
         $menuGroups = config('admin.menu', []);
+        $hiddenItems = config('admin.hideMenuItems', []);
+        if (!empty($hiddenItems)) {
+            $currentRole = auth()->user()->role;
+        }
         $injectedSections = \App\Support\AdminMenu::getInjectedSections();
         $injectedItems = \App\Support\AdminMenu::getInjectedItems();
         $injectedSubItems = \App\Support\AdminMenu::getInjectedSubItems();
@@ -187,6 +191,14 @@
                 $childrenActive = $hasChildren ? $hasActiveChild($visibleSubItems) : false;
                 $isOpen = $isActive || $childrenActive;
                 $childCount = count($visibleSubItems);
+
+                // itens escondidos em config/admin.php
+                if (!empty($hiddenItems)) {
+                    $hidden = $hiddenItems[$currentRole];
+                    if (!empty($hidden) && in_array($item['label'], $hidden)) {
+                        continue;
+                    }
+                }
             @endphp
 
             @if($hasChildren)

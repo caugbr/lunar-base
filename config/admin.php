@@ -299,6 +299,15 @@ return [
         ]
     ],
 
+    // Podemos esconder certos itens no menu por role, independente de
+    // permissões definidas nos itens do menu acima. Use o label.
+    // Pensado para ser temporário.
+    "hideMenuItems" => [
+        "admin" => [],
+        "editor" => [],
+        "author" => []
+    ],
+
     "dashboard" =>  [
         "icon" => "layout-dashboard",
         "title" => "Dashboard",
