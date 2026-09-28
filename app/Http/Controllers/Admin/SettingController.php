@@ -189,6 +189,14 @@ class SettingController extends Controller
                     continue;
                 }
 
+                // === PUBLICATION TYPES ===
+                if ($type === 'publication_types') {
+                    $value = $request->input($key, []);
+                    $value = is_array($value) ? implode(',', $value) : $value;
+                    Setting::set($key, $value, $groupKey, $type);
+                    continue;
+                }
+
                 // === REPEATER (Matrizes/Tabelas replicáveis) ===
                 if ($type === 'repeater') {
                     $rawInput = $request->input($key, []);

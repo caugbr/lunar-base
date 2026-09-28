@@ -19,6 +19,7 @@
                 <button type="button"
                     class="settings-tab {{ $loop->first ? 'active' : '' }}"
                     data-tab="{{ $groupKey }}"
+                    disabled
                     onclick="switchTab('{{ $groupKey }}')">
                     @if(isset($group['icon']))
                         <x-dynamic-component component="lucide-{{ $group['icon'] }}" class="lucid-icon" />
@@ -433,6 +434,12 @@ function switchTab(tabKey) {
     if (hidden) hidden.value = tabKey;
 }
 
+function enableTabButtons() {
+    document.querySelectorAll('.settings-tabs button').forEach(btn => {
+        btn.disabled = false;
+    });
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     // Password fields
     const passToggles = document.querySelectorAll('.password-field a');
@@ -446,6 +453,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ===== Dependency Manager =====
     new DependencyManager().init();
+
+    enableTabButtons();
 });
 
 class DependencyManager {

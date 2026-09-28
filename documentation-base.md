@@ -1,6 +1,7 @@
 # Lunar Base - Mapa Arquitetural do Sistema
 
 ## Comandos Artisan
+- ExportConfigTranslations - lê strings traduzíveis de /config e salva como json em /lang
 - FakeMigrate - registra as migrations sem executar
 - LinkPluginAssets - cria o link simbólico para um plugin (--unlink para desvincular)
 - LinkThemeAssets - cria o link simbólico para um tema (--unlink para desvincular)

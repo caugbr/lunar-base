@@ -109,3 +109,40 @@ function emit(eventName, target = window, detail = null, options = {}) {
     target.dispatchEvent(event);
     return event;
 }
+
+/**
+ * Aguarda uma condição retornar true dentro de um limite de tentativas.
+ * Sempre resolve uma Promise com `true` (sucesso) ou `false` (timeout ou erro).
+ *
+ * @param {Function} conditionFn - Função de teste (deve retornar true/false)
+ * @param {number}   [maxTries=50] - Limite máximo de tentativas
+ * @param {number}   [interval=300] - Intervalo em milissegundos
+ * @returns {Promise<boolean>}
+ */
+function when(conditionFn, maxTries = 50, interval = 300) {
+  return new Promise((resolve) => {
+    let attempts = 0;
+
+    const check = () => {
+      try {
+        // Se a condição for atendida, resolve com true
+        if (Boolean(conditionFn())) {
+          return resolve(true);
+        }
+      } catch (e) {
+        // Se a própria condição der erro de execução, apenas ignora e segue tentando
+      }
+
+      attempts++;
+
+      // Se estourou as tentativas, encerra com false
+      if (attempts >= maxTries) {
+        return resolve(false);
+      }
+
+      setTimeout(check, interval);
+    };
+
+    check();
+  });
+}

@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.14.0] 2026-09-27
+
+### Added
+- Recuperação de senha via email
+- Melhoria em settings - botões agora só habilitam quando efetivamente utilizáveis
+
+### Fixed
+- Tipo 'publication_types' em settings dava erro ao salvar - corrigido
+
 ## [2.13.1] 2026-09-24
 
 ### Added

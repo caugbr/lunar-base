@@ -15,12 +15,18 @@
     <div class="login-container">
         <h1>
             <x-lucide-lock class="lucid-icon" style="width: 20px; height: 20px;" />
-            <a href="{{ route('home') }}">{{ setting('site_name', 'Lunar Base') }}</a>
+            <a href="{{ route('home') }}" title="Ir para o site">{{ setting('site_name', 'Lunar Base') }}</a>
         </h1>
 
         @if ($errors->any())
             <div class="error">
                 {{ $errors->first() }}
+            </div>
+        @endif
+
+        @if (session('status'))
+            <div style="background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; padding: 12px; border-radius: 6px; margin-bottom: 16px; font-size: 0.9rem;">
+                {{ session('status') }}
             </div>
         @endif
 
@@ -64,6 +70,12 @@
                 ></div>
             </div>
             @endif
+
+            <div style="text-align: right; margin-top: -8px; margin-bottom: 16px;">
+                <a href="{{ route('password.request') }}" style="font-size: 0.85rem; color: var(--text-muted, #64748b); text-decoration: none;">
+                    Esqueceu a senha?
+                </a>
+            </div>
 
             <button type="submit"><x-lucide-log-in class="lucid-icon" /> Entrar</button>
         </form>
