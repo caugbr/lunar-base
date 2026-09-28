@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.14.1] 2026-09-27
+
+### Added
+- View reset-password foi esquecida :/
+
 ## [2.14.0] 2026-09-27
 
 ### Added
