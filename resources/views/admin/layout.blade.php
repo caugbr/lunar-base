@@ -16,6 +16,11 @@
     <link rel="stylesheet" href="{{ asset('css/admin/admin.css') }}">
     <link rel="stylesheet" href="{{ asset('css/dialog.css') }}">
 
+    <script defer src="{{ asset('js/alpine.min.js') }}"></script>
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
+
     <script src="{{ asset('js/dialog.js') }}"></script>
     <script src="{{ asset('js/admin.js') }}"></script>
 
@@ -26,12 +31,6 @@
     <x-hook name="admin.favicon" desc="Permite substituir o favicon">
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
     </x-hook>
-
-    {{-- Alpine CDN --}}
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <style>
-        [x-cloak] { display: none !important; }
-    </style>
 
     @headerAssets
     @stack('styles')

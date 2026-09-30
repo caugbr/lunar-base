@@ -15,7 +15,7 @@
 @push('scripts')
     {{-- Carrega o script do Chart.js UMA ÚNICA VEZ por página, independente de quantos gráficos existirem --}}
     @once
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="{{ asset('js/chart.js') }}"></script>
     @endonce
 
     <script>

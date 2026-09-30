@@ -50,13 +50,58 @@ class CoreUpdateService
     /**
      * Consulta a API de Releases do GitHub
      */
+    // protected function fetchFromGitHub(): array
+    // {
+    //     $currentVersion = appVersion();
+
+    //     try {
+    //         $response = Http::timeout(5)
+    //             ->withHeaders(['User-Agent' => 'Lunar-Base-Updater'])
+    //             ->get("https://api.github.com/repos/{$this->repo}/releases/latest");
+
+    //         if ($response->successful()) {
+    //             $data = $response->json();
+    //             $latestTag = ltrim($data['tag_name'] ?? $currentVersion, 'v');
+
+    //             $hasUpdate = version_compare($currentVersion, $latestTag, '<');
+
+    //             return [
+    //                 'success'         => true,
+    //                 'has_update'      => $hasUpdate,
+    //                 'current_version' => $currentVersion,
+    //                 'latest_version'  => $latestTag,
+    //                 'changelog'       => $data['body'] ?? '',
+    //                 'download_url'    => $data['zipball_url'] ?? null,
+    //             ];
+    //         }
+    //     } catch (Exception $e) {
+    //         logger()->error("Erro ao verificar atualização do Core: " . $e->getMessage());
+    //     }
+
+    //     return [
+    //         'success'         => false,
+    //         'has_update'      => false,
+    //         'current_version' => $currentVersion,
+    //         'latest_version'  => $currentVersion,
+    //         'changelog'       => '',
+    //         'download_url'    => null,
+    //     ];
+    // }
     protected function fetchFromGitHub(): array
     {
         $currentVersion = appVersion();
 
         try {
-            $response = Http::timeout(5)
-                ->withHeaders(['User-Agent' => 'Lunar-Base-Updater'])
+            $response = Http::timeout(15) // Aumentado de 5 para 15s
+                ->withHeaders([
+                    'User-Agent' => 'Lunar-Base-Updater',
+                    'Accept'     => 'application/vnd.github.v3+json',
+                ])
+                ->withOptions([
+                    'curl' => [
+                        CURLOPT_IPRESOLVE => CURL_IPRESOLVE_V4, // Força IPv4 na KingHost
+                    ],
+                ])
                 ->get("https://api.github.com/repos/{$this->repo}/releases/latest");
 
             if ($response->successful()) {

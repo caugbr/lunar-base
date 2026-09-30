@@ -1,5 +1,26 @@
 # Changelog
 
+## [2.15.0] 2026-09-29
+
+### Changed
+- Adicionado o helper AddonHelper, que inclui as funções globais:
+  - active_plugins() - retorna os plugins ativos
+  - active_theme() - retorna o tema ativo
+  - is_plugin_active(folder_name) - testa se um plugin está ativo
+  - is_theme_active(folder_name) - testa se um tema está ativo
+  - is_addon_active(folder_name) - testa se um plugin ou tema está ativo
+  - addon_info(URL) - recebe uma URL ou path e retorna type e is_active
+- Alpine.js agora está embarcado no projeto
+- Chart.js agora está embarcado no projeto
+
+### Changed
+- Modo de requisição para atualização do core e de plugins atualizado
+- As views de ajuda contextual de plugins agora devem ficar em help-views
+- Helpers de addons são incluídos apenas se os temas/plugins estiverem ativos
+
+### Fixed
+- CSS do botão VLibras corrigido
+
 ## [2.14.1] 2026-09-27
 
 ### Added

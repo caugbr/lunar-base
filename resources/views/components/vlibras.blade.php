@@ -3,21 +3,23 @@
     'opacity' => 1.0
 ])
 
-<!-- O seu botão estilizado perfeitamente integrado à sua barra de acessibilidade -->
-<button type="button"
-        id="custom-vlibras-btn"
-        class="accessibility-btn"
-        title="Acessibilidade em Libras"
-        onclick="toggleVLibras()"
-        style="display: inline-flex; width:32px; height: 32px; justify-content: center; align-items: center; border-radius: 6px; border: 1px solid currentColor; background: transparent; cursor: pointer;">
+<a href="#"
+    id="custom-vlibras-btn"
+    class="accessibility-btn"
+    title="Acessibilidade em Libras">
     <img style="width: 20px; height: 20px;" src="{{ asset('images/vlibras.png') }}" alt="Vlibras">
-</button>
+</a>
 
 @push('scripts')
 <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         new window.VLibras.Widget('https://vlibras.gov.br/app');
+        const vla = document.getElementById('custom-vlibras-btn');
+        vla.addEventListener('click', event => {
+            event.preventDefault();
+            toggleVLibras();
+        })
     });
 
     // Função que clica no botão oficial dentro do Shadow DOM
@@ -50,6 +52,24 @@
     .vp-container,
     [vw-plugin-wrapper] {
         display: block !important;
+    }
+
+    #custom-vlibras-btn {
+        text-decoration: none;
+        display: inline-flex;
+        width: 32px;
+        height: 32px;
+        justify-content: center;
+        align-items: center;
+        border: 1px solid currentColor;
+        border-radius: 6px;
+        transition: background-color 0.2s, color 0.2s, transform 0.1s;
+        background: transparent;
+        cursor: pointer;
+    }
+
+    #custom-vlibras-btn:active {
+        transform: scale(0.95);
     }
 </style>
 @endpush

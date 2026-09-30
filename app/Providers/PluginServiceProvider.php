@@ -41,11 +41,11 @@ class PluginServiceProvider extends ServiceProvider
 
         foreach (File::directories($pluginsPath) as $pluginPath) {
             $folderName = basename($pluginPath);
-            $kebabName = Str::kebab($folderName);
+            $slugName = Str::slug($folderName);
             $helpPath = $pluginPath . '/resources/help-views';
 
             if (File::isDirectory($helpPath)) {
-                $this->loadViewsFrom($helpPath, "{$kebabName}-help");
+                $this->loadViewsFrom($helpPath, "{$slugName}-help");
             }
         }
     }

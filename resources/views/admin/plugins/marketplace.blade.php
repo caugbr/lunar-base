@@ -51,12 +51,14 @@
                         <th>Nome</th>
                         <th>Descrição</th>
                         <th>Versão</th>
-                        <th style="display: flex; justify-content: space-between;">
-                            Status
-                            <div class="check-all">
-                                <button type="submit" class="transparent-btn remove-plugin trash-inactive" title="Excluir inativos" form="remove_inactive">
-                                    <x-lucide-trash-2 class="lucid-icon" />
-                                </button>
+                        <th>
+                            <div style="display: flex; justify-content: space-between;">
+                                Status
+                                <div class="check-all">
+                                    <button type="submit" class="transparent-btn remove-plugin trash-inactive" title="Excluir inativos" form="remove_inactive">
+                                        <x-lucide-trash-2 class="lucid-icon" />
+                                    </button>
+                                </div>
                             </div>
                         </th>
                     </tr>

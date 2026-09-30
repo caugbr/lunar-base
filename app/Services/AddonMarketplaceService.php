@@ -85,14 +85,52 @@ class AddonMarketplaceService
     /**
      * Busca o catálogo remoto com cache de 1 hora.
      */
+    // public function fetchCatalog(): array
+    // {
+    //     return Cache::remember('lunar_marketplace_catalog', now()->addHour(), function () {
+    //         try {
+    //             $response = Http::timeout(5)->get($this->manifestUrl);
+    //             if ($response->successful()) {
+    //                 return $response->json();
+    //             }
+    //         } catch (\Exception $e) {
+    //             logger()->error("Erro ao carregar o catálogo de addons: " . $e->getMessage());
+    //         }
+
+    //         return ['plugins' => [], 'themes' => []];
+    //     });
+    // }
     public function fetchCatalog(): array
     {
         return Cache::remember('lunar_marketplace_catalog', now()->addHour(), function () {
             try {
-                $response = Http::timeout(5)->get($this->manifestUrl);
+                $response = Http::timeout(20)
+                    ->withHeaders([
+                        'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                        'Accept'     => '*/*',
+                    ])
+                    ->withOptions([
+                        'curl' => [
+                            CURLOPT_IPRESOLVE       => CURL_IPRESOLVE_V4,
+                            CURLOPT_FOLLOWLOCATION  => true, // Obriga o cURL a seguir os saltos
+                            CURLOPT_MAXREDIRS       => 5,    // Permite até 5 redirects (temos 2 aqui)
+                            CURLOPT_AUTOREFERER     => true,
+                        ],
+                        'allow_redirects' => [
+                            'max'             => 5,
+                            'strict'          => false,
+                            'referer'         => true,
+                            'protocols'       => ['http', 'https'],
+                            'track_redirects' => true
+                        ],
+                    ])
+                    ->get($this->manifestUrl);
+
                 if ($response->successful()) {
                     return $response->json();
                 }
+
+                logger()->warning("Falha ao obter catálogo. Status HTTP: " . $response->status());
             } catch (\Exception $e) {
                 logger()->error("Erro ao carregar o catálogo de addons: " . $e->getMessage());
             }

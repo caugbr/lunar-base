@@ -17,7 +17,7 @@
             $hints = array_keys(view()->getFinder()->getHints());
 
             foreach ($hints as $namespace) {
-                $pluginPath = "{$namespace}::help.{$flatName}";
+                $pluginPath = "{$namespace}-help::{$flatName}";
                 if (view()->exists($pluginPath)) {
                     $helpView = $pluginPath;
                     break;
@@ -37,7 +37,7 @@
     </x-modal>
     <button type="button"
         onclick="window.dispatchEvent(new CustomEvent('modal-open', { detail: { id: '{{ $helpView }}' } }))"
-        class="admin-btn admin-btn-secondary"
+        class="admin-btn admin-btn-secondary help-button"
         title="Ajuda da interface"
         style="padding: 8px;"
         disabled>
@@ -55,7 +55,7 @@
                 header.classList.toggle('show-help');
             });
         }
-        const helpButton = document.querySelector('button[title="Ajuda da interface"]');
+        const helpButton = document.querySelector('button.help-button');
         if (helpButton) {
             helpButton.disabled = false;
         }
