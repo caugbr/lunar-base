@@ -63,7 +63,7 @@ class UserController extends Controller
     //         'role' => $validated['role'],
     //     ]);
 
-    //     log_admin("Usuário criado: {$validated['name']}", "users");
+    //     logAdmin("Usuário criado: {$validated['name']}", "users");
 
     //     return redirect()->route('admin.users.index')
     //         ->with('success', 'Usuário criado com sucesso!');
@@ -84,7 +84,7 @@ class UserController extends Controller
             'role' => $validated['role'],
         ]);
 
-        log_admin("Usuário criado: {$validated['name']}", "users");
+        logAdmin("Usuário criado: {$validated['name']}", "users");
 
         $successMsg = 'Usuário criado com sucesso!';
 
@@ -128,7 +128,7 @@ class UserController extends Controller
 
         $user->save();
 
-        log_admin("Usuário atualizado: {$validated['name']}", "users");
+        logAdmin("Usuário atualizado: {$validated['name']}", "users");
 
         return redirect()->route('admin.users.index')
             ->with('success', 'Usuário atualizado com sucesso!');
@@ -147,7 +147,7 @@ class UserController extends Controller
 
         $user->delete();
 
-        log_admin("Usuário removido: {$name}", "users");
+        logAdmin("Usuário removido: {$name}", "users");
 
         return redirect()->route('admin.users.index')
             ->with('success', 'Usuário removido com sucesso!');

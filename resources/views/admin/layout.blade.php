@@ -69,7 +69,7 @@
                 <div class="admin-header-user">
                     <x-hook name="admin.header_user_start" :params="['user' => auth()->user()]" desc="Header, no início do menu de usuário" />
                     @php
-                        $href = apply_filters('profile_link', route('admin.profile.edit'));
+                        $href = aplyFilters('profile_link', route('admin.profile.edit'));
                     @endphp
                     <a href="{{ $href }}">
                         <x-hook name="admin.header_user_avatar" :params="['user' => auth()->user()]" desc="Substitui o avatar do usuário">

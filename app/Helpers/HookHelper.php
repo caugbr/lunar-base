@@ -8,21 +8,21 @@ if (!function_exists('hook')) {
     }
 }
 
-if (!function_exists('get_discovered_hooks')) {
+if (!function_exists('getDiscoveredHooks')) {
     /**
      * Retorna a lista de todos os hooks descobertos em disco
      */
-    function get_discovered_hooks(string $sector = 'all', bool $force = false): array
+    function getDiscoveredHooks(string $sector = 'all', bool $force = false): array
     {
         return HookDiscoverer::all($sector, $force);
     }
 }
 
-if (!function_exists('render_hooks_select')) {
+if (!function_exists('renderHooksSelect')) {
     /**
      * Retorna a tag <select> HTML populada com os ganchos do sistema
      */
-    function render_hooks_select(array $options = []): string
+    function renderHooksSelect(array $options = []): string
     {
         return HookDiscoverer::renderSelect($options);
     }

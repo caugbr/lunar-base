@@ -51,7 +51,7 @@ O Lunar Base trabalha com o conceito de temas e plugins. Esse material está em 
 
 ### Outros
 * **Atualização do Core em 1 Clique:** Atualização do núcleo do sistema diretamente pelo painel administrativo.
-* **Asset Pipeline Inteligente (AssetManager):** Enfileiramento de scripts e estilos (`add_style`, `add_script`).
+* **Asset Pipeline Inteligente (AssetManager):** Enfileiramento de scripts e estilos (`addStyle`, `addScript`).
 * **Settings & Options API:**
   * *Settings:* Criação declarativa de elementos como switches, selects, number, color picker e outros para as configurações na administração.
   * *Options:* Armazenamento leve de chave/valor tipado (com casting automático para arrays e encriptação nativa).

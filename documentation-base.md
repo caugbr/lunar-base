@@ -17,25 +17,33 @@
 ### Versão
 - appVersion - retorna a versão atual do sistema
 
+### Addons
+- activePlugins - retorna um array com todos os plugins ativos
+- activeTheme - retorna o tema ativo, se houver
+- isPluginActive - testa se um plugin está ativo
+- isThemeActive - testa se um tema está ativo
+- isAddonActive - testa se um plugin ou tema está ativo
+- addonInfo - retorna um array com type (plugin / theme) e is_active
+
 ### Assets
-- add_script - enfileira um script sem duplicação
-- add_inline_script - enfileira um script inline
-- add_style - enfileira um estilo sem duplicação
-- add_inline_style - enfileira um estilo inline
+- addScript - enfileira um script sem duplicação
+- addInlineScript - enfileira um script inline
+- addStyle - enfileira um estilo sem duplicação
+- addInlineStyle - enfileira um estilo inline
 
 ### Database
 - dbAvailable - checa se a database é acessível ou se uma tabela existe
 
 ### Hooks no PHP
-- add_action - adiciona uma action
-- do_action - dispara uma action no código
-- add_filter - adiciona um filtro a uma variável
-- apply_filters - aplica os filtros registrados a uma variável
+- addAction - adiciona uma action
+- doAction - dispara uma action no código
+- addFilter - adiciona um filtro a uma variável
+- aplyFilters - aplica a uma variável os filtros registrados
 
 ### Hooks nas views
 - hook - renderiza um hook Blade
-- get_discovered_hooks - lista todos os hooks encontrados no código
-- render_hooks_select - renderiza um select com todos os hooks disponíveis
+- getDiscoveredHooks - lista todos os hooks encontrados no código
+- renderHooksSelect - renderiza um select com todos os hooks disponíveis
 
 ### Imagens
 - uploadImage - processa o upload de uma imagem
@@ -43,9 +51,10 @@
 - getImage - retorna a URL de uma imagem
 - generateMediaVariants - cria as variações otimizadas para uma imagem (chamada em uploadImage)
 - deleteMediaVariants - remove as variações de uma imagem (chamada em deleteImage)
+- addImageSize - adiciona um novo tamanho de imagem
 
 ### Log
-- log_admin - registra uma ação na tabela admin_logs com categoria e metadados
+- logAdmin - registra uma ação na tabela admin_logs com categoria e metadados
 
 ### Options
 - getOption - retorna o valor de uma option tipada
@@ -104,7 +113,11 @@
 
 ## Componentes com Classe PHP (app/View/Components/)
 
-## Componentes Blade Reutilizáveis por Addons (resources/views/components/)
+### Componentes para plugins
+- <x-configurable-plugin-values> - formata bloco de ajuda para config/pluginSettings.php
+- <x-plugin-dependencies> - exigências de pacotes do Composer para plugins
+
+### Componentes Blade Reutilizáveis por Addons (resources/views/components/)
 - <x-switch> - interruptor deslizante liga/desliga com suporte a onChange
 - <x-select-input> - dropdown com campo alternativo para digitação de novo valor na hora
 - <x-icon-selector> - modal com grade completa do catálogo de ícones Lucide
@@ -113,7 +126,7 @@
 - <x-copy-text> - container monoespaçado com botão de cópia rápida para o clipboard
 - <x-chart> - renderizador declarativo de gráficos de barras, linhas ou pizza com Chart.js
 
-## Componentes Blade disponíveis para uso
+### Componentes Blade disponíveis para uso
 - <x-hook> - renderiza os callbacks registrados via HookManager
 - <x-page-picker> - seletor hierárquico de páginas com exclusão do item atual
 - <x-post-picker> - seletor de posts com ordenação feedOrder e badges visuais
@@ -122,9 +135,9 @@
 - <x-password-field> - campo de senha com alternância de visibilidade e medidor de força
 - <x-breadcrumbs> - trilha de navegação com resolução automática de rotas e taxonomias
 - <x-assessibility> - barra flutuante de acessibilidade unificada
-- <x-switch-theme> - alternador visual de tema claro/escuro
-- <x-text-size> - botão cíclico de controle dinâmico do tamanho do texto
-- <x-vlibras> - botão integrado ao widget oficial do VLibras
+    - <x-switch-theme> - alternador visual de tema claro/escuro
+    - <x-text-size> - botão cíclico de controle dinâmico do tamanho do texto
+    - <x-vlibras> - botão integrado ao widget oficial do VLibras
 - <x-cookie.banner>  - modal de gestão de consentimento LGPD
 - <x-cookie.scripts> - injeção condicional de scripts com base no consentimento
 
@@ -136,10 +149,7 @@
 - <x-media.upload-modal> - modal de upload direto de mídia com barra de progresso
 
 ## Componentes Blade Exclusivos do Core
-- <x-render> - orquestrador que injeta blocos estruturais de components/rendered/*
 - <x-seo-meta> - gera tags <meta> e OpenGraph para o cabeçalho <head>
-- <x-configurable-plugin-values> - formata bloco de ajuda para config/pluginSettings.php
-- <x-plugin-dependencies> - exigências de pacotes do Composer para plugins
 - <x-admin-alert> - exibição central das mensagens flash da sessão (success, warning, error, info)
 - <x-admin-help> - botão e modal de ajuda contextual acoplado à rota ativa
 - <x-system-update-badge> - indicador e modal com trava de tela para atualização do núcleo via GitHub
@@ -187,12 +197,14 @@
 -----------------------
 
 ## Processos a documentar (tutoriais)
-- Dashboard widgets
-- Admin contextual help
+- Dashboard widgets - boxes no dashboard
+- Admin contextual help - ajuda por página na admin
 - AddonDependency - Gerenciamento de dependências
-- Admin logs deve ser usado em plugins
-- ContentLock
-- DynamicRoutes
-- Shortcodes
-- Adicionar novos perfis de usuário
+- Admin logs - registro de ações na admin
+- ContentLock - evita conflito quando duas ou mais pessoas editam simultaneamente
+- DynamicRoutes - rotas dinâmicas para novos tipos
+- Shortcodes - modo de injetar conteúdos diretamente pelo editor
+- Roles / permissions - adicionar novos níveis de usuário e permissões
 - Criar novos tamanhos de imagem
+- Tipos de publicação - registrar novos tipos para backup / taxonomias / buscas
+- ApiRegistry - registra uma nova entidade a ser servida pela API

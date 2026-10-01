@@ -49,3 +49,30 @@
     bottom: 0;
     z-index: 1;
 }
+
+
+/* .admin-alert {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+} */
+
+.admin-alert .alert-content {
+    flex: 1; /* Empurra o botão de fechar para o canto direito */
+}
+
+.admin-alert .alert-dismiss-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+    border: none;
+    background: transparent;
+}
+
+.admin-alert .alert-dismiss-btn:hover {
+    opacity: 1;
+}

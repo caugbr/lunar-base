@@ -91,19 +91,19 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td><code>add_style()</code></td>
+                        <td><code>addStyle()</code></td>
                         <td>Enfileira um arquivo CSS externo ou local na tag <code>&lt;head&gt;</code>.</td>
                     </tr>
                     <tr>
-                        <td><code>add_script()</code></td>
+                        <td><code>addScript()</code></td>
                         <td>Enfileira um arquivo JavaScript externo ou local (no header ou footer).</td>
                     </tr>
                     <tr>
-                        <td><code>add_inline_style()</code></td>
+                        <td><code>addInlineStyle()</code></td>
                         <td>Injeta um bloco de regras CSS inline gerado dinamicamente via PHP.</td>
                     </tr>
                     <tr>
-                        <td><code>add_inline_script()</code></td>
+                        <td><code>addInlineScript()</code></td>
                         <td>Injeta um bloco de código JavaScript inline antes dos scripts no rodapé.</td>
                     </tr>
                 </tbody>
@@ -113,9 +113,9 @@
         <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="estilos">
             <h2>Enfileirando Folhas de Estilo (CSS)</h2>
-            <p>Utilize a função <code>add_style()</code> para adicionar arquivos CSS. O sistema cuida da renderização de tags <code>&lt;link rel="stylesheet"&gt;</code> formatadas com identificadores únicos:</p>
+            <p>Utilize a função <code>addStyle()</code> para adicionar arquivos CSS. O sistema cuida da renderização de tags <code>&lt;link rel="stylesheet"&gt;</code> formatadas com identificadores únicos:</p>
 
-            <pre><code class="code-label">PHP</code>add_style(
+            <pre><code class="code-label">PHP</code>addStyle(
     string $handle,               // Identificador único (ex: 'leaflet-css')
     string $src,                  // URL completa ou caminho via asset()
     array $deps = [],             // Dependências (opcional)
@@ -126,17 +126,17 @@
             <div class="example-box">
                 <h4>Exemplo Prático:</h4>
                 <pre><code class="code-label">PHP</code>// No boot() de um plugin ou em um Controller:
-add_style('leaflet-maps', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css', [], '1.9.4');
-add_style('meu-plugin-custom', asset('plugins/meuplugin/css/style.css'), [], '1.0.2');</pre>
+addStyle('leaflet-maps', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css', [], '1.9.4');
+addStyle('meu-plugin-custom', asset('plugins/meuplugin/css/style.css'), [], '1.0.2');</pre>
             </div>
         </section>
 
         <!-- ═══════════════════════════════════════════════════════════════ -->
         <section id="scripts">
             <h2>Enfileirando Scripts (JS)</h2>
-            <p>Utilize a função <code>add_script()</code> para carregar bibliotecas ou arquivos de comportamento JavaScript:</p>
+            <p>Utilize a função <code>addScript()</code> para carregar bibliotecas ou arquivos de comportamento JavaScript:</p>
 
-            <pre><code class="code-label">PHP</code>add_script(
+            <pre><code class="code-label">PHP</code>addScript(
     string $handle,               // Identificador único (ex: 'chart-js')
     string $src,                  // URL do script
     array $deps = [],             // Dependências
@@ -148,10 +148,10 @@ add_style('meu-plugin-custom', asset('plugins/meuplugin/css/style.css'), [], '1.
             <div class="example-box">
                 <h4>Exemplo Prático:</h4>
                 <pre><code class="code-label">PHP</code>// Carrega o Chart.js no footer com defer ativado
-add_script('chart-js', 'https://cdn.jsdelivr.net/npm/chart.js', [], '4.4.0', true, true);
+addScript('chart-js', 'https://cdn.jsdelivr.net/npm/chart.js', [], '4.4.0', true, true);
 
 // Carrega o script de rastreamento do plugin
-add_script('tracker-events', asset('plugins/tracker/js/eventTracker.js'), ['chart-js'], '1.0.0', true, true);</pre>
+addScript('tracker-events', asset('plugins/tracker/js/eventTracker.js'), ['chart-js'], '1.0.0', true, true);</pre>
             </div>
         </section>
 
@@ -160,7 +160,7 @@ add_script('tracker-events', asset('plugins/tracker/js/eventTracker.js'), ['char
             <h2>Injeção Dinâmica (Inline CSS e JS)</h2>
             <p>Uma das maiores vantagens do AssetManager é permitir que o backend envie variáveis computadas em tempo de execução para o JavaScript ou CSS sem misturar lógica Blade em arquivos estáticos.</p>
 
-            <h3>1. Passando Configurações para o JavaScript (`add_inline_script`)</h3>
+            <h3>1. Passando Configurações para o JavaScript (`addInlineScript`)</h3>
             <p>Ideal para injetar URLs de API, tokens CSRF ou dados vindos do banco de dados:</p>
 
             <div class="example-box">
@@ -168,18 +168,18 @@ add_script('tracker-events', asset('plugins/tracker/js/eventTracker.js'), ['char
 $eventUrl = route('tracker.api.event');
 $csrfToken = csrf_token();
 
-add_inline_script("window.TRACKER_CONFIG = { eventUrl: '{$eventUrl}', csrfToken: '{$csrfToken}' };");
-add_script('tracker-js', asset('plugins/tracker/js/eventTracker.js'), [], '1.0.0', true, true);</pre>
+addInlineScript("window.TRACKER_CONFIG = { eventUrl: '{$eventUrl}', csrfToken: '{$csrfToken}' };");
+addScript('tracker-js', asset('plugins/tracker/js/eventTracker.js'), [], '1.0.0', true, true);</pre>
                 <p>Dentro do seu arquivo <code>eventTracker.js</code> externo e estático, basta ler o objeto global <code>window.TRACKER_CONFIG</code>!</p>
             </div>
 
-            <h3>2. Injetando Cores e Estilos Dinâmicos (`add_inline_style`)</h3>
+            <h3>2. Injetando Cores e Estilos Dinâmicos (`addInlineStyle`)</h3>
             <p>Ideal quando o administrador escolhe cores ou fontes personalizadas no painel administrativo:</p>
 
             <div class="example-box">
                 <pre><code class="code-label">PHP</code>$corPrimaria = setting('general.theme_primary_color', '#2563eb');
 
-add_inline_style(":root { --color-brand: {$corPrimaria}; }");</pre>
+addInlineStyle(":root { --color-brand: {$corPrimaria}; }");</pre>
             </div>
         </section>
 
@@ -195,7 +195,7 @@ $this->app->singleton(AssetManager::class, function () {
 
             <h4>Por que isso é importante?</h4>
             <ul class="steps">
-                <li>Durante uma mesma requisição HTTP, todas as chamadas a <code>add_script()</code> ou <code>add_style()</code> feitas por controllers, middlewares ou plugins diferentes compartilham a <strong>mesma fila em memória</strong>.</li>
+                <li>Durante uma mesma requisição HTTP, todas as chamadas a <code>addScript()</code> ou <code>addStyle()</code> feitas por controllers, middlewares ou plugins diferentes compartilham a <strong>mesma fila em memória</strong>.</li>
                 <li>Quando o Blade atinge a tag <code>@headerAssets</code> ou <code>@footerAssets</code>, ele consulta a instância única na memória e imprime as tags HTML finais sem duplicatas.</li>
                 <li>Ao término da requisição, a memória é limpa automaticamente pelo PHP/Laravel, garantindo que os assets de uma página nunca vazem para outra.</li>
             </ul>
@@ -207,7 +207,7 @@ $this->app->singleton(AssetManager::class, function () {
             <ul class="steps">
                 <li><strong>Nomes de Handles Semânticos:</strong> Use identificadores claros com prefixo do seu plugin (ex: <code>tracker-chart-js</code>, <code>caminho-custom-css</code>) para evitar colisões acidentais.</li>
                 <li><strong>Prefira Scripts no Footer com Defer:</strong> Salvo casos estritamente necessários no <code>&lt;head&gt;</code>, mantenha <code>$inFooter = true</code> e <code>$defer = true</code> para não bloquear a renderização da página (melhorando o score de performance e Core Web Vitals).</li>
-                <li><strong>Não duplique tags &lt;script&gt; soltas no Blade:</strong> Se seu plugin precisa carregar uma biblioteca JS, use sempre <code>add_script()</code> no ServiceProvider ou Controller em vez de colar tags <code>&lt;script src="..."&gt;</code> no meio do corpo HTML.</li>
+                <li><strong>Não duplique tags &lt;script&gt; soltas no Blade:</strong> Se seu plugin precisa carregar uma biblioteca JS, use sempre <code>addScript()</code> no ServiceProvider ou Controller em vez de colar tags <code>&lt;script src="..."&gt;</code> no meio do corpo HTML.</li>
                 <li><strong>Use Controle de Versão:</strong> Ao atualizar os arquivos CSS/JS do seu plugin, altere o parâmetro de versão (ex: <code>'1.0.1'</code>) para forçar a renovação de cache nos navegadores dos visitantes.</li>
             </ul>
         </section>

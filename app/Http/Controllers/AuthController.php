@@ -49,7 +49,7 @@ class AuthController extends Controller
 
             $request->session()->regenerate();
 
-            log_admin("Login realizado com sucesso", "auth");
+            logAdmin("Login realizado com sucesso", "auth");
 
             if ($request->filled('interim')) {
                 return view('auth.interim-success');
@@ -62,7 +62,7 @@ class AuthController extends Controller
             return redirect()->intended('/admin/dashboard');
         }
 
-        log_admin("Tentativa de login falhou: {$credentials['email']}", "auth");
+        logAdmin("Tentativa de login falhou: {$credentials['email']}", "auth");
 
         return back()->withErrors([
             'email' => 'As credenciais informadas não correspondem aos nossos registros.',

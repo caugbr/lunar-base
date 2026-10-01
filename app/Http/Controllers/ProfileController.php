@@ -50,7 +50,7 @@ class ProfileController extends Controller
 
         if (!empty($validated['new_password'])) {
             $user->password = Hash::make($validated['new_password']);
-            log_admin("Usuário alterou a própria senha", "security");
+            logAdmin("Usuário alterou a própria senha", "security");
         }
 
         $user->save();

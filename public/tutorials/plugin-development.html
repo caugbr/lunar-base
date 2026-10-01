@@ -356,7 +356,7 @@ if (!function_exists('tracker_format_currency')) {
             <ul class="steps">
                 <li><strong>Nomenclatura Única:</strong> Use PascalCase para pastas e namespaces (ex: <code>Plugins\Tracker</code>).</li>
                 <li><strong>Namespaces de Views:</strong> Sempre defina um namespace exclusivo e em minúsculas (ex: <code>'tracker'</code>) no <code>loadViewsFrom()</code> para evitar conflitos de templates.</li>
-                <li><strong>Isolamento de Assets:</strong> Injete estilos e scripts usando <code>add_script()</code> e <code>add_inline_script()</code> no <code>@footerAssets</code>, mantendo o código JS em arquivos estáticos separados.</li>
+                <li><strong>Isolamento de Assets:</strong> Injete estilos e scripts usando <code>addScript()</code> e <code>addInlineScript()</code> no <code>@footerAssets</code>, mantendo o código JS em arquivos estáticos separados.</li>
                 <li><strong>Separação de Funções e Classes:</strong> Não misture funções soltas em <code>Helpers/</code>. Use <code>HelperFunctions/</code> exclusivamente para funções procedurais globais.</li>
                 <li><strong>Checagem de Dependências:</strong> Use <code>class_exists()</code> para verificar pacotes opcionais antes de executar métodos que possam falhar caso o pacote não esteja no <code>vendor/</code>.</li>
             </ul>

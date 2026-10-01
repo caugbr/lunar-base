@@ -23,19 +23,19 @@ class AddonDependencyService
     {
         $unresolved = [];
 
-        // 1. Checa as dependências do tema ativo
+        // Checa as dependências do tema ativo
         $activeTheme = Theme::where('is_active', true)->first();
         if ($activeTheme) {
             $unresolved = array_merge($unresolved, $this->checkThemeDependencies($activeTheme));
         }
 
-        // 2. Checa as dependências dos plugins ativos
+        // Checa as dependências dos plugins ativos
         $activePlugins = Plugin::where('is_active', true)->get();
         foreach ($activePlugins as $plugin) {
             $unresolved = array_merge($unresolved, $this->checkPluginDependencies($plugin));
         }
 
-        // 3. Checa as dependências globais do projeto em config/addons.php
+        // Checa as dependências globais do projeto em config/addons.php
         $unresolved = array_merge($unresolved, $this->checkProjectRequirements());
 
         return $unresolved;

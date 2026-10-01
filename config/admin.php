@@ -205,6 +205,22 @@ return [
                     ]
                 ],
                 [
+                    'label'  => 'Avisos',
+                    'icon'   => 'bell',
+                    'route'  => 'admin.notices.index',
+                    'active' => 'admin.notices.*',
+                    'role'   => 'admin',
+                    'items'  => [
+                        [
+                            'label'  => 'Novo aviso',
+                            'icon'   => 'bell-plus',
+                            'route'  => 'admin.notices.create',
+                            'active' => 'admin.notices.create',
+                            'role'   => 'admin',
+                        ]
+                    ]
+                ],
+                [
                     'label' => 'Plugins',
                     'icon' => 'puzzle',
                     'route' => 'admin.plugins.index',

@@ -2,11 +2,11 @@
 
 use App\Models\AdminLog;
 
-if (!function_exists('log_admin')) {
+if (!function_exists('logAdmin')) {
     /**
      * Registra uma ação de auditoria no painel administrativo
      */
-    function log_admin(string $action, string $category = 'general', array $metadata = [])
+    function logAdmin(string $action, string $category = 'general', array $metadata = [])
     {
         try {
             $user = auth()->user();

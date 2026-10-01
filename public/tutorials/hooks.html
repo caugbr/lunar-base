@@ -81,7 +81,7 @@ HookManager::register('post.footer_end', function($params) {
 
             <h4>Helper Útil para Painéis (Admin):</h4>
             <p>Você pode renderizar um dropdown unificado listando todos os ganchos descobertos para que o administrador escolha onde injetar um menu de navegação, por exemplo:</p>
-            <pre><code class="code-label">PHP</code>{!! render_hooks_select([
+            <pre><code class="code-label">PHP</code>{!! renderHooksSelect([
     'name'        => 'hook',
     'id'          => 'menu_hook',
     'selected'    => $menu->hook ?? null,

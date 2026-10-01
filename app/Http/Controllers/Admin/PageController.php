@@ -71,7 +71,7 @@ class PageController extends Controller
 
         $page->delete();
 
-        log_admin("Página movida para a lixeira: {$page->title}", "pages");
+        logAdmin("Página movida para a lixeira: {$page->title}", "pages");
 
         return redirect()->route('admin.pages.index')
             ->with('success', 'Página movida para a lixeira com sucesso!');
@@ -84,7 +84,7 @@ class PageController extends Controller
 
         $page->restore();
 
-        log_admin("Página restaurada da lixeira: {$page->title}", "pages");
+        logAdmin("Página restaurada da lixeira: {$page->title}", "pages");
 
         return redirect()->back()
             ->with('success', 'Página restaurada com sucesso!');
@@ -100,7 +100,7 @@ class PageController extends Controller
         $page->terms()->detach();
         $page->forceDelete();
 
-        log_admin("Página excluída definitivamente: {$title}", "pages");
+        logAdmin("Página excluída definitivamente: {$title}", "pages");
 
         return redirect()->back()
             ->with('success', 'Página excluída definitivamente!');
@@ -117,7 +117,7 @@ class PageController extends Controller
             $page->forceDelete();
         }
 
-        log_admin("Lixeira de páginas esvaziada.", "pages");
+        logAdmin("Lixeira de páginas esvaziada.", "pages");
 
         return redirect()->route('admin.pages.index', ['view' => 'trash'])
             ->with('success', 'Lixeira esvaziada com sucesso!');
@@ -209,7 +209,7 @@ class PageController extends Controller
                 ]);
         }
 
-        log_admin("Página criada: {$validated['title']}", "pages");
+        logAdmin("Página criada: {$validated['title']}", "pages");
 
         return redirect()->route('admin.pages.edit', $page->id)
             ->with('success', 'Página criada com sucesso!');
@@ -309,7 +309,7 @@ class PageController extends Controller
                 ]);
         }
 
-        log_admin("Página editada: {$validated['title']}", "pages");
+        logAdmin("Página editada: {$validated['title']}", "pages");
 
         return redirect()->route('admin.pages.edit', $page->id)
             ->with('success', 'Página atualizada com sucesso!');

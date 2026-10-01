@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciamento de Dependências - Lunar Base v2.0.0</title>
+    <link rel="stylesheet" href="tutorials.css">
+</head>
+<body>
+    <header>
+        <h1>Gerenciamento de Dependências</h1>
+        <p data-subtitle>Lunar Base v2.0.0 - Como Declarar e Resolver Requisitos entre Temas, Plugins e Core</p>
+    </header>
+
+    <div class="container">
+        <nav class="toc">
+            <a href="index.html" class="back-index">Voltar</a>
+            <h2>Sumário</h2>
+            <ul>
+                <li><a href="#intro">Visão Geral</a></li>
+                <li><a href="#origens">As 3 Camadas de Dependência</a></li>
+                <li><a href="#declaracao">Como Declarar Dependências</a></li>
+                <li><a href="#funcionamento">Como o Core Resolve e Valida</a></li>
+                <li><a href="#marketplace">Integração com o Marketplace</a></li>
+                <li><a href="#status">Estados de Resolução</a></li>
+                <li><a href="#exemplos">Exemplos Práticos</a></li>
+                <li><a href="#boas-praticas">Boas Práticas</a></li>
+            </ul>
+        </nav>
+
+        <section id="intro">
+            <h2>Visão Geral</h2>
+            <div class="intro">
+                <p>O ecossistema do <span class="app-name">Lunar Base</span> permite que temas e plugins declarem dependências estritas de outros módulos para operar com integridade. O serviço <code>AddonDependencyService</code> centraliza a validação dessas regras e informa a administração caso algum componente essencial esteja ausente ou desativado.</p>
+                <p>Isso impede que uma loja quebre se o gateway de pagamento for desativado, ou que um tema fique sem estilização caso o plugin de formulários ou sliders não esteja instalado.</p>
+            </div>
+        </section>
+
+        <section id="origens">
+            <h2>As 3 Camadas de Dependência</h2>
+            <p>O sistema processa e consolida dependências a partir de três origens distintas:</p>
+
+            <ol class="steps">
+                <li>
+                    <strong>1. Dependências do Tema Ativo</strong>
+                    <p>Lidas a partir do manifesto <code>themes/{folder_name}/theme.json</code>. Aplicam-se unicamente ao tema que estiver ativo no momento da navegação.</p>
+                </li>
+                <li>
+                    <strong>2. Dependências de Plugins Ativos</strong>
+                    <p>Lidas a partir de cada <code>plugins/{folder_name}/plugin.json</code> dos plugins com status ativo (<code>is_active = 1</code>). Plugins inativos têm suas dependências ignoradas até que sejam ligados.</p>
+                </li>
+                <li>
+                    <strong>3. Requisitos Globais do Projeto (Core)</strong>
+                    <p>Lidas do arquivo de configuração do sistema em <code>config/addons.php</code>. Definem plugins obrigatórios para a instalação como um todo (essenciais para as regras de negócio do site).</p>
+                </li>
+            </ol>
+        </section>
+
+        <section id="declaracao">
+            <h2>Como Declarar Dependências</h2>
+            <p>A declaração é feita na chave <code>dependencies.plugins</code> dentro dos manifestos JSON dos addons ou no array de configuração do Core.</p>
+
+            <h3>1. Em Plugins (`plugin.json`) e Temas (`theme.json`)</h3>
+            <pre><code class="code-label">JSON</code>{
+  "name": "Loja Virtual Pro",
+  "version": "1.0.0",
+  "dependencies": {
+    "plugins": {
+      "Asaas": {
+        "reason": "Obrigatório para processar pagamentos via PIX e Cartão de Crédito."
+      },
+      "CorreiosFrete": {
+        "reason": "Necessário para o cálculo dinâmico do frete na finalização da compra.",
+        "url": "https://meusite.com.br/downloads/correios-frete.zip"
+      }
+    }
+  }
+}</pre>
+
+            <h3>2. No Core do Sistema (`config/addons.php`)</h3>
+            <pre><code class="code-label">PHP</code>// config/addons.php
+return [
+    'required' => [
+        'plugins' => [
+            'Asaas' => [
+                'reason' => 'Necessário para a liquidação financeira de produtos e assinaturas do sistema.',
+            ],
+            'LunarApps' => [
+                'reason' => 'Plugin com as regras de negócio e geração de relatórios astrológicos.',
+                'url'    => 'https://dist.lunarapps.com.br/lunar-apps-latest.zip'
+            ],
+        ],
+    ],
+];</pre>
+
+            <div class="info">
+                <strong>Propriedades Disponíveis para cada Dependência:</strong>
+                <ul>
+                    <li><code>reason</code> <em>(string, opcional)</em> - Texto explicativo exibido para o usuário final justificando a exigência.</li>
+                    <li><code>url</code> <em>(string, opcional)</em> - Link direto de download caso o plugin não esteja publicado no Marketplace oficial.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="funcionamento">
+            <h2>Como o Core Resolve e Valida</h2>
+            <p>A validação das dependências é acionada via <code>AddonDependencyService::getUnresolvedDependencies()</code>. O fluxo de verificação para cada módulo exigido ocorre da seguinte forma:</p>
+
+            <ol class="steps">
+                <li>
+                    <strong>Normalização do Nome da Pasta</strong>
+                    <p>O nome declarado é convertido para o padrão do sistema via <code>Str::studly()</code> (ex: <code>meu-plugin</code> vira <code>MeuPlugin</code>).</p>
+                </li>
+                <li>
+                    <strong>Verificação de Presença no Disco</strong>
+                    <p>Checa se o diretório físico existe em <code>base_path("plugins/{FolderName}")</code>.</p>
+                </li>
+                <li>
+                    <strong>Verificação de Estado no Banco</strong>
+                    <p>Consulta o registro na tabela <code>plugins</code> e confirma se a coluna <code>is_active</code> é verdadeira.</p>
+                </li>
+                <li>
+                    <strong>Conclusão ou Registro de Pendência</strong>
+                    <p>Se o módulo estiver no disco e com <code>is_active = 1</code>, a dependência é considerada satisfeita. Caso contrário, uma pendência é criada com seu respectivo diagnóstico.</p>
+                </li>
+            </ol>
+        </section>
+
+        <section id="marketplace">
+            <h2>Integração com o Marketplace</h2>
+            <p>Se uma dependência estiver ausente do servidor (não existe no disco) e nenhuma <code>url</code> direta tiver sido informada no manifesto, o <code>AddonDependencyService</code> aciona o <code>AddonMarketplaceService</code>.</p>
+            <p>O sistema consulta o catálogo remoto oficial de addons (<code>marketplace.json</code>), localiza o item pelo nome e extrai automaticamente a sua <code>download_url</code> oficial.</p>
+
+            <div class="info">
+                <strong>Instalação Automatizada:</strong>
+                <p>Graças a essa ponte, a interface administrativa do <span class="app-name">Lunar Base</span> consegue oferecer ao usuário um botão direto de <em>"Instalar e Ativar Dependência"</em> com apenas um clique, sem exigir download manual de arquivos compactados.</p>
+            </div>
+        </section>
+
+        <section id="status">
+            <h2>Estados de Resolução</h2>
+            <p>Cada item retornado na lista de pendências não resolvidas é classificado em um de dois estados:</p>
+
+            <div class="example-box">
+                <h4>1. Status: <code>inactive</code> (Inativo)</h4>
+                <p>O plugin já está baixado e presente na pasta <code>plugins/</code>, porém está desativado no banco de dados.</p>
+                <p><strong>Ação esperada na UI:</strong> Exibir botão de ação rápida para <em>"Ativar Plugin"</em>.</p>
+            </div>
+
+            <div class="example-box">
+                <h4>2. Status: <code>missing</code> (Ausente)</h4>
+                <p>Os arquivos do plugin não existem no servidor.</p>
+                <p><strong>Ação esperada na UI:</strong> Exibir botão para <em>"Instalar via Marketplace"</em> (se houver <code>download_url</code>) ou alerta de instalação manual.</p>
+            </div>
+        </section>
+
+        <section id="exemplos">
+            <h2>Exemplos Práticos</h2>
+
+            <div class="example-box">
+                <h4>Exemplo 1: Tema Exigindo Plugin de Formulário</h4>
+                <pre><code class="code-label">JSON (themes/Moderno/theme.json)</code>{
+  "name": "Moderno",
+  "version": "2.1.0",
+  "dependencies": {
+    "plugins": {
+      "ContactForm": {
+        "reason": "Necessário para a renderização das seções de contato da página inicial."
+      }
+    }
+  }
+}</pre>
+            </div>
+
+            <div class="example-box">
+                <h4>Exemplo 2: Plugin que Extende outro Plugin</h4>
+                <pre><code class="code-label">JSON (plugins/LunarApps/plugin.json)</code>{
+  "name": "Lunar Apps",
+  "version": "1.2.0",
+  "dependencies": {
+    "plugins": {
+      "Asaas": {
+        "reason": "O Lunar Apps necessita do plugin Asaas ativo para emissão de cobranças e recepção de webhooks."
+      }
+    }
+  }
+}</pre>
+            </div>
+
+            <div class="example-box">
+                <h4>Exemplo 3: Consumindo as Pendências via Controller/Middleware</h4>
+                <pre><code class="code-label">PHP</code>use App\Services\AddonDependencyService;
+
+public function checkDependencies(AddonDependencyService $dependencyService)
+{
+    $unresolved = $dependencyService->getUnresolvedDependencies();
+
+    if (!empty($unresolved)) {
+        // Envia as pendências para renderização no painel
+        view()->share('unresolvedAddons', $unresolved);
+    }
+}</pre>
+            </div>
+        </section>
+
+        <section id="boas-praticas">
+            <h2>Boas Práticas</h2>
+
+            <ul>
+                <li>
+                    <strong>Sempre informe o nome da pasta em StudlyCase no manifesto.</strong>
+                    Embora o sistema normalize strings, declarar exatamente o mesmo nome da pasta (ex: <code>"ContactForm"</code> para a pasta <code>plugins/ContactForm</code>) evita ambiguidades.
+                </li>
+                <li>
+                    <strong>Forneça sempre o campo <code>reason</code>.</strong>
+                    Mensagens amigáveis evitam que usuários finais desativem plugins vitais por engano e abram chamados de suporte.
+                </li>
+                <li>
+                    <strong>Prefira nomes compatíveis com o Marketplace oficial.</strong>
+                    Ao requisitar plugins de terceiros que já estão listados no catálogo oficial, você dispensa a necessidade de declarar o campo <code>url</code>, tornando a manutenção de versões automática.
+                </li>
+                <li>
+                    <strong>Não crie dependências circulares.</strong>
+                    Evite cenários onde o Plugin A depende do Plugin B, e o Plugin B depende do Plugin A, a menos que isso seja estritamente planejado para carregamento condicional.
+                </li>
+                <li>
+                    <strong>Use o <code>config/addons.php</code> apenas para o que for estrutural.</strong>
+                    Reserve a configuração global do Core apenas para módulos sem os quais o propósito principal do projeto não pode funcionar.
+                </li>
+            </ul>
+        </section>
+
+        <footer>
+            <p><strong>Gerenciamento de Dependências - Lunar Base v2.0.0</strong></p>
+            <p data-footer-info>Última atualização: Setembro/2026 | &copy; 2026 Cau Guanabara</p>
+        </footer>
+    </div>
+</body>
+</html>

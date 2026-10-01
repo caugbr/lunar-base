@@ -21,6 +21,7 @@ use App\Http\Controllers\Admin\UpdateController;
 use App\Http\Controllers\Admin\ContentTransferController;
 use App\Http\Controllers\Admin\HeartbeatController;
 use App\Http\Controllers\Admin\ContentLockController;
+use App\Http\Controllers\Admin\NoticeController;
 use App\Models\Theme;
 use Illuminate\Support\Facades\Artisan;
 
@@ -74,6 +75,21 @@ Route::middleware($middlewares)->prefix('admin')->name('admin.')->group(function
     // Perfil (ambos editam seu próprio perfil)
     Route::get('/profile', [EditorProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [EditorProfileController::class, 'update'])->name('profile.update');
+
+    // ========== AVISOS DO SISTEMA (NOTICES) ==========
+    // Rota de descarte pelo botão "X" (Acessível por qualquer usuário logado no painel)
+    Route::post('/notices/{id}/dismiss', [NoticeController::class, 'dismiss'])
+        ->name('admin.notices.dismiss');
+
+    // CRUD Administrativo (Apenas para quem gerencia o sistema / admin)
+    Route::middleware(['permission:manage-settings'])->prefix('notices')->name('notices.')->group(function () {
+        Route::get('/', [NoticeController::class, 'index'])->name('index');
+        Route::get('/create', [NoticeController::class, 'create'])->name('create');
+        Route::post('/', [NoticeController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [NoticeController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [NoticeController::class, 'update'])->name('update');
+        Route::delete('/{id}', [NoticeController::class, 'destroy'])->name('destroy');
+    });
 
     // Plugins (Apenas Admin)
     Route::middleware(['role:admin'])->group(function () {

@@ -4,13 +4,13 @@ use App\Models\Plugin;
 use App\Models\Theme;
 use Illuminate\Support\Facades\Schema;
 
-if (! function_exists('active_plugins')) {
+if (! function_exists('activePlugins')) {
     /**
      * Retorna a lista com os nomes das pastas de todos os plugins ativos.
      *
      * @return array<string>
      */
-    function active_plugins(): array
+    function activePlugins(): array
     {
         static $pluginsList = null;
 
@@ -32,13 +32,13 @@ if (! function_exists('active_plugins')) {
     }
 }
 
-if (! function_exists('active_theme')) {
+if (! function_exists('activeTheme')) {
     /**
      * Retorna o nome da pasta do tema ativo atual (ou null se nenhum ativo).
      *
      * @return string|null
      */
-    function active_theme(): ?string
+    function activeTheme(): ?string
     {
         static $themeFolder = false;
 
@@ -59,53 +59,53 @@ if (! function_exists('active_theme')) {
     }
 }
 
-if (! function_exists('is_plugin_active')) {
+if (! function_exists('isPluginActive')) {
     /**
      * Verifica se um plugin está ativo pelo nome da sua pasta.
      *
      * @param string $folderName
      * @return bool
      */
-    function is_plugin_active(string $folderName): bool
+    function isPluginActive(string $folderName): bool
     {
         static $activePluginsMap = null;
 
         if ($activePluginsMap === null) {
-            // Reutiliza active_plugins() e usa array_flip para checagem instantânea (O(1))
-            $activePluginsMap = array_flip(active_plugins());
+            // Reutiliza activePlugins() e usa array_flip para checagem instantânea (O(1))
+            $activePluginsMap = array_flip(activePlugins());
         }
 
         return isset($activePluginsMap[$folderName]);
     }
 }
 
-if (! function_exists('is_theme_active')) {
+if (! function_exists('isThemeActive')) {
     /**
      * Verifica se um tema está ativo pelo nome da sua pasta.
      *
      * @param string $folderName
      * @return bool
      */
-    function is_theme_active(string $folderName): bool
+    function isThemeActive(string $folderName): bool
     {
-        return active_theme() === $folderName;
+        return activeTheme() === $folderName;
     }
 }
 
-if (! function_exists('is_addon_active')) {
+if (! function_exists('isAddonActive')) {
     /**
      * Verifica se um addon (tema ou plugin) está ativo pelo nome da sua pasta.
      *
      * @param string $folderName
      * @return bool
      */
-    function is_addon_active(string $folderName): bool
+    function isAddonActive(string $folderName): bool
     {
-        return is_plugin_active($folderName) || is_theme_active($folderName);
+        return isPluginActive($folderName) || isThemeActive($folderName);
     }
 }
 
-if (! function_exists('addon_info')) {
+if (! function_exists('addonInfo')) {
     /**
      * Identifica o tipo (plugin|theme) e a pasta a partir de um caminho de arquivo ou URL.
      *
@@ -113,7 +113,7 @@ if (! function_exists('addon_info')) {
      * @param string $returnType 'array' | 'object'
      * @return array|object|null
      */
-    function addon_info(string $pathOrUrl, string $returnType = 'array')
+    function addonInfo(string $pathOrUrl, string $returnType = 'array')
     {
         $normalizedPath = str_replace('\\', '/', $pathOrUrl);
 

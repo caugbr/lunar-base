@@ -76,7 +76,7 @@ class TwoFactorSetupController extends Controller
                 'otp_code' => null,
                 'otp_expires_at' => null
             ]);
-            log_admin("Usuário ativou a autenticação de duas etapas", "security");
+            logAdmin("Usuário ativou a autenticação de duas etapas", "security");
             return redirect()->route('admin.profile.edit')->with('success', 'Autenticação de dois fatores ativada!');
         }
 

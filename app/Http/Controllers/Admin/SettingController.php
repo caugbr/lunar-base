@@ -283,7 +283,7 @@ class SettingController extends Controller
             return;
         }
 
-        log_admin(
+        logAdmin(
             'Configurações do sistema atualizadas',
             'settings',
             [

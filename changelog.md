@@ -1,19 +1,29 @@
 # Changelog
 
+## [2.16.0] 2026-09-30
+
+### Added
+- Avisos persistentes na admin por role ou diretamente a usuários
+
+### Changed
+- Todas as funções globais de helpers agora seguem o padrão camelcase
+- Admin alerts agora tem um botão para fechar as mensagens
+
 ## [2.15.0] 2026-09-29
 
 ### Changed
 - Adicionado o helper AddonHelper, que inclui as funções globais:
-  - active_plugins() - retorna os plugins ativos
-  - active_theme() - retorna o tema ativo
-  - is_plugin_active(folder_name) - testa se um plugin está ativo
-  - is_theme_active(folder_name) - testa se um tema está ativo
-  - is_addon_active(folder_name) - testa se um plugin ou tema está ativo
-  - addon_info(URL) - recebe uma URL ou path e retorna type e is_active
+  - activePlugins() - retorna os plugins ativos
+  - activeTheme() - retorna o tema ativo
+  - isPluginActive(folder_name) - testa se um plugin está ativo
+  - isThemeActive(folder_name) - testa se um tema está ativo
+  - isAddonActive(folder_name) - testa se um plugin ou tema está ativo
+  - addonInfo(URL) - recebe uma URL ou path e retorna type e is_active
 - Alpine.js agora está embarcado no projeto
 - Chart.js agora está embarcado no projeto
 
 ### Changed
+- Helper addImageSize para adicionar tamanhos de imagem em tempo de execução
 - Modo de requisição para atualização do core e de plugins atualizado
 - As views de ajuda contextual de plugins agora devem ficar em help-views
 - Helpers de addons são incluídos apenas se os temas/plugins estiverem ativos
@@ -160,7 +170,7 @@
 ## [2.5.0] 2026-09-11
 
 ### Added
-- Helper para Filters - add_filter() e apply_filters()
+- Helper para Filters - addFilter() e aplyFilters()
 - Filters no PHP. Filtro para variáveis, abre para plugins modificarem
 - Esconder item 'Temas' nas settings - 'navigation.hide_themes'
 - Adicionado um form de busca na index de users, na admin
@@ -282,7 +292,7 @@
 - Theme preview
 - Plugin Tracker
 - Plugin Space
-- Helpers add_script/add_inline_script, add_style/add_inline_style - assets sem repetição
+- Helpers addScript/addInlineScript, addStyle/addInlineStyle - assets sem repetição
 - Comando migrate:fake - adiciona ao banco as migrations sem executar
 
 ### Changed

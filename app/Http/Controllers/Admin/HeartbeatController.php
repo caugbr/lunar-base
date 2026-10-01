@@ -27,7 +27,7 @@ class HeartbeatController extends Controller
         ];
 
         // Ponto de extensão: Módulos (como ContentLock) injetam suas respostas aqui
-        $response = apply_filters('heartbeat_pulse', $response, $clientData, $user);
+        $response = aplyFilters('heartbeat_pulse', $response, $clientData, $user);
 
         return response()->json($response);
     }

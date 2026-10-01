@@ -30,7 +30,7 @@ class ContentTransferController extends Controller
         try {
             $filePath = $exporter->generateExport($selected);
 
-            log_admin("Exportação de conteúdo realizada: " . implode(', ', $selected), "system");
+            logAdmin("Exportação de conteúdo realizada: " . implode(', ', $selected), "system");
 
             return response()->download($filePath)->deleteFileAfterSend(true);
         } catch (\Exception $e) {
@@ -54,7 +54,7 @@ class ContentTransferController extends Controller
 
             $stats = $importer->import($file->getRealPath(), $strategy);
 
-            log_admin("Importação de conteúdo realizada via JSON", "system");
+            logAdmin("Importação de conteúdo realizada via JSON", "system");
 
             // Monta mensagem de sucesso detalhada
             $msg = "Importação concluída! Taxonomias: {$stats['taxonomies']}, Termos: {$stats['terms']}. ";

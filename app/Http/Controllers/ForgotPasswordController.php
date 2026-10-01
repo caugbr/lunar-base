@@ -14,13 +14,13 @@ use Carbon\Carbon;
 
 class ForgotPasswordController extends Controller
 {
-    // 1. Tela para digitar o e-mail
+    // Tela para digitar o e-mail
     public function showLinkRequestForm()
     {
         return view('auth.forgot-password');
     }
 
-    // 2. Envia o e-mail com o token
+    // Envia o e-mail com o token
     public function sendResetLinkEmail(Request $request)
     {
         $request->validate(['email' => 'required|email']);
@@ -47,14 +47,14 @@ class ForgotPasswordController extends Controller
 
         Mail::to($user->email)->send(new ResetPasswordMail($resetUrl, $user->name));
 
-        if (function_exists('log_admin')) {
-            log_admin("Solicitação de redefinição de senha para: {$user->email}", "auth");
+        if (function_exists('logAdmin')) {
+            logAdmin("Solicitação de redefinição de senha para: {$user->email}", "auth");
         }
 
         return back()->with('status', 'Enviamos o link de redefinição de senha para o seu e-mail!');
     }
 
-    // 3. Tela onde o usuário digita a NOVA senha vindo do e-mail
+    // Tela onde o usuário digita a NOVA senha vindo do e-mail
     public function showResetForm(Request $request, $token)
     {
         return view('auth.reset-password', [
@@ -63,7 +63,7 @@ class ForgotPasswordController extends Controller
         ]);
     }
 
-    // 4. Salva a nova senha
+    // Salva a nova senha
     public function reset(Request $request)
     {
         $request->validate([
@@ -105,8 +105,8 @@ class ForgotPasswordController extends Controller
         // Apaga o token usado
         DB::table('password_reset_tokens')->where('email', $request->email)->delete();
 
-        if (function_exists('log_admin')) {
-            log_admin("Senha redefinida com sucesso para: {$user->email}", "auth");
+        if (function_exists('logAdmin')) {
+            logAdmin("Senha redefinida com sucesso para: {$user->email}", "auth");
         }
 
         return redirect()->route('login')->with('status', 'Sua senha foi redefinida com sucesso! Faça login com a nova senha.');

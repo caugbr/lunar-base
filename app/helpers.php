@@ -19,14 +19,14 @@ $themesHelpers  = glob($projectRoot . '/themes/*/HelperFunctions/*.php') ?: [];
 $helpers        = array_merge($pluginsHelpers, $themesHelpers);
 
 foreach ($helpers as $helperFile) {
-    $info = addon_info($helperFile);
+    $info = addonInfo($helperFile);
 
     // Só dá require se o plugin ou tema estiver de fato ATIVO no banco!
-    if ($info['type'] === 'plugin' && ! is_plugin_active($info['folder_name'])) {
+    if ($info['type'] === 'plugin' && ! isPluginActive($info['folder_name'])) {
         continue;
     }
 
-    if ($info['type'] === 'theme' && ! is_theme_active($info['folder_name'])) {
+    if ($info['type'] === 'theme' && ! isThemeActive($info['folder_name'])) {
         continue;
     }
 

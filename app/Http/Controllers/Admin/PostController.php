@@ -165,7 +165,7 @@ class PostController extends Controller
                 ]);
         }
 
-        log_admin("Post criado: {$validated['title']}", "posts");
+        logAdmin("Post criado: {$validated['title']}", "posts");
 
         return redirect()->route('admin.posts.edit', $post->id)
             ->with('success', 'Post criado com sucesso!');
@@ -276,7 +276,7 @@ class PostController extends Controller
                 ]);
         }
 
-        log_admin("Post editado: {$validated['title']}", "posts");
+        logAdmin("Post editado: {$validated['title']}", "posts");
 
         return redirect()->route('admin.posts.edit', $post->id)
             ->with('success', 'Post atualizado com sucesso!');
@@ -288,7 +288,7 @@ class PostController extends Controller
 
         $post->delete();
 
-        log_admin("Post movido para a lixeira: {$post->title}", "posts");
+        logAdmin("Post movido para a lixeira: {$post->title}", "posts");
 
         return redirect()->route('admin.posts.index')
             ->with('success', 'Post movido para a lixeira!');
@@ -302,7 +302,7 @@ class PostController extends Controller
 
         $post->restore();
 
-        log_admin("Post restaurado da lixeira: {$post->title}", "posts");
+        logAdmin("Post restaurado da lixeira: {$post->title}", "posts");
 
         return redirect()->back()
             ->with('success', 'Post restaurado com sucesso!');
@@ -320,7 +320,7 @@ class PostController extends Controller
         $post->meta()->delete();
         $post->forceDelete();
 
-        log_admin("Post excluído definitivamente: {$title}", "posts");
+        logAdmin("Post excluído definitivamente: {$title}", "posts");
 
         return redirect()->back()
             ->with('success', 'Post excluído definitivamente!');
@@ -339,7 +339,7 @@ class PostController extends Controller
             $post->forceDelete();
         }
 
-        log_admin("Lixeira de posts esvaziada.", "posts");
+        logAdmin("Lixeira de posts esvaziada.", "posts");
 
         return redirect()->route('admin.posts.index', ['view' => 'trash'])
             ->with('success', 'Lixeira esvaziada com sucesso!');

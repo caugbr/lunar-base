@@ -15,6 +15,7 @@ use Illuminate\Auth\Notifications\VerifyEmail; // Adicionado
 use Illuminate\Notifications\Messages\MailMessage; // Adicionado
 use App\Services\AssetManager;
 use App\Services\ContentLockService;
+use App\Models\AdminNotice;
 // use App\Support\ConfigTranslator;
 
 class AppServiceProvider extends ServiceProvider
@@ -79,7 +80,7 @@ class AppServiceProvider extends ServiceProvider
             }
 
             // Conecta o ContentLock ao barramento do Heartbeat
-            add_filter('heartbeat_pulse', function ($response, $clientData, $user) {
+            addFilter('heartbeat_pulse', function ($response, $clientData, $user) {
                 return ContentLockService::handleHeartbeat($response, $clientData, $user);
             });
         }
@@ -108,5 +109,33 @@ class AppServiceProvider extends ServiceProvider
 
         // // Aplica a tradução para o idioma atual do site
         // ConfigTranslator::apply();
+
+        // Notificações na admin
+        View::composer('components.admin-alert', function ($view) {
+            if (!auth()->check() || !dbAvailable('admin_notices')) {
+                $view->with('persistentNotices', collect());
+                return;
+            }
+
+            $user = auth()->user();
+
+            $activeNotices = AdminNotice::where('is_active', true)
+                ->where(function ($query) {
+                    $query->whereNull('expires_at')
+                        ->orWhere('expires_at', '>', now());
+                })
+                ->whereDoesntHave('dismissals', function ($query) use ($user) {
+                    $query->where('user_id', $user->id);
+                })
+                ->get()
+                ->filter(function ($notice) use ($user) {
+                    if ($notice->target_type === 'all') return true;
+                    if ($notice->target_type === 'roles') return in_array($user->role, $notice->target_values ?? [], true);
+                    if ($notice->target_type === 'users') return in_array($user->id, $notice->target_values ?? [], true);
+                    return false;
+                });
+
+            $view->with('persistentNotices', $activeNotices);
+        });
     }
 }

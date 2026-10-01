@@ -157,3 +157,28 @@ if (!function_exists('getImage')) {
             : null;
     }
 }
+
+if (! function_exists('addImageSize')) {
+    /**
+     * Registra um novo tamanho de imagem na configuração em tempo de execução.
+     *
+     * @param string      $name     Identificador único do tamanho (ex: 'thumbnail_card', 'banner')
+     * @param int         $width    Largura máxima em pixels
+     * @param int|null    $height   Altura máxima em pixels (opcional)
+     * @param bool        $crop     Se deve recortar exatamente nas dimensões especificadas
+     * @param string      $position Posição do corte caso $crop seja true ('center', 'top', 'bottom')
+     * @return void
+     */
+    function addImageSize(string $name, int $width, ?int $height = null, bool $crop = false, string $position = 'center'): void
+    {
+        // Injeta ou sobrescreve dinamicamente no config('imageSizes')
+        config([
+            "imageSizes.{$name}" => [
+                'width'    => $width,
+                'height'   => $height,
+                'crop'     => $crop,
+                'position' => $position,
+            ]
+        ]);
+    }
+}
