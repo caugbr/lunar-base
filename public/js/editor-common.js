@@ -42,18 +42,48 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Alpine data para thumbnail
+// function thumbnailManager(initial = {}) {
+//     return {
+//         thumbnailId: initial.id || null,
+//         thumbnailUrl: initial.url || '',
+
+//         openSelector() {
+//             openGridModal('thumbnail', false, initial.id || null);
+//         },
+
+//         setMedia(media) {
+//             this.thumbnailId = media.id;
+//             this.thumbnailUrl = media.thumbnail_url || media.url;
+//         },
+
+//         clearMedia() {
+//             this.thumbnailId = null;
+//             this.thumbnailUrl = '';
+//         }
+//     }
+// }
 function thumbnailManager(initial = {}) {
     return {
         thumbnailId: initial.id || null,
         thumbnailUrl: initial.url || '',
 
         openSelector() {
-            openGridModal('thumbnail', false, initial.id || null);
+            openGridModal(
+                'thumbnail',
+                false,
+                this.thumbnailId ? [this.thumbnailId] : [], // Passa o ID atual selecionado
+                {}, // Labels padrão
+                {
+                    allowSizeSelect: false, // 👈 Esconde o dropdown de tamanhos na gaveta!
+                    fixedSize: 'large',     // 👈 Trava no tamanho desejado (ex: 'large' ou 'thumb')
+                }
+            );
         },
 
         setMedia(media) {
             this.thumbnailId = media.id;
-            this.thumbnailUrl = media.thumbnail_url || media.url;
+            // Se veio a variante pedida, usa ela, senão faz fallback seguro
+            this.thumbnailUrl = media.url || media.thumbnail_url;
         },
 
         clearMedia() {

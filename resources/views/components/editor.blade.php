@@ -34,6 +34,10 @@
     $editorConfigJson = json_encode($editorConfig);
 @endphp
 
+<script>
+    window.LunarKnownBlocks = @json(\App\Services\EditorManager::editorBlocksMap());
+</script>
+
 <div class="lunar-editor-wrapper">
     @if($isTiptap)
         {{-- ================================================= --}}

@@ -131,6 +131,10 @@
         border: 1px solid var(--color-border);
         border-radius: 8px;
     }
+    .target-options label,
+    .roles-checklist label {
+        margin: 0;
+    }
     .radio-label { display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer; }
     .target-block { display: none; }
     .roles-checklist {

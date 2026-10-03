@@ -87,6 +87,8 @@
                 <tr
                     class="plugin-row {{ $plugin->is_active ? 'active' : 'inactive' }}"
                     data-tags="{{ implode(',', $pluginTags) }}"
+                    data-plugin-name="{{ strtolower($plugin->name) }}"
+                    data-folder-name="{{ strtolower($plugin->folder_name) }}"
                 >
                     <td>
                         <div style="display: flex; align-items: center; gap: 4px;">
@@ -300,6 +302,22 @@
     tr.inactive {
         background-color: #fafafa;
     }
+    /* DESTAQUE COM FADE-OUT AO BUSCAR PLUGIN */
+    .row-highlight td {
+        animation: highlightFade 20s ease-out forwards;
+    }
+
+    @keyframes highlightFade {
+        0% {
+            background-color: #fef08a; /* Amarelo bem visível */
+        }
+        70% {
+            background-color: #fef9c3;
+        }
+        100% {
+            background-color: transparent;
+        }
+    }
 </style>
 @endpush
 
@@ -335,6 +353,37 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    // =========================================================================
+    // SCROLL + DESTAQUE COM FADE SE HOUVER ?search= OU ?highlight= NA URL
+    // =========================================================================
+    const urlParams = new URLSearchParams(window.location.search);
+    const searchTarget = (urlParams.get('search') || urlParams.get('highlight') || '').toLowerCase().trim();
+
+    if (searchTarget) {
+        // Procura a linha que bate com o nome do plugin ou nome da pasta
+        const targetRow = Array.from(rows).find(row => {
+            const pName = row.getAttribute('data-plugin-name') || '';
+            const fName = row.getAttribute('data-folder-name') || '';
+            return pName === searchTarget || fName === searchTarget || pName.includes(searchTarget);
+        });
+
+        if (targetRow) {
+            // Garante que a linha esteja visível mesmo se tiver filtro ativo
+            targetRow.style.display = '';
+
+            // Rola suavemente até o elemento centralizando na tela
+            setTimeout(() => {
+                targetRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                targetRow.classList.add('row-highlight');
+
+                // Remove a classe após a animação terminar
+                setTimeout(() => {
+                    targetRow.classList.remove('row-highlight');
+                }, 20000);
+            }, 150);
+        }
+    }
 });
 </script>
 @endpush

@@ -38,7 +38,7 @@ class PublicationTypes
         if (!self::$booted) {
             // Registro dos tipos nativos do Core do Lunar Base
             self::register('post', [
-                'label'         => 'Posts (Blog)',
+                'label'         => 'Posts',
                 'model'         => Post::class,
                 'relations'     => ['author', 'thumbnail', 'terms'],
                 'search_fields' => ['title', 'content'],

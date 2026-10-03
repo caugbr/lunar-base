@@ -239,4 +239,64 @@ class Media extends Model
             }
         });
     }
+
+    /**
+     * Retorna a lista de todas as variações de tamanho disponíveis para a imagem
+     */
+    public function getVariantsAttribute(): array
+    {
+        // SVG ou arquivos não-imagem não têm variantes
+        if (!$this->is_image || str_starts_with($this->mime_type, 'image/svg')) {
+            return [
+                'original' => [
+                    'name'   => 'original',
+                    'label'  => 'Original (Vetor SVG)',
+                    'url'    => $this->url,
+                    'width'  => null,
+                    'height' => null,
+                ]
+            ];
+        }
+
+        // Tamanhos nativos + tamanhos extras de plugins/temas
+        $availableSizes = array_merge([
+            'thumb' => [
+                'label'  => 'Miniatura',
+                'width'  => 300,
+                'height' => 300,
+            ],
+            'large' => [
+                'label'  => 'Grande',
+                'width'  => 1200,
+                'height' => 630,
+            ]
+        ], config('imageSizes', []));
+
+        $variants = [
+            'original' => [
+                'name'   => 'original',
+                'label'  => 'Original' . ($this->width ? " ({$this->width}×{$this->height})" : ''),
+                'url'    => $this->url,
+                'width'  => $this->width,
+                'height' => $this->height,
+            ]
+        ];
+
+        foreach ($availableSizes as $sizeKey => $config) {
+            $url = $this->getUrlForVariant($sizeKey);
+            $w = $config['width'] ?? 'auto';
+            $h = $config['height'] ?? 'auto';
+            $label = $config['label'] ?? ucfirst($sizeKey);
+
+            $variants[$sizeKey] = [
+                'name'   => $sizeKey,
+                'label'  => "{$label} ({$w}×{$h})",
+                'url'    => $url,
+                'width'  => $config['width'] ?? null,
+                'height' => $config['height'] ?? null,
+            ];
+        }
+
+        return $variants;
+    }
 }

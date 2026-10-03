@@ -249,16 +249,23 @@ class MediaController extends Controller
 
         // Transforma a coleção adicionando metadados úteis para o modal Alpine
         $media->getCollection()->transform(function ($item) {
-            if (str_starts_with($item->mime_type, 'image/svg')) {
+            // if (str_starts_with($item->mime_type, 'image/svg')) {
+            //     $thumbnailUrl = $item->url;
+            // } else {
+            //     $pathInfo = pathinfo($item->path);
+            //     $thumbName = $pathInfo['filename'] . '_thumb.' . $pathInfo['extension'];
+            //     $thumbPath = rtrim($pathInfo['dirname'], '/') . '/' . $thumbName;
+
+            //     $thumbnailUrl = Storage::disk('public')->exists($thumbPath)
+            //         ? Storage::disk('public')->url($thumbPath)
+            //         : $item->url;
+            // }
+            $isSvg = str_starts_with($item->mime_type, 'image/svg');
+
+            if ($isSvg) {
                 $thumbnailUrl = $item->url;
             } else {
-                $pathInfo = pathinfo($item->path);
-                $thumbName = $pathInfo['filename'] . '_thumb.' . $pathInfo['extension'];
-                $thumbPath = rtrim($pathInfo['dirname'], '/') . '/' . $thumbName;
-
-                $thumbnailUrl = Storage::disk('public')->exists($thumbPath)
-                    ? Storage::disk('public')->url($thumbPath)
-                    : $item->url;
+                $thumbnailUrl = $item->thumb_url; // Usa o acessor inteligente que já existe!
             }
 
             $mediaableInfo = null;
@@ -286,6 +293,8 @@ class MediaController extends Controller
                 'meta'           => $item->meta ?? [],
                 'size_formatted' => $item->size_formatted,
                 'is_image'       => $item->is_image,
+                'is_svg'         => $isSvg,
+                'variants'       => $item->variants, // 👈 ENVIADO PARA O FRONTEND!
                 'mime_type'      => $item->mime_type,
                 'created_at'     => $item->created_at->format('d/m/Y H:i'),
                 'linked_to'      => $mediaableInfo,

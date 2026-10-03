@@ -137,3 +137,46 @@ if (! function_exists('addonInfo')) {
         return $returnType === 'object' ? (object) $empty : $empty;
     }
 }
+
+if (! function_exists('allPluginsManifests')) {
+    /**
+     * Retorna os manifestos (plugin.json) de TODOS os plugins instalados no disco,
+     * indexados pelo nome da pasta (folder_name).
+     *
+     * @return array<string, array>
+     */
+    function allPluginsManifests(): array
+    {
+        static $manifests = null;
+
+        if ($manifests !== null) {
+            return $manifests;
+        }
+
+        $manifests = [];
+        $files = glob(base_path('plugins/*/plugin.json')) ?: [];
+
+        foreach ($files as $file) {
+            try {
+                $content = json_decode(file_get_contents($file), true);
+                if (!is_array($content)) {
+                    continue;
+                }
+
+                // Captura o nome da pasta (ex: "plugins/BeforeAfter/plugin.json" -> "BeforeAfter")
+                $normalized = str_replace('\\', '/', $file);
+                preg_match('#plugins/([^/]+)/plugin\.json$#i', $normalized, $matches);
+                $folderName = $matches[1] ?? ($content['name'] ?? null);
+
+                if ($folderName) {
+                    $content['folder_name'] = $folderName;
+                    $manifests[$folderName] = $content;
+                }
+            } catch (\Throwable $e) {
+                // ignora arquivo json corrompido
+            }
+        }
+
+        return $manifests;
+    }
+}

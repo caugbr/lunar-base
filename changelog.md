@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.17.0] 2026-10-02
+
+### Added
+- Novo método em EditorManager: editorBlocksMap()
+- Nova função global em AddonHelper: allPluginsManifests()
+- Novos hooks admin.page_properties e admin.post_properties em create e edit
+- Novo bloco no editor para tratar sem erro elementos feitos em blocos desativados
+
+### Changed
+- Melhorias no modal de mídia
+- Interface de plugins agora apontam o plugin se houver ?search=PluginName na URL
+- Menu admin agora sabe lidar com parâmetros na URL (?a=1)
+- Melhorias no plugin Comments
+
 ## [2.16.0] 2026-09-30
 
 ### Added

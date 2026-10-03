@@ -140,6 +140,8 @@
                             <small>Define a página mãe dessa página (opcional)</small>
                             @error('parent_id') <small class="error">{{ $message }}</small> @enderror
                         </div>
+
+                        <x-hook name="admin.page_properties" :params="['page' => $page ?? null]" desc="No final do box Propriedades na criação/edição de páginas" />
                     </article>
                 </div>
                 <div class="edit-box">

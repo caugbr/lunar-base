@@ -49,4 +49,36 @@ class EditorManager
     {
         return static::$styles;
     }
+
+    /**
+     * Retorna um mapa [ 'tipoDoBloco' => ['plugin_name' => '...', 'folder_name' => '...'] ]
+     * varrendo os manifestos lidos por allPluginsManifests().
+     *
+     * @return array
+     */
+    public static function editorBlocksMap(): array
+    {
+        static $map = null;
+
+        if ($map !== null) {
+            return $map;
+        }
+
+        $map = [];
+        $allManifests = allPluginsManifests();
+
+        foreach ($allManifests as $folderName => $manifest) {
+            $blocks = $manifest['editorBlocks'] ?? $manifest['insertedBlocks'] ?? [];
+
+            foreach ($blocks as $blockType) {
+                $map[$blockType] = [
+                    'plugin_name'  => $manifest['name'] ?? $folderName,
+                    'folder_name'  => $folderName,
+                    'activate_url' => route('admin.plugins.index', ['search' => $manifest['name'] ?? $folderName]),
+                ];
+            }
+        }
+
+        return $map;
+    }
 }

@@ -113,10 +113,28 @@
             return $items;
         };
 
-        $hasActiveChild = function($items) {
+        // Helper para validar se o item está ativo (checa rota E params da query string)
+        $isItemActive = function(array $item): bool {
+            if (!request()->routeIs($item['active'] ?? '')) {
+                return false;
+            }
+
+            // Se o item tem 'params' definidos, a URL atual precisa ter esses parâmetros exatos
+            if (!empty($item['params']) && is_array($item['params'])) {
+                foreach ($item['params'] as $key => $val) {
+                    if (request()->query($key) != $val) {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        };
+
+        $hasActiveChild = function($items) use ($isItemActive): bool {
             if (empty($items)) return false;
             foreach ($items as $subItem) {
-                if (request()->routeIs($subItem['active'] ?? '')) {
+                if ($isItemActive($subItem)) {
                     return true;
                 }
             }
@@ -143,14 +161,11 @@
 
     @foreach($menuGroups as $group)
         @php
-            // 1. O GRUPO INTEIRO TEM ACESSO? (se tiver role ou permission no grupo)
             if (!$canAccess($group)) {
                 continue;
             }
 
-            // 2. Filtra os itens principais deste grupo
             $groupItems = array_filter($group['items'] ?? [], function($item) use ($canAccess) {
-                // Suporte a settings de exibição globais
                 if (($item['label'] ?? '') === 'Referências' && !setting('navigation.show_references')) {
                     return false;
                 }
@@ -161,7 +176,6 @@
                 return $canAccess($item);
             });
 
-            // Se o grupo não tiver nenhum item visível, pula a renderização do grupo inteiro!
             if (empty($groupItems)) {
                 continue;
             }
@@ -181,21 +195,19 @@
                 $subInjections = $injectedSubItems[$parentLabel] ?? [];
                 $allSubItems = $injectIntoItems($item['items'] ?? [], $subInjections);
 
-                // 3. Filtra os sub-itens pela permissão/role de cada um
                 $visibleSubItems = array_filter($allSubItems, function($sub) use ($canAccess) {
                     return $canAccess($sub);
                 });
 
-                $isActive = request()->routeIs($item['active']);
+                $isActive = $isItemActive($item);
                 $hasChildren = !empty($visibleSubItems);
                 $childrenActive = $hasChildren ? $hasActiveChild($visibleSubItems) : false;
                 $isOpen = $isActive || $childrenActive;
                 $childCount = count($visibleSubItems);
 
-                // itens escondidos em config/admin.php
                 if (!empty($hiddenItems)) {
-                    $hidden = $hiddenItems[$currentRole];
-                    if (!empty($hidden) && in_array($item['label'], $hidden)) {
+                    $hidden = $hiddenItems[$currentRole] ?? [];
+                    if (!empty($hidden) && in_array($item['label'], $hidden, true)) {
                         continue;
                     }
                 }
@@ -204,7 +216,7 @@
             @if($hasChildren)
                 {{-- Item com submenu --}}
                 <div class="admin-nav-dropdown {{ $isOpen ? 'open' : '' }}" style="--submenu-items: {{ $childCount }}">
-                    <a href="{{ route($item['route']) }}"
+                    <a href="{{ route($item['route'], $item['params'] ?? []) }}"
                        class="admin-nav-item admin-nav-parent {{ $isOpen ? 'active' : '' }}">
                         <x-dynamic-component :component="'lucide-' . $item['icon']" class="lucid-icon" />
                         <span>{{ $item['label'] }}</span>
@@ -215,9 +227,9 @@
                     <div class="admin-nav-submenu">
                         @foreach($visibleSubItems as $subItem)
                             @php
-                                $isSubActive = request()->routeIs($subItem['active']);
+                                $isSubActive = $isItemActive($subItem);
                             @endphp
-                            <a href="{{ route($subItem['route']) }}"
+                            <a href="{{ route($subItem['route'], $subItem['params'] ?? []) }}"
                                class="admin-nav-subitem {{ $isSubActive ? 'active' : '' }}">
                                 <x-dynamic-component :component="'lucide-' . $subItem['icon']" class="lucid-icon" />
                                 <span>{{ $subItem['label'] }}</span>
@@ -227,7 +239,7 @@
                 </div>
             @else
                 {{-- Item simples --}}
-                <a href="{{ route($item['route']) }}"
+                <a href="{{ route($item['route'], $item['params'] ?? []) }}"
                    class="admin-nav-item {{ $isActive ? 'active' : '' }}">
                     <x-dynamic-component :component="'lucide-' . $item['icon']" class="lucid-icon" />
                     <span>{{ $item['label'] }}</span>

@@ -152,6 +152,8 @@
                             </label>
                             <small>Mantém este post sempre no topo da listagem</small>
                         </div>
+
+                        <x-hook name="admin.post_properties" :params="['post' => $post ?? null]" desc="No final do box Propriedades na criação/edição de posts" />
                     </article>
                 </div>
 

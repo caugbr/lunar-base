@@ -70,6 +70,7 @@ O Lunar Base trabalha com o conceito de temas e plugins. Esse material está em 
 | **Mídia** | Biblioteca centralizada para upload e gestão de arquivos e imagens. |
 | **Taxonomias** | Categorização de conteúdos (com gestão de *Taxonomias* e *Termos*). |
 | **Usuários** | Gerenciamento de acessos e contas do sistema (com atalho para *Novo Usuário*). |
+| **Avisos** | Avisos persistentes na administração, direcionados a roles ou usuários. |
 | **Plugins** | Gerenciador de extensões ativas e acesso ao *Marketplace de Plugins*. |
 | **Temas** | Gerenciador de temas visuais e acesso ao *Marketplace de Temas*. |
 | **Configurações** | Painel para parametrização de variáveis globais do sistema. |
