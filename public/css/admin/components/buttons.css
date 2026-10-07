@@ -23,6 +23,11 @@
     font-family: inherit;
 }
 
+.admin-btn-sm {
+    padding: 4px 12px;
+    font-size: 0.9em;
+}
+
 .admin-btn[disabled] {
     opacity: 0.6;
     pointer-events: none;

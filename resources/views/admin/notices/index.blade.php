@@ -73,16 +73,18 @@
                     </td>
                     <td>{{ $notice->created_at->format('d/m/Y H:i') }}</td>
                     <td class="admin-actions">
-                        <a href="{{ route('admin.notices.edit', $notice->id) }}" class="admin-btn admin-btn-secondary" title="Editar">
-                            <x-lucide-pencil class="lucid-icon" />
-                        </a>
-                        <form method="POST" action="{{ route('admin.notices.destroy', $notice->id) }}" class="inline-form" data-confirm="Remover este aviso?">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="admin-btn admin-btn-danger" title="Excluir">
-                                <x-lucide-trash-2 class="lucid-icon" />
-                            </button>
-                        </form>
+                        <div>
+                            <a href="{{ route('admin.notices.edit', $notice->id) }}" class="admin-btn admin-btn-secondary" title="Editar">
+                                <x-lucide-pencil class="lucid-icon" />
+                            </a>
+                            <form method="POST" action="{{ route('admin.notices.destroy', $notice->id) }}" class="inline-form" data-confirm="Remover este aviso?">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="admin-btn admin-btn-danger" title="Excluir">
+                                    <x-lucide-trash-2 class="lucid-icon" />
+                                </button>
+                            </form>
+                        </div>
                     </td>
                 </tr>
                 @empty

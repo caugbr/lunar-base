@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.18.0] 2026-10-06
+
+### Added
+- Suporte para controle de indexação por buscadores (meta robots)
+    - Controle dos valores nas configurações
+    - Componente <x-set-robots> para definir os valores em uma publicação
+    - Componente <x-print-robots> para o layout imprimir a tag meta com base nas definições
+- Middleware InitHook dispara a action global 'init' com sessão e Auth 100% disponíveis a plugins
+- Método PublicationTypes::bootHooks para geração automática de hooks de CRUD via Eloquent para tipos nativos e customizados ('type_creating', 'type_created', 'type_updating', 'type_updated', 'type_saving', 'type_saved', 'type_deleting', 'type_deleted'), onde 'type' é o slug do tipo (post, page, curso, etc)
+- Suporte a Barreiras e Filtros: plugins agora podem transformar atributos via applyFilters ou cancelar operações no banco retornando false
+
 ## [2.17.0] 2026-10-02
 
 ### Added
@@ -184,7 +195,7 @@
 ## [2.5.0] 2026-09-11
 
 ### Added
-- Helper para Filters - addFilter() e aplyFilters()
+- Helper para Filters - addFilter() e applyFilters()
 - Filters no PHP. Filtro para variáveis, abre para plugins modificarem
 - Esconder item 'Temas' nas settings - 'navigation.hide_themes'
 - Adicionado um form de busca na index de users, na admin

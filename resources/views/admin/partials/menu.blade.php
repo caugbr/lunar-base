@@ -156,7 +156,7 @@
         }
 
         // Permite que plugins filtrem ou alterem a árvore
-        $menuGroups = aplyFilters('adminMenuGroups', $menuGroups);
+        $menuGroups = applyFilters('adminMenuGroups', $menuGroups);
     @endphp
 
     @foreach($menuGroups as $group)

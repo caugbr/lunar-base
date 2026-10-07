@@ -18,8 +18,8 @@ if (!function_exists('doAction')) {
     }
 }
 
-if (!function_exists('has_action')) {
-    function has_action(string $tag): bool
+if (!function_exists('hasAction')) {
+    function hasAction(string $tag): bool
     {
         return app('php_hooks')->hasAction($tag);
     }
@@ -36,15 +36,15 @@ if (!function_exists('addFilter')) {
     }
 }
 
-if (!function_exists('aplyFilters')) {
-    function aplyFilters(string $tag, mixed $value, mixed ...$args): mixed
+if (!function_exists('applyFilters')) {
+    function applyFilters(string $tag, mixed $value, mixed ...$args): mixed
     {
         return app('php_hooks')->applyFilters($tag, $value, ...$args);
     }
 }
 
-if (!function_exists('has_filter')) {
-    function has_filter(string $tag): bool
+if (!function_exists('hasFilter')) {
+    function hasFilter(string $tag): bool
     {
         return app('php_hooks')->hasFilter($tag);
     }

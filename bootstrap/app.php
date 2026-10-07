@@ -33,6 +33,11 @@ $app = Application::configure(basePath: dirname(__DIR__))
             'api/*',
             'api/v1/*',
         ]);
+
+        // Apenas executa o hook 'init'
+        $middleware->web(append: [
+            \App\Http\Middleware\InitHook::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         // ?

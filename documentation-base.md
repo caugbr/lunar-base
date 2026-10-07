@@ -38,7 +38,7 @@
 - addAction - adiciona uma action
 - doAction - dispara uma action no código
 - addFilter - adiciona um filtro a uma variável
-- aplyFilters - aplica a uma variável os filtros registrados
+- applyFilters - aplica a uma variável os filtros registrados
 
 ### Hooks nas views
 - hook - renderiza um hook Blade

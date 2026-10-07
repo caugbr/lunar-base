@@ -297,6 +297,33 @@ return [
                     'description' => 'Selecione a página usada para os termos de uso do site',
                     'default' => 'Lunar Base',
                 ],
+                [
+                    'type' => 'subtitle',
+                    'label' => 'Interação com sistemas de busca',
+                    'icon' => 'search',
+                ],
+                [
+                    'type' => 'paragraph',
+                    'text' => 'Defina aqui de que modo os buscadores irão indexar o site. Essas configurações são gerais, mas podem ser sobrescritas em cada post ou página.',
+                ],
+                [
+                    'key' => 'robots_index',
+                    'type' => 'switch',
+                    'label' => 'Indexar páginas?',
+                    'description' => 'Defina se os buscadores devem ou não indexar as páginas.',
+                    'default' => true,
+                    'active' => 'Indexar',
+                    'inactive' => 'Não indexar',
+                ],
+                [
+                    'key' => 'robots_follow',
+                    'type' => 'switch',
+                    'label' => 'Seguir links?',
+                    'description' => 'Defina se os buscadores devem ou não seguir os links da página para continuar a indexação.',
+                    'default' => true,
+                    'active' => 'Seguir',
+                    'inactive' => 'Não seguir',
+                ],
             ],
         ],
 

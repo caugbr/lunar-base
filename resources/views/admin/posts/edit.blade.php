@@ -106,6 +106,8 @@
                             </select>
                         </div>
 
+                        <x-set-robots :model="$post" />
+
                         <div class="buttons">
                             <button type="submit" class="admin-btn admin-btn-primary">
                                 <x-lucide-save class="lucid-icon" /> Atualizar

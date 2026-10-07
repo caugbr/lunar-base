@@ -90,6 +90,8 @@
                             </select>
                         </div>
 
+                        <x-set-robots type="page" />
+
                         <div class="buttons">
                             <button type="submit" class="admin-btn admin-btn-primary">
                                 <x-lucide-save class="lucid-icon" /> Salvar

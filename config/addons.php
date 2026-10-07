@@ -43,6 +43,16 @@ return [
                 'icon' => 'shield-check',
                 'description' => 'Backups, manutenção, monitoramento e utilitários.',
             ],
+            'optimization' => [
+                'name' => 'Otimização e Desempenho',
+                'icon' => 'zap',
+                'description' => 'Cache, compressão de imagens, minificação e melhorias de velocidade.',
+            ],
+            'analytics' => [
+                'name' => 'Métricas e Estatísticas',
+                'icon' => 'bar-chart-2',
+                'description' => 'Mapas de calor, rastreamento de acessos, conversões e relatórios.',
+            ],
         ],
 
         'theme' => [

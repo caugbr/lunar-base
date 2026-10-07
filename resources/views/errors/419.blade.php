@@ -14,6 +14,8 @@
     @endphp
     <link rel="stylesheet" href="{{ asset($varsFile) }}">
     <link rel="stylesheet" href="{{ asset('css/errors.css') }}">
+
+    <meta name="robots" content="noindex, nofollow">
 </head>
 <body>
     <div class="login-container">

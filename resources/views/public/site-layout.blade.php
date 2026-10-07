@@ -23,6 +23,8 @@
     <script src="{{ asset('js/dialog.js') }}"></script>
     <script src="{{ asset('js/site.js') }}"></script>
 
+    <x-print-robots />
+
     @stack('styles')
 </head>
 

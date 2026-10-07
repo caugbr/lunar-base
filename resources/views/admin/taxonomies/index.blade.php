@@ -45,19 +45,21 @@
                     <td>{{ $taxonomy->terms()->count() }}</td>
                     <td>{{ $taxonomy->created_at->format('d/m/Y H:i') }}</td>
                     <td class="admin-actions">
-                        <a href="{{ route('admin.taxonomies.edit', $taxonomy->id) }}" class="admin-btn admin-btn-secondary">
-                            <x-lucide-pencil class="lucid-icon" />
-                        </a>
-                        <a href="{{ route('admin.terms.index', ['taxonomy_id' => $taxonomy->id]) }}" class="admin-btn admin-btn-secondary">
-                            <x-lucide-tags class="lucid-icon" />
-                        </a>
-                        <form method="POST" action="{{ route('admin.taxonomies.destroy', $taxonomy->id) }}" style="display: inline;" data-confirm="Remover esta taxonomia?">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="admin-btn admin-btn-danger">
-                                <x-lucide-trash-2 class="lucid-icon" />
-                            </button>
-                        </form>
+                        <div>
+                            <a href="{{ route('admin.taxonomies.edit', $taxonomy->id) }}" class="admin-btn admin-btn-secondary">
+                                <x-lucide-pencil class="lucid-icon" />
+                            </a>
+                            <a href="{{ route('admin.terms.index', ['taxonomy_id' => $taxonomy->id]) }}" class="admin-btn admin-btn-secondary">
+                                <x-lucide-tags class="lucid-icon" />
+                            </a>
+                            <form method="POST" action="{{ route('admin.taxonomies.destroy', $taxonomy->id) }}" style="display: inline;" data-confirm="Remover esta taxonomia?">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="admin-btn admin-btn-danger">
+                                    <x-lucide-trash-2 class="lucid-icon" />
+                                </button>
+                            </form>
+                        </div>
                     </td>
                 </tr>
                 @empty

@@ -16,7 +16,8 @@ use Illuminate\Notifications\Messages\MailMessage; // Adicionado
 use App\Services\AssetManager;
 use App\Services\ContentLockService;
 use App\Models\AdminNotice;
-// use App\Support\ConfigTranslator;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Routing\Events\RouteMatched;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -136,6 +137,18 @@ class AppServiceProvider extends ServiceProvider
                 });
 
             $view->with('persistentNotices', $activeNotices);
+        });
+
+        // Salva opções de robots para qualquer tipo
+        addAction('publication_saved', function ($model, $type) {
+            if (request()->has('robots_index')) {
+                $payload = [
+                    'index'  => (bool) request('robots_index'),
+                    'follow' => (bool) request('robots_follow'),
+                ];
+
+                setOption("robots_{$type}_{$model->id}", $payload, 'json');
+            }
         });
     }
 }

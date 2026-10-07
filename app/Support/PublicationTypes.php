@@ -75,4 +75,82 @@ class PublicationTypes
     {
         return self::all()[$key] ?? null;
     }
+
+    /**
+     * Registra automaticamente os hooks de todos os tipos no ciclo de vida do Eloquent.
+     */
+    public static function bootHooks(): void
+    {
+        foreach (self::all() as $key => $config) {
+            $modelClass = $config['model'] ?? null;
+
+            if ($modelClass && class_exists($modelClass)) {
+
+                // ==========================================
+                // APENAS NA CRIAÇÃO (INSERT / Store)
+                // ==========================================
+                $modelClass::creating(function ($model) use ($key) {
+                    $model = applyFilters('publication_creating', $model, $key);
+                    if ($model === false) return false;
+
+                    $model = applyFilters("{$key}_creating", $model);
+                    if ($model === false) return false;
+                });
+
+                $modelClass::created(function ($model) use ($key) {
+                    doAction('publication_created', $model, $key);
+                    doAction("{$key}_created", $model);
+                });
+
+                // ==========================================
+                // APENAS NA ATUALIZAÇÃO (UPDATE / Update)
+                // ==========================================
+                $modelClass::updating(function ($model) use ($key) {
+                    $model = applyFilters('publication_updating', $model, $key);
+                    if ($model === false) return false;
+
+                    $model = applyFilters("{$key}_updating", $model);
+                    if ($model === false) return false;
+                });
+
+                $modelClass::updated(function ($model) use ($key) {
+                    doAction('publication_updated', $model, $key);
+                    doAction("{$key}_updated", $model);
+                });
+
+                // ==========================================
+                // SALVAMENTO GERAL (INSERT + UPDATE)
+                // ==========================================
+                $modelClass::saving(function ($model) use ($key) {
+                    $model = applyFilters('publication_saving', $model, $key);
+                    if ($model === false) return false;
+
+                    $model = applyFilters("{$key}_saving", $model);
+                    if ($model === false) return false;
+                });
+
+                $modelClass::saved(function ($model) use ($key) {
+                    doAction('publication_saved', $model, $key);
+                    doAction("{$key}_saved", $model);
+                });
+
+                // ==========================================
+                // EXCLUSÃO (DELETE / Destroy)
+                // ==========================================
+                $modelClass::deleting(function ($model) use ($key) {
+                    // Mudamos para applyFilters para permitir barrar
+                    $result = applyFilters('publication_deleting', $model, $key);
+                    if ($result === false) return false;
+
+                    $result = applyFilters("{$key}_deleting", $model);
+                    if ($result === false) return false;
+                });
+
+                $modelClass::deleted(function ($model) use ($key) {
+                    doAction('publication_deleted', $model, $key);
+                    doAction("{$key}_deleted", $model);
+                });
+            }
+        }
+    }
 }

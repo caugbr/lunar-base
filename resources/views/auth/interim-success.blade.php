@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Autenticado</title>
+
+    <meta name="robots" content="noindex, nofollow">
 </head>
 <body style="display: flex; align-items: center; justify-content: center; height: 100vh; font-family: sans-serif;">
     <p>Autenticado com sucesso! Atualizando...</p>

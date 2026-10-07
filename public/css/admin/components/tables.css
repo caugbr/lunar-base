@@ -42,6 +42,10 @@
     white-space: nowrap;
 }
 
+.admin-table th:last-child {
+    text-align: right;
+}
+
 .admin-actions .admin-btn {
     padding: 4px 12px;
 }
@@ -49,4 +53,5 @@
 .admin-actions > div {
     display: flex;
     gap: 6px;
+    justify-content: flex-end;
 }
