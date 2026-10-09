@@ -151,9 +151,6 @@ class AppServiceProvider extends ServiceProvider
             }
         });
 
-        $avisosAtivos = 4;
-setMenuBadge('Avisos', $avisosAtivos);
-
         $this->loadAddonsHelpers();
     }
 
