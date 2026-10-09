@@ -16,8 +16,8 @@ use Illuminate\Notifications\Messages\MailMessage; // Adicionado
 use App\Services\AssetManager;
 use App\Services\ContentLockService;
 use App\Models\AdminNotice;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Routing\Events\RouteMatched;
+// use Illuminate\Support\Facades\Event;
+// use Illuminate\Routing\Events\RouteMatched;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -150,5 +150,41 @@ class AppServiceProvider extends ServiceProvider
                 setOption("robots_{$type}_{$model->id}", $payload, 'json');
             }
         });
+
+        $avisosAtivos = 4;
+setMenuBadge('Avisos', $avisosAtivos);
+
+        $this->loadAddonsHelpers();
+    }
+
+    protected function loadAddonsHelpers(): void
+    {
+        $projectRoot = base_path();
+
+        $pluginsHelpers = glob($projectRoot . '/plugins/*/HelperFunctions/*.php') ?: [];
+        $themesHelpers  = glob($projectRoot . '/themes/*/HelperFunctions/*.php') ?: [];
+        $helpers        = array_merge($pluginsHelpers, $themesHelpers);
+
+        foreach ($helpers as $helperFile) {
+            $info = addonInfo($helperFile);
+
+            // Só dá require se o plugin ou tema estiver de fato ATIVO no banco!
+            if ($info['type'] === 'plugin' && ! isPluginActive($info['folder_name'])) {
+                continue;
+            }
+
+            if ($info['type'] === 'theme' && ! isThemeActive($info['folder_name'])) {
+                continue;
+            }
+
+            if (is_file($helperFile)) {
+                require_once $helperFile;
+            }
+        }
+
+        // Se você tiver a action 'plugin_helpers' para disparar:
+        if (function_exists('doAction')) {
+            doAction('plugin_helpers');
+        }
     }
 }

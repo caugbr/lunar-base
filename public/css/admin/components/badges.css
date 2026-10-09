@@ -1,11 +1,13 @@
 .admin-badge {
     display: inline-flex;
-    padding: 4px 12px;
+    padding: 2px 12px 4px;
     border-radius: 20px;
     font-size: 0.8rem;
     font-weight: 500;
     gap: 5px;
     align-items: center;
+    background: #bbb;
+    color: white;
 }
 
 .admin-badge-info {
@@ -31,22 +33,22 @@
 .admin-badge-paid {
     background: var(--color-success-bg);
     color: var(--color-success-text);
-    padding: 4px 8px;
-    font-size: 0.75rem;
+    /* padding: 4px 8px;
+    font-size: 0.75rem; */
 }
 
 .admin-badge-pending {
     background: var(--color-warning-bg);
     color: var(--color-warning-text);
-    padding: 4px 8px;
-    font-size: 0.75rem;
+    /* padding: 4px 8px;
+    font-size: 0.75rem; */
 }
 
 .admin-badge-failed {
     background: var(--color-danger-bg);
     color: var(--color-danger-text);
-    padding: 4px 8px;
-    font-size: 0.75rem;
+    /* padding: 4px 8px;
+    font-size: 0.75rem; */
 }
 
 .admin-badge-inactive {
@@ -57,25 +59,25 @@
 .admin-badge-admin {
     background: var(--color-primary);
     color: white;
-    padding: 2px 8px;
+    /* padding: 2px 8px;
     border-radius: 4px;
-    font-size: 0.7rem;
+    font-size: 0.7rem; */
 }
 
 .admin-badge-partner {
     background: var(--color-success);
     color: white;
-    padding: 2px 8px;
+    /* padding: 2px 8px;
     border-radius: 4px;
-    font-size: 0.7rem;
+    font-size: 0.7rem; */
 }
 
 .admin-badge-editor {
     background: var(--color-accent);
     color: white;
-    padding: 2px 8px;
+    /* padding: 2px 8px;
     border-radius: 4px;
-    font-size: 0.7rem;
+    font-size: 0.7rem; */
 }
 
 /* ============================================

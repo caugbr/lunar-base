@@ -36,7 +36,9 @@ class NoticeController extends Controller
     {
         $validated = $request->validate([
             'message'        => 'required|string',
-            'type'           => 'required|in:info,warning,error,success',
+            'type'           => 'required|in:info,warning,error,success,custom',
+            'icon'           => 'nullable|string',
+            'color'           => 'nullable|string',
             'target_type'    => 'required|in:all,roles,users',
             'target_roles'   => 'nullable|array|required_if:target_type,roles',
             'target_users'   => 'nullable|array|required_if:target_type,users',
@@ -55,6 +57,8 @@ class NoticeController extends Controller
         $notice = AdminNotice::create([
             'message'       => $validated['message'],
             'type'          => $validated['type'],
+            'icon'          => $validated['icon'] ?? null,
+            'color'         => $validated['color'] ?? null,
             'target_type'   => $validated['target_type'],
             'target_values' => $targetValues,
             'is_active'     => $request->boolean('is_active', true),
@@ -88,7 +92,9 @@ class NoticeController extends Controller
 
         $validated = $request->validate([
             'message'        => 'required|string',
-            'type'           => 'required|in:info,warning,error,success',
+            'type'           => 'required|in:info,warning,error,success,custom',
+            'icon'           => 'nullable|string',
+            'color'          => 'nullable|string',
             'target_type'    => 'required|in:all,roles,users',
             'target_roles'   => 'nullable|array|required_if:target_type,roles',
             'target_users'   => 'nullable|array|required_if:target_type,users',
@@ -106,6 +112,8 @@ class NoticeController extends Controller
         $notice->update([
             'message'       => $validated['message'],
             'type'          => $validated['type'],
+            'icon'          => $validated['icon'] ?? null,
+            'color'         => $validated['color'] ?? null,
             'target_type'   => $validated['target_type'],
             'target_values' => $targetValues,
             'is_active'     => $request->boolean('is_active', true),
@@ -158,5 +166,18 @@ class NoticeController extends Controller
         );
 
         return response()->json(['success' => true]);
+    }
+
+    /**
+     * Limpa os registros de dispensa/leitura de um aviso,
+     * fazendo com que ele reapareça para todos os destinatários.
+     */
+    public function resetDismissals($id)
+    {
+        DB::table('admin_notice_dismissals')
+            ->where('notice_id', $id)
+            ->delete();
+
+        return back()->with('success', 'Visualizações limpas com sucesso! O aviso voltará a aparecer para todos.');
     }
 }

@@ -18,7 +18,7 @@
         <div class="admin-form-row">
             <div class="form-group form-group-full">
                 <label for="message">Mensagem do Aviso *</label>
-                <textarea name="message" id="message" rows="4" required placeholder="Digite a mensagem. Suporta tags HTML como <strong>, <a> e <code>">{{ old('message') }}</textarea>
+                <x-html-editor name="message" value="{{ old('message') }}" />
                 <small>Esta mensagem será exibida na barra de alertas do painel.</small>
                 @error('message') <small class="error">{{ $message }}</small> @enderror
             </div>
@@ -32,6 +32,7 @@
                     <option value="warning" {{ old('type') === 'warning' ? 'selected' : '' }}>Aviso / Alerta (Amarelo)</option>
                     <option value="error" {{ old('type') === 'error' ? 'selected' : '' }}>Crítico / Erro (Vermelho)</option>
                     <option value="success" {{ old('type') === 'success' ? 'selected' : '' }}>Sucesso (Verde)</option>
+                    <option value="custom" {{ old('type') === 'custom' ? 'selected' : '' }}>Personalizado...</option>
                 </select>
                 @error('type') <small class="error">{{ $message }}</small> @enderror
             </div>
@@ -41,6 +42,25 @@
                 <input type="datetime-local" name="expires_at" id="expires_at" value="{{ old('expires_at') }}">
                 <small>Após esta data, o aviso deixará de ser exibido automaticamente.</small>
                 @error('expires_at') <small class="error">{{ $message }}</small> @enderror
+            </div>
+        </div>
+
+        <div class="admin-form-row customize-line" style="display: none;">
+            <div class="form-group">
+                <label for="color">Cor personalizada</label>
+                <x-input-color name="color" value="{{ old('color') }}" />
+                <small>Cor para a fonte e a borda da caixa de mensagem. A cor de fundo será a mesma cor a 10%.</small>
+            </div>
+            <div class="form-group">
+                <label for="icon">Ícone personalizado (Opcional)</label>
+                <x-icon-selector
+                    name="icon"
+                    id="icon"
+                    value="{{ old('icon') }}"
+                    can_clear="{{ true }}"
+                />
+                <small>Se quiser trocar o ícone à esquerda, escolha aqui um outro ícone para a mensagem.</small>
+                @error('icon') <small class="error">{{ $message }}</small> @enderror
             </div>
         </div>
 
@@ -182,6 +202,15 @@
 
         radios.forEach(radio => radio.addEventListener('change', updateTargetVisibility));
         updateTargetVisibility();
+
+        const types = document.getElementById('type');
+        const customLine = document.querySelector('.customize-line');
+
+        types.addEventListener('change', () => {
+            customLine.style.display = types.value === 'custom' ? 'flex' : 'none';
+        });
+
+        types.dispatchEvent(new Event('change'));
     });
 </script>
 @endpush

@@ -15,7 +15,7 @@ if (!function_exists('addLinkIcon')) {
     }
 }
 
-// 1. Resolve a mensagem pontual (passada via prop ou da sessão)
+// Resolve a mensagem pontual (passada via prop ou da sessão)
 $sessionMessage = $message;
 $sessionType    = $type;
 
@@ -37,11 +37,19 @@ if (!$sessionMessage) {
 $sessionType = $sessionType ?? 'info';
 @endphp
 
-{{-- 1. RENDERIZA OS AVISOS PERSISTENTES DO BANCO (Injetados pelo Composer) --}}
+{{-- RENDERIZA OS AVISOS PERSISTENTES DO BANCO (Injetados pelo Composer) --}}
 @if(isset($persistentNotices) && $persistentNotices->isNotEmpty() && !$message)
     @foreach($persistentNotices as $pNotice)
-        <div class="admin-alert admin-alert-{{ $pNotice->type }}" data-persistent-id="{{ $pNotice->id }}">
-            @if($pNotice->type === 'success')
+        @php
+        $color = '';
+        if ($pNotice->color ?? null && $pNotice->color !== '') {
+            $color = " style=\"--box-color: {$pNotice->color}\"";
+        }
+        @endphp
+        <div class="admin-alert admin-alert-{{ $pNotice->type }}" data-persistent-id="{{ $pNotice->id }}"{!! $color !!}>
+            @if($pNotice->icon ?? null)
+                <x-dynamic-component component="lucide-{{ $pNotice->icon }}" class="lucid-icon" />
+            @elseif($pNotice->type === 'success')
                 <x-lucide-circle-check class="lucid-icon" />
             @elseif($pNotice->type === 'warning')
                 <x-lucide-circle-alert class="lucid-icon" />
@@ -52,18 +60,24 @@ $sessionType = $sessionType ?? 'info';
             @endif
 
             <span class="alert-content">
-                {!! $pNotice->message !!}
+                {!! $pNotice->type === 'custom' ? nl2br($pNotice->message) : $pNotice->message !!}
                 {!! addLinkIcon($pNotice->message) !!}
             </span>
 
-            <button type="button" class="transparent-btn alert-dismiss-btn" title="Dispensar aviso">
-                <x-lucide-x class="lucid-icon" />
-            </button>
+            <span class="dismiss-x-check">
+                <button type="button" class="transparent-btn alert-dismiss-btn dismiss-x" title="Dispensar aviso">
+                    <x-lucide-x class="lucid-icon" />
+                </button>
+                <button type="button" class="transparent-btn alert-dismiss-btn dismiss-check">
+                    Ok, ciente!
+                    <x-lucide-check class="lucid-icon" />
+                </button>
+            </span>
         </div>
     @endforeach
 @endif
 
-{{-- 2. RENDERIZA A MENSAGEM COMUM DE SESSÃO OU MANUAL --}}
+{{-- RENDERIZA A MENSAGEM COMUM DE SESSÃO OU MANUAL --}}
 @if($sessionMessage)
     <div
         class="admin-alert admin-alert-{{ $sessionType }}"
@@ -119,9 +133,11 @@ $sessionType = $sessionType ?? 'info';
                 }).catch(err => console.error('Erro ao dispensar aviso:', err));
             }
 
-            alert.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
+            alert.style.transition = 'opacity 0.25s ease, transform 0.25s ease, margin-bottom 0.25s ease 0.1s';
             alert.style.opacity = '0';
             alert.style.transform = 'translateY(-4px)';
+            const h = alert.getBoundingClientRect().height;
+            alert.style.marginBottom = `-${h}px`;
 
             setTimeout(() => alert.remove(), 250);
         });

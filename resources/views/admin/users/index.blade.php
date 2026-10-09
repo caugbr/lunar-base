@@ -60,11 +60,9 @@
                     <td>{{ $user->name }}</td>
                     <td>{{ $user->email }}</td>
                     <td>
-                        @if($user->isAdmin())
-                            <span class="admin-badge admin-badge-admin">Admin</span>
-                        @else
-                            <span class="admin-badge admin-badge-editor">Editor</span>
-                        @endif
+                        <span class="admin-badge admin-badge-{{ strtolower($user->role) }}">
+                            {{ $user->role }}
+                        </span>
                     </td>
                     <td>{{ $user->created_at->format('d/m/Y') }}</td>
                     <td class="admin-actions">

@@ -15,6 +15,7 @@ return [
 
     'name' => 'Lunar Base',
     'version' => trim(@file_get_contents(base_path('VERSION')) ?: '1.12.0'),
+    'git_link' => 'https://github.com/' . env('GIT_SYSTEM_REPO'),
 
     /*
     |--------------------------------------------------------------------------

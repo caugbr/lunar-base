@@ -15,7 +15,9 @@ return new class extends Migration
         Schema::create('admin_notices', function (Blueprint $table) {
             $table->id();
             $table->text('message');
-            $table->enum('type', ['info', 'warning', 'error', 'success'])->default('info');
+            $table->enum('type', ['info', 'warning', 'error', 'success', 'custom'])->default('info');
+            $table->string('icon', 75)->nullable();
+            $table->string('color', 100)->nullable();
 
             // Direcionamento: 'all' (todos), 'roles' (perfis específicos), 'users' (usuários específicos)
             $table->string('target_type', 20)->default('all');

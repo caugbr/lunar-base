@@ -79,7 +79,9 @@ Route::middleware($middlewares)->prefix('admin')->name('admin.')->group(function
     // ========== AVISOS DO SISTEMA (NOTICES) ==========
     // Rota de descarte pelo botão "X" (Acessível por qualquer usuário logado no painel)
     Route::post('/notices/{id}/dismiss', [NoticeController::class, 'dismiss'])
-        ->name('admin.notices.dismiss');
+        ->name('notices.dismiss');
+    Route::post('notices/{id}/reset-dismissals', [NoticeController::class, 'resetDismissals'])
+        ->name('notices.reset-dismissals');
 
     // CRUD Administrativo (Apenas para quem gerencia o sistema / admin)
     Route::middleware(['permission:manage-settings'])->prefix('notices')->name('notices.')->group(function () {

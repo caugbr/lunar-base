@@ -36,6 +36,8 @@
 
     @headerAssets
     @stack('styles')
+
+    {!! rolesBadgeStyles() !!}
 </head>
 <body data-theme="{{ setting('general.admin_theme', 'light') }}">
     <div class="admin-wrapper">
@@ -110,8 +112,10 @@
                             {{ config('app.author') }}
                         </a>
                         &nbsp;|&nbsp;
-                        {{ config('app.name') }}
-                        {{ config('app.version') }}
+                        <a target="_blank" href="{{ config('app.git_link') }}" title="GitHub">
+                            {{ config('app.name') }}
+                            {{ config('app.version') }}
+                        </a>
                         <x-system-update-badge />
                     </div>
                 </div>

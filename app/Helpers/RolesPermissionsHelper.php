@@ -13,17 +13,19 @@ if (! function_exists('addRole')) {
      * @param array  $permissions Lista inicial de permissões (opcional)
      * @return void
      */
-    function addRole(string $slug, string $name, string $description = '', array $permissions = []): void
+    function addRole(string $slug, string $name, string $description = '', array $permissions = [], ?string $badgeColor = null): void
     {
-        // 1. Registra a role na lista
-        config([
-            "rolesPermissions.roles.{$slug}" => [
-                'name'        => $name,
-                'description' => $description,
-            ]
-        ]);
+        $roleData = [
+            'name'        => $name,
+            'description' => $description,
+        ];
 
-        // 2. Se foram passadas permissões, atribui à role
+        if ($badgeColor) {
+            $roleData['badge_color'] = $badgeColor;
+        }
+
+        config(["rolesPermissions.roles.{$slug}" => $roleData]);
+
         if (! empty($permissions)) {
             assignPermissionsToRole($slug, $permissions);
         }
@@ -187,5 +189,58 @@ if (! function_exists('registerPermissionGate')) {
             $userPermissions = config("rolesPermissions.permissionsByRole.{$user->role}", []);
             return in_array($permission, $userPermissions, true);
         });
+    }
+}
+
+if (! function_exists('rolesBadgeStyles')) {
+    /**
+     * Gera estilos CSS inline para os badges de cada role configurada.
+     * Calcula automaticamente se o texto deve ser claro ou escuro com base na luminância.
+     *
+     * @return string
+     */
+    function rolesBadgeStyles(): string
+    {
+        $roles = config('rolesPermissions.roles', []);
+        $css = [];
+
+        foreach ($roles as $slug => $data) {
+            if (empty($data['badge_color'])) {
+                continue;
+            }
+
+            $bg = $data['badge_color'];
+            $text = getContrastColor($bg); // Garante legibilidade automática
+
+            $css[] = ".admin-badge-{$slug} { background-color: {$bg} !important; color: {$text} !important; }";
+        }
+
+        return empty($css) ? '' : "<style id=\"role-badges-css\">\n" . implode("\n", $css) . "\n</style>";
+    }
+}
+
+if (! function_exists('getContrastColor')) {
+    /**
+     * Retorna '#ffffff' ou '#1f2937' dependendo da luminância da cor de fundo.
+     */
+    function getContrastColor(string $hexColor): string
+    {
+        $hex = ltrim($hexColor, '#');
+        if (strlen($hex) === 3) {
+            $hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
+        }
+
+        if (strlen($hex) !== 6) {
+            return '#ffffff';
+        }
+
+        $r = hexdec(substr($hex, 0, 2));
+        $g = hexdec(substr($hex, 2, 2));
+        $b = hexdec(substr($hex, 4, 2));
+
+        // Fórmula YIQ para cálculo de contraste perceptual
+        $yiq = (($r * 299) + ($g * 587) + ($b * 114)) / 1000;
+
+        return ($yiq >= 128) ? '#1f2937' : '#ffffff';
     }
 }

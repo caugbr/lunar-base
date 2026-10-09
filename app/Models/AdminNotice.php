@@ -10,6 +10,8 @@ class AdminNotice extends Model
     protected $fillable = [
         'message',
         'type',
+        'icon',
+        'color',
         'target_type',
         'target_values',
         'is_active',

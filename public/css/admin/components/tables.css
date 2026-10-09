@@ -13,6 +13,12 @@
     text-align: left;
     border-bottom: 1px solid var(--color-border);
     color: var(--color-text);
+    transition: background-color 200ms ease 0s;
+}
+
+.admin-table tr:hover td {
+    border-color: #999;
+    background-color: #f9f9f9;
 }
 
 .admin-table th {

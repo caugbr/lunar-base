@@ -77,6 +77,14 @@
                             <a href="{{ route('admin.notices.edit', $notice->id) }}" class="admin-btn admin-btn-secondary" title="Editar">
                                 <x-lucide-pencil class="lucid-icon" />
                             </a>
+
+                            <form method="POST" action="{{ route('admin.notices.reset-dismissals', $notice->id) }}" class="inline-form" data-confirm="Deseja limpar as visualizações deste aviso? Se ele estiver ativo, voltará a aparecer para os usuários.">
+                                @csrf
+                                <button type="submit" class="admin-btn admin-btn-secondary" title="Limpar visualizações (reexibir)">
+                                    <x-lucide-rotate-ccw class="lucid-icon" />
+                                </button>
+                            </form>
+
                             <form method="POST" action="{{ route('admin.notices.destroy', $notice->id) }}" class="inline-form" data-confirm="Remover este aviso?">
                                 @csrf
                                 @method('DELETE')

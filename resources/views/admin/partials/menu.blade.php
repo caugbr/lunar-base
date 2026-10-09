@@ -219,7 +219,22 @@
                     <a href="{{ route($item['route'], $item['params'] ?? []) }}"
                        class="admin-nav-item admin-nav-parent {{ $isOpen ? 'active' : '' }}">
                         <x-dynamic-component :component="'lucide-' . $item['icon']" class="lucid-icon" />
-                        <span>{{ $item['label'] }}</span>
+                        <div>
+                            <span class="label">
+                                {{ $item['label'] }}
+
+                                @if(!empty($item['badgeCount']) && $item['badgeCount'] > 0)
+                                    @php
+                                        $bTitle = '';
+                                        if (!empty($item['badgeTitle'])) {
+                                            $bTitle = " title='{$item['badgeTitle']}'";
+                                        }
+                                    @endphp
+                                    <span class="admin-nav-badge"{{ $bTitle }}>{{ $item['badgeCount'] }}</span>
+                                @endif
+                            </span>
+                        </div>
+
                         <span class="dropdown-arrow">
                             <x-lucide-chevron-down class="lucid-icon" />
                         </span>
@@ -232,7 +247,11 @@
                             <a href="{{ route($subItem['route'], $subItem['params'] ?? []) }}"
                                class="admin-nav-subitem {{ $isSubActive ? 'active' : '' }}">
                                 <x-dynamic-component :component="'lucide-' . $subItem['icon']" class="lucid-icon" />
-                                <span>{{ $subItem['label'] }}</span>
+                                <span>
+                                    <span class="label">
+                                        {{ $subItem['label'] }}
+                                    </span>
+                                </span>
                             </a>
                         @endforeach
                     </div>
@@ -242,7 +261,21 @@
                 <a href="{{ route($item['route'], $item['params'] ?? []) }}"
                    class="admin-nav-item {{ $isActive ? 'active' : '' }}">
                     <x-dynamic-component :component="'lucide-' . $item['icon']" class="lucid-icon" />
-                    <span>{{ $item['label'] }}</span>
+                    <div>
+                        <span class="label">
+                            {{ $item['label'] }}
+
+                            @if(!empty($item['badgeCount']) && $item['badgeCount'] > 0)
+                                @php
+                                    $bTitle = '';
+                                    if (!empty($item['badgeTitle'])) {
+                                        $bTitle = " title=\"{$item['badgeTitle']}\"";
+                                    }
+                                @endphp
+                                <span class="admin-nav-badge"{!! $bTitle !!}>{{ $item['badgeCount'] }}</span>
+                            @endif
+                        </span>
+                    </div>
                 </a>
             @endif
         @endforeach

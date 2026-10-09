@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.19.0] 2026-10-09
+
+### Added
+- Agora podemos resetar um aviso, limpando as visualizações para reiniciar
+- Avisos personalizados permitem definir cor e ícone
+- Novo componente <x-input-color> - insere um campo para definir uma cor
+- Novo componente <x-html-editor> - textarea com botões de formatação html
+- Badges redondos para contagem nos itens do menu
+- A global addRole agora aceita uma cor para os badges nas listagens da admin
+
+### Fixed
+- Role do usuário na listagem agora aparece corretamente
+
 ## [2.18.0] 2026-10-06
 
 ### Added

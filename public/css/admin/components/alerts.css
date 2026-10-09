@@ -51,6 +51,16 @@
 }
 
 
+
+.admin-alert-custom {
+    color: var(--box-color, #3b82f6);
+    border: 1px solid var(--box-color, #3b82f6);
+    /* Mistura 10% da sua cor com 90% de branco */
+    background-color: color-mix(in srgb, var(--box-color, #3b82f6) 10%, white);
+}
+
+
+
 /* .admin-alert {
     display: flex;
     align-items: center;
@@ -71,8 +81,22 @@
     transition: opacity 0.2s ease;
     border: none;
     background: transparent;
+    color: currentColor;
 }
 
-.admin-alert .alert-dismiss-btn:hover {
+
+.admin-alert .dismiss-x-check:hover button {
     opacity: 1;
+}
+
+.admin-alert .dismiss-check {
+    display: none;
+}
+
+.admin-alert .dismiss-x-check:hover .dismiss-x {
+    display: none;
+}
+
+.admin-alert .dismiss-x-check:hover .dismiss-check {
+    display: inline-block;
 }
