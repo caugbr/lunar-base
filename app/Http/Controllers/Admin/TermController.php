@@ -42,7 +42,9 @@ class TermController extends Controller
                 ->get();
         }
 
-        return view('admin.terms.create', compact('taxonomies', 'selectedTaxonomy', 'parentTerms'));
+        $term = new Term();
+
+        return view('admin.terms.create', compact('taxonomies', 'selectedTaxonomy', 'parentTerms', 'term'));
     }
 
     public function store(Request $request)

@@ -26,7 +26,7 @@ class NoticeController extends Controller
      */
     public function create()
     {
-        return view('admin.notices.create');
+        return view('admin.notices.create', ['notice' => new AdminNotice()]);
     }
 
     /**
@@ -42,6 +42,7 @@ class NoticeController extends Controller
             'target_type'    => 'required|in:all,roles,users',
             'target_roles'   => 'nullable|array|required_if:target_type,roles',
             'target_users'   => 'nullable|array|required_if:target_type,users',
+            'close_text'     => 'nullable|string',
             'expires_at'     => 'nullable|date',
             'is_active'      => 'nullable|boolean',
         ]);
@@ -62,6 +63,7 @@ class NoticeController extends Controller
             'target_type'   => $validated['target_type'],
             'target_values' => $targetValues,
             'is_active'     => $request->boolean('is_active', true),
+            'close_text'    => $validated['close_text'] ?? null,
             'expires_at'    => $validated['expires_at'] ?? null,
             'created_by'    => auth()->id(),
         ]);
@@ -97,6 +99,7 @@ class NoticeController extends Controller
             'color'          => 'nullable|string',
             'target_type'    => 'required|in:all,roles,users',
             'target_roles'   => 'nullable|array|required_if:target_type,roles',
+            'close_text'     => 'nullable|string',
             'target_users'   => 'nullable|array|required_if:target_type,users',
             'expires_at'     => 'nullable|date',
             'is_active'      => 'nullable|boolean',
@@ -117,6 +120,7 @@ class NoticeController extends Controller
             'target_type'   => $validated['target_type'],
             'target_values' => $targetValues,
             'is_active'     => $request->boolean('is_active', true),
+            'close_text'    => $validated['close_text'] ?? null,
             'expires_at'    => $validated['expires_at'] ?? null,
         ]);
 

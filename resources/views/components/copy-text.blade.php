@@ -1,12 +1,14 @@
 @props([
     'text' => '',
+    'display' => 'block'
 ])
 
 @php
     $content = $text ?: $slot;
+    $displayAttr = $display === 'block' ? '' : ' style="display: ' . $display . ';"';
 @endphp
 
-<div class="copy-text-box">
+<div class="copy-text-box"{!! $displayAttr !!}>
     <span class="copy-text-content">{{ $content }}</span>
     <button type="button"
             class="copy-text-btn"

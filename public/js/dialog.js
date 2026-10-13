@@ -2,17 +2,57 @@
 class Dialog {
   static listeners = new Map();
 
-  // Sistema de eventos interno
+  // Registra um ouvinte para o evento (retorna função para desinscrever)
   static on(event, callback) {
     if (!this.listeners.has(event)) {
       this.listeners.set(event, []);
     }
     this.listeners.get(event).push(callback);
+
+    // Retorna callback de unsubscribe para conveniência
+    return () => this.off(event, callback);
+  }
+
+  // Remove ouvintes registrados
+  static off(event, callback) {
+    if (!event) {
+      // Se não passou evento, limpa todos os ouvintes de todos os eventos
+      this.listeners.clear();
+      return;
+    }
+
+    if (!this.listeners.has(event)) {
+      return;
+    }
+
+    if (!callback) {
+      // Se não especificou o callback, remove todos os ouvintes deste evento
+      this.listeners.delete(event);
+      return;
+    }
+
+    // Remove apenas a função de callback específica
+    const filtered = this.listeners.get(event).filter(cb => cb !== callback);
+    if (filtered.length > 0) {
+      this.listeners.set(event, filtered);
+    } else {
+      this.listeners.delete(event);
+    }
+  }
+
+  // Dispara o ouvinte apenas uma única vez e se auto-remove
+  static once(event, callback) {
+    const handler = (data) => {
+      this.off(event, handler);
+      callback(data);
+    };
+    this.on(event, handler);
   }
 
   static emit(event, data) {
     if (this.listeners.has(event)) {
-      this.listeners.get(event).forEach(cb => cb(data));
+      // Cria uma cópia rasa para evitar problemas se um listener se auto-remover durante a iteração
+      [...this.listeners.get(event)].forEach(cb => cb(data));
     }
   }
 
@@ -84,7 +124,23 @@ class Dialog {
 
       this.emit('open', { type, message });
 
+      let isClosed = false;
+
+      // Listener do Escape (isolado para poder ser removido ao fechar)
+      const handleEscapeKey = (e) => {
+          if (e.key === 'Escape') {
+              closeWithResult(type === 'prompt' ? null : false);
+          }
+      };
+      document.addEventListener('keydown', handleEscapeKey);
+
       const closeWithResult = (result) => {
+          if (isClosed) return;
+          isClosed = true;
+
+          // Remove o ouvinte global de Escape imediatamente
+          document.removeEventListener('keydown', handleEscapeKey);
+
           const backdrop = overlay.querySelector('.dialog-modal-backdrop');
           const box = overlay.querySelector('.dialog-modal-box');
           if (backdrop) backdrop.style.opacity = '0';
@@ -95,14 +151,14 @@ class Dialog {
           overlay.style.opacity = '0';
 
           setTimeout(() => {
+              // Captura estado do checkbox antes de remover do DOM
+              const checkbox = overlay.querySelector('#dialog-checkbox');
+              const checked = checkbox ? checkbox.checked : false;
+
               overlay.remove();
               if (!document.querySelector('.dialog-modal-overlay')) {
                   document.body.style.overflow = '';
               }
-
-              // Captura estado do checkbox se existir
-              const checkbox = overlay.querySelector('#dialog-checkbox');
-              const checked = checkbox ? checkbox.checked : false;
 
               // Dispara evento de fechamento
               this.emit('close', { id, type, result, checked });
@@ -132,12 +188,6 @@ class Dialog {
 
       overlay.querySelector('.dialog-modal-backdrop').addEventListener('click', () => {
           closeWithResult(type === 'prompt' ? null : false);
-      });
-
-      document.addEventListener('keydown', (e) => {
-          if (e.key === 'Escape') {
-              closeWithResult(type === 'prompt' ? null : false);
-          }
       });
 
       if (type === 'prompt') {
@@ -177,14 +227,11 @@ document.addEventListener('DOMContentLoaded', function () {
         const confirmMessage = form.getAttribute('data-confirm');
 
         if (confirmMessage) {
-            // Impede o formulário de ser enviado imediatamente
             event.preventDefault();
 
-            // Aguarda a resposta do seu modal customizado
             const confirmed = await Dialog.confirm(confirmMessage);
 
             if (confirmed) {
-                // Remove temporariamente o atributo para não cair no interceptador de novo
                 form.removeAttribute('data-confirm');
                 form.submit();
             }
@@ -196,12 +243,10 @@ document.addEventListener('DOMContentLoaded', function () {
         const link = event.target.closest('a[data-confirm]');
 
         if (link) {
-            // Impede o redirecionamento imediato do link
             event.preventDefault();
 
             const confirmMessage = link.getAttribute('data-confirm');
 
-            // Aguarda a resposta do seu modal customizado
             const confirmed = await Dialog.confirm(confirmMessage);
 
             if (confirmed) {
@@ -210,4 +255,3 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 });
-

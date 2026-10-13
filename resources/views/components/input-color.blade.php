@@ -54,7 +54,7 @@
         -webkit-appearance: none;
         -moz-appearance: none;
         appearance: none;
-        width: 5rem !important;
+        width: 15rem !important;
         height: 2.25rem;
         padding: 0 !important;
         border: 1px solid #d1d5db !important;

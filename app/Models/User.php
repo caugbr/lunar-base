@@ -38,10 +38,6 @@ class User extends Authenticatable implements MustVerifyEmail // Adicionado 'imp
         return $config['permissionsByRole'][$this->role] ?? [];
     }
 
-    // public function hasPermission(string $permission): bool
-    // {
-    //     return in_array($permission, $this->permissions, true);
-    // }
     public function hasPermission(string|array $permissions): bool
     {
         // Se for string com vírgula (ex: "manage-posts,manage-own-posts"), converte para array

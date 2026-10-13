@@ -95,7 +95,9 @@ class PostController extends Controller
             ->pluck('meta_key')
             ->toArray();
 
-        return view('admin.posts.create', compact('users', 'currentUserId', 'templates', 'taxonomies', 'existingMetaKeys'));
+        $post = new Post();
+
+        return view('admin.posts.create', compact('users', 'currentUserId', 'templates', 'taxonomies', 'existingMetaKeys', 'post'));
     }
 
     public function store(Request $request)

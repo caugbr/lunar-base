@@ -20,18 +20,32 @@
     <div class="mini-editor-wrapper">
         {{-- Barra de Ferramentas --}}
         <div class="mini-editor-toolbar" data-target="{{ $fieldId }}">
-            <button type="button" onclick="formatTag('{{ $fieldId }}', 'b')" title="Negrito"><b>B</b></button>
+            {{-- <button type="button" onclick="formatTag('{{ $fieldId }}', 'b')" title="Negrito"><b>B</b></button>
             <button type="button" onclick="formatTag('{{ $fieldId }}', 'i')" title="Itálico"><i>I</i></button>
             <button type="button" onclick="formatTag('{{ $fieldId }}', 'u')" title="Sublinhado"><u>U</u></button>
             <button type="button" onclick="formatTag('{{ $fieldId }}', 's')" title="Tachado"><s>S</s></button>
-            <button type="button" onclick="formatLink('{{ $fieldId }}')" title="Link">🔗</button>
+            <button type="button" onclick="formatLink('{{ $fieldId }}')" title="Link">🔗</button> --}}
+            <button type="button" onclick="formatTag('{{ $fieldId }}', 'b')" title="Negrito">
+                <x-lucide-bold class="lucid-icon" />
+            </button>
+            <button type="button" onclick="formatTag('{{ $fieldId }}', 'i')" title="Itálico">
+                <x-lucide-italic class="lucid-icon" />
+            </button>
+            <button type="button" onclick="formatTag('{{ $fieldId }}', 'u')" title="Sublinhado">
+                <x-lucide-underline class="lucid-icon" />
+            </button>
+            <button type="button" onclick="formatTag('{{ $fieldId }}', 's')" title="Tachado">
+                <x-lucide-strikethrough class="lucid-icon" />
+            </button>
+            <button type="button" onclick="formatLink('{{ $fieldId }}')" title="Link">
+                <x-lucide-link-2 class="lucid-icon" />
+            </button>
 
             <span class="toolbar-separator"></span>
 
             {{-- Botão Limpar Formatação (Tx) --}}
             <button type="button" onclick="clearFormatting('{{ $fieldId }}')" title="Limpar formatação (remover tags HTML)">
-                {{-- <span style="text-decoration: line-through; font-weight: bold; font-size: 0.8rem;">T</span><small style="font-size: 0.65rem; margin-left: 1px;">x</small> --}}
-                &#x1F9FD;
+                <x-lucide-eraser class="lucid-icon" />
             </button>
         </div>
 

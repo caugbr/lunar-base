@@ -1,5 +1,26 @@
 # Changelog
 
+## [2.20.0] 2026-10-09
+
+### Added
+- Botão para maximizar o editor (escrita sem distrações)
+- Função saveBase64Image() no ImageHelper
+- Funções openModal e closeModal no componente <x-modal>
+- Plugin VisualSnippets - versão 1
+- Combinar botões de formatação inline do editor num dropdown, opcionalmente
+- Compactar dropdowns na toolbar do editor, opcionalmente
+- Possibilidade de usar o editor com toolbar fixa e scroll da página
+- Parâmetros novos no componente <x-editor>: 'toolbarTop' e 'minHeight' 
+
+### Changed
+- Adicionado o parâmetro close_text para os avisos (AdminNotice)
+- View _form usada por create e edit nos CRUD de page, post, notice, taxonomy, term e user
+
+## [2.19.1] 2026-10-09
+
+### Fixed
+- Avisos personalizados - fix
+
 ## [2.19.0] 2026-10-09
 
 ### Added

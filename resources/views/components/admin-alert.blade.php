@@ -69,7 +69,10 @@ $sessionType = $sessionType ?? 'info';
                     <x-lucide-x class="lucid-icon" />
                 </button>
                 <button type="button" class="transparent-btn alert-dismiss-btn dismiss-check">
-                    Ok, ciente!
+                    @php
+                    $closeText = $pNotice->close_text ?? 'Ok, ciente';
+                    @endphp
+                    {{ $closeText }}
                     <x-lucide-check class="lucid-icon" />
                 </button>
             </span>

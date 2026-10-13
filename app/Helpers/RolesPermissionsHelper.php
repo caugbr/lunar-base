@@ -11,6 +11,7 @@ if (! function_exists('addRole')) {
      * @param string $name        Nome legível (ex: 'Coordenador')
      * @param string $description Descrição do papel
      * @param array  $permissions Lista inicial de permissões (opcional)
+     * @param string $badgeColor  Cor para os badges na admin (opcional)
      * @return void
      */
     function addRole(string $slug, string $name, string $description = '', array $permissions = [], ?string $badgeColor = null): void

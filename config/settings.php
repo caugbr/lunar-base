@@ -807,6 +807,7 @@ return [
                         'media_upload',
                         'media_library',
                         'history',
+                        'zen_mode'
                     ],
                     'options' => [
                         'heading'       => 'Seletor de Texto / Títulos (H1, H2, H3)',
@@ -829,7 +830,35 @@ return [
                         'media_upload'  => 'Botão Direto de Upload de Imagem',
                         'media_library' => 'Botão Direto da Biblioteca de Mídia',
                         'history'       => 'Desfazer / Refazer (Undo / Redo)',
+                        'zen_mode'      => 'Modo de escrita sem distrações'
                     ],
+                ],
+                [
+                    'key' => 'group_inline_tools',
+                    'type' => 'switch',
+                    'label' => 'Agrupar comandos inline',
+                    'description' => 'Se marcado, 5 botões são agrupados em um dropdown: negrito, itálico, rsicado, sublinhado e código.',
+                    'default' => true,
+                    'active' => 'Sim',
+                    'inactive' => 'Não',
+                ],
+                [
+                    'key' => 'compact_dropdowns',
+                    'type' => 'switch',
+                    'label' => 'Compactar dropdowns',
+                    'description' => 'Essa opção pode diminuir um pouco o tamanho dos dropdowns, removendo a setinha.',
+                    'default' => true,
+                    'active' => 'Sim',
+                    'inactive' => 'Não',
+                ],
+                [
+                    'key' => 'sticky_toolbar',
+                    'type' => 'switch',
+                    'label' => 'Fixar barra de ferramentas ao rolar',
+                    'description' => 'Mantém os botões de formatação visíveis no topo da tela durante a rolagem, facilitando a edição de textos longos.',
+                    'default' => true,
+                    'active' => 'Sim',
+                    'inactive' => 'Não',
                 ],
                 [
                     'type' => 'subtitle',

@@ -16,6 +16,7 @@ class AdminNotice extends Model
         'target_values',
         'is_active',
         'expires_at',
+        'close_text',
         'created_by',
     ];
 

@@ -11,7 +11,6 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Tabela de Avisos Criados
         Schema::create('admin_notices', function (Blueprint $table) {
             $table->id();
             $table->text('message');
@@ -24,6 +23,7 @@ return new class extends Migration
             $table->json('target_values')->nullable(); // Ex: ["editor", "author"] ou [2, 5, 8]
 
             $table->boolean('is_active')->default(true)->index();
+            $table->string('close_text', 150)->nullable();
             $table->timestamp('expires_at')->nullable()->index();
 
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();

@@ -9,14 +9,6 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    // public function index()
-    // {
-    //     $users = User::whereIn('role', ['admin', 'editor'])
-    //         ->orderBy('created_at', 'desc')
-    //         ->paginate(setting('reading.pagination_max_items'));
-    //     $roles = config('rolesPermissions.roles');
-    //     return view('admin.users.index', compact('users', 'roles'));
-    // }
     public function index(Request $request)
     {
         $users = User::query()
@@ -47,27 +39,6 @@ class UserController extends Controller
         return view('admin.users.create')->with('roles', $roles);
     }
 
-    // public function store(Request $request)
-    // {
-    //     $validated = $request->validate([
-    //         'name' => 'required|string|max:255',
-    //         'email' => 'required|email|unique:users',
-    //         'password' => 'required|string|min:8',
-    //         'role' => 'required|in:admin,editor',
-    //     ]);
-
-    //     User::create([
-    //         'name' => $validated['name'],
-    //         'email' => $validated['email'],
-    //         'password' => Hash::make($validated['password']),
-    //         'role' => $validated['role'],
-    //     ]);
-
-    //     logAdmin("Usuário criado: {$validated['name']}", "users");
-
-    //     return redirect()->route('admin.users.index')
-    //         ->with('success', 'Usuário criado com sucesso!');
-    // }
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -103,8 +74,10 @@ class UserController extends Controller
 
     public function edit($id)
     {
-        $user = User::whereIn('role', ['admin', 'editor'])->findOrFail($id);
-        return view('admin.users.edit', compact('user'));
+        $user = User::findOrFail($id);
+        $roles = config('rolesPermissions.roles', []);
+
+        return view('admin.users.edit', compact('user', 'roles'));
     }
 
     public function update(Request $request, $id)

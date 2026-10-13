@@ -149,7 +149,9 @@ class PageController extends Controller
             ->values()
             ->toArray();
 
-        return view('admin.pages.create', compact('users', 'namespaces', 'currentUserId', 'templates', 'taxonomies', 'existingMetaKeys'));
+        $page = new Page();
+
+        return view('admin.pages.create', compact('users', 'namespaces', 'currentUserId', 'templates', 'taxonomies', 'existingMetaKeys', 'page'));
     }
 
     public function store(Request $request)

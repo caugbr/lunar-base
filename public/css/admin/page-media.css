@@ -82,3 +82,47 @@
 .terms-checkbox-group small {
     color: #9ca3af;
 }
+
+/* No distractions mode */
+
+body.zen-mode {
+    overflow-x: hidden;
+}
+
+.zen-mode .admin-card-header {
+    transition: transform 300ms ease, margin-bottom 300ms ease, opacity 0s ease;
+}
+
+.zen-mode .admin-sidebar {
+    transition: transform 300ms ease, margin-right 300ms ease;
+}
+
+.zen-mode .aside-column {
+    transition: transform 300ms ease, margin-left 300ms ease;
+}
+
+/* height 52 */
+.zen-mode.zen-full .admin-card-header {
+    transform: translateY(-52px);
+    margin-bottom: -52px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* width 245 */
+.zen-mode.zen-full .admin-sidebar {
+    transform: translateX(-310px) !important;
+    width: 265px !important;
+    margin-right: -265px;
+    overflow: hidden;
+}
+
+/* width 360 */
+.zen-mode.zen-full .aside-column {
+    transform: translateX(415px);
+    margin-left: -360px;
+}
+
+.zen-mode.zen-full #toggle_menu {
+    display: none;
+}

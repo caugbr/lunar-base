@@ -3,7 +3,9 @@
     'jsonName' => 'content_json',
     'value' => '',
     'json' => null,
-    'forceType' => null
+    'forceType' => null,
+    'toolbarTop' => 100,
+    'minHeight' => 250
 ])
 
 @php
@@ -29,6 +31,9 @@
         'tools'              => $toolbarTools,
         'colors'             => $colorPalette,
         'allow_custom_color' => (bool) ($editorSettings['allow_custom_color'] ?? true),
+        'group_inline_tools' => (bool) ($editorSettings['group_inline_tools'] ?? true),
+        'compact_dropdowns'  => (bool) ($editorSettings['compact_dropdowns'] ?? true),
+        'sticky_toolbar'     => (bool) ($editorSettings['sticky_toolbar'] ?? true),
     ];
 
     $editorConfigJson = json_encode($editorConfig);
@@ -38,6 +43,8 @@
     window.LunarKnownBlocks = @json(\App\Services\EditorManager::editorBlocksMap());
 </script>
 
+<x-hook name="admin.editor_before_scripts" desc="Injeção prévia de scripts para o editor Tiptap" />
+
 <div class="lunar-editor-wrapper">
     @if($isTiptap)
         {{-- ================================================= --}}
@@ -46,8 +53,10 @@
         <div
             id="lunar-tiptap-app"
             data-initial-json="{{ is_array($json) ? json_encode($json) : ($json ?? '') }}"
-            data-initial-html="{{ $value }}"
+            data-initial-html="{{ e($value) }}"
             data-editor-config="{{ $editorConfigJson }}"
+            data-toolbar-top="{{ $toolbarTop }}"
+            data-min-height="{{ $minHeight }}"
         ></div>
 
         <input type="hidden" name="{{ $jsonName }}" id="lunar_content_json" value="{{ is_array($json) ? json_encode($json) : $json }}">
@@ -176,4 +185,6 @@
         </script>
     @endif
     <script src="{{ asset('js/editor-common.js') }}"></script>
+
+    <x-hook name="admin.editor_scripts" desc="Injeção de scripts para o editor Tiptap" />
 </div>

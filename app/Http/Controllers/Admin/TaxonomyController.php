@@ -16,7 +16,8 @@ class TaxonomyController extends Controller
 
     public function create()
     {
-        return view('admin.taxonomies.create');
+        $taxonomy = new Taxonomy();
+        return view('admin.taxonomies.create', compact('taxonomy'));
     }
 
     public function store(Request $request)

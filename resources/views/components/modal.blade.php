@@ -154,6 +154,15 @@
 
 @push('scripts')
 <script>
+// Helpers globais para abrir e fechar qualquer modal
+window.openModal = function(id) {
+    window.dispatchEvent(new CustomEvent('modal-open', { detail: { id: id } }));
+};
+
+window.closeModal = function(id) {
+    window.dispatchEvent(new CustomEvent('modal-close', { detail: { id: id } }));
+};
+
 function modalComponent(id, initialTitle, initialCloseLabel) {
     return {
         id: id,

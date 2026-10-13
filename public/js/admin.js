@@ -77,6 +77,19 @@ window.addEventListener('message', function (event) {
     }
 });
 
+window.addEventListener('editor:focus-mode', (e) => {
+  const isFocus = e.detail.active
+  const body = document.body
+
+  if (isFocus) {
+    body.classList.add('zen-mode', 'zen-full')
+  } else {
+    body.classList.remove('zen-full')
+    // Se quiser manter o .zen-mode ou remover ambos:
+    setTimeout(() => body.classList.remove('zen-mode'), 310);
+  }
+})
+
 function debounce(func, delay) {
     let timeoutId;
 
