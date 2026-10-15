@@ -138,7 +138,7 @@ class ContentHelper
 
         $pattern = '/\[([a-zA-Z0-9_\-]+)((?:\s+[a-zA-Z0-9_\-]+=(?:"[^"]*"|\'[^\']*\'))*)\s*\](?:(.*?)\[\/\1\])?/is';
 
-        return preg_replace_callback($pattern, function($matches) {
+        $replaced = preg_replace_callback($pattern, function($matches) {
             $tag = strtolower($matches[1]);
             $attrsString = $matches[2] ?? '';
             $innerContent = $matches[3] ?? null;
@@ -147,6 +147,8 @@ class ContentHelper
 
             return self::renderShortcode($tag, $attributes, $innerContent);
         }, $content);
+
+        return applyFilters('content.render_shortcodes', $replaced);
     }
 
     private static function parseAttributes($attrsString)

@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.21.0] 2026-10-15
+
+### Added
+- Quando um plugin é deletado do disco, olink é apagado e um aviso é disparado na admin
+- Habilitada a inicialização de Service Providers de plugins ativos no ambiente de console
+- Opção de remover tabelas de plugins ao excluir, individualmente ou em lote
+- Filter 'content.render_shortcodes' para filtrar o conteúdo depois dos shortcodes aplicados
+
+### Changed
+- Melhorias na interface do marketplace de plugins
+- Dialog agora não interfere mais com o scroll do BODY
+
 ## [2.20.0] 2026-10-09
 
 ### Added

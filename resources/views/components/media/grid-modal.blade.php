@@ -85,7 +85,7 @@ window.openGridModal = function(
     window.gridIsMultiple = multiple;
     window.dispatchEvent(new CustomEvent('media:set-multiple', { detail: { multiple } }));
 
-    // 🚀 PASSA OS DETALHES COMPLETOS NO PRÓPRIO EVENTO DE ABERTURA:
+    //PASSA OS DETALHES COMPLETOS NO PRÓPRIO EVENTO DE ABERTURA:
     window.dispatchEvent(new CustomEvent('modal-open', {
         detail: {
             id: 'selectorModal',

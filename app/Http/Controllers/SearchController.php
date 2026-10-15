@@ -13,7 +13,7 @@ class SearchController extends Controller
     {
         $term = trim($request->input('q', ''));
 
-        // 1. Define quais tipos consultar:
+        // Define quais tipos consultar:
         // Prioridade: Parâmetro da URL > Configuração do sistema > Todos os tipos registrados
         $requestedTypes = $request->input('types');
         if (empty($requestedTypes)) {
@@ -32,7 +32,7 @@ class SearchController extends Controller
 
         $results = collect();
 
-        // 2. Executa a busca somente se houver termo digitado
+        // Executa a busca somente se houver termo digitado
         if ($term !== '') {
             foreach ($activeKeys as $key) {
                 $config = $allTypes[$key] ?? null;
@@ -87,7 +87,7 @@ class SearchController extends Controller
             });
         }
 
-        // 3. Paginação manual do conjunto unificado
+        // Paginação manual do conjunto unificado
         $perPage = 10;
         $currentPage = LengthAwarePaginator::resolveCurrentPage();
         $currentItems = $results->slice(($currentPage - 1) * $perPage, $perPage)->values();

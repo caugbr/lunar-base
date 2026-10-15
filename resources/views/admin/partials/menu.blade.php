@@ -6,7 +6,7 @@
         $canAccess = function(array $node) use ($user): bool {
             if (!$user) return false;
 
-            // 1. Checagem por role (se houver)
+            // Checagem por role (se houver)
             if (isset($node['role'])) {
                 $allowedRoles = is_array($node['role'])
                     ? $node['role']

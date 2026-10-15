@@ -31,7 +31,7 @@ class ThemeController extends Controller
     //         $theme->has_update     = $remote['has_update'] ?? false;
     //         $theme->download_url   = $remote['download_url'] ?? null;
 
-    //         // 1. Lê o plugin.json diretamente do disco
+    //         // Lê o plugin.json diretamente do disco
     //         $manifestPath = base_path("themes/{$theme->folder_name}/theme.json");
 
     //         // Fallback caso a pasta use StudlyCase
@@ -70,7 +70,7 @@ class ThemeController extends Controller
             $theme->has_update     = $remote['has_update'] ?? false;
             $theme->download_url   = $remote['download_url'] ?? null;
 
-            // 1. Lê o theme.json diretamente do disco
+            // Lê o theme.json diretamente do disco
             $manifestPath = base_path("themes/{$theme->folder_name}/theme.json");
 
             // Fallback caso a pasta use StudlyCase
@@ -85,7 +85,7 @@ class ThemeController extends Controller
                 $theme->tags = [];
             }
 
-            // 2. Valida se o arquivo físico do screenshot realmente existe no disco
+            // Valida se o arquivo físico do screenshot realmente existe no disco
             $screenshotRelative = $theme->screenshot ?: 'resources/assets/images/screenshot.png';
             $screenshotPath     = base_path("themes/{$folderName}/" . ltrim($screenshotRelative, '/'));
 
@@ -242,10 +242,10 @@ class ThemeController extends Controller
             $folderName = Str::studly($theme->folder_name);
             $screenshotRelative = ltrim($theme->screenshot, '/');
 
-            // 1. Tenta o caminho com StudlyCase
+            // Tenta o caminho com StudlyCase
             $path = base_path("themes/{$folderName}/{$screenshotRelative}");
 
-            // 2. Fallback com o nome exato gravado no banco
+            // Fallback com o nome exato gravado no banco
             if (! File::exists($path)) {
                 $path = base_path("themes/{$theme->folder_name}/{$screenshotRelative}");
             }

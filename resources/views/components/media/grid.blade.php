@@ -489,18 +489,18 @@ function mediaGridComponent(config) {
             this.loadData();
             this.selectedIds = Array.isArray(this.selected) ? [...this.selected] : [this.selected].filter(Boolean);
 
-            // 1. AO ABRIR O MODAL: Reconfigura o estado com base no novo contexto
+            // AO ABRIR O MODAL: Reconfigura o estado com base no novo contexto
             window.addEventListener('modal-open', (e) => {
                 if (e.detail?.id !== 'selectorModal') return;
 
                 this.currentContext = e.detail?.context || 'grid';
                 this.modalOpenDetail = e.detail || {};
 
-                // 🔄 RESET DE CONFIGURAÇÕES CONTEXTUAIS (Evita que o Tiptap herde do thumbnail)
+                //RESET DE CONFIGURAÇÕES CONTEXTUAIS (Evita que o Tiptap herde do thumbnail)
                 this.allowSizeSelect = e.detail?.allowSizeSelect !== undefined ? e.detail.allowSizeSelect : true;
                 this.fixedSize = e.detail?.fixedSize || null;
 
-                // 🔄 RESET DE SELEÇÃO: Se quem chamou passou itens, seleciona. Se não, ZERA!
+                //RESET DE SELEÇÃO: Se quem chamou passou itens, seleciona. Se não, ZERA!
                 if (e.detail?.selected !== undefined) {
                     const sel = e.detail.selected;
                     this.selectedIds = Array.isArray(sel) ? [...sel] : [sel].filter(Boolean);
@@ -520,7 +520,7 @@ function mediaGridComponent(config) {
                 }
             });
 
-            // 2. 🛡️ O PULO DO GATO: AO FECHAR O MODAL, RESETA O ESTADO IMEDIATAMENTE!
+            //️ O PULO DO GATO: AO FECHAR O MODAL, RESETA O ESTADO IMEDIATAMENTE!
             window.addEventListener('modal-close', (e) => {
                 if (e.detail?.id === 'selectorModal') {
                     this.resetGridState();

@@ -74,8 +74,8 @@ function thumbnailManager(initial = {}) {
                 this.thumbnailId ? [this.thumbnailId] : [], // Passa o ID atual selecionado
                 {}, // Labels padrão
                 {
-                    allowSizeSelect: false, // 👈 Esconde o dropdown de tamanhos na gaveta!
-                    fixedSize: 'large',     // 👈 Trava no tamanho desejado (ex: 'large' ou 'thumb')
+                    allowSizeSelect: false, //Esconde o dropdown de tamanhos na gaveta!
+                    fixedSize: 'large',     //Trava no tamanho desejado (ex: 'large' ou 'thumb')
                 }
             );
         },

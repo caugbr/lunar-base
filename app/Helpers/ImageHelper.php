@@ -129,14 +129,16 @@ if (!function_exists('uploadImage')) {
 if (!function_exists('deleteImage')) {
     function deleteImage($path, $folder = 'images', $disk = 'public')
     {
-        // Remove o arquivo original físico no disco correspondente (padrão 'public')
-        if (Storage::disk($disk)->exists($path)) {
-            Storage::disk($disk)->delete($path);
-        }
+        if (!empty($path)) {
+            // Remove o arquivo original físico no disco correspondente (padrão 'public')
+            if (Storage::disk($disk)->exists($path)) {
+                Storage::disk($disk)->delete($path);
 
-        // Aciona o limpador do ImageProcessor para apagar as variações em cache (_thumb, _large, etc.)
-        if (function_exists('deleteMediaVariants')) {
-            deleteMediaVariants($path, $folder);
+                // Aciona o limpador do ImageProcessor para apagar as variações em cache (_thumb, _large, etc.)
+                if (function_exists('deleteMediaVariants')) {
+                    deleteMediaVariants($path, $folder);
+                }
+            }
         }
     }
 }

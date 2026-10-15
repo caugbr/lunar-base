@@ -35,7 +35,7 @@ class PluginCreate extends Command
         $hasController = $this->confirm('Requer Controller e Rotas?', true);
         $hasViews      = $this->confirm('Requer Views?', true);
 
-        // 1. Carrega as categorias do config('addons.tags.plugin')
+        // Carrega as categorias do config('addons.tags.plugin')
         $categoriesConfig = config('addons.tags.plugin', []);
         $choices = [];
         $slugMap = [];
@@ -51,7 +51,7 @@ class PluginCreate extends Command
             $cnt++;
         }
 
-        // 2. Seleção clássica por números (iniciando em 1)
+        // Seleção clássica por números (iniciando em 1)
         $selectedLabels = [];
         if (!empty($choices)) {
             $selectedLabels = $this->choice(
@@ -63,7 +63,7 @@ class PluginCreate extends Command
             );
         }
 
-        // 3. Converte os textos selecionados de volta para os slugs ('editor', 'marketing', etc.)
+        // Converte os textos selecionados de volta para os slugs ('editor', 'marketing', etc.)
         $selectedTags = [];
         if (is_array($selectedLabels)) {
             foreach ($selectedLabels as $selectedText) {

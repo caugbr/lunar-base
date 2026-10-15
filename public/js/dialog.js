@@ -104,7 +104,7 @@ class Dialog {
       `;
 
       document.body.appendChild(overlay);
-      document.body.style.overflow = 'hidden';
+    //   document.body.style.overflow = 'hidden';
 
       requestAnimationFrame(() => {
           overlay.style.opacity = '1';

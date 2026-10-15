@@ -31,7 +31,7 @@ class ThemeCreate extends Command
         $description = $this->argument('description') ?? "Um tema customizado para Lunar Base.";
         $this->info("Iniciando setup para o tema '{$studlyName}'...");
 
-        // 1. Carrega as tags/categorias de temas do config('addons.tags.theme')
+        // Carrega as tags/categorias de temas do config('addons.tags.theme')
         $themeTagsConfig = config('addons.tags.theme', []);
         $choices = [];
         $slugMap = [];
@@ -47,7 +47,7 @@ class ThemeCreate extends Command
             $cnt++;
         }
 
-        // 2. Seleção clássica por números (iniciando em 1, compatível com qualquer terminal)
+        // Seleção clássica por números (iniciando em 1, compatível com qualquer terminal)
         $selectedLabels = [];
         if (!empty($choices)) {
             $selectedLabels = $this->choice(
@@ -59,7 +59,7 @@ class ThemeCreate extends Command
             );
         }
 
-        // 3. Converte os textos selecionados de volta para os slugs ('blog', 'corporate', etc.)
+        // Converte os textos selecionados de volta para os slugs ('blog', 'corporate', etc.)
         $selectedTags = [];
         if (is_array($selectedLabels)) {
             foreach ($selectedLabels as $selectedText) {
@@ -69,7 +69,7 @@ class ThemeCreate extends Command
             }
         }
 
-        // 4. Criação de diretórios
+        // Criação de diretórios
         $directories = [
             $themePath,
             $themePath . '/resources/assets',
@@ -84,7 +84,7 @@ class ThemeCreate extends Command
             File::ensureDirectoryExists($dir, 0755, true);
         }
 
-        // 5. Criar arquivo theme.json com as tags
+        // Criar arquivo theme.json com as tags
         $manifest = [
             'name'        => Str::headline($inputName),
             'description' => $description,
@@ -99,7 +99,7 @@ class ThemeCreate extends Command
             json_encode($manifest, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
         );
 
-        // 6. Clonar a estrutura de views originais
+        // Clonar a estrutura de views originais
         $sourceViews = resource_path('views/public');
         $destinationViews = $themePath . '/resources/views/public';
 
@@ -110,7 +110,7 @@ class ThemeCreate extends Command
             $this->warn("Aviso: O diretório original 'resources/views/public' não foi encontrado.");
         }
 
-        // 7. Copiar os CSSs públicos originais para o tema
+        // Copiar os CSSs públicos originais para o tema
         $sourceCss = public_path('css/public');
         $destinationBaseCss = $themePath . '/resources/assets/css';
         $destinationCss = $destinationBaseCss . '/public';
@@ -138,7 +138,7 @@ class ThemeCreate extends Command
             }
         }
 
-        // 8. Reescrever as referências de asset nas views do tema
+        // Reescrever as referências de asset nas views do tema
         if (File::exists($destinationViews)) {
             $this->rewriteAssetPaths($destinationViews, $slugName);
             $this->info("Referências de asset atualizadas nas views do tema.");

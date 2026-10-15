@@ -104,12 +104,12 @@ class ThemeMarketplaceController extends Controller
      */
     public function removeInactive(AddonMarketplaceService $marketplace)
     {
-        // 1. Mapeia os temas remotos que realmente podem ser baixados novamente
+        // Mapeia os temas remotos que realmente podem ser baixados novamente
         $downloadableThemes = collect($marketplace->getAvailableThemes())
             ->filter(fn ($item) => ! empty($item['download_url']))
             ->keyBy(fn ($item) => str_replace(' ', '', $item['folder'] ?? $item['name'] ?? ''));
 
-        // 2. Busca todos os temas inativos no banco
+        // Busca todos os temas inativos no banco
         $inactiveThemes = Theme::where('is_active', false)->get();
 
         if ($inactiveThemes->isEmpty()) {
@@ -166,18 +166,18 @@ class ThemeMarketplaceController extends Controller
 
         $themePath = base_path("themes/{$folderName}");
 
-        // 1. Apaga a pasta física do tema
+        // Apaga a pasta física do tema
         if (File::exists($themePath)) {
             File::deleteDirectory($themePath);
         }
 
-        // 2. Apaga o link simbólico dos assets de public/themes/{nome}
+        // Apaga o link simbólico dos assets de public/themes/{nome}
         Artisan::call('theme:link', [
             'theme'    => Str::lower($folderName),
             '--unlink' => true,
         ]);
 
-        // 3. Apaga o registro do banco de dados
+        // Apaga o registro do banco de dados
         Theme::where('folder_name', $folderName)
             ->orWhere('name', $folderName)
             ->delete();

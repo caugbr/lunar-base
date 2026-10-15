@@ -13,7 +13,7 @@ class PluginEditTags extends Command
     public function handle(): int
     {
         do {
-            // 1. Localiza todos os plugins instalados que possuem plugin.json
+            // Localiza todos os plugins instalados que possuem plugin.json
             $pluginsPath = base_path('plugins');
             if (!File::exists($pluginsPath)) {
                 $this->error("O diretório 'plugins/' não foi encontrado!");
@@ -35,7 +35,7 @@ class PluginEditTags extends Command
                 return Command::SUCCESS;
             }
 
-            // 2. Define qual plugin será editado (pelo argumento ou escolha numerada)
+            // Define qual plugin será editado (pelo argumento ou escolha numerada)
             $pluginFolder = $this->argument('plugin');
 
             if (!$pluginFolder || !in_array($pluginFolder, $availablePlugins)) {
@@ -58,7 +58,7 @@ class PluginEditTags extends Command
             $jsonPath = base_path("plugins/{$pluginFolder}/plugin.json");
             $manifest = json_decode(File::get($jsonPath), true) ?? [];
 
-            // 3. Exibe as tags atuais
+            // Exibe as tags atuais
             $currentTags = (array) ($manifest['tags'] ?? []);
             $this->line('');
             $this->info("==================================================");
@@ -66,7 +66,7 @@ class PluginEditTags extends Command
             $this->comment("Tags atuais: " . (empty($currentTags) ? 'Nenhuma' : implode(', ', $currentTags)));
             $this->info("==================================================");
 
-            // 4. Monta as opções de categorias a partir do config('addons.tags.plugin')
+            // Monta as opções de categorias a partir do config('addons.tags.plugin')
             $categoriesConfig = config('addons.tags.plugin', []);
             $choices = [];
             $slugMap = [];
@@ -82,7 +82,7 @@ class PluginEditTags extends Command
                 $cnt++;
             }
 
-            // 5. Pergunta as novas tags
+            // Pergunta as novas tags
             $selectedLabels = $this->choice(
                 'Selecione as novas tags (digite os números separados por vírgula, ex: 1,3):',
                 $choices,
@@ -91,7 +91,7 @@ class PluginEditTags extends Command
                 true // Permite seleção múltipla
             );
 
-            // 6. Converte as seleções de volta para os slugs
+            // Converte as seleções de volta para os slugs
             $selectedTags = [];
             if (is_array($selectedLabels)) {
                 foreach ($selectedLabels as $selectedText) {
@@ -101,7 +101,7 @@ class PluginEditTags extends Command
                 }
             }
 
-            // 7. Atualiza e salva o plugin.json preservando os outros dados
+            // Atualiza e salva o plugin.json preservando os outros dados
             $manifest['tags'] = array_values(array_unique($selectedTags));
 
             File::put(

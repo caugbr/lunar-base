@@ -97,7 +97,7 @@ if (!function_exists('generateMediaVariants')) {
                         $offsetX = 0;
                     }
 
-                    // 1. Recorta a janela calculada ao redor do ponto de foco
+                    // Recorta a janela calculada ao redor do ponto de foco
                     $image->crop(
                         (int) round($cropW),
                         (int) round($cropH),
@@ -105,7 +105,7 @@ if (!function_exists('generateMediaVariants')) {
                         (int) round($offsetY)
                     );
 
-                    // 2. Redimensiona para o tamanho final pretendido
+                    // Redimensiona para o tamanho final pretendido
                     $image->resize($targetW, $targetH);
 
                 } else {

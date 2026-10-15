@@ -50,15 +50,19 @@
                         </th>
                         <th>Nome</th>
                         <th>Descrição</th>
-                        <th>Versão</th>
-                        <th>
-                            <div style="display: flex; justify-content: space-between;">
+                        <th style="width: 110px">Versão</th>
+                        <th style="width: 140px">
                                 Status
-                                <div class="check-all">
-                                    <button type="submit" class="transparent-btn remove-plugin trash-inactive" title="Excluir inativos" form="remove_inactive">
-                                        <x-lucide-trash-2 class="lucid-icon" />
-                                    </button>
-                                </div>
+                        </th>
+                        <th style="width: 230px; text-align: left;">
+                            <div class="check-all">
+                                <button type="submit" class="transparent-btn remove-plugin trash-inactive" title="Excluir inativos" form="remove_inactive">
+                                    <x-lucide-trash-2 class="lucid-icon" />
+                                </button>
+                                <label>
+                                    <input type="checkbox" id="check-all-inactive">
+                                    Marcar todas
+                                </label>
                             </div>
                         </th>
                     </tr>
@@ -103,13 +107,28 @@
                                 <span class="admin-badge admin-badge-suspended">
                                     Instalado
                                 </span>
-                                <a href="{{ route('admin.plugins.marketplace.remove', $plugin['folder']) }}" data-name="{{ $plugin['name'] }}" class="remove-plugin" title="Remover plugin">
-                                    <x-lucide-trash-2 class="lucid-icon" />
-                                </a>
                             @else
                                 <span class="admin-badge" style="background-color: #e5e7eb; color: #4b5563;">
                                     Não Instalado
                                 </span>
+                            @endif
+                        </td>
+                        <td>
+                            @if($plugin['is_installed'])
+                                <a href="{{ route('admin.plugins.marketplace.remove', $plugin['folder']) }}" data-name="{{ $plugin['name'] }}" data-folder="{{ $plugin['folder'] }}" class="remove-plugin" title="Remover plugin">
+                                    <x-lucide-trash-2 class="lucid-icon" />
+                                </a>
+                                @if(\App\Models\Plugin::checkMigrations($plugin['folder']))
+                                    <label>
+                                        <input type="checkbox"
+                                            id="rollback_{{ $plugin['folder'] }}"
+                                            class="remove-tables"
+                                            name="rollback_folders[]"
+                                            value="{{ $plugin['folder'] }}"
+                                            form="remove_inactive">
+                                        Remover tabelas
+                                    </label>
+                                @endif
                             @endif
                         </td>
                     </tr>
@@ -180,6 +199,9 @@
         const name = link.dataset.name;
         const url = link.href;
 
+        const folder = link.dataset.folder;
+        const rollbackInput = document.getElementById(`rollback_${folder}`);
+
         // Confirmação via seu componente Dialog
         const confirmed = await Dialog.confirm(`Deseja remover o plugin ${name}?`);
         if (!confirmed) return;
@@ -188,6 +210,15 @@
         const form = document.createElement('form');
         form.method = 'POST';
         form.action = url;
+
+        // rollback
+        if (rollbackInput) {
+            const rollback = document.createElement('input');
+            rollback.type = 'hidden';
+            rollback.name = 'rollback';
+            rollback.value = rollbackInput.checked ? 1 : 0;
+            form.appendChild(rollback);
+        }
 
         // Token CSRF
         const csrfInput = document.createElement('input');
@@ -211,6 +242,19 @@
     document.addEventListener('click', event => {
         if (event.target.matches('a.remove-plugin') || event.target.closest('a.remove-plugin')) {
             removePlugin(event);
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const checkAll = document.getElementById('check-all-inactive');
+        if (checkAll) {
+            checkAll.addEventListener('input', event => {
+                const checked = event.target.checked;
+                const checks = document.querySelectorAll('input.remove-tables');
+                Array.from(checks).forEach(check => {
+                    check.checked = checked;
+                });
+            });
         }
     });
 </script>

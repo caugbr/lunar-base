@@ -294,7 +294,7 @@ class MediaController extends Controller
                 'size_formatted' => $item->size_formatted,
                 'is_image'       => $item->is_image,
                 'is_svg'         => $isSvg,
-                'variants'       => $item->variants, // 👈 ENVIADO PARA O FRONTEND!
+                'variants'       => $item->variants, //ENVIADO PARA O FRONTEND!
                 'mime_type'      => $item->mime_type,
                 'created_at'     => $item->created_at->format('d/m/Y H:i'),
                 'linked_to'      => $mediaableInfo,

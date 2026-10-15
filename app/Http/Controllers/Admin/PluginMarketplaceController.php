@@ -86,33 +86,38 @@ class PluginMarketplaceController extends Controller
     }
 
     /**
-     * Remove completamente a pasta de um único plugin do disco e do banco.
+     * Remove completamente um único plugin do disco e do banco.
      */
-    public function remove(string $folderName, AddonMarketplaceService $marketplace)
+    public function remove(string $folderName, Request $request, AddonMarketplaceService $marketplace)
     {
-        if (! $this->deletePlugin($folderName)) {
-            return back()->with('error', 'Nome de plugin inválido.');
+        $plugin = Plugin::where('folder_name', $folderName)->first();
+        $displayName = $plugin->name ?? $folderName;
+        $shouldRollback = $request->boolean('rollback');
+
+        // Executa a destruição completa encapsulada
+        if (! $this->deletePlugin($folderName, $shouldRollback)) {
+            return back()->with('error', 'Não foi possível remover o plugin.');
         }
 
-        // Limpa o cache do catálogo do marketplace para recalcular os status
         $marketplace->clearCache();
 
         return redirect()->action([PluginController::class, 'index'])
-            ->with('success', "Plugin '{$folderName}' foi removido com sucesso!");
+            ->with('success', "Plugin '{$displayName}' foi removido com sucesso!");
     }
 
     /**
      * Remove todos os plugins inativos em lote (apenas os disponíveis no catálogo).
      */
-    public function removeInactive(AddonMarketplaceService $marketplace)
+    public function removeInactive(Request $request, AddonMarketplaceService $marketplace)
     {
-        // 1. Mapeia os plugins remotos que realmente podem ser baixados novamente
+        // Mapeia os plugins remotos que realmente podem ser baixados novamente
         $downloadablePlugins = collect($marketplace->getAvailablePlugins())
             ->filter(fn ($item) => ! empty($item['download_url']))
             ->keyBy(fn ($item) => str_replace(' ', '', $item['folder'] ?? $item['name'] ?? ''));
 
-        // 2. Busca todos os plugins inativos no banco
+        // Busca todos os plugins inativos no banco
         $inactivePlugins = Plugin::where('is_active', false)->get();
+        $rollbackFolders = (array) $request->input('rollback_folders', []);
 
         if ($inactivePlugins->isEmpty()) {
             return back()->with('info', 'Nenhum plugin inativo encontrado para remoção.');
@@ -130,7 +135,7 @@ class PluginMarketplaceController extends Controller
                 continue;
             }
 
-            if ($this->deletePlugin($plugin->folder_name)) {
+            if ($this->deletePlugin($plugin->folder_name, in_array($plugin->folder_name, $rollbackFolders))) {
                 $deletedCount++;
             }
         }
@@ -155,7 +160,7 @@ class PluginMarketplaceController extends Controller
     /**
      * Executa a limpeza física da pasta, link simbólico e registro no banco de dados.
      */
-    protected function deletePlugin(string $folderName): bool
+    protected function deletePlugin(string $folderName, bool $rollback = false): bool
     {
         if (empty($folderName)) {
             return false;
@@ -163,18 +168,26 @@ class PluginMarketplaceController extends Controller
 
         $pluginPath = base_path("plugins/{$folderName}");
 
-        // 1. Apaga a pasta física do plugin
+        // ROLLBACK PRIMEIRO: precisa dos arquivos físicos ainda presentes no disco
+        if ($rollback && Plugin::checkMigrations($folderName)) {
+            Artisan::call('migrate:rollback', [
+                '--path'  => "plugins/{$folderName}/database/migrations",
+                '--force' => true,
+            ]);
+        }
+
+        // Apaga a pasta física do plugin
         if (File::exists($pluginPath)) {
             File::deleteDirectory($pluginPath);
         }
 
-        // 2. Apaga o link simbólico de assets públicos
+        // Apaga o link simbólico de assets públicos
         Artisan::call('plugin:link', [
             'plugin'   => Str::kebab($folderName),
             '--unlink' => true,
         ]);
 
-        // 3. Apaga o registro do banco de dados (se cadastrado)
+        // Apaga o registro do banco de dados (se cadastrado)
         Plugin::where('folder_name', $folderName)->delete();
 
         return true;

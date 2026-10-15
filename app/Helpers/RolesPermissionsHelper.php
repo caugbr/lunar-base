@@ -75,19 +75,19 @@ if (! function_exists('addPermission')) {
      */
     function addPermission(string $slug, string $label, string $group = 'general', ?string $groupTitle = null): void
     {
-        // 1. Registra no permissionGroups
+        // Registra no permissionGroups
         config([
             "rolesPermissions.permissionGroups.{$group}.{$slug}" => $label
         ]);
 
-        // 2. O Admin sempre recebe todas as permissões registradas
+        // O Admin sempre recebe todas as permissões registradas
         $adminPerms = config('rolesPermissions.permissionsByRole.admin', []);
         if (! in_array($slug, $adminPerms, true)) {
             $adminPerms[] = $slug;
             config(['rolesPermissions.permissionsByRole.admin' => $adminPerms]);
         }
 
-        // 3. Registra no Gate do Laravel para habilitar can(), @can e middleware can:
+        // Registra no Gate do Laravel para habilitar can(), @can e middleware can:
         registerPermissionGate($slug);
     }
 }

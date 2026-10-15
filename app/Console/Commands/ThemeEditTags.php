@@ -13,7 +13,7 @@ class ThemeEditTags extends Command
     public function handle(): int
     {
         do {
-            // 1. Localiza todos os temas instalados que possuem theme.json
+            // Localiza todos os temas instalados que possuem theme.json
             $themesPath = base_path('themes');
             if (!File::exists($themesPath)) {
                 $this->error("O diretório 'themes/' não foi encontrado!");
@@ -35,7 +35,7 @@ class ThemeEditTags extends Command
                 return Command::SUCCESS;
             }
 
-            // 2. Define qual tema será editado (pelo argumento ou escolha numerada)
+            // Define qual tema será editado (pelo argumento ou escolha numerada)
             $themeFolder = $this->argument('theme');
 
             if (!$themeFolder || !in_array($themeFolder, $availableThemes)) {
@@ -58,7 +58,7 @@ class ThemeEditTags extends Command
             $jsonPath = base_path("themes/{$themeFolder}/theme.json");
             $manifest = json_decode(File::get($jsonPath), true) ?? [];
 
-            // 3. Exibe as tags atuais
+            // Exibe as tags atuais
             $currentTags = (array) ($manifest['tags'] ?? []);
             $this->line('');
             $this->info("==================================================");
@@ -66,7 +66,7 @@ class ThemeEditTags extends Command
             $this->comment("Tags atuais: " . (empty($currentTags) ? 'Nenhuma' : implode(', ', $currentTags)));
             $this->info("==================================================");
 
-            // 4. Monta as opções de categorias a partir do config('addons.tags.theme')
+            // Monta as opções de categorias a partir do config('addons.tags.theme')
             $themeTagsConfig = config('addons.tags.theme', []);
             $choices = [];
             $slugMap = [];
@@ -82,7 +82,7 @@ class ThemeEditTags extends Command
                 $cnt++;
             }
 
-            // 5. Pergunta as novas tags
+            // Pergunta as novas tags
             $selectedLabels = $this->choice(
                 'Selecione as novas tags do tema (digite os números separados por vírgula, ex: 1,3):',
                 $choices,
@@ -91,7 +91,7 @@ class ThemeEditTags extends Command
                 true // Permite seleção múltipla
             );
 
-            // 6. Converte as seleções de volta para os slugs ('blog', 'corporate', etc.)
+            // Converte as seleções de volta para os slugs ('blog', 'corporate', etc.)
             $selectedTags = [];
             if (is_array($selectedLabels)) {
                 foreach ($selectedLabels as $selectedText) {
@@ -101,7 +101,7 @@ class ThemeEditTags extends Command
                 }
             }
 
-            // 7. Atualiza e salva o theme.json preservando todos os outros campos
+            // Atualiza e salva o theme.json preservando todos os outros campos
             $manifest['tags'] = array_values(array_unique($selectedTags));
 
             File::put(
