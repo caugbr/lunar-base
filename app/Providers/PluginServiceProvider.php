@@ -122,6 +122,24 @@ class PluginServiceProvider extends ServiceProvider
     /**
      * Registra as views de ajuda de TODOS os plugins.
      */
+    // private function registerPluginHelpViews(): void
+    // {
+    //     $pluginsPath = base_path('plugins');
+
+    //     if (!File::isDirectory($pluginsPath)) {
+    //         return;
+    //     }
+
+    //     foreach (File::directories($pluginsPath) as $pluginPath) {
+    //         $folderName = basename($pluginPath);
+    //         $slugName = Str::slug($folderName);
+    //         $helpPath = $pluginPath . '/resources/help-views';
+
+    //         if (File::isDirectory($helpPath)) {
+    //             $this->loadViewsFrom($helpPath, "{$slugName}-help");
+    //         }
+    //     }
+    // }
     private function registerPluginHelpViews(): void
     {
         $pluginsPath = base_path('plugins');
@@ -132,10 +150,13 @@ class PluginServiceProvider extends ServiceProvider
 
         foreach (File::directories($pluginsPath) as $pluginPath) {
             $folderName = basename($pluginPath);
-            $slugName = Str::slug($folderName);
             $helpPath = $pluginPath . '/resources/help-views';
 
             if (File::isDirectory($helpPath)) {
+                // Insere espaço antes de maiúsculas seguidas de minúsculas
+                $spacedName = preg_replace('/(?<!^)(?=[A-Z][a-z])/', ' ', $folderName);
+                $slugName = Str::slug($spacedName);
+
                 $this->loadViewsFrom($helpPath, "{$slugName}-help");
             }
         }

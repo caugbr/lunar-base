@@ -11,7 +11,27 @@ use Exception;
 
 class CoreUpdateService
 {
+    /**
+     * Repositório oficial do GitHub para verificação e download de releases.
+     */
     protected string $repo;
+
+    /**
+     * Arquivos em /config que pertencem estritamente ao Core da aplicação.
+     * Estes arquivos DEVEM ser sobrescritos a cada release para que o sistema
+     * receba novos esquemas, metadados e regras de segurança.
+     *
+     * Todos os outros arquivos de /config (ex: site.php, scripts.php, app.php)
+     * serão preservados se já existirem na instalação local.
+     */
+    protected array $coreConfigFiles = [
+        'settings.php',
+        'rolesPermissions.php',
+        'addons.php',
+        'coreTranslatable.php',
+        'tutorials.php',
+        'defaultUsers.php',
+    ];
 
     public function __construct()
     {
@@ -50,56 +70,19 @@ class CoreUpdateService
     /**
      * Consulta a API de Releases do GitHub
      */
-    // protected function fetchFromGitHub(): array
-    // {
-    //     $currentVersion = appVersion();
-
-    //     try {
-    //         $response = Http::timeout(5)
-    //             ->withHeaders(['User-Agent' => 'Lunar-Base-Updater'])
-    //             ->get("https://api.github.com/repos/{$this->repo}/releases/latest");
-
-    //         if ($response->successful()) {
-    //             $data = $response->json();
-    //             $latestTag = ltrim($data['tag_name'] ?? $currentVersion, 'v');
-
-    //             $hasUpdate = version_compare($currentVersion, $latestTag, '<');
-
-    //             return [
-    //                 'success'         => true,
-    //                 'has_update'      => $hasUpdate,
-    //                 'current_version' => $currentVersion,
-    //                 'latest_version'  => $latestTag,
-    //                 'changelog'       => $data['body'] ?? '',
-    //                 'download_url'    => $data['zipball_url'] ?? null,
-    //             ];
-    //         }
-    //     } catch (Exception $e) {
-    //         logger()->error("Erro ao verificar atualização do Core: " . $e->getMessage());
-    //     }
-
-    //     return [
-    //         'success'         => false,
-    //         'has_update'      => false,
-    //         'current_version' => $currentVersion,
-    //         'latest_version'  => $currentVersion,
-    //         'changelog'       => '',
-    //         'download_url'    => null,
-    //     ];
-    // }
     protected function fetchFromGitHub(): array
     {
         $currentVersion = appVersion();
 
         try {
-            $response = Http::timeout(15) // Aumentado de 5 para 15s
+            $response = Http::timeout(15)
                 ->withHeaders([
                     'User-Agent' => 'Lunar-Base-Updater',
                     'Accept'     => 'application/vnd.github.v3+json',
                 ])
                 ->withOptions([
                     'curl' => [
-                        CURLOPT_IPRESOLVE => CURL_IPRESOLVE_V4, // Força IPv4 na KingHost
+                        CURLOPT_IPRESOLVE => CURL_IPRESOLVE_V4,
                     ],
                 ])
                 ->get("https://api.github.com/repos/{$this->repo}/releases/latest");
@@ -176,7 +159,14 @@ class CoreUpdateService
 
             // Normaliza a subpasta interna criada automaticamente pelo GitHub
             $subDirs = File::directories($tempExtract);
-            $sourcePath = count($subDirs) === 1 ? $subDirs[0] : $tempExtract;
+            // $sourcePath = count($subDirs) === 1 ? $subDirs[0] : $tempExtract;
+            $sourcePath = $tempExtract;
+            foreach (File::directories($tempExtract) as $dir) {
+                if (File::exists($dir . '/composer.json')) {
+                    $sourcePath = $dir;
+                    break;
+                }
+            }
 
             // Backup do banco SQLite se existir em database/database.sqlite
             $sqliteFile = base_path('database/database.sqlite');
@@ -203,7 +193,7 @@ class CoreUpdateService
                 File::delete($sqliteBackup);
             }
 
-            // Atualiza a pasta CONFIG de forma ADITIVA (Só copia arquivos novos!)
+            // Atualiza a pasta CONFIG de forma seletiva
             if (File::exists($sourcePath . '/config')) {
                 $configFiles = File::files($sourcePath . '/config');
 
@@ -211,6 +201,13 @@ class CoreUpdateService
                     $fileName   = $file->getFilename();
                     $targetFile = base_path("config/{$fileName}");
 
+                    // Arquivos essenciais do Core são sempre sobrescritos com a versão da release
+                    if (in_array($fileName, $this->coreConfigFiles)) {
+                        File::copy($file->getPathname(), $targetFile);
+                        continue;
+                    }
+
+                    // Arquivos do projeto ou do Laravel só são copiados se não existirem localmente
                     if (!File::exists($targetFile)) {
                         File::copy($file->getPathname(), $targetFile);
                     }
@@ -260,15 +257,60 @@ class CoreUpdateService
                 File::copy($sourcePath . '/composer.json', base_path('composer.json'));
             }
 
+            // if ($needsComposerUpdate) {
+            //     logger()->info("Alteração no composer.lock detectada. Rodando atualização de pacotes...");
+            //     if (!function_exists('exec')) {
+            //         logger()->warning("Função exec() desabilitada no servidor. O composer install não pôde ser executado automaticamente.");
+
+            //         session()->flash('warning', "Atenção: A função <code>exec()</code> está desabilitada neste servidor. O <code>composer install</code> não pôde ser executado automaticamente.");
+            //     } else {
+            //         if (PHP_OS_FAMILY === 'Windows') {
+            //             exec("composer install 2>&1", $output, $returnCode);
+            //         } else {
+            //             $useComposerScript = base_path('usecomposer.sh');
+            //             if (File::exists($useComposerScript)) {
+            //                 exec("bash \"" . $useComposerScript . "\" install --no-dev 2>&1", $output, $returnCode);
+            //             }
+            //         }
+            //     }
+            // }
             if ($needsComposerUpdate) {
                 logger()->info("Alteração no composer.lock detectada. Rodando atualização de pacotes...");
 
-                if (PHP_OS_FAMILY === 'Windows') {
-                    exec("composer install 2>&1", $output, $returnCode);
+                $isExecDisabled = !function_exists('exec')
+                    || in_array('exec', array_map('trim', explode(',', (string) ini_get('disable_functions'))));
+
+                if ($isExecDisabled) {
+                    logger()->warning("Função exec() desabilitada no servidor. O composer install não pôde ser executado automaticamente.");
+
+                    if (request()->hasSession()) {
+                        session()->flash('warning', "Atenção: A função <code>exec()</code> está desabilitada neste servidor. O <code>composer install</code> da nova versão precisa ser executado manualmente.");
+                    }
                 } else {
-                    $useComposerScript = base_path('usecomposer.sh');
-                    if (File::exists($useComposerScript)) {
-                        exec("bash \"" . $useComposerScript . "\" install --no-dev 2>&1", $output, $returnCode);
+                    $output = [];
+                    $returnCode = 0;
+
+                    if (PHP_OS_FAMILY === 'Windows') {
+                        exec("composer install --no-dev 2>&1", $output, $returnCode);
+                    } else {
+                        $useComposerScript = base_path('usecomposer.sh');
+
+                        if (File::exists($useComposerScript)) {
+                            exec("bash \"" . $useComposerScript . "\" install --no-dev 2>&1", $output, $returnCode);
+                        } else {
+                            // Fallback caso o script usecomposer.sh não exista no Linux
+                            exec("composer install --no-dev 2>&1", $output, $returnCode);
+                        }
+                    }
+
+                    // Se a execução retornou código de erro diferente de 0
+                    if ($returnCode !== 0) {
+                        $errorOutput = implode("\n", $output);
+                        logger()->error("Falha ao executar composer install. Código: {$returnCode}. Saída:\n{$errorOutput}");
+
+                        if (request()->hasSession()) {
+                            session()->flash('warning', "Atenção: A atualização de dependências via Composer retornou um erro. Verifique os logs do sistema.");
+                        }
                     }
                 }
             }

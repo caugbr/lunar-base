@@ -3,39 +3,14 @@
 return [
     /*
     |--------------------------------------------------------------------------
-    | Regras de tradução para arquivos em /config
+    | Regras de tradução personalizadas do projeto
     |--------------------------------------------------------------------------
     |
-    | Caminhos com dot-notation e curingas (*) que apontam para
-    | textos humanos que devem ser traduzidos em tempo de execução.
+    | Adicione aqui caminhos adicionais específicos do seu tema, plugins
+    | próprios ou novos menus que você queira tornar traduzíveis.
     */
     'rules' => [
-        // addons
-        'addons.tags.*.*.name',
-        'addons.tags.*.*.description',
-
-        // admin
-        'admin.menu.*.title',
-        'admin.menu.*.items.label',
-        'admin.dashboard.title',
-        'admin.dashboard.subtitle',
-        'admin.dashboard.cardTitle',
-
-        // rolesPermissions
-        'rolesPermissions.roles.*.name',
-        'rolesPermissions.roles.*.description',
-        'rolesPermissions.permissionGroups.*.*',
-
-        // settings
-        'settings.definitions.*.tab',
-        'settings.definitions.*.title',
-        'settings.definitions.*.description',
-        'settings.definitions.*.fields.*.label',
-        'settings.definitions.*.fields.*.description',
-        'settings.definitions.*.fields.*.options.*',
-
-        // site
-        'site.mainMenu.*.label',
-        'site.loginFooterText',
+        // Exemplo de regra customizada do projeto:
+        // 'meu_tema.banners.*.titulo',
     ],
 ];

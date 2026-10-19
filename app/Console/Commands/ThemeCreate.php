@@ -117,6 +117,7 @@ class ThemeCreate extends Command
 
         $cssFiles = [
             public_path('css') . "/auth.css",
+            public_path('css') . "/editor-blocks.css",
             public_path('css') . "/dialog.css",
             public_path('css') . "/errors.css"
         ];

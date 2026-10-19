@@ -35,6 +35,14 @@ body {
     text-decoration: none;
 }
 
+.captcha-wrapper {
+    margin-bottom: 16px;
+}
+
+.captcha-wrapper div {
+    text-align: center;
+}
+
 .form-group {
     margin-bottom: 20px;
 }

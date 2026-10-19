@@ -1,4 +1,24 @@
 <?php
+/**
+ * =============================================================================
+ * LUNAR BASE - ARQUIVO ESTRUTURAL DO CORE
+ * =============================================================================
+ *
+ * ATENÇÃO: NÃO EDITE ESTE ARQUIVO DIRETAMENTE!
+ *
+ * Este arquivo é parte integrante do núcleo do sistema e define esquemas,
+ * regras e metadados oficiais da plataforma.
+ *
+ * Qualquer alteração manual feita aqui SERÁ SOBRESCRITA a cada atualização
+ * de versão baixada pelo CoreUpdateService.
+ *
+ * Para personalizações de projeto:
+ * - Valores de configuração: altere pelo Painel Administrativo ou banco de dados.
+ * - Variáveis de ambiente: utilize o arquivo .env.
+ * - Regras complementares: utilize os arquivos de projeto correspondentes.
+ *
+ * =============================================================================
+ */
 
 /**
  * =============================================================================
@@ -492,6 +512,11 @@ return [
                     'inactive' => 'Não verificar',
                 ],
                 [
+                    'type' => 'subtitle',
+                    'icon' => 'shield',
+                    'label' => 'Captcha Turnstile'
+                ],
+                [
                     'key' => 'use_captcha',
                     'type' => 'switch',
                     'label' => 'Usar CAPTCHA',
@@ -499,6 +524,40 @@ return [
                     'default' => false,
                     'active' => 'Usar CAPTCHA no login.',
                     'inactive' => 'Não usar',
+                ],
+                [
+                    'key' => 'turnstile_appearance',
+                    'type' => 'select',
+                    'label' => 'Modo de exibição do captcha',
+                    'description' => 'Determina se o desafio deve aparecer de imediato ou rodar silenciosamente em segundo plano.',
+                    'default' => 'always',
+                    'options' => [
+                        'always' => 'Sempre visível (exibe o widget desde o carregamento)',
+                        'interaction-only' => 'Invisível (só aparece se exigir interação manual)',
+                        // 'execute' => 'Sob demanda (acionado programaticamente via script)',
+                    ],
+                    'depends_on' => [
+                        'field' => 'use_captcha',
+                        'operator' => '===',
+                        'value' => true,
+                    ],
+                ],
+                [
+                    'key' => 'turnstile_size',
+                    'type' => 'select',
+                    'label' => 'Dimensões do widget',
+                    'description' => 'Define a proporção visual e o formato da caixa do Turnstile nos formulários.',
+                    'default' => 'normal',
+                    'options' => [
+                        'normal' => 'Normal (formato retangular fixo de 300x65px)',
+                        'flexible' => 'Flexível (largura 100% adaptável ao container)',
+                        'compact' => 'Compacto (formato quadrado/vertical de 130x140px)',
+                    ],
+                    'depends_on' => [
+                        'field' => 'use_captcha',
+                        'operator' => '===',
+                        'value' => true,
+                    ],
                 ],
                 [
                     'key' => 'turnstile_site_key',
@@ -523,6 +582,11 @@ return [
                         'operator' => '===',
                         'value' => true,
                     ],
+                ],
+                [
+                    'type' => 'subtitle',
+                    'icon' => 'fingerprint-pattern',
+                    'label' => 'Autenticação em duas etapas'
                 ],
                 [
                     'key' => '2fa_enabled',

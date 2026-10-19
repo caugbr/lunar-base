@@ -77,7 +77,7 @@
             <tbody>
                 @forelse($plugins as $plugin)
                 @php
-                    $kebabName = Str::kebab($plugin->name);
+                    $kebabName = Str::slug($plugin->name);
                     $helpView = null;
                     if (view()->exists("{$kebabName}-help::help")) {
                         $helpView = "{$kebabName}-help::help";

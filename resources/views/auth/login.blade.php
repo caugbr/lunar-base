@@ -61,14 +61,19 @@
                 </span>
             </div>
 
-            @if(setting('navigation.use_captcha'))
+            @if(setting('auth.use_captcha'))
+            @php
+                $siteKey = setting('auth.turnstile_site_key', '');
+                $appearance = setting('auth.turnstile_appearance', 'always');
+                $size = setting('auth.turnstile_size', 'normal');
+            @endphp
             <div class="captcha-wrapper">
                 <div
                     class="cf-turnstile"
-                    data-sitekey="{{ setting('auth.turnstile_site_key') }}"
+                    data-sitekey="{{ $siteKey }}"
                     data-theme="light"
-                    data-size="normal"
-                    data-callback="onSuccess"
+                    data-size="{{ $size }}"
+                    data-appearance="{{ $appearance }}"
                 ></div>
             </div>
             @endif

@@ -1,4 +1,24 @@
 <?php
+/**
+ * =============================================================================
+ * LUNAR BASE - ARQUIVO ESTRUTURAL DO CORE
+ * =============================================================================
+ *
+ * ATENÇÃO: NÃO EDITE ESTE ARQUIVO DIRETAMENTE!
+ *
+ * Este arquivo é parte integrante do núcleo do sistema e define esquemas,
+ * regras e metadados oficiais da plataforma.
+ *
+ * Qualquer alteração manual feita aqui SERÁ SOBRESCRITA a cada atualização
+ * de versão baixada pelo CoreUpdateService.
+ *
+ * Para personalizações de projeto:
+ * - Valores de configuração: altere pelo Painel Administrativo ou banco de dados.
+ * - Variáveis de ambiente: utilize o arquivo .env.
+ * - Regras complementares: utilize os arquivos de projeto correspondentes.
+ *
+ * =============================================================================
+ */
 
 return [
     'tags' => [

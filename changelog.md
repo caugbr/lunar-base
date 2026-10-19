@@ -1,9 +1,25 @@
 # Changelog
 
+## [2.22.0] 2026-10-17
+
+### Added
+- Plugin Telegram Notifier
+- Plugin Frontend Login
+
+### Changed
+- Captcha agora tem parâmetros de configuração para tamanho e visibilidade
+- Update agora atualiza alguns arquivos em config - apenas os exclusivos do core
+- Definimos arquivos em /config que serão sobrescritos no update
+- O aquivo translatable.php, em config, agora é coreTranslatable.php, deixando o original para edições do cliente
+
+### Fixed
+- Modo de gerar o nome das help views ajustado
+- Captcha na view de login não carregava - corrigido
+
 ## [2.21.0] 2026-10-15
 
 ### Added
-- Quando um plugin é deletado do disco, olink é apagado e um aviso é disparado na admin
+- Quando um plugin é deletado do disco, o link é apagado e um aviso é disparado na admin
 - Habilitada a inicialização de Service Providers de plugins ativos no ambiente de console
 - Opção de remover tabelas de plugins ao excluir, individualmente ou em lote
 - Filter 'content.render_shortcodes' para filtrar o conteúdo depois dos shortcodes aplicados
