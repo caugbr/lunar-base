@@ -158,6 +158,12 @@ Route::middleware($middlewares)->prefix('admin')->name('admin.')->group(function
         Route::get('reference/roles-permissions', [ReferenceController::class, 'permissions'])
             ->name('roles-permissions');
         Route::get('reference/logs', [ReferenceController::class, 'logs'])->name('logs');
+
+        Route::prefix('system/update')->name('system.update.')->group(function () {
+            Route::get('/', [UpdateController::class, 'index'])->name('index');
+            Route::post('/apply', [UpdateController::class, 'apply'])->name('apply');
+            Route::get('/check', [UpdateController::class, 'check'])->name('check');
+        });
     });
 
     // Rotas da Lixeira de Páginas

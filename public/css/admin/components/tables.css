@@ -2,6 +2,10 @@
     overflow-x: auto;
 }
 
+.table-wrap .admin-table {
+    min-width: 800px;
+}
+
 .admin-table {
     width: 100%;
     border-collapse: collapse;

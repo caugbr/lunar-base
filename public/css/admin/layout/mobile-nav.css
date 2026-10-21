@@ -79,6 +79,7 @@
 
     .admin-header {
         padding: 12px 20px 12px 60px;
+        z-index: 24 !important;
     }
 
     .admin-content {

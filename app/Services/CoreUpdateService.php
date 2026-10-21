@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Str;
 use ZipArchive;
 use Exception;
 
@@ -39,7 +40,7 @@ class CoreUpdateService
     }
 
     /**
-     * Retorna informações sobre a atualização do Core
+     * Retorna informações sobre a atualização do Core, incluindo o Changelog da versão alvo.
      */
     public function getUpdateInfo(): array
     {
@@ -49,18 +50,93 @@ class CoreUpdateService
 
         $currentVersion = appVersion();
         $latestTag      = $githubData['latest_version'] ?? $currentVersion;
+        $hasUpdate      = version_compare($currentVersion, $latestTag, '<');
 
-        $hasUpdate = version_compare($currentVersion, $latestTag, '<');
+        // Se houver update, busca o changelog da nova versão; senão, busca da versão atual instalada
+        $targetVersion = $hasUpdate ? $latestTag : $currentVersion;
+        $changelogHtml = $this->getChangelogForVersion($targetVersion);
 
         return array_merge($githubData, [
             'current_version' => $currentVersion,
             'has_update'      => $hasUpdate,
+            'target_version'  => $targetVersion,
+            'changelog_html'  => $changelogHtml,
         ]);
     }
 
     /**
-     * Força a rechecagem limpando o cache do GitHub
+     * Busca o CHANGELOG.md do GitHub e extrai apenas a seção da versão especificada.
      */
+    public function getChangelogForVersion(string $version): string
+    {
+        $cacheKey = "lunar_changelog_{$version}";
+
+        return Cache::remember($cacheKey, now()->addDay(), function () use ($version) {
+            try {
+                // Tenta baixar o CHANGELOG.md remoto da branch main (ou master)
+                $url = "https://raw.githubusercontent.com/{$this->repo}/main/CHANGELOG.md";
+
+                $response = Http::timeout(10)
+                    ->withHeaders(['User-Agent' => 'Lunar-Base-Updater'])
+                    ->get($url);
+
+                if (!$response->successful()) {
+                    // Fallback caso a branch principal seja 'master'
+                    $response = Http::timeout(10)
+                        ->withHeaders(['User-Agent' => 'Lunar-Base-Updater'])
+                        ->get("https://raw.githubusercontent.com/{$this->repo}/master/CHANGELOG.md");
+                }
+
+                if ($response->successful()) {
+                    $rawContent = $response->body();
+                    $versionSection = $this->extractVersionFromChangelog($rawContent, $version);
+
+                    if (!empty($versionSection)) {
+                        return Str::markdown($versionSection, [
+                            'html_input'         => 'escape',
+                            'allow_unsafe_links' => false,
+                        ]);
+                    }
+                }
+            } catch (Exception $e) {
+                logger()->warning("Não foi possível carregar o CHANGELOG.md remoto: " . $e->getMessage());
+            }
+
+            // Fallback: se não achar no GitHub, tenta ler do arquivo local se existir
+            $localChangelog = base_path('CHANGELOG.md');
+            if (File::exists($localChangelog)) {
+                $section = $this->extractVersionFromChangelog(File::get($localChangelog), $version);
+                if (!empty($section)) {
+                    return Str::markdown($section, [
+                        'html_input'         => 'escape',
+                        'allow_unsafe_links' => false,
+                    ]);
+                }
+            }
+
+            return "<p class=\"text-muted\">Nenhum registro de alterações detalhado foi encontrado para a versão v{$version}.</p>";
+        });
+    }
+
+    /**
+     * Extrai o bloco de texto entre "## [versao]" e a próxima ocorrência de "## ["
+     */
+    protected function extractVersionFromChangelog(string $markdown, string $version): string
+    {
+        $escapedVersion = preg_quote($version, '/');
+
+        // Regex que captura desde '## [versao]' até o próximo '## [' ou fim do arquivo
+        $pattern = "/##\s*\[" . $escapedVersion . "\].*?(?=(?:\R##\s*\[|\z))/s";
+
+        if (preg_match($pattern, $markdown, $matches)) {
+            // Remove a linha do título '## [versao] Data' para não duplicar na view
+            $cleanContent = preg_replace('/^##\s*\[.*?\].*?\R+/m', '', trim($matches[0]));
+            return trim($cleanContent);
+        }
+
+        return '';
+    }
+
     public function checkForUpdates(): array
     {
         Cache::forget('lunar_github_latest_release');
@@ -257,23 +333,6 @@ class CoreUpdateService
                 File::copy($sourcePath . '/composer.json', base_path('composer.json'));
             }
 
-            // if ($needsComposerUpdate) {
-            //     logger()->info("Alteração no composer.lock detectada. Rodando atualização de pacotes...");
-            //     if (!function_exists('exec')) {
-            //         logger()->warning("Função exec() desabilitada no servidor. O composer install não pôde ser executado automaticamente.");
-
-            //         session()->flash('warning', "Atenção: A função <code>exec()</code> está desabilitada neste servidor. O <code>composer install</code> não pôde ser executado automaticamente.");
-            //     } else {
-            //         if (PHP_OS_FAMILY === 'Windows') {
-            //             exec("composer install 2>&1", $output, $returnCode);
-            //         } else {
-            //             $useComposerScript = base_path('usecomposer.sh');
-            //             if (File::exists($useComposerScript)) {
-            //                 exec("bash \"" . $useComposerScript . "\" install --no-dev 2>&1", $output, $returnCode);
-            //             }
-            //         }
-            //     }
-            // }
             if ($needsComposerUpdate) {
                 logger()->info("Alteração no composer.lock detectada. Rodando atualização de pacotes...");
 

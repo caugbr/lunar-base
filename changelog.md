@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.23.0] 2026-10-19
+
+### Added
+- Nova interface de atualização, mostrando as novidades no changelog
+- Itens do menu agora podem usar, além de 'role' e 'permission', 'callback' para teste personalizado
+- Novo arquivo top-scroll.js - adiciona uma barra de rolagem horizontal no topo de elementos
+- Componente <x-image-field> para upload de imagens usando os modais do sistema ou input file
+
+### Fixed
+- Tabelas dentro de .table-wrap agora tem um min-width de 800px
+- Menu admin perdia o botão toggle no mobile - corrigido
+- Componente <x-modal> - botões não tinham o type=button e submetiam o formulário onde estivessem
+
 ## [2.22.0] 2026-10-17
 
 ### Added

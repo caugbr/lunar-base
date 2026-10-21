@@ -6,6 +6,13 @@
         $canAccess = function(array $node) use ($user): bool {
             if (!$user) return false;
 
+            // Checagem personalizada
+            if (isset($node['callback']) && is_callable($node['callback'])) {
+                if (!call_user_func($node['callback'], $user, $node)) {
+                    return false;
+                }
+            }
+
             // Checagem por role (se houver)
             if (isset($node['role'])) {
                 $allowedRoles = is_array($node['role'])

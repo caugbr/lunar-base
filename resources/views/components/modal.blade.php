@@ -36,7 +36,7 @@
         {{-- Header (Exibido se houver título na prop do Blade ou via JS) --}}
         <div class="modal-header" x-show="title">
             <h3 class="modal-title" x-text="title"></h3>
-            <button @click="close()" class="modal-close" aria-label="Fechar">
+            <button type="button" @click="close()" class="modal-close" aria-label="Fechar">
                 <x-lucide-x class="lucid-icon" />
             </button>
         </div>
@@ -51,7 +51,7 @@
         <div class="modal-footer">
             {{ $footer ?? '' }}
             {{-- Corrigido x-tezt para x-text e adicionado x-text no conteúdo do botão --}}
-            <button @click="close()" class="admin-btn admin-btn-secondary" x-text="closeLabel"></button>
+            <button type="button" @click="close()" class="admin-btn admin-btn-secondary" x-text="closeLabel"></button>
         </div>
         @endif
     </div>

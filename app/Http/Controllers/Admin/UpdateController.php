@@ -4,10 +4,19 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Services\CoreUpdateService;
-use Illuminate\Http\Request;
 
 class UpdateController extends Controller
 {
+    /**
+     * Exibe a tela de atualização e changelog
+     */
+    public function index(CoreUpdateService $updater)
+    {
+        $updateInfo = $updater->getUpdateInfo();
+
+        return view('admin.system.update', compact('updateInfo'));
+    }
+
     /**
      * Processa a atualização do Core via AJAX
      */
