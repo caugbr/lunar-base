@@ -23,14 +23,14 @@
                 <div style="display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap;">
                     <div>
                         <span style="font-size: 0.8rem; color: #64748b; text-transform: uppercase; font-weight: 600; display: block;">Versão Atual</span>
-                        <strong style="font-size: 1.15rem; color: #1e293b;">v{{ $updateInfo['current_version'] }}</strong>
+                        <strong style="font-size: 1.15rem; color: #1e293b;">{{ $updateInfo['current_version'] }}</strong>
                     </div>
 
                     <div style="color: #cbd5e1; font-size: 1.25rem;">→</div>
 
                     <div>
                         <span style="font-size: 0.8rem; color: #64748b; text-transform: uppercase; font-weight: 600; display: block;">Nova Versão</span>
-                        <strong style="font-size: 1.15rem; color: #10b981;">v{{ $updateInfo['latest_version'] }}</strong>
+                        <strong style="font-size: 1.15rem; color: #10b981;">{{ $updateInfo['latest_version'] }}</strong>
                     </div>
 
                     <div>
@@ -46,14 +46,14 @@
                         class="admin-btn admin-btn-primary"
                         style="background: #10b981; border-color: #10b981; color: #fff; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; padding: 0.65rem 1.25rem; cursor: pointer;">
                     <x-lucide-cloud-download class="lucid-icon" style="width: 18px; height: 18px;" />
-                    Atualizar para a v{{ $updateInfo['latest_version'] }}
+                    Atualizar para a versão {{ $updateInfo['latest_version'] }}
                 </button>
             @else
                 {{-- Cenário SEM Atualização: Apenas a versão do sistema e a confirmação --}}
                 <div style="display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap;">
                     <div>
                         <span style="font-size: 0.8rem; color: #64748b; text-transform: uppercase; font-weight: 600; display: block;">Versão do Sistema</span>
-                        <strong style="font-size: 1.15rem; color: #1e293b;">v{{ $updateInfo['current_version'] }}</strong>
+                        <strong style="font-size: 1.15rem; color: #1e293b;">{{ $updateInfo['current_version'] }}</strong>
                     </div>
 
                     <div style="display: inline-flex; align-items: center; gap: 6px; color: #10b981; font-weight: 600; font-size: 0.95rem;">
@@ -68,7 +68,7 @@
         <div style="margin-bottom: 1rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.75rem;">
             <h3 style="margin: 0; font-size: 1.15rem; color: #0f172a; display: flex; align-items: center; gap: 8px;">
                 <x-lucide-file-text class="lucid-icon" style="width: 18px; height: 18px; color: #64748b;" />
-                Notas da Versão v{{ $updateInfo['target_version'] }}
+                Notas da Versão {{ $updateInfo['target_version'] }}
             </h3>
         </div>
 
