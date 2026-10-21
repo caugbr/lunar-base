@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.23.1] 2026-10-20
+
+### Fixed
+- Ajustes no texto da view update
+
 ## [2.23.0] 2026-10-19
 
 ### Added
