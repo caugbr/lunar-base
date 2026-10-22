@@ -14,7 +14,7 @@ if (! function_exists('setMenuBadge')) {
             return;
         }
 
-        addFilter('adminMenuGroups', function (array $menuGroups) use ($label, $badge): array {
+        addFilter('admin_menu_groups', function (array $menuGroups) use ($label, $badge): array {
             $target = mb_strtolower($label);
 
             return array_map(function (array $group) use ($target, $badge) {

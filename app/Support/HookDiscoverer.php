@@ -2,151 +2,84 @@
 
 namespace App\Support;
 
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
 
 class HookDiscoverer
 {
-    protected static string $cacheKey = 'lunar_discovered_hooks';
+    protected static string $cachePath = 'bootstrap/cache/hooks.php';
 
     /**
-     * Limpa o cache físico da varredura de ganchos (Útil na ativação de temas/plugins)
+     * Limpa o cache físico da varredura de ganchos e força nova geração
      */
     public static function clearCache(): void
     {
-        Cache::forget(self::$cacheKey);
+        $file = base_path(self::$cachePath);
+
+        if (File::exists($file)) {
+            File::delete($file);
+        }
+
+        Artisan::call('hooks:scan');
     }
 
     /**
-     * Retorna a lista de todos os hooks descobertos em disco organizados
+     * Retorna os hooks de template (100% retrocompatível com chamadas anteriores)
      */
-    public static function all(string $sector = 'all', bool $forceRefresh = false): array
+    public static function all(string $sector = 'all'): array
     {
-        if ($forceRefresh) {
-            self::clearCache();
-        }
+        return self::templates($sector);
+    }
 
-        // Cache persistente para velocidade de carregamento instantânea
-        $allHooks = Cache::rememberForever(self::$cacheKey, function () {
-            return self::scanDirectories();
-        });
+    /**
+     * Retorna apenas os hooks visuais de template (<x-hook>)
+     */
+    public static function templates(string $sector = 'all'): array
+    {
+        $data = self::loadCompiledData();
+        $hooks = $data['templates'] ?? [];
 
         if ($sector === 'all' || empty($sector)) {
-            return $allHooks;
+            return $hooks;
         }
 
-        // Filtra por setor específico (system, plugin ou theme)
-        return array_filter($allHooks, function ($hook) use ($sector) {
-            return $hook['sector'] === $sector;
-        });
+        return array_values(array_filter($hooks, fn($hook) => ($hook['sector'] ?? '') === $sector));
     }
 
     /**
-     * Varre as pastas de views do sistema de forma recursiva
+     * Retorna apenas os hooks de PHP (doAction / applyFilters)
      */
-    protected static function scanDirectories(): array
+    public static function php(string $sector = 'all'): array
     {
-        $directories = [
-            'system' => base_path('resources/views'),
-            'plugin' => base_path('plugins'),
-            'theme'  => base_path('themes'),
-        ];
+        $data = self::loadCompiledData();
+        $hooks = $data['php'] ?? [];
 
-        $hooks = [];
-
-        foreach ($directories as $sector => $path) {
-            if (!File::isDirectory($path)) {
-                continue;
-            }
-
-            $directoryIterator = new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::SKIP_DOTS);
-            $iterator = new RecursiveIteratorIterator($directoryIterator);
-
-            foreach ($iterator as $file) {
-                // Filtra apenas arquivos com extensão final .blade.php
-                if ($file->isFile() && str_ends_with($file->getFilename(), '.blade.php')) {
-                    self::scanFile($file->getPathname(), $sector, $hooks);
-                }
-            }
+        if ($sector === 'all' || empty($sector)) {
+            return $hooks;
         }
 
-        return array_values($hooks);
+        return array_values(array_filter($hooks, fn($hook) => ($hook['sector'] ?? '') === $sector));
     }
 
     /**
-     * Analisa o código do arquivo Blade usando Busca Dupla estável por Regex
+     * Carrega o arquivo compilado com fallback automático
      */
-    protected static function scanFile(string $filePath, string $sector, array &$hooks): void
+    protected static function loadCompiledData(): array
     {
-        $content = file_get_contents($filePath);
+        $cacheFile = base_path(self::$cachePath);
 
-        // Regex unificada que captura tanto ganchos auto-fechados (/>) quanto fechados (></x-hook>)
-        // usa um grupo de não-captura (?: ... | ... ) para bifurcar os dois cenários possíveis
-        preg_match_all(
-            '/<x-hook\s+((?:[^>"\']|"[^"]*"|\'[^\']*\')*?)(?:\/>|>(.*?)<\/x-hook>)/is',
-            $content,
-            $matches,
-            PREG_SET_ORDER
-        );
-
-        foreach ($matches as $match) {
-            $attributesString = $match[1];
-
-            // Se o gancho for auto-fechado (Opção 1), o grupo 2 (conteúdo interno) não existirá na captura.
-            // Usamos o operador de coalescência nula para garantir que venha uma string vazia.
-            $innerContent = $match[2] ?? '';
-
-            self::parseAndRegisterHook($attributesString, $innerContent, $sector, $filePath, $hooks);
-        }
-    }
-
-    /**
-     * Analisa as strings de atributos e monta o mapa final do hook
-     */
-    protected static function parseAndRegisterHook(string $attributesString, string $innerContent, string $sector, string $filePath, array &$hooks): void
-    {
-        // Normaliza os atributos removendo quebras de linha
-        $attributesStringNormalized = str_replace(["\r", "\n"], ' ', $attributesString);
-
-        // Captura os pares de chave="valor" (ex: name="menu" ou :params="['id' => 1]")
-        preg_match_all('/([\w:]+)\s*=\s*("(?:[^"\\\\]|\\\\.)*"|\'(?:[^\'\\\\]|\\\\.)*\')/', $attributesStringNormalized, $attrMatches, PREG_SET_ORDER);
-
-        $attrs = [];
-        foreach ($attrMatches as $match) {
-            $key = strtolower($match[1]);
-            $attrs[$key] = $match[2];
+        if (File::exists($cacheFile)) {
+            return require $cacheFile;
         }
 
-        // Lê o nome do hook (suporta com ou sem binding de dois pontos do Blade)
-        $name = $attrs['name'] ?? $attrs[':name'] ?? null;
+        // Se o arquivo não existir, roda a varredura na hora
+        Artisan::call('hooks:scan');
 
-        if ($name) {
-            $name = trim($name, "'\"");
-
-            $desc   = $attrs['desc'] ?? $attrs['description'] ?? null;
-            $params = $attrs['params'] ?? $attrs[':params'] ?? null;
-
-            // CORREÇÃO: Usamos apenas empty(trim()) para preservar tags HTML de ícones como conteúdo válido!
-            $type = empty(trim($innerContent)) ? 'action' : 'filter';
-
-            // Evita duplicidade se o mesmo gancho for declarado em arquivos diferentes
-            if (!isset($hooks[$name])) {
-                $hooks[$name] = [
-                    'name'   => $name,
-                    'desc'   => $desc ? trim($desc, "'\"") : null,
-                    'params' => $params ? trim($params, "'\"") : null,
-                    'type'   => $type,
-                    'sector' => $sector,
-                    'file'   => str_replace(base_path(), '', $filePath),
-                ];
-            } elseif ($type === 'filter') {
-                // Se já estiver cadastrado como 'action' por um arquivo auto-fechado,
-                // mas outro arquivo declarar como 'filter', prioriza o tipo com conteúdo de fallback
-                $hooks[$name]['type'] = 'filter';
-            }
+        if (File::exists($cacheFile)) {
+            return require $cacheFile;
         }
+
+        return ['templates' => [], 'php' => []];
     }
 
     /**
@@ -161,15 +94,13 @@ class HookDiscoverer
         $sector      = $options['sector'] ?? 'all';
         $class       = $options['class'] ?? 'form-input';
 
-        $hooks = self::all($sector);
+        $hooks = self::templates($sector);
 
-        // Agrupa os ganchos por setor para criar os blocos visuais de agrupamento
         $grouped = [];
         foreach ($hooks as $hook) {
             $grouped[$hook['sector']][] = $hook;
         }
 
-        // Títulos amigáveis para as categorias no painel do administrador
         $sectorLabels = [
             'theme'  => 'Tema Ativo (Recomendado)',
             'plugin' => 'Plugins Instalados',
@@ -182,7 +113,6 @@ class HookDiscoverer
             $html .= '<option value="">' . e($placeholder) . '</option>';
         }
 
-        // Sequência de exibição preferencial dos blocos (Tema -> Plugins -> Core)
         $order = ['theme', 'plugin', 'system'];
         foreach ($order as $secKey) {
             if (empty($grouped[$secKey])) {
@@ -191,18 +121,13 @@ class HookDiscoverer
 
             $html .= '<optgroup label="' . e($sectorLabels[$secKey]) . '">';
             foreach ($grouped[$secKey] as $hook) {
-                // Compara o nome do gancho para marcar como selecionado (Selected)
                 $isSel = ($selected === $hook['name']) ? ' selected' : '';
-
-                // Identificador visual: Mostra se é um Filtro ou uma Ação baseado na presença de slot
                 $badge = ($hook['type'] ?? 'action') === 'filter' ? '[filtro] ' : '[ação] ';
 
-                // Formata o rótulo: Exibe a descrição com o tipo e nome técnico entre parênteses
                 $label = $hook['desc']
                     ? $badge . e($hook['name']) . ' (' . e($hook['desc']) . ')'
                     : $badge . e($hook['name']);
 
-                // Guarda as informações de parâmetros no atributo title para exibir uma dica de tela
                 $paramAttr = $hook['params']
                     ? ' data-params="' . e($hook['params']) . '" title="Parâmetros fornecidos: ' . e($hook['params']) . '"'
                     : '';

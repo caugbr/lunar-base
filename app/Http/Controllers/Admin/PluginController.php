@@ -69,6 +69,12 @@ class PluginController extends Controller
 
         $this->setPluginAssetLink($plugin, $targetState);
 
+        if ($plugin->is_active) {
+            doAction('plugin_activation', $plugin);
+        } else {
+            doAction('plugin_deactivation', $plugin);
+        }
+
         $status = $plugin->is_active ? 'ativado' : 'desativado';
 
         return back()->with('success', "Plugin '{$plugin->name}' foi {$status}!");
@@ -90,6 +96,12 @@ class PluginController extends Controller
 
             // Força o disco a ficar no estado desejado para cada plugin
             $this->setPluginAssetLink($plugin, $targetState);
+
+            if ($plugin->is_active) {
+                doAction('plugin_activation', $plugin);
+            } else {
+                doAction('plugin_deactivation', $plugin);
+            }
         }
 
         $message = $targetState
@@ -124,47 +136,6 @@ class PluginController extends Controller
             ]);
         }
     }
-
-    /**
-     * Scan the plugins directory and sync with the database.
-     */
-    // protected function syncPlugins(): void
-    // {
-    //     $pluginsPath = base_path('plugins');
-
-    //     if (!File::exists($pluginsPath)) {
-    //         File::makeDirectory($pluginsPath, 0755, true);
-    //         return;
-    //     }
-
-    //     $directories = File::directories($pluginsPath);
-    //     $scannedFolders = [];
-
-    //     foreach ($directories as $directory) {
-    //         $folderName = basename($directory);
-    //         $scannedFolders[] = $folderName;
-    //         $manifestPath = $directory . '/plugin.json';
-
-    //         if (File::exists($manifestPath)) {
-    //             $manifest = json_decode(File::get($manifestPath), true);
-
-    //             if ($manifest) {
-    //                 Plugin::updateOrCreate(
-    //                     ['folder_name' => $folderName],
-    //                     [
-    //                         'name' => $manifest['name'] ?? $folderName,
-    //                         'service_provider_class' => $manifest['provider'] ?? '',
-    //                         'version' => $manifest['version'] ?? '1.0.0',
-    //                         'description' => $manifest['description'] ?? '',
-    //                     ]
-    //                 );
-    //             }
-    //         }
-    //     }
-
-    //     // Clean up database records for plugins that no longer exist physically
-    //     Plugin::whereNotIn('folder_name', $scannedFolders)->delete();
-    // }
 
     /**
      * Scan the plugins directory and sync with the database.
@@ -207,21 +178,6 @@ class PluginController extends Controller
                 ]
             );
         }
-
-        // Busca plugins no banco que não existem mais fisicamente (ou perderam o plugin.json)
-        // $missingPlugins = Plugin::whereNotIn('folder_name', $scannedFolders)->get();
-
-        // foreach ($missingPlugins as $plugin) {
-        //     // Se o plugin que sumiu estava ativo, limpe seus links simbólicos
-        //     if ($plugin->is_active) {
-        //         $this->setPluginAssetLink($plugin, false);
-
-        //         Log::warning("Plugin ativo '{$plugin->name}' ({$plugin->folder_name}) foi removido do disco e desativado automaticamente.");
-        //     }
-
-        //     // Deleta individualmente para disparar eventos de Model se existirem
-        //     $plugin->delete();
-        // }
 
         // Busca os plugins que estão no banco mas não existem mais no disco
         $missingPlugins = Plugin::whereNotIn('folder_name', $scannedFolders)->get();

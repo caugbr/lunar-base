@@ -114,7 +114,7 @@ class CoreUpdateService
                 }
             }
 
-            return "<p class=\"text-muted\">Nenhum registro de alterações detalhado foi encontrado para a versão v{$version}.</p>";
+            return "<p class=\"text-muted\">Nenhum registro de alterações detalhado foi encontrado para a versão {$version}.</p>";
         });
     }
 

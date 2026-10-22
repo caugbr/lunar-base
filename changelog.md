@@ -1,5 +1,24 @@
 # Changelog
 
+## [2.24.0] 2026-10-21
+
+### Added
+- Botão Sincronizar Hooks em Hooks e PHP Hooks, para atualizar a varredura
+- Comando hooks:scan para escanear o sistema por hooks de template e de PHP
+- Nova tela PHP Hooks em Referências, listando os hooks de PHP
+- Novos hooks
+    - Action 'plugin_activation' - depois do plugin ser ativado
+    - Action 'plugin_deactivation' - depois do plugin ser desativado
+    - Action 'plugin_removed' - depois do plugin ser removido
+    - Filter 'should_remove_plugin' - antes do plugin ser removido (boolean - pode interromper a remoção)
+    - Action 'theme_activation' - depois de um tema ser ativado
+    - Action 'themes_deactivation' - depois de um tema ser desativado, sem ativar outro
+    - Action 'theme_removed' - depois do tema ser removido
+    - Filter 'should_remove_theme' - antes do tema ser removido (boolean - pode interromper a remoção)
+
+### Changed
+- HookDiscoverer atualizado para trabalhar com hooks:scan
+
 ## [2.23.1] 2026-10-20
 
 ### Fixed
@@ -8,7 +27,7 @@
 ## [2.23.0] 2026-10-19
 
 ### Added
-- Nova interface de atualização, mostrando as novidades no changelog
+- Nova interface de atualização, mostrando as novidades do changelog
 - Itens do menu agora podem usar, além de 'role' e 'permission', 'callback' para teste personalizado
 - Novo arquivo top-scroll.js - adiciona uma barra de rolagem horizontal no topo de elementos
 - Componente <x-image-field> para upload de imagens usando os modais do sistema ou input file
@@ -40,7 +59,7 @@
 - Quando um plugin é deletado do disco, o link é apagado e um aviso é disparado na admin
 - Habilitada a inicialização de Service Providers de plugins ativos no ambiente de console
 - Opção de remover tabelas de plugins ao excluir, individualmente ou em lote
-- Filter 'content.render_shortcodes' para filtrar o conteúdo depois dos shortcodes aplicados
+- Filter 'shortcodes_rendered' para filtrar o conteúdo depois dos shortcodes aplicados
 
 ### Changed
 - Melhorias na interface do marketplace de plugins

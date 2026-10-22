@@ -166,6 +166,11 @@ class PluginMarketplaceController extends Controller
             return false;
         }
 
+        $shouldRemove = applyFilters('should_remove_plugin', true, $folderName);
+        if (!$shouldRemove) {
+            return false;
+        }
+
         $pluginPath = base_path("plugins/{$folderName}");
 
         // ROLLBACK PRIMEIRO: precisa dos arquivos físicos ainda presentes no disco
@@ -189,6 +194,8 @@ class PluginMarketplaceController extends Controller
 
         // Apaga o registro do banco de dados (se cadastrado)
         Plugin::where('folder_name', $folderName)->delete();
+
+        doAction('plugin_removed', $folderName);
 
         return true;
     }

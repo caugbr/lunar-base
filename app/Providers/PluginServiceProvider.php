@@ -122,24 +122,6 @@ class PluginServiceProvider extends ServiceProvider
     /**
      * Registra as views de ajuda de TODOS os plugins.
      */
-    // private function registerPluginHelpViews(): void
-    // {
-    //     $pluginsPath = base_path('plugins');
-
-    //     if (!File::isDirectory($pluginsPath)) {
-    //         return;
-    //     }
-
-    //     foreach (File::directories($pluginsPath) as $pluginPath) {
-    //         $folderName = basename($pluginPath);
-    //         $slugName = Str::slug($folderName);
-    //         $helpPath = $pluginPath . '/resources/help-views';
-
-    //         if (File::isDirectory($helpPath)) {
-    //             $this->loadViewsFrom($helpPath, "{$slugName}-help");
-    //         }
-    //     }
-    // }
     private function registerPluginHelpViews(): void
     {
         $pluginsPath = base_path('plugins');

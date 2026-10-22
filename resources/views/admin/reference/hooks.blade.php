@@ -12,6 +12,14 @@
 <div class="admin-card">
     <div class="admin-card-header">
         <h2><x-lucide-fishing-hook class="lucid-icon" /> Referência de hooks</h2>
+
+        <a href="{{ route('admin.hooks.sync') }}"
+           class="admin-btn admin-btn-secondary"
+           style="display: inline-flex; align-items: center; gap: 6px;"
+           title="Escanear e compilar lista de hooks">
+            <x-lucide-rotate-cw class="lucid-icon" style="width: 16px; height: 16px;" />
+            Sincronizar Hooks
+        </a>
     </div>
 
     <div class="hooks-explanation">

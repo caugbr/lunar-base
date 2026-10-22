@@ -155,8 +155,11 @@ Route::middleware($middlewares)->prefix('admin')->name('admin.')->group(function
             ->name('shortcodes');
         Route::get('reference/hooks', [ReferenceController::class, 'hooks'])
             ->name('hooks');
+        Route::get('reference/php-hooks', [ReferenceController::class, 'phpHooks'])
+            ->name('php-hooks');
         Route::get('reference/roles-permissions', [ReferenceController::class, 'permissions'])
             ->name('roles-permissions');
+        Route::get('admin/reference/hooks/sync', [ReferenceController::class, 'syncHooks'])->name('hooks.sync');
         Route::get('reference/logs', [ReferenceController::class, 'logs'])->name('logs');
 
         Route::prefix('system/update')->name('system.update.')->group(function () {

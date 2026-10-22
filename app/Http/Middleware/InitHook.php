@@ -14,7 +14,7 @@ class InitHook
         // Amarramos os hooks nos Models registrados (do Core e dos Plugins)
         PublicationTypes::bootHooks();
 
-        // Avisamos os plugins que o sistema está 100% pronto e o Auth disponível
+        // Avisa aos plugins que o sistema está carregado e o Auth disponível
         doAction('init');
 
         return $next($request);

@@ -179,7 +179,6 @@ class AppServiceProvider extends ServiceProvider
             }
         }
 
-        // Se você tiver a action 'plugin_helpers' para disparar:
         if (function_exists('doAction')) {
             doAction('plugin_helpers');
         }

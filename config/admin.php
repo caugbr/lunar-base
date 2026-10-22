@@ -289,6 +289,13 @@ return [
                             'role' => 'admin'
                         ],
                         [
+                            'label' => 'PHP Hooks',
+                            'icon' => 'code',
+                            'route' => 'admin.php-hooks',
+                            'active' => 'admin.php-hooks',
+                            'role' => 'admin'
+                        ],
+                        [
                             'label' => 'Shortcodes',
                             'icon' => 'brackets',
                             'route' => 'admin.shortcodes',

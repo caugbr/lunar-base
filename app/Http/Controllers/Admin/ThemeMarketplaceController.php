@@ -93,8 +93,15 @@ class ThemeMarketplaceController extends Controller
             return back()->with('error', 'Nome de tema inválido.');
         }
 
+        $shouldRemove = applyFilters('should_remove_theme', true, $folderName);
+        if (!$shouldRemove) {
+            return back()->with('error', 'A remoção do tema foi bloqueada.');
+        }
+
         // Limpa o cache do catálogo para recarregar o status
         $marketplace->clearCache();
+
+        doAction('theme_removed', $folderName);
 
         return back()->with('success', "Tema '{$folderName}' foi removido com sucesso!");
     }
@@ -116,6 +123,7 @@ class ThemeMarketplaceController extends Controller
             return back()->with('info', 'Nenhum tema inativo encontrado para remoção.');
         }
 
+        $deletedThemes  = [];
         $deletedCount  = 0;
         $skippedCustom = 0;
 
@@ -127,6 +135,11 @@ class ThemeMarketplaceController extends Controller
 
             $folderName = $theme->folder_name;
 
+            $shouldRemove = applyFilters('should_remove_theme', true, $folderName);
+            if (!$shouldRemove) {
+                continue;
+            }
+
             // Trava de segurança 2: se não tem download_url no marketplace, é um tema próprio/local. Preserva!
             if (! $downloadableThemes->has($folderName)) {
                 $skippedCustom++;
@@ -135,12 +148,15 @@ class ThemeMarketplaceController extends Controller
 
             if ($this->deleteTheme($folderName)) {
                 $deletedCount++;
+                $deletedThemes[] = $folderName;
             }
         }
 
         // Limpa o cache do catálogo apenas se algum tema foi deletado
         if ($deletedCount > 0) {
             $marketplace->clearCache();
+
+            doAction('themes_removed', $deletedThemes);
         }
 
         if ($deletedCount === 0 && $skippedCustom > 0) {

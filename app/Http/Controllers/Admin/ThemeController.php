@@ -14,45 +14,6 @@ class ThemeController extends Controller
     /**
      * Display the theme gallery and synchronize with directories.
      */
-    // public function index(AddonMarketplaceService $marketplace)
-    // {
-    //     $this->syncThemes();
-
-    //     $themes = Theme::orderBy('name')->get();
-
-    //     // Busca informações do GitHub para comparar versões na lista local
-    //     $remoteThemes = collect($marketplace->getAvailableThemes())->keyBy('folder');
-
-    //     $themes->transform(function ($theme) use ($remoteThemes) {
-    //         $folderName = Str::studly($theme->folder_name);
-    //         $remote     = $remoteThemes->get($folderName);
-
-    //         $theme->remote_version = $remote['remote_version'] ?? null;
-    //         $theme->has_update     = $remote['has_update'] ?? false;
-    //         $theme->download_url   = $remote['download_url'] ?? null;
-
-    //         // Lê o plugin.json diretamente do disco
-    //         $manifestPath = base_path("themes/{$theme->folder_name}/theme.json");
-
-    //         // Fallback caso a pasta use StudlyCase
-    //         if (!File::exists($manifestPath)) {
-    //             $manifestPath = base_path("themes/{$folderName}/theme.json");
-    //         }
-
-    //         if (File::exists($manifestPath)) {
-    //             $manifest = json_decode(File::get($manifestPath), true) ?? [];
-    //             $theme->tags = (array) ($manifest['tags'] ?? []);
-    //         } else {
-    //             $theme->tags = [];
-    //         }
-
-    //         return $theme;
-    //     });
-
-    //     $tags = config('addons.tags.theme', []);
-
-    //     return view('admin.themes.index', compact('themes', 'tags'));
-    // }
     public function index(AddonMarketplaceService $marketplace)
     {
         $this->syncThemes();
@@ -113,6 +74,8 @@ class ThemeController extends Controller
 
         $this->syncAllThemeAssetLinks($theme);
 
+        doAction('theme_activation', $theme->name);
+
         return back()->with('success', "Tema '{$theme->name}' ativado com sucesso!");
     }
 
@@ -128,6 +91,8 @@ class ThemeController extends Controller
             // Passamos `null` para garantir que TODOS os links de temas sejam removidos do disco
             $this->syncAllThemeAssetLinks(null);
 
+            doAction('themes_deactivation');
+
             return back()->with('success', "Tema '{$theme->name}' foi desativado.");
         }
 
@@ -137,6 +102,8 @@ class ThemeController extends Controller
 
         // Sincroniza o disco para manter apenas o link do tema atual
         $this->syncAllThemeAssetLinks($theme);
+
+        doAction('theme_activation', $theme->name);
 
         return back()->with('success', "Tema '{$theme->name}' foi ativado!");
     }
@@ -224,18 +191,6 @@ class ThemeController extends Controller
     /**
      * Serve the theme screenshot safely from the internal folder.
      */
-    // public function screenshot(Theme $theme)
-    // {
-    //     if ($theme->screenshot) {
-    //         $path = base_path("themes/{$theme->folder_name}/{$theme->screenshot}");
-
-    //         if (File::exists($path)) {
-    //             return response()->file($path);
-    //         }
-    //     }
-
-    //     abort(404);
-    // }
     public function screenshot(Theme $theme)
     {
         if ($theme->screenshot) {

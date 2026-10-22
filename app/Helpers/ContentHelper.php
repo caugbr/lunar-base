@@ -148,7 +148,7 @@ class ContentHelper
             return self::renderShortcode($tag, $attributes, $innerContent);
         }, $content);
 
-        return applyFilters('content.render_shortcodes', $replaced);
+        return applyFilters('shortcodes_rendered', $replaced);
     }
 
     private static function parseAttributes($attrsString)

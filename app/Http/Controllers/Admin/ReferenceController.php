@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\AdminLog;
+use App\Support\HookDiscoverer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 
 class ReferenceController extends Controller
 {
@@ -14,22 +16,23 @@ class ReferenceController extends Controller
     }
 
     /**
-     * Lista todos os hooks descobertos no sistema (readonly)
+     * Lista todos os hooks de Template (<x-hook>) descobertos no sistema
      */
     public function hooks()
     {
         $hooks = [];
 
-        if (class_exists('App\Support\HookDiscoverer')) {
-            $discovered = \App\Support\HookDiscoverer::all();
+        if (class_exists(HookDiscoverer::class)) {
+            $discovered = HookDiscoverer::templates();
 
             foreach ($discovered as $hook) {
                 $hooks[] = [
                     'name'        => $hook['name'] ?? 'N/A',
                     'type'        => $hook['type'] ?? 'action',
                     'params'      => $hook['params'] ?? '',
-                    'description' => $hook['desc'] ?? 'Sem descricao',
+                    'description' => $hook['desc'] ?? 'Sem descrição',
                     'file'        => str_replace('\\', '/', $hook['file']),
+                    'sector'      => $hook['sector'] ?? 'system',
                 ];
             }
         }
@@ -37,6 +40,47 @@ class ReferenceController extends Controller
         usort($hooks, fn($a, $b) => strcmp($a['name'], $b['name']));
 
         return view('admin.reference.hooks', compact('hooks'));
+    }
+
+    /**
+     * Lista todos os hooks de PHP (doAction / applyFilters) descobertos no sistema
+     */
+    public function phpHooks()
+    {
+        $hooks = [];
+
+        if (class_exists(HookDiscoverer::class)) {
+            $discovered = HookDiscoverer::php();
+
+            foreach ($discovered as $hook) {
+                $hooks[] = [
+                    'name'        => $hook['name'] ?? 'N/A',
+                    'type'        => $hook['type'] ?? 'action',
+                    'params'      => $hook['params'] ?? '',
+                    'description' => $hook['desc'] ?? 'Sem descrição',
+                    'file'        => str_replace('\\', '/', $hook['file']),
+                    'sector'      => $hook['sector'] ?? 'system',
+                ];
+            }
+        }
+
+        usort($hooks, fn($a, $b) => strcmp($a['name'], $b['name']));
+
+        return view('admin.reference.php-hooks', compact('hooks'));
+    }
+
+    /**
+     * Força a re-varredura e compilação do cache dos hooks
+     */
+    public function syncHooks()
+    {
+        try {
+            Artisan::call('hooks:scan');
+
+            return back()->with('success', 'Varredura concluída! Hooks sincronizados com sucesso.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Falha ao sincronizar hooks: ' . $e->getMessage());
+        }
     }
 
     public function permissions()
@@ -48,25 +92,19 @@ class ReferenceController extends Controller
     {
         $query = AdminLog::query()->with('user');
 
-        // Filtro por Ação (Busca parcial com LIKE)
         if ($request->filled('action')) {
             $query->where('action', 'like', '%' . $request->input('action') . '%');
         }
 
-        // Filtro por Categoria (Busca exata)
         if ($request->filled('category')) {
             $query->where('category', $request->input('category'));
         }
 
-        // Filtro por Nome do Usuário (Busca parcial com LIKE)
         if ($request->filled('user_name')) {
             $query->where('user_name', 'like', '%' . $request->input('user_name') . '%');
         }
 
-        // Paginação com 30 registros por página ordenando pelos mais recentes
         $logs = $query->latest()->paginate(30);
-
-        // Captura as categorias distintas que existem no banco para alimentar o select do filtro dinamicamente
         $categories = AdminLog::distinct()->pluck('category')->filter();
 
         return view('admin.reference.logs', compact('logs', 'categories'));
