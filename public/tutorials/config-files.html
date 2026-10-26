@@ -257,25 +257,21 @@ users, user-pen, user-key, settings, list-checks, puzzle, palette</code></pre>
             <h2>defaultUsers.php (Usuários Padrão)</h2>
 
             <div class="intro">
-                <p>Este arquivo <strong>não deve ser editado manualmente</strong>. Ele trabalha em conjunto com o script
-                    <code>install.sh</code> para gerar os usuários iniciais do sistema durante a instalação.</p>
+                <p>Este arquivo gera dinamicamente os usuários iniciais do sistema para serem criados pelo seeder (<code>AdminUsersSeeder</code>).</p>
             </div>
 
             <h3>Como funciona</h3>
             <ol class="steps">
-                <li>O script <code>install.sh</code> lê o <code>rolesPermissions.php</code> para identificar os perfis
-                    existentes.</li>
-                <li>Gera um usuário para cada perfil (admin, editor, author, subscriber).</li>
-                <li>Salva os dados em <code>storage/app/.install/default_users_data.json</code>.</li>
-                <li>O seeder usa esse JSON para popular o banco na instalação.</li>
+                <li>Ele lê o arquivo <code>rolesPermissions.php</code> para identificar todas as roles (perfis) cadastradas.</li>
+                <li>Gera automaticamente um usuário padrão para cada perfil (ex: <code>admin@seusite.com</code>, <code>coordinator@seusite.com</code>, etc.).</li>
+                <li>Ao executar <code>php artisan db:seed</code>, esses usuários são inseridos no banco de dados.</li>
             </ol>
 
-            <h3>Senhas padrão</h3>
-            <p>Todos os usuários gerados têm a senha: <code>Pass#1029</code></p>
+            <h3>Senhas e Acesso Padrão</h3>
+            <p>Todos os usuários iniciais são gerados com a senha padrão: <code>Pass#1029</code></p>
 
             <div class="tip">
-                <strong>Recomendação:</strong> Após a instalação, altere as senhas imediatamente pelo painel
-                administrativo.
+                <strong>Recomendação de Segurança:</strong> Em ambientes de produção, altere imediatamente a senha do administrador e remova os usuários de teste pelo painel administrativo.
             </div>
         </section>
 

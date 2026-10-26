@@ -179,8 +179,7 @@ class AppServiceProvider extends ServiceProvider
             }
         }
 
-        if (function_exists('doAction')) {
-            doAction('plugin_helpers');
-        }
+        // Ponto em que os arquivos helper de plugins estão carregados
+        doAction('plugin_helpers');
     }
 }

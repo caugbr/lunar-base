@@ -166,6 +166,7 @@ class PluginMarketplaceController extends Controller
             return false;
         }
 
+        // Filtro anterior à exclusão de um plugin - permite bloquear a remoção
         $shouldRemove = applyFilters('should_remove_plugin', true, $folderName);
         if (!$shouldRemove) {
             return false;
@@ -195,6 +196,7 @@ class PluginMarketplaceController extends Controller
         // Apaga o registro do banco de dados (se cadastrado)
         Plugin::where('folder_name', $folderName)->delete();
 
+        // Após remover um plugin
         doAction('plugin_removed', $folderName);
 
         return true;

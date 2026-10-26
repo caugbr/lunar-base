@@ -42,6 +42,36 @@ class CoreUpdateService
     /**
      * Retorna informações sobre a atualização do Core, incluindo o Changelog da versão alvo.
      */
+    // public function getUpdateInfo(): array
+    // {
+    //     $githubData = Cache::remember('lunar_github_latest_release', now()->addDay(), function () {
+    //         return $this->fetchFromGitHub();
+    //     });
+
+    //     $currentVersion = appVersion();
+    //     $latestTag      = $githubData['latest_version'] ?? $currentVersion;
+    //     $hasUpdate      = version_compare($currentVersion, $latestTag, '<');
+
+    //     // Se houver update, busca o changelog da nova versão; senão, busca da versão atual instalada
+    //     $targetVersion = $hasUpdate ? $latestTag : $currentVersion;
+    //     $changelogHtml = $this->getChangelogForVersion($targetVersion);
+
+    //     return array_merge($githubData, [
+    //         'current_version' => $currentVersion,
+    //         'has_update'      => $hasUpdate,
+    //         'target_version'  => $targetVersion,
+    //         'changelog_html'  => $changelogHtml,
+    //     ]);
+    // }
+
+    /**
+     * Busca o CHANGELOG.md do GitHub e extrai apenas a seção da versão especificada.
+     */
+    // public functio
+
+    /**
+     * Retorna informações sobre a atualização do Core, incluindo o Changelog estruturado da família de versões.
+     */
     public function getUpdateInfo(): array
     {
         $githubData = Cache::remember('lunar_github_latest_release', now()->addDay(), function () {
@@ -52,28 +82,29 @@ class CoreUpdateService
         $latestTag      = $githubData['latest_version'] ?? $currentVersion;
         $hasUpdate      = version_compare($currentVersion, $latestTag, '<');
 
-        // Se houver update, busca o changelog da nova versão; senão, busca da versão atual instalada
+        // Se houver update, a versão alvo é a mais recente; senão, é a instalada
         $targetVersion = $hasUpdate ? $latestTag : $currentVersion;
-        $changelogHtml = $this->getChangelogForVersion($targetVersion);
+
+        // Busca a lista de versões da mesma família (ex: 2.23.1, 2.23.0...)
+        $changelogEntries = $this->getChangelogForVersion($targetVersion, $currentVersion);
 
         return array_merge($githubData, [
-            'current_version' => $currentVersion,
-            'has_update'      => $hasUpdate,
-            'target_version'  => $targetVersion,
-            'changelog_html'  => $changelogHtml,
+            'current_version'   => $currentVersion,
+            'has_update'        => $hasUpdate,
+            'target_version'    => $targetVersion,
+            'changelog_entries' => $changelogEntries,
         ]);
     }
 
     /**
-     * Busca o CHANGELOG.md do GitHub e extrai apenas a seção da versão especificada.
+     * Busca o CHANGELOG.md do GitHub e extrai todas as versões da mesma família (MAJOR.MINOR.*).
      */
-    public function getChangelogForVersion(string $version): string
+    public function getChangelogForVersion(string $targetVersion, string $currentVersion): array
     {
-        $cacheKey = "lunar_changelog_{$version}";
+        $cacheKey = "lunar_changelog_family_{$targetVersion}_{$currentVersion}";
 
-        return Cache::remember($cacheKey, now()->addDay(), function () use ($version) {
+        return Cache::remember($cacheKey, now()->addDay(), function () use ($targetVersion, $currentVersion) {
             try {
-                // Tenta baixar o CHANGELOG.md remoto da branch main (ou master)
                 $url = "https://raw.githubusercontent.com/{$this->repo}/main/CHANGELOG.md";
 
                 $response = Http::timeout(10)
@@ -81,41 +112,81 @@ class CoreUpdateService
                     ->get($url);
 
                 if (!$response->successful()) {
-                    // Fallback caso a branch principal seja 'master'
                     $response = Http::timeout(10)
                         ->withHeaders(['User-Agent' => 'Lunar-Base-Updater'])
                         ->get("https://raw.githubusercontent.com/{$this->repo}/master/CHANGELOG.md");
                 }
 
                 if ($response->successful()) {
-                    $rawContent = $response->body();
-                    $versionSection = $this->extractVersionFromChangelog($rawContent, $version);
-
-                    if (!empty($versionSection)) {
-                        return Str::markdown($versionSection, [
-                            'html_input'         => 'escape',
-                            'allow_unsafe_links' => false,
-                        ]);
+                    $entries = $this->extractFamilyEntriesFromChangelog($response->body(), $targetVersion, $currentVersion);
+                    if (!empty($entries)) {
+                        return $entries;
                     }
                 }
             } catch (Exception $e) {
                 logger()->warning("Não foi possível carregar o CHANGELOG.md remoto: " . $e->getMessage());
             }
 
-            // Fallback: se não achar no GitHub, tenta ler do arquivo local se existir
+            // Fallback: lê do arquivo local se existir
             $localChangelog = base_path('CHANGELOG.md');
             if (File::exists($localChangelog)) {
-                $section = $this->extractVersionFromChangelog(File::get($localChangelog), $version);
-                if (!empty($section)) {
-                    return Str::markdown($section, [
-                        'html_input'         => 'escape',
-                        'allow_unsafe_links' => false,
-                    ]);
+                $entries = $this->extractFamilyEntriesFromChangelog(File::get($localChangelog), $targetVersion, $currentVersion);
+                if (!empty($entries)) {
+                    return $entries;
                 }
             }
 
-            return "<p class=\"text-muted\">Nenhum registro de alterações detalhado foi encontrado para a versão {$version}.</p>";
+            return [[
+                'version'      => $targetVersion,
+                'date'         => '',
+                'is_new'       => version_compare($targetVersion, $currentVersion, '>'),
+                'content_html' => "<p class=\"text-muted\">Nenhum registro detalhado encontrado para a versão v{$targetVersion}.</p>",
+            ]];
         });
+    }
+
+    /**
+     * Extrai todas as versões que pertencem à mesma série MAJOR.MINOR (ex: 2.23.*)
+     * e define se cada uma é novidade ou se o usuário já possui instalada.
+     */
+    protected function extractFamilyEntriesFromChangelog(string $markdown, string $targetVersion, string $currentVersion): array
+    {
+        // Descobre a série (ex: de '2.23.1' extrai '2.23')
+        if (!preg_match('/^(\d+\.\d+)/', $targetVersion, $m)) {
+            return [];
+        }
+        $familyPrefix = $m[1];
+        $escapedFamily = preg_quote($familyPrefix, '/');
+
+        // Captura todos os blocos: ## [2.23.X] Data ... até o próximo ## [
+        $pattern = '/##\s*\[(?<version>' . $escapedFamily . '\.[^\]]+)\][ \t]*(?<date>[^\r\n]*)\r?\n(?<body>.*?)(?=(?:\R##\s*\[|\z))/s';
+
+        if (!preg_match_all($pattern, $markdown, $matches, PREG_SET_ORDER)) {
+            return [];
+        }
+
+        $entries = [];
+
+        foreach ($matches as $match) {
+            $ver = trim($match['version']);
+            $date = trim($match['date'], " -–\t\r\n");
+            $body = trim($match['body']);
+
+            // É novidade se for estritamente superior à versão instalada
+            $isNew = version_compare($ver, $currentVersion, '>');
+
+            $entries[] = [
+                'version'      => $ver,
+                'date'         => $date,
+                'is_new'       => $isNew,
+                'content_html' => Str::markdown($body, [
+                    'html_input'         => 'escape',
+                    'allow_unsafe_links' => false,
+                ]),
+            ];
+        }
+
+        return $entries;
     }
 
     /**
@@ -304,7 +375,7 @@ class CoreUpdateService
             }
 
             // Sincroniza arquivos utilitários da raiz
-            $rootFiles = ['VERSION', '.env.example', 'usecomposer.sh', 'install.sh'];
+            $rootFiles = ['VERSION', '.env.example', 'usecomposer.sh'];
             foreach ($rootFiles as $rFile) {
                 $sourceRFile = $sourcePath . '/' . $rFile;
                 if (File::exists($sourceRFile)) {

@@ -53,7 +53,7 @@
                     <p class="preview-size" x-text="media?.size_formatted"></p>
 
                     {{-- VÍNCULO VIA MEDIAABLE (galeria) --}}
-                    <template x-if="media?.linked_to">
+                    <template x-if="media?.is_image && media?.linked_to">
                         <div class="linked-info">
                             <div class="linked-info-label">
                                 <x-lucide-link class="lucid-icon" style="width:1rem;height:1rem;" />
@@ -73,7 +73,7 @@
                     </template>
 
                     {{-- VÍNCULO VIA THUMBNAIL --}}
-                    <template x-if="media?.thumbnail_of">
+                    <template x-if="media?.is_image && media?.thumbnail_of">
                         <div class="linked-info linked-info--thumb">
                             <div class="linked-info-label">
                                 <x-lucide-image class="lucid-icon" style="width:1rem;height:1rem;" />
@@ -93,7 +93,7 @@
                     </template>
 
                     {{-- AVISO: nenhum vínculo --}}
-                    <template x-if="!media?.linked_to && !media?.thumbnail_of">
+                    <template x-if="media?.is_image && !media?.linked_to && !media?.thumbnail_of">
                         <div class="linked-info linked-info--orphan">
                             <div class="linked-info-label">
                                 <x-lucide-unlink class="lucid-icon" style="width:1rem;height:1rem;" />
@@ -113,22 +113,26 @@
                         <input type="text" id="media-name" x-model="media.name" class="form-input" placeholder="nome-do-arquivo.jpg">
                     </div>
 
-                    <div class="form-group">
-                        <label for="media-alignment">Alinhamento</label>
-                        <select id="media-alignment" x-model="media.meta.alignment" class="form-input">
-                            <option value="none">Sem alinhamento definido</option>
-                            <option value="left">Esquerda</option>
-                            <option value="center">Centro</option>
-                            <option value="right">Direita</option>
-                            <option value="float-left">Esquerda (dentro do texto)</option>
-                            <option value="float-right">Direita (dentro do texto)</option>
-                        </select>
-                    </div>
+                    <template x-if="media?.is_image">
+                        <div class="form-group">
+                            <label for="media-alignment">Alinhamento</label>
+                            <select id="media-alignment" x-model="media.meta.alignment" class="form-input">
+                                <option value="none">Sem alinhamento definido</option>
+                                <option value="left">Esquerda</option>
+                                <option value="center">Centro</option>
+                                <option value="right">Direita</option>
+                                <option value="float-left">Esquerda (dentro do texto)</option>
+                                <option value="float-right">Direita (dentro do texto)</option>
+                            </select>
+                        </div>
+                    </template>
 
-                    <div class="form-group">
-                        <label for="media-alt">Texto alternativo (SEO)</label>
-                        <input type="text" id="media-alt" x-model="media.alt" class="form-input" placeholder="Descreva a imagem para acessibilidade">
-                    </div>
+                    <template x-if="media?.is_image">
+                        <div class="form-group">
+                            <label for="media-alt">Texto alternativo (SEO)</label>
+                            <input type="text" id="media-alt" x-model="media.alt" class="form-input" placeholder="Descreva a imagem para acessibilidade">
+                        </div>
+                    </template>
 
                     <div class="form-group">
                         <label for="media-caption">Legenda</label>

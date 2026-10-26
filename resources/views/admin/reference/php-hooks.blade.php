@@ -33,26 +33,19 @@
             <div class="usage-card">
                 <h5><x-lucide-zap class="lucid-icon" /> Ação (doAction)</h5>
                 <p>Disparada em momentos pontuais. Não retorna valor:</p>
-                <code>doAction('user_registered', $user);</code>
+                <code>doAction&#40;'user_registered', $user&#41;;</code>
                 <p style="margin-top: 6px; font-size: 0.8rem; opacity: 0.85;">Para escutar no seu plugin:</p>
-                <code>addAction('user_registered', function($user) { ... });</code>
+                <code>addAction&#40;'user_registered', function($user) { ... }&#41;;</code>
             </div>
             <div class="usage-card">
                 <h5><x-lucide-filter class="lucid-icon" /> Filtro (applyFilters)</h5>
                 <p>Intercepta, modifica e retorna um valor alterado:</p>
-                <code>$data = applyFilters('before_save_post', $data);</code>
+                <code>$data = applyFilters&#40;'before_save_post', $data&#41;;</code>
                 <p style="margin-top: 6px; font-size: 0.8rem; opacity: 0.85;">Para filtrar no seu plugin:</p>
-                <code>addFilter('before_save_post', function($data) { return $data; });</code>
+                <code>addFilter&#40;'before_save_post', function($data) { return $data; }&#41;;</code>
             </div>
         </div>
     </div>
-
-    {{-- <div class="filter">
-        Mostrar:
-        <label><input type="radio" name="show" value="all" checked> Todos</label>
-        <label><input type="radio" name="show" value="admin"> Administração</label>
-        <label><input type="radio" name="show" value="front"> Outros / Geral</label>
-    </div> --}}
 
     <div class="table-wrap" style="margin-top: 1.5rem;">
         <table class="admin-table">
@@ -112,48 +105,3 @@
     </div>
 </div>
 @endsection
-
-{{-- @once
-@push('styles')
-<style>
-    .filter {
-        background: var(--color-bg-dark);
-        border: 1px solid var(--color-border);
-        border-radius: 8px;
-        padding: 1.5rem;
-        margin-top: 1rem;
-    }
-</style>
-@endpush
-@push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const filterRadios = document.querySelectorAll('input[name="show"]');
-    const rows = document.querySelectorAll('.admin-table tbody tr');
-
-    filterRadios.forEach(radio => {
-        radio.addEventListener('change', function () {
-            const selectedFilter = this.value; // 'all', 'admin' ou 'front'
-
-            rows.forEach(row => {
-                const hookNameElement = row.querySelector('.hook-name');
-
-                if (!hookNameElement) return;
-
-                const hookName = hookNameElement.textContent.trim();
-                const isAdmin = hookName.startsWith('admin.');
-
-                if (selectedFilter === 'all') {
-                    row.style.display = '';
-                } else if (selectedFilter === 'admin') {
-                    row.style.display = isAdmin ? '' : 'none';
-                } else if (selectedFilter === 'front') {
-                    row.style.display = !isAdmin ? '' : 'none';
-                }
-            });
-        });
-    });
-});
-</script>
-@endpush
-@endonce --}}

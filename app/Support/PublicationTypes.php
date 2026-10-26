@@ -90,15 +90,20 @@ class PublicationTypes
                 // APENAS NA CRIAÇÃO (INSERT / Store)
                 // ==========================================
                 $modelClass::creating(function ($model) use ($key) {
+                    // Ao criar qualquer tipo de publicação - permite bloquear
                     $model = applyFilters('publication_creating', $model, $key);
                     if ($model === false) return false;
 
+                    // Ao criar um tipo específico de publicação (slug) - permite bloquear
                     $model = applyFilters("{$key}_creating", $model);
                     if ($model === false) return false;
                 });
 
                 $modelClass::created(function ($model) use ($key) {
+                    // Após criar qualquer tipo de publicação
                     doAction('publication_created', $model, $key);
+
+                    // Após criar um tipo específico de publicação (slug)
                     doAction("{$key}_created", $model);
                 });
 
@@ -106,15 +111,19 @@ class PublicationTypes
                 // APENAS NA ATUALIZAÇÃO (UPDATE / Update)
                 // ==========================================
                 $modelClass::updating(function ($model) use ($key) {
+                    // Ao atualizar qualquer tipo de publicação
                     $model = applyFilters('publication_updating', $model, $key);
                     if ($model === false) return false;
 
+                    // Ao atualizar um tipo específico de publicação (slug)
                     $model = applyFilters("{$key}_updating", $model);
                     if ($model === false) return false;
                 });
 
                 $modelClass::updated(function ($model) use ($key) {
+                    // Após atualizar qualquer tipo de publicação
                     doAction('publication_updated', $model, $key);
+                    // Após atualizar um tipo específico de publicação (slug)
                     doAction("{$key}_updated", $model);
                 });
 
@@ -122,15 +131,19 @@ class PublicationTypes
                 // SALVAMENTO GERAL (INSERT + UPDATE)
                 // ==========================================
                 $modelClass::saving(function ($model) use ($key) {
+                    // Ao salvar qualquer tipo de publicação
                     $model = applyFilters('publication_saving', $model, $key);
                     if ($model === false) return false;
 
+                    // Ao salvar um tipo específico de publicação (slug)
                     $model = applyFilters("{$key}_saving", $model);
                     if ($model === false) return false;
                 });
 
                 $modelClass::saved(function ($model) use ($key) {
+                    // Após salvar qualquer tipo de publicação
                     doAction('publication_saved', $model, $key);
+                    // Após salvar um tipo específico de publicação (slug)
                     doAction("{$key}_saved", $model);
                 });
 
@@ -138,16 +151,19 @@ class PublicationTypes
                 // EXCLUSÃO (DELETE / Destroy)
                 // ==========================================
                 $modelClass::deleting(function ($model) use ($key) {
-                    // Mudamos para applyFilters para permitir barrar
+                    // Ao excluir qualquer tipo de publicação - permite bloquear
                     $result = applyFilters('publication_deleting', $model, $key);
                     if ($result === false) return false;
 
+                    // Ao excluir um tipo específico de publicação (slug) - permite bloquear
                     $result = applyFilters("{$key}_deleting", $model);
                     if ($result === false) return false;
                 });
 
                 $modelClass::deleted(function ($model) use ($key) {
+                    // Após excluir qualquer tipo de publicação
                     doAction('publication_deleted', $model, $key);
+                    // Após excluir um tipo específico de publicação (slug)
                     doAction("{$key}_deleted", $model);
                 });
             }

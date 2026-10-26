@@ -1,12 +1,53 @@
 /**
  * Heartbeat Engine
- * Gerencia a comunicação periódica unificada com o backend.
+ * Gerencia a comunicação periódica unificada com o backend com detecção de inatividade.
  */
 window.Heartbeat = (function () {
     let queue = {};
     let timer = null;
     let isPaused = false;
-    const interval = 25000; // 25 segundos
+    const interval = 25000; // 25 segundos entre pulsos normais
+
+    // --- CONTROLE DE INATIVIDADE ---
+    const idleTimeout = 15 * 60 * 1000; // 15 minutos sem interação coloca o usuário como "ausente"
+    let lastActivity = Date.now();
+    let activityThrottle = null;
+
+    /**
+     * Registra que o usuário realizou uma ação física na página
+     */
+    function recordActivity() {
+        if (activityThrottle) return;
+
+        // Limita a checagem a no máximo uma vez por segundo (alivia CPU)
+        activityThrottle = setTimeout(() => {
+            activityThrottle = null;
+        }, 1000);
+
+        const wasIdle = (Date.now() - lastActivity) > idleTimeout;
+        lastActivity = Date.now();
+
+        // Se o usuário estava inativo/dormindo e acabou de voltar, dispara um pulso imediato para checar o status
+        if (wasIdle && !isPaused) {
+            beat();
+        }
+    }
+
+    /**
+     * Monitora eventos do usuário para detectar presença real
+     */
+    function setupActivityListeners() {
+        ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'].forEach(eventName => {
+            window.addEventListener(eventName, recordActivity, { passive: true });
+        });
+
+        // Se o usuário alternar de aba e voltar, atualiza a atividade
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                recordActivity();
+            }
+        });
+    }
 
     /**
      * Adiciona dados à próxima requisição do Heartbeat
@@ -27,6 +68,7 @@ window.Heartbeat = (function () {
      */
     function resume() {
         isPaused = false;
+        lastActivity = Date.now(); // Reseta a inatividade ao retomar
         beat(); // Dispara imediatamente
     }
 
@@ -43,6 +85,12 @@ window.Heartbeat = (function () {
      */
     function beat() {
         if (isPaused) return;
+
+        // SE O USUÁRIO ESTIVER INATIVO HÁ MAIS DE 15 MINUTOS:
+        // Não envia a requisição, permitindo que a sessão do Laravel expire naturalmente!
+        if ((Date.now() - lastActivity) > idleTimeout) {
+            return;
+        }
 
         // Dispara evento para quem quiser anexar dados
         document.dispatchEvent(new CustomEvent('heartbeat-send', {
@@ -108,9 +156,12 @@ window.Heartbeat = (function () {
 
     // Inicia o ciclo contínuo
     function start() {
+        setupActivityListeners();
+
         if (timer) clearInterval(timer);
         timer = setInterval(beat, interval);
-        // Opcional: dispara um batimento 3 segundos após carregar a página
+
+        // Dispara um batimento 3 segundos após carregar a página
         setTimeout(beat, 3000);
     }
 
@@ -125,6 +176,7 @@ window.Heartbeat = (function () {
         enqueue,
         pause,
         resume,
-        beat
+        beat,
+        isIdle: () => (Date.now() - lastActivity) > idleTimeout
     };
 })();

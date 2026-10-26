@@ -172,8 +172,10 @@ class ScanHooksCommand extends Command
      */
     protected function scanPhpHooks(string $content, string $filePath, string $sector, array &$hooks): void
     {
-        // Regex robusta: captura o comentário anterior opcional, o tipo, o nome e parâmetros
-        $pattern = '/(?:(?<comment>\/\/[^\r\n]+|\/\*[\s\S]*?\*\/)\s+)?\b(?<type>doAction|applyFilters)\s*\(\s*[\'"](?<name>[a-zA-Z0-9_\.\-]+)[\'"](?<args>[^;]*?)\)\s*;(?:\s*\/\/\s*(?<inline_comment>[^\r\n]+))?/s';
+        // 1. (?:(?<comment>(?:^[ \t]*\/\/[^\r\n]*\r?\n)+))? -> Captura linhas com // imediatamente acima
+        // 2. [ \t]*.*? -> Permite atribuições na mesma linha (ex: $var = applyFilters...)
+        // 3. Modificador /m -> Cada linha é tratada de forma estrita, impedindo que a regex engula quebras de linha
+        $pattern = '/(?:(?<comment>(?:^[ \t]*\/\/[^\r\n]*\r?\n)+))?[ \t]*.*?\b(?<type>doAction|applyFilters)\s*\(\s*[\'"](?<name>[a-zA-Z0-9_\.\-\:\/\{\}\$]+)[\'"](?<args>[^;]*?)\)\s*;/m';
 
         preg_match_all($pattern, $content, $matches, PREG_SET_ORDER);
 
@@ -186,29 +188,25 @@ class ScanHooksCommand extends Command
             $rawArgs = ltrim($rawArgs, ',');
             $params  = !empty(trim($rawArgs)) ? preg_replace('/\s+/', ' ', trim($rawArgs)) : null;
 
-            // Descrição (opcional)
+            // Descrição (estritamente as linhas com // imediatamente acima da chamada)
             $desc = null;
-            if (!empty($match['inline_comment'])) {
-                // Comentário na mesma linha: doAction(...); // Descrição
-                $desc = trim($match['inline_comment']);
-            } elseif (!empty($match['comment'])) {
-                $rawComment = trim($match['comment']);
+            if (!empty($match['comment'])) {
+                $lines = explode("\n", $match['comment']);
+                $cleaned = [];
 
-                if (str_starts_with($rawComment, '/**')) {
-                    // Limpa DocBlock
-                    $lines = explode("\n", $rawComment);
-                    $cleanLines = [];
-                    foreach ($lines as $line) {
-                        $clean = trim($line, "/* \t\r");
-                        if (!empty($clean) && !str_starts_with($clean, '@')) {
-                            $cleanLines[] = $clean;
-                        }
+                foreach ($lines as $line) {
+                    $line = trim($line);
+                    // Remove o '//' e espaços iniciais
+                    $line = preg_replace('/^\/\/\s*/', '', $line);
+                    // Se você ainda tiver algum comentário com 'hook:' remove também
+                    $line = preg_replace('/^hook(?:-desc)?\s*:\s*/i', '', $line);
+
+                    if (!empty($line)) {
+                        $cleaned[] = $line;
                     }
-                    $desc = !empty($cleanLines) ? implode(' ', $cleanLines) : null;
-                } elseif (preg_match('/^\/\/\s*(?:hook(?:-desc)?\s*:\s*)?(.+)$/i', $rawComment, $cMatch)) {
-                    // Comentário de barra dupla na linha anterior: // hook: Descrição ou // Descrição
-                    $desc = trim($cMatch[1]);
                 }
+
+                $desc = !empty($cleaned) ? implode(' ', $cleaned) : null;
             }
 
             $key = "{$type}_{$name}";

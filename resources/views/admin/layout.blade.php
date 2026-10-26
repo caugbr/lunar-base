@@ -73,6 +73,7 @@
                 <div class="admin-header-user">
                     <x-hook name="admin.header_user_start" :params="['user' => auth()->user()]" desc="Header, no início do menu de usuário" />
                     @php
+                        // Permite filtrar o link para o perfil
                         $href = applyFilters('profile_link', route('admin.profile.edit'));
                     @endphp
                     <a href="{{ $href }}">

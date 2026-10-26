@@ -1,23 +1,35 @@
 # Changelog
 
+## [2.25.0] 2026-10-22
+
+### Added
+- Botão Sincronizar em Template Hooks e PHP Hooks, para atualizar a varredura
+- Comando hooks:scan para escanear o sistema por hooks de template e de PHP
+- Nova tela PHP Hooks em Referências, listando os hooks de PHP
+
+### Changed
+- Arquivo install.sh removido
+- A tela de update agora mostra todos os logs de uma minor version, como 1.1.0, 1.1.1, 1.1.2
+- Heartbeat agora tem um sensor de atividade que para as requisições quando não há atividade
+- HookDiscoverer atualizado para trabalhar com hooks:scan
+
+## Fixed
+- Edição de usuários só aceitava editar admin ou editor, agora funciona para todos
+- Modal de edição oculta os campos Alt e Alinhamento para arquivos que não são imagens
+- Modal de edição de anexos agora só mostra dados de indexação de imagem em arquivos de imagem
+
 ## [2.24.0] 2026-10-21
 
 ### Added
-- Botão Sincronizar Hooks em Hooks e PHP Hooks, para atualizar a varredura
-- Comando hooks:scan para escanear o sistema por hooks de template e de PHP
-- Nova tela PHP Hooks em Referências, listando os hooks de PHP
 - Novos hooks
     - Action 'plugin_activation' - depois do plugin ser ativado
     - Action 'plugin_deactivation' - depois do plugin ser desativado
     - Action 'plugin_removed' - depois do plugin ser removido
-    - Filter 'should_remove_plugin' - antes do plugin ser removido (boolean - pode interromper a remoção)
+    - Filter 'should_remove_plugin' - antes do plugin ser removido (pode interromper a remoção)
     - Action 'theme_activation' - depois de um tema ser ativado
     - Action 'themes_deactivation' - depois de um tema ser desativado, sem ativar outro
     - Action 'theme_removed' - depois do tema ser removido
-    - Filter 'should_remove_theme' - antes do tema ser removido (boolean - pode interromper a remoção)
-
-### Changed
-- HookDiscoverer atualizado para trabalhar com hooks:scan
+    - Filter 'should_remove_theme' - antes do tema ser removido (pode interromper a remoção)
 
 ## [2.23.1] 2026-10-20
 

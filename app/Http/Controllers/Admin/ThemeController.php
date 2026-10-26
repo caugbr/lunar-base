@@ -74,6 +74,7 @@ class ThemeController extends Controller
 
         $this->syncAllThemeAssetLinks($theme);
 
+        // Ao ativar um tema
         doAction('theme_activation', $theme->name);
 
         return back()->with('success', "Tema '{$theme->name}' ativado com sucesso!");
@@ -91,6 +92,7 @@ class ThemeController extends Controller
             // Passamos `null` para garantir que TODOS os links de temas sejam removidos do disco
             $this->syncAllThemeAssetLinks(null);
 
+            // Ao desativar todos os temas
             doAction('themes_deactivation');
 
             return back()->with('success', "Tema '{$theme->name}' foi desativado.");
@@ -103,6 +105,7 @@ class ThemeController extends Controller
         // Sincroniza o disco para manter apenas o link do tema atual
         $this->syncAllThemeAssetLinks($theme);
 
+        // Ao ativar um tema
         doAction('theme_activation', $theme->name);
 
         return back()->with('success', "Tema '{$theme->name}' foi ativado!");

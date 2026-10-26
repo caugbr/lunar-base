@@ -41,11 +41,14 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
+        $roles = config('rolesPermissions.roles', []);
+        $rolesIds = implode(",", array_keys($roles));
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
             'password' => 'required|string|min:8',
-            'role' => 'required|in:admin,editor',
+            'role' => 'required|in:' . $rolesIds,
         ]);
 
         $user = User::create([
@@ -82,13 +85,15 @@ class UserController extends Controller
 
     public function update(Request $request, $id)
     {
-        $user = User::whereIn('role', ['admin', 'editor'])->findOrFail($id);
+        $user = User::findOrFail($id);
+        $roles = config('rolesPermissions.roles', []);
+        $rolesIds = implode(",", array_keys($roles));
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $id,
             'password' => 'nullable|string|min:8',
-            'role' => 'required|in:admin,editor',
+            'role' => 'required|in:' . $rolesIds,
         ]);
 
         $user->name = $validated['name'];
@@ -109,7 +114,7 @@ class UserController extends Controller
 
     public function destroy($id)
     {
-        $user = User::whereIn('role', ['admin', 'editor'])->findOrFail($id);
+        $user = User::findOrFail($id);
 
         if ($user->id === auth()->id()) {
             return redirect()->route('admin.users.index')

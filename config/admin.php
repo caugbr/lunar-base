@@ -282,7 +282,7 @@ return [
                     'role' => 'admin',
                     'items' => [
                         [
-                            'label' => 'Hooks',
+                            'label' => 'Template Hooks',
                             'icon' => 'fishing-hook',
                             'route' => 'admin.hooks',
                             'active' => 'admin.hooks',

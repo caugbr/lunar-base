@@ -162,7 +162,7 @@
             }
         }
 
-        // Permite que plugins filtrem ou alterem a árvore
+        // Permite alterar os itens do menu
         $menuGroups = applyFilters('admin_menu_groups', $menuGroups);
     @endphp
 

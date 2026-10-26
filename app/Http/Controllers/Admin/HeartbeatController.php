@@ -26,7 +26,7 @@ class HeartbeatController extends Controller
             'server_time' => now()->toIso8601String(),
         ];
 
-        // Ponto de extensão: Módulos (como ContentLock) injetam suas respostas aqui
+        // Ponto de inserção do heartbeat para plugins
         $response = applyFilters('heartbeat_pulse', $response, $clientData, $user);
 
         return response()->json($response);

@@ -93,6 +93,7 @@ class ThemeMarketplaceController extends Controller
             return back()->with('error', 'Nome de tema inválido.');
         }
 
+        // Filtro anterior à exclusão de um tema - permite bloquear a remoção
         $shouldRemove = applyFilters('should_remove_theme', true, $folderName);
         if (!$shouldRemove) {
             return back()->with('error', 'A remoção do tema foi bloqueada.');
@@ -101,6 +102,7 @@ class ThemeMarketplaceController extends Controller
         // Limpa o cache do catálogo para recarregar o status
         $marketplace->clearCache();
 
+        // Após remover um tema
         doAction('theme_removed', $folderName);
 
         return back()->with('success', "Tema '{$folderName}' foi removido com sucesso!");
@@ -135,6 +137,7 @@ class ThemeMarketplaceController extends Controller
 
             $folderName = $theme->folder_name;
 
+            // Filtro anterior à exclusão de um tema - permite bloquear a remoção
             $shouldRemove = applyFilters('should_remove_theme', true, $folderName);
             if (!$shouldRemove) {
                 continue;
@@ -156,6 +159,7 @@ class ThemeMarketplaceController extends Controller
         if ($deletedCount > 0) {
             $marketplace->clearCache();
 
+            // Após a remoção de temas em lote
             doAction('themes_removed', $deletedThemes);
         }
 

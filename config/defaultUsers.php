@@ -1,61 +1,22 @@
 <?php
+
 /**
  * =============================================================================
- * LUNAR BASE - ARQUIVO ESTRUTURAL DO CORE
+ * LUNAR BASE - USUÁRIOS PADRÃO (SEEDER)
  * =============================================================================
  *
- * ATENÇÃO: NÃO EDITE ESTE ARQUIVO DIRETAMENTE!
- *
- * Este arquivo é parte integrante do núcleo do sistema e define esquemas,
- * regras e metadados oficiais da plataforma.
- *
- * Qualquer alteração manual feita aqui SERÁ SOBRESCRITA a cada atualização
- * de versão baixada pelo CoreUpdateService.
- *
- * Para personalizações de projeto:
- * - Valores de configuração: altere pelo Painel Administrativo ou banco de dados.
- * - Variáveis de ambiente: utilize o arquivo .env.
- * - Regras complementares: utilize os arquivos de projeto correspondentes.
- *
+ * Gera dinamicamente a lista de usuários iniciais/demonstração com base
+ * nos papéis (roles) registrados em rolesPermissions.php.
+ * Utilizado primariamente pelo AdminUsersSeeder durante o 'php artisan db:seed'.
  * =============================================================================
  */
 
-// Este arquivo gera o array de usuários padrão para o AdminUsersSeeder.
-// Prioridade de leitura:
-//   1. Se existir storage/app/.install/default_users_data.json, usa os dados dele.
-//   2. Caso contrário, gera os dados automaticamente a partir de rolesPermissions.php.
-//
-// O JSON é gerado pelo script install.sh durante a instalação interativa.
-
-// Resolve o path do JSON de forma robusta, funcionando mesmo antes
-// do framework estar totalmente bootstrapped.
-$jsonPath = function_exists('storage_path')
-    ? storage_path('app/.install/default_users_data.json')
-    : __DIR__ . '/../storage/app/.install/default_users_data.json';
-
-if (file_exists($jsonPath)) {
-    $jsonContent = file_get_contents($jsonPath);
-    $users = json_decode($jsonContent, true);
-
-    if (is_array($users) && count($users) > 0 && json_last_error() === JSON_ERROR_NONE) {
-        return $users;
-    }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Fallback: gera usuários automaticamente a partir das roles
-// ─────────────────────────────────────────────────────────────────────────────
-
 $config = include __DIR__ . '/rolesPermissions.php';
 
-$createRoleUsers = true;
-
-// Tenta obter o host do APP_URL; se não disponível, usa 'lunar.base' como padrão
-$appUrl = null;
-if (function_exists('env')) {
-    $appUrl = env('APP_URL');
-}
+// Obtém o domínio do site a partir do APP_URL (ex: lunar.base)
+$appUrl = function_exists('env') ? env('APP_URL') : null;
 $mailHost = 'lunar.base';
+
 if (!empty($appUrl)) {
     $parsed = preg_replace("#^https?://([^/:]+).*$#", "$1", $appUrl);
     if (!empty($parsed)) {
@@ -65,13 +26,14 @@ if (!empty($appUrl)) {
 
 $users = [];
 
-if ($createRoleUsers) {
+// Cria um usuário correspondente para cada papel do sistema com senha padrão
+if (!empty($config['roles']) && is_array($config['roles'])) {
     foreach ($config['roles'] as $slug => $roleData) {
         $users[] = [
-            'name' => $roleData['name'],
-            'email' => $slug . '@' . $mailHost,
+            'name'     => $roleData['name'] ?? ucfirst($slug),
+            'email'    => $slug . '@' . $mailHost,
             'password' => 'Pass#1029',
-            'role' => $slug
+            'role'     => $slug,
         ];
     }
 }

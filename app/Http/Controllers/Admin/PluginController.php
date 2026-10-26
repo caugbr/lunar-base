@@ -70,8 +70,10 @@ class PluginController extends Controller
         $this->setPluginAssetLink($plugin, $targetState);
 
         if ($plugin->is_active) {
+            // Ao ativar um plugin
             doAction('plugin_activation', $plugin);
         } else {
+            // Ao desativar um plugin
             doAction('plugin_deactivation', $plugin);
         }
 
@@ -98,8 +100,10 @@ class PluginController extends Controller
             $this->setPluginAssetLink($plugin, $targetState);
 
             if ($plugin->is_active) {
+                // Ao ativar um plugin
                 doAction('plugin_activation', $plugin);
             } else {
+                // Ao desativar um plugin
                 doAction('plugin_deactivation', $plugin);
             }
         }

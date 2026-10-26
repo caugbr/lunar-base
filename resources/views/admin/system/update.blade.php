@@ -73,8 +73,35 @@
         </div>
 
         {{-- BLOCO 3: Conteúdo Formatado do Changelog --}}
-        <div class="changelog-content" style="line-height: 1.7; color: #334155;">
+        {{-- <div class="changelog-content" style="line-height: 1.7; color: #334155;">
             {!! $updateInfo['changelog_html'] !!}
+        </div> --}}
+        {{-- BLOCO 3: Lista de Versões da Família --}}
+        <div class="changelog-list">
+            @forelse($updateInfo['changelog_entries'] as $entry)
+                <div class="changelog-entry {{ $entry['is_new'] ? 'is-new' : 'is-installed' }}">
+                    <div class="changelog-entry-header">
+                        <div class="changelog-version-meta">
+                            <strong class="changelog-version-name">v{{ $entry['version'] }}</strong>
+                            @if(!empty($entry['date']))
+                                <span class="changelog-date">({{ $entry['date'] }})</span>
+                            @endif
+                        </div>
+
+                        @if($entry['is_new'])
+                            <span class="changelog-badge changelog-badge-new">Novo nesta atualização</span>
+                        @else
+                            <span class="changelog-badge changelog-badge-installed">Já instalado</span>
+                        @endif
+                    </div>
+
+                    <div class="changelog-content">
+                        {!! $entry['content_html'] !!}
+                    </div>
+                </div>
+            @empty
+                <p class="admin-text-muted">Nenhum registro de alterações disponível.</p>
+            @endforelse
         </div>
     </div>
 </div>
@@ -150,6 +177,90 @@
 
     @keyframes spin-update {
         to { transform: rotate(360deg); }
+    }
+
+    /* Lista e Cards de Versões do Changelog */
+    .changelog-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .changelog-entry {
+        padding: 1.25rem;
+        border-radius: 8px;
+        transition: opacity 0.2s ease, border-color 0.2s ease;
+    }
+
+    /* Estado: Versão Nova */
+    .changelog-entry.is-new {
+        background-color: #ffffff;
+        border: 1px solid #bbf7d0;
+    }
+
+    .changelog-entry.is-new .changelog-version-name {
+        color: #0f172a;
+    }
+
+    /* Estado: Versão Já Instalada (Atenuado) */
+    .changelog-entry.is-installed {
+        background-color: #f8fafc;
+        border: 1px solid #e2e8f0;
+        opacity: 0.7;
+    }
+
+    .changelog-entry.is-installed .changelog-version-name {
+        color: #475569;
+    }
+
+    .changelog-entry.is-installed .changelog-entry-header {
+        border-bottom-color: #cbd5e1;
+    }
+
+    /* Cabeçalho de cada bloco */
+    .changelog-entry-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 0.75rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .changelog-version-meta {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .changelog-version-name {
+        font-size: 1.1rem;
+    }
+
+    .changelog-date {
+        font-size: 0.85rem;
+        color: #94a3b8;
+    }
+
+    /* Badges de Identificação */
+    .changelog-badge {
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 3px 8px;
+        border-radius: 4px;
+        line-height: 1;
+    }
+
+    .changelog-badge-new {
+        background-color: #dcfce7;
+        color: #15803d;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .changelog-badge-installed {
+        background-color: #e2e8f0;
+        color: #475569;
     }
 </style>
 @endpush

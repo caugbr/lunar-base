@@ -148,6 +148,7 @@ class ContentHelper
             return self::renderShortcode($tag, $attributes, $innerContent);
         }, $content);
 
+        // Conteúdo após o parse dos shortcodes
         return applyFilters('shortcodes_rendered', $replaced);
     }
 
