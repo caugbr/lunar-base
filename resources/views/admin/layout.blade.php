@@ -142,14 +142,11 @@
             pointer-events: none;
             transition: opacity 250ms ease-in 0s;
             position: fixed;
-            top: 12px;
-            right: 12px;
-            bottom: 12px;
-            left: 12px;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
             z-index: 999999;
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 0 0 100vmax rgba(15, 23, 42, 0.7), 0 20px 25px -5px rgba(0, 0, 0, 0.5);
             overflow: hidden;
         }
         #heartbeat-auth-overlay.visible {
@@ -161,7 +158,9 @@
         <iframe
             id="interim-login-frame"
             src="about:blank"
-            style="width: 100%; height: 100%; border: none; display: block;">
+            style="width: 100%; height: 100%; border: none; display: block; background-color: transparent;"
+            allowtransparency="true"
+        >
         </iframe>
     </div>
     <script src="{{ asset('js/heartbeat.js') }}"></script>

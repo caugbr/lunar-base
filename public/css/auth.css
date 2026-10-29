@@ -14,6 +14,18 @@ body {
     justify-content: center;
 }
 
+body.interim,
+html:has(body.interim) {
+    background-color: transparent !important;
+    background-image: none !important;
+}
+
+body.interim {
+    background: rgba(255, 255, 255, 0.25) !important;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
 .login-container {
     background: white;
     padding: 40px;

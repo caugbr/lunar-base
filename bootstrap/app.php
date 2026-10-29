@@ -3,7 +3,7 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-// use Illuminate\Http\Request;
+use Illuminate\Session\TokenMismatchException;
 
 $app = Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -40,7 +40,11 @@ $app = Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        // ?
+        // Quando o token CSRF expirar (Erro 419):
+        $exceptions->render(function (TokenMismatchException $e) {
+            return redirect()->route('login')
+                ->with('warning', 'Sua sessão expirou por inatividade. Faça login novamente.');
+        });
     })->create();
 
 // === CARREGAMENTO PRECOCE DO .ENV ===

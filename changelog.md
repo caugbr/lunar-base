@@ -1,5 +1,21 @@
 # Changelog
 
+## [2.26.0] 2026-10-29
+
+### Added
+- Lidando com o loop no erro 419
+    - JS para recarregar a página de login se carregou a partir do cache
+    - Redirecionamento do erro 419 para a view de login
+    - Middleware 'guest' aplicado à rota de login
+    - Middleware NoCache para o login sempre buscar do site e ignorar o cache
+- Helper QrCodeHelper.php adicionado ao core - qrCodeSvg() e saveQrCodeSvg()
+
+### Changed
+- Interim login agora com fundo semi-transparente
+
+### Fixed
+- Interim login agora tem uma trava pra não carregar a admin dentro do iframe
+
 ## [2.25.0] 2026-10-22
 
 ### Added

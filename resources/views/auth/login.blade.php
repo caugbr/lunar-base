@@ -12,8 +12,23 @@
     <link rel="stylesheet" href="{{ asset('css/auth.css') }}">
 
     <meta name="robots" content="noindex, nofollow">
+
+    <script>
+        // Se a página foi restaurada do cache de memória do celular (BFCache), força um reload limpo
+        window.addEventListener('pageshow', function (event) {
+            if (event.persisted) {
+                window.location.reload();
+            }
+        });
+    </script>
 </head>
-<body>
+@php
+$bodyClass = '';
+if (isset($_GET['interim'])) {
+    $bodyClass = ' class="interim"';
+}
+@endphp
+<body{{ $bodyClass }}>
     <div class="login-container">
         <h1>
             <x-lucide-lock class="lucid-icon" style="width: 20px; height: 20px;" />
@@ -40,7 +55,7 @@
             </div>
         @endif
 
-        <form method="POST" action="{{ route('login') }}">
+        <form method="POST" action="{{ route('login') }}" @if(!request()->has('interim')) target="_top" @endif>
             @csrf
 
             @if(request()->filled('interim'))
