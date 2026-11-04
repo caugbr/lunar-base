@@ -29,24 +29,26 @@
 @endif
 <div class="form-group robots-field-item robots-index">
     <label>{{ $index_title }}</label>
-    <x-switch
+    <x-form.switch
         name="robots_index"
         id="robots_index"
         :checked="$indexChecked"
         active="Indexar"
         inactive="Não indexar"
+        :includeCss="true"
+        :help="$index_desc"
     />
-    <small>{{ $index_desc }}</small>
 </div>
 
 <div class="form-group robots-field-item robots-follow">
     <label>{{ $follow_title }}</label>
-    <x-switch
+    <x-form.switch
         name="robots_follow"
         id="robots_follow"
         :checked="$followChecked"
         active="Seguir"
         inactive="Não seguir"
+        :includeCss="true"
+        :help="$follow_desc"
     />
-    <small>{{ $follow_desc }}</small>
 </div>

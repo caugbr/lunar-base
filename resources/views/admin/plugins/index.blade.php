@@ -155,10 +155,22 @@
                         <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;">
 
                             {{-- Switch de Ativar/Desativar --}}
-                            <form method="POST" action="{{ route('admin.plugins.toggle', $plugin->id) }}" style="display: inline;">
-                                @csrf
-                                <x-switch name="is_active" checked="{{ old('is_active', $plugin->is_active) }}" active="Ligado" inactive="Desligado" style="top: 0;" onChange="this.form.submit()" />
-                            </form>
+                            <x-form
+                                method="POST"
+                                action="{{ route('admin.plugins.toggle', $plugin->id) }}"
+                                class="form-inline-action"
+                                :includeCss="false"
+                            >
+                                <x-form.switch
+                                    name="is_active"
+                                    id="is_active_{{ $plugin->id }}"
+                                    :checked="(bool) $plugin->is_active"
+                                    active="Ligado"
+                                    inactive="Desligado"
+                                    onchange="this.form.submit()"
+                                    :includeCss="true"
+                                />
+                            </x-form>
 
                             {{-- Botão de Atualizar em 1 clique --}}
                             @if($plugin->has_update)
@@ -318,6 +330,12 @@
             background-color: transparent;
         }
     }
+
+    .admin-actions .switch-control,
+    .admin-actions .form-field {
+        margin-bottom: 0;
+    }
+
 </style>
 @endpush
 

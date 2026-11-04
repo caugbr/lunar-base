@@ -1,0 +1,55 @@
+.mini-editor-wrapper {
+    border: 1px solid var(--color-border, #cccccc);
+    border-radius: 8px;
+    background: var(--input-bg-color, #ffffff);
+    overflow: hidden;
+    transition: border-color 0.15s ease-in-out;
+}
+
+.mini-editor-wrapper:focus-within {
+    border-color: var(--color-primary, #0056b3);
+}
+
+.mini-editor-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    background: #f8f9fa;
+    border-bottom: 1px solid var(--color-border, #e9ecef);
+    padding: 0.35rem 0.5rem;
+}
+
+.mini-editor-toolbar button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border: 1px solid transparent;
+    background: transparent;
+    border-radius: 4px;
+    cursor: pointer;
+    color: var(--color-text, #495057);
+    padding: 0;
+}
+
+.mini-editor-toolbar button:hover {
+    background-color: #e9ecef;
+    border-color: #ced4da;
+}
+
+.toolbar-separator {
+    width: 1px;
+    height: 1.15rem;
+    background-color: #ced4da;
+    margin: 0 0.25rem;
+}
+
+.mini-editor-textarea {
+    border: none !important;
+    outline: none;
+    resize: vertical;
+    line-height: 1.5;
+    display: block;
+    background: transparent;
+}

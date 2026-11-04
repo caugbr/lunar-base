@@ -2,73 +2,83 @@
     $term = $term ?? new \App\Models\Term();
     $isEdit = $term->exists;
     $currentTaxonomyId = old('taxonomy_id', $term->taxonomy_id ?? ($selectedTaxonomy->id ?? ''));
+
+    $taxonomyOptions = collect($taxonomies)->pluck('name', 'id')->all();
+    $hierarchicalMap = collect($taxonomies)->pluck('hierarchical', 'id')->all();
+
+    $parentOptions = collect($parentTerms ?? [])
+        ->filter(fn($parent) => !$isEdit || $parent->id !== $term->id)
+        ->pluck('name', 'id')
+        ->all();
 @endphp
 
-<form method="POST" action="{{ $action }}" id="term_form">
-    @csrf
-    @if($isEdit)
-        @method('PUT')
-    @endif
+<x-form
+    :action="$action"
+    :method="$isEdit ? 'PUT' : 'POST'"
+    id="term_form"
+    :warn-changes="$isEdit"
+>
+    <div class="form-row">
+        <x-form.select
+            name="taxonomy_id"
+            id="taxonomy_id"
+            label="Taxonomia"
+            :options="$taxonomyOptions"
+            :value="$currentTaxonomyId"
+            placeholder="Selecione"
+            :data-hierarchical-map="json_encode($hierarchicalMap)"
+            required
+        />
 
-    <div class="admin-form-row">
-        <div class="form-group">
-            <label for="taxonomy_id">Taxonomia *</label>
-            <select name="taxonomy_id" id="taxonomy_id" required>
-                <option value="">Selecione</option>
-                @foreach($taxonomies as $tax)
-                    <option value="{{ $tax->id }}"
-                            data-hierarchical="{{ $tax->hierarchical ? 'true' : 'false' }}"
-                            {{ (string) $currentTaxonomyId === (string) $tax->id ? 'selected' : '' }}>
-                        {{ $tax->name }}
-                    </option>
-                @endforeach
-            </select>
-            @error('taxonomy_id') <small class="error">{{ $message }}</small> @enderror
-        </div>
-
-        <div class="form-group">
-            <label for="name">Nome *</label>
-            <input type="text" name="name" id="name" value="{{ old('name', $term->name) }}" required>
-            @error('name') <small class="error">{{ $message }}</small> @enderror
-        </div>
+        <x-form.text
+            name="name"
+            id="name"
+            label="Nome"
+            :value="$term->name"
+            required
+        />
     </div>
 
-    <div class="admin-form-row">
-        <div class="form-group">
-            <label for="slug">Slug *</label>
-            <input type="text" name="slug" id="slug" value="{{ old('slug', $term->slug) }}" required>
-            @error('slug') <small class="error">{{ $message }}</small> @enderror
-        </div>
+    <div class="form-row">
+        <x-form.text
+            name="slug"
+            id="slug"
+            label="Slug"
+            :value="$term->slug"
+            required
+        />
 
-        <div class="form-group">
-            <label for="order">Ordem</label>
-            <input type="number" name="order" id="order" value="{{ old('order', $term->order ?? 0) }}" min="0">
-            <small>Menor número aparece primeiro</small>
-            @error('order') <small class="error">{{ $message }}</small> @enderror
-        </div>
+        <x-form.text
+            type="number"
+            name="order"
+            id="order"
+            label="Ordem"
+            :value="$term->order ?? 0"
+            min="0"
+            help="Menor número aparece primeiro"
+        />
     </div>
 
-    <div class="form-group" id="parent-group" style="display: none;">
-        <label for="parent_id">Termo Pai</label>
-        <select name="parent_id" id="parent_id">
-            <option value="">-- Nenhum --</option>
-            @foreach($parentTerms as $parent)
-                {{-- Evita que um termo seja pai dele mesmo na edição --}}
-                @if(!$isEdit || $parent->id !== $term->id)
-                    <option value="{{ $parent->id }}" {{ (string) old('parent_id', $term->parent_id) === (string) $parent->id ? 'selected' : '' }}>
-                        {{ $parent->name }}
-                    </option>
-                @endif
-            @endforeach
-        </select>
-        <small>Apenas para taxonomias hierárquicas</small>
-        @error('parent_id') <small class="error">{{ $message }}</small> @enderror
+    <div class="parent-group-wrapper" id="parent-group">
+        <x-form.select
+            name="parent_id"
+            id="parent_id"
+            label="Termo pai"
+            :options="$parentOptions"
+            :value="$term->parent_id"
+            placeholder="-- Nenhum --"
+            help="Apenas para taxonomias hierárquicas"
+        />
     </div>
 
     <div class="form-group">
-        <label for="description">Descrição</label>
-        <textarea name="description" id="description" rows="3">{{ old('description', $term->description) }}</textarea>
-        @error('description') <small class="error">{{ $message }}</small> @enderror
+        <x-form.textarea
+            name="description"
+            id="description"
+            label="Descrição"
+            :value="$term->description"
+            rows="3"
+        />
     </div>
 
     <x-hook
@@ -78,62 +88,82 @@
     />
 
     <div class="buttons">
-        <button type="submit" class="admin-btn admin-btn-primary">
-            <x-lucide-save class="lucid-icon" /> {{ $isEdit ? 'Atualizar' : 'Salvar' }}
-        </button>
+        <x-form.button type="submit" variant="primary" icon="save">
+            {{ $isEdit ? 'Atualizar' : 'Salvar' }}
+        </x-form.button>
     </div>
-</form>
+</x-form>
 
-@if($isEdit)
-    <x-lost-changes-warn selector="#term_form" />
-@endif
+@push('styles')
+<style>
+    .parent-group-wrapper {
+        display: none;
+        margin-bottom: 1.25rem;
+    }
+
+    .parent-group-wrapper.is-visible {
+        display: block;
+    }
+</style>
+@endpush
 
 @push('scripts')
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const nameField = document.getElementById('name');
-        const slugField = document.getElementById('slug');
+document.addEventListener('DOMContentLoaded', () => {
+    const nameField = document.getElementById('name');
+    const slugField = document.getElementById('slug');
 
-        if (nameField && slugField) {
-            nameField.addEventListener('input', function() {
-                if (!slugField.dataset.manuallyEdited) {
-                    slugField.value = slugify(this.value);
-                }
-            });
-
-            slugField.addEventListener('input', function() {
-                this.dataset.manuallyEdited = 'true';
-            });
+    if (nameField && slugField) {
+        if (slugField.value.trim().length > 0) {
+            slugField.dataset.manuallyEdited = 'true';
         }
 
-        const taxonomySelect = document.getElementById('taxonomy_id');
-        const parentGroup = document.getElementById('parent-group');
-        const parentSelect = document.getElementById('parent_id');
-
-        function checkHierarchical() {
-            if (!taxonomySelect || !parentGroup) return;
-            const selectedOption = taxonomySelect.options[taxonomySelect.selectedIndex];
-            const isHierarchical = selectedOption && selectedOption.getAttribute('data-hierarchical') === 'true';
-
-            parentGroup.style.display = isHierarchical ? 'block' : 'none';
-            if (!isHierarchical && parentSelect) {
-                parentSelect.value = '';
+        nameField.addEventListener('input', () => {
+            if (!slugField.dataset.manuallyEdited) {
+                slugField.value = slugify(nameField.value);
             }
+        });
+
+        slugField.addEventListener('input', () => {
+            slugField.dataset.manuallyEdited = 'true';
+        });
+    }
+
+    const taxonomySelect = document.getElementById('taxonomy_id');
+    const parentGroup = document.getElementById('parent-group');
+    const parentSelect = document.getElementById('parent_id');
+
+    const checkHierarchical = () => {
+        if (!taxonomySelect || !parentGroup) return;
+
+        let map = {};
+        try {
+            map = JSON.parse(taxonomySelect.dataset.hierarchicalMap || '{}');
+        } catch (e) {
+            map = {};
         }
 
-        if (taxonomySelect) {
-            taxonomySelect.addEventListener('change', checkHierarchical);
-            checkHierarchical();
-        }
+        const isHierarchical = Boolean(map[taxonomySelect.value]);
 
-        function slugify(text) {
-            return text.toString().toLowerCase()
-                .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-                .trim()
-                .replace(/[^a-z0-9\s-]/g, '')
-                .replace(/[\s_-]+/g, '-')
-                .replace(/^-+|-+$/g, '');
+        parentGroup.classList.toggle('is-visible', isHierarchical);
+        if (!isHierarchical && parentSelect) {
+            parentSelect.value = '';
         }
-    });
+    };
+
+    if (taxonomySelect) {
+        taxonomySelect.addEventListener('change', checkHierarchical);
+        checkHierarchical();
+    }
+
+    function slugify(text) {
+        return text.toString().toLowerCase()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+            .trim()
+            .replace(/[^a-z0-9\s-]/g, '')
+            .replace(/[\s_-]+/g, '-')
+            .replace(/^-+|-+$/g, '');
+    }
+});
 </script>
 @endpush

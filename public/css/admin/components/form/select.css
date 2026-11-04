@@ -1,0 +1,16 @@
+.select-field-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.creatable-select-group [data-select-input] {
+    display: none;
+}
+
+.creatable-select-group.is-inserting [data-select-input] {
+    display: block;
+}
+
+.creatable-select-group.is-inserting [data-select-native] {
+    display: none;
+}

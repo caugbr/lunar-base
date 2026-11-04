@@ -42,36 +42,6 @@ class CoreUpdateService
     /**
      * Retorna informações sobre a atualização do Core, incluindo o Changelog da versão alvo.
      */
-    // public function getUpdateInfo(): array
-    // {
-    //     $githubData = Cache::remember('lunar_github_latest_release', now()->addDay(), function () {
-    //         return $this->fetchFromGitHub();
-    //     });
-
-    //     $currentVersion = appVersion();
-    //     $latestTag      = $githubData['latest_version'] ?? $currentVersion;
-    //     $hasUpdate      = version_compare($currentVersion, $latestTag, '<');
-
-    //     // Se houver update, busca o changelog da nova versão; senão, busca da versão atual instalada
-    //     $targetVersion = $hasUpdate ? $latestTag : $currentVersion;
-    //     $changelogHtml = $this->getChangelogForVersion($targetVersion);
-
-    //     return array_merge($githubData, [
-    //         'current_version' => $currentVersion,
-    //         'has_update'      => $hasUpdate,
-    //         'target_version'  => $targetVersion,
-    //         'changelog_html'  => $changelogHtml,
-    //     ]);
-    // }
-
-    /**
-     * Busca o CHANGELOG.md do GitHub e extrai apenas a seção da versão especificada.
-     */
-    // public functio
-
-    /**
-     * Retorna informações sobre a atualização do Core, incluindo o Changelog estruturado da família de versões.
-     */
     public function getUpdateInfo(): array
     {
         $githubData = Cache::remember('lunar_github_latest_release', now()->addDay(), function () {

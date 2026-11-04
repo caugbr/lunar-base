@@ -1,0 +1,79 @@
+.switch-container {
+    display: flex;
+    align-items: center;
+    min-height: 2.5rem;
+}
+
+.switch-control {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    user-select: none;
+}
+
+.switch-native-input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    margin: 0;
+    pointer-events: none;
+}
+
+.switch-track {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+    background-color: #ced4da;
+    border-radius: 12px;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    flex-shrink: 0;
+}
+
+.switch-thumb {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+    background-color: #ffffff;
+    border-radius: 50%;
+    transition: transform 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.switch-status-text {
+    font-size: 0.875rem;
+    color: var(--color-text-muted, #495057);
+    font-weight: 500;
+}
+
+.switch-status-text::before {
+    content: attr(data-inactive);
+}
+
+.switch-native-input:checked + .switch-track {
+    background-color: var(--color-primary, #0056b3);
+}
+
+.switch-native-input:checked + .switch-track .switch-thumb {
+    transform: translateX(20px);
+}
+
+.switch-native-input:checked ~ .switch-status-text::before {
+    content: attr(data-active);
+}
+
+.switch-native-input:focus-visible + .switch-track {
+    box-shadow: 0 0 0 3px rgba(0, 86, 179, 0.25);
+}
+
+.form-field.field-disabled .switch-track {
+    background-color: var(--color-border-strong, #dee2e6) !important;
+}
+
+.form-field.field-disabled .switch-thumb {
+    background-color: var(--color-bg-disabled, #e9ecef);
+}

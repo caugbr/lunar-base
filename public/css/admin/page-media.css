@@ -53,7 +53,7 @@
 }
 .preview-remove:hover { background: #dc2626; }
 .thumbnail-actions { display: flex; flex-direction: column; gap: 0.5rem; }
-
+/*
 .taxonomy-group {
     margin-bottom: 1rem;
     padding: 0.75rem;
@@ -81,7 +81,7 @@
 }
 .terms-checkbox-group small {
     color: #9ca3af;
-}
+} */
 
 /* No distractions mode */
 

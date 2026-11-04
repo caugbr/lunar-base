@@ -1,21 +1,38 @@
 @php
     $isEdit = $page->exists;
+
+    $userOptions = collect($users)->mapWithKeys(function ($user) {
+        return [$user->id => "{$user->name} ({$user->role})"];
+    })->all();
+
+    $statusOptions = [
+        'draft' => 'Rascunho',
+        'published' => 'Publicado',
+        'archived' => 'Arquivado',
+    ];
+
+    $thumbInitial = [
+        'id' => old('thumbnail_id', $page->thumbnail_id),
+        'url' => old('thumbnail_url', optional($page->thumbnail)->url ?? '')
+    ];
 @endphp
 
-<form method="POST" action="{{ $action }}" id="{{ $isEdit ? 'edit' : 'create' }}_form">
-    @csrf
-    @if($isEdit)
-        @method('PUT')
-    @endif
-
+<x-form
+    :action="$action"
+    :method="$isEdit ? 'PUT' : 'POST'"
+    :id="($isEdit ? 'edit' : 'create') . '_form'"
+    :warn-changes="$isEdit"
+>
     <div class="edit-page-inner">
         <div class="main-column">
             {{-- Título --}}
-            <div class="admin-form-row">
-                <div class="form-group">
-                    <input type="text" name="title" id="title" value="{{ old('title', $page->title) }}" placeholder="Título da página" required>
-                    @error('title') <small class="error">{{ $message }}</small> @enderror
-                </div>
+            <div class="form-row">
+                <x-form.text
+                    name="title"
+                    :value="$page->title"
+                    placeholder="Título da página"
+                    required
+                />
             </div>
 
             {{-- Conteúdo --}}
@@ -32,10 +49,13 @@
             <div class="edit-box">
                 <header>Descrição curta</header>
                 <article>
-                    <div class="form-group excerpt">
-                        <textarea name="excerpt" id="excerpt" rows="4">{{ old('excerpt', $page->excerpt) }}</textarea>
-                        <small>Breve resumo da página (opcional)</small>
-                    </div>
+                    <x-form.textarea
+                        name="excerpt"
+                        rows="4"
+                        :value="$page->excerpt"
+                        help="Breve resumo da página (opcional)"
+                        class="excerpt"
+                    />
                 </article>
             </div>
 
@@ -66,28 +86,22 @@
             <div class="edit-box">
                 <header>Detalhes da página</header>
                 <article>
-                    <div class="form-group">
-                        <label for="author_id">Autor</label>
-                        <select name="author_id" id="author_id">
-                            <option value="">-- Selecione um autor --</option>
-                            @foreach($users as $user)
-                                <option value="{{ $user->id }}"
-                                    {{ old('author_id', $page->author_id ?? Auth::id()) == $user->id ? 'selected' : '' }}>
-                                    {{ $user->name }} ({{ $user->role }})
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('author_id') <small class="error">{{ $message }}</small> @enderror
-                    </div>
+                    <x-form.select
+                        name="author_id"
+                        label="Autor"
+                        :options="$userOptions"
+                        :value="$page->author_id ?? Auth::id()"
+                        placeholder="-- Selecione um autor --"
+                    />
 
-                    <div class="form-group">
-                        <label for="status">Status *</label>
-                        <select name="status" id="status" required>
-                            <option value="draft" {{ old('status', $page->status ?? 'draft') == 'draft' ? 'selected' : '' }}>Rascunho</option>
-                            <option value="published" {{ old('status', $page->status) == 'published' ? 'selected' : '' }}>Publicado</option>
-                            <option value="archived" {{ old('status', $page->status) == 'archived' ? 'selected' : '' }}>Arquivado</option>
-                        </select>
-                    </div>
+                    <x-form.select
+                        name="status"
+                        label="Status"
+                        :options="$statusOptions"
+                        :value="$page->status ?? 'draft'"
+                        :placeholder="false"
+                        required
+                    />
 
                     @if($isEdit)
                         <x-set-robots :model="$page" />
@@ -96,9 +110,9 @@
                     @endif
 
                     <div class="buttons">
-                        <button type="submit" class="admin-btn admin-btn-primary">
+                        <x-form.button type="submit" variant="primary">
                             <x-lucide-save class="lucid-icon" /> {{ $isEdit ? 'Atualizar' : 'Salvar' }}
-                        </button>
+                        </x-form.button>
                     </div>
                 </article>
             </div>
@@ -106,63 +120,47 @@
             <div class="edit-box">
                 <header>Propriedades</header>
                 <article>
-                    <div class="form-group">
-                        <label for="slug">Slug *</label>
-                        <input type="text" name="slug" id="slug" value="{{ old('slug', $page->slug) }}" required>
-                        <small>URL amigável (ex: termos-de-uso, politica-privacidade)</small>
-                        @error('slug') <small class="error">{{ $message }}</small> @enderror
-                    </div>
+                    <x-form.text
+                        name="slug"
+                        label="Slug"
+                        :value="$page->slug"
+                        help="URL amigável (ex: termos-de-uso, politica-privacidade)"
+                        required
+                    />
 
-                    <div class="form-group">
-                        <x-select-input
-                            name="namespace"
-                            label="Namespace opcional"
-                            :options="$namespaces"
-                            :value="old('namespace', $page->namespace)"
-                            placeholder="-- Nenhum (página geral) --"
-                            :allowInsert="true"
-                            insertLabel="Inserir novo..."
-                            insertPlaceholder="Digite o novo namespace"
-                            help="Defina um namespace para esta página"
-                        />
-                    </div>
+                    <x-form.select
+                        name="namespace"
+                        label="Namespace opcional"
+                        :options="$namespaces"
+                        :value="$page->namespace"
+                        placeholder="-- Nenhum (página geral) --"
+                        allow-insert
+                        insert-label="Inserir novo..."
+                        insert-placeholder="Digite o novo namespace"
+                        help="Defina um namespace para esta página"
+                    />
 
-                    <div class="form-group">
-                        <label for="template">Template da página</label>
-                        <select name="template" id="template">
-                            @foreach($templates as $value => $label)
-                                <option value="{{ $value }}" {{ old('template', $page->template ?? config('pageTemplates.default')) == $value ? 'selected' : '' }}>
-                                    {{ $label }}
-                                </option>
-                            @endforeach
-                        </select>
-                        <small>Define como a página será exibida publicamente</small>
-                        @error('template') <small class="error">{{ $message }}</small> @enderror
-                    </div>
+                    <x-form.select
+                        name="template"
+                        label="Template da página"
+                        :options="$templates"
+                        :value="$page->template ?? config('pageTemplates.default')"
+                        :placeholder="false"
+                        help="Define como a página será exibida publicamente"
+                    />
 
-                    <div class="form-group">
-                        <label for="parent_id">Página mãe</label>
-                        <x-page-picker
-                            name="parent_id"
-                            id="parent_id"
-                            :selected="old('parent_id', $page->parent_id ?? '')"
-                            placeholder="-- Nenhuma --"
-                            :exclude="$page->id ?? null"
-                        />
-                        <small>Define a página mãe dessa página (opcional)</small>
-                        @error('parent_id') <small class="error">{{ $message }}</small> @enderror
-                    </div>
+                    <x-picker.page
+                        name="parent_id"
+                        label="Página mãe"
+                        :value="$page->parent_id ?? ''"
+                        placeholder="-- Nenhuma --"
+                        :exclude="$page->id ?? null"
+                        help="Define a página mãe dessa página (opcional)"
+                    />
 
                     <x-hook name="admin.page_properties" :params="['page' => $page ?? null]" desc="No final do box Propriedades na criação/edição de páginas" />
                 </article>
             </div>
-
-            @php
-            $thumbInitial = [
-                'id' => old('thumbnail_id', $page->thumbnail_id),
-                'url' => old('thumbnail_url', optional($page->thumbnail)->url ?? '')
-            ];
-            @endphp
 
             <div class="edit-box" x-data='thumbnailManager({{ json_encode($thumbInitial) }})'>
                 <header>Imagem da página</header>
@@ -219,12 +217,8 @@
     </div>
 
     <div class="buttons bottom-buttons">
-        <button type="submit" class="admin-btn admin-btn-primary">
+        <x-form.button type="submit" variant="primary">
             <x-lucide-save class="lucid-icon" /> {{ $isEdit ? 'Atualizar' : 'Salvar' }}
-        </button>
+        </x-form.button>
     </div>
-</form>
-
-@if($isEdit)
-    <x-lost-changes-warn selector="#edit_form" />
-@endif
+</x-form>

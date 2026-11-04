@@ -9,35 +9,47 @@
 if (!function_exists('addLinkIcon')) {
     function addLinkIcon($text) {
         if (str_contains($text, '<a ')) {
-            return '<span class="link-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right-icon lucide-chevron-right lucid-icon"><path d="m9 18 6-6-6-6"/></svg></span>';
+            return '<span class="link-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucid-icon"><path d="m9 18 6-6-6-6"/></svg></span>';
         }
         return '';
     }
 }
 
-// Resolve a mensagem pontual (passada via prop ou da sessão)
-$sessionMessage = $message;
-$sessionType    = $type;
+// Consolida todas as mensagens pontuais a serem exibidas
+$alerts = [];
 
-if (!$sessionMessage) {
-    if (session()->has('success')) {
-        $sessionMessage = session('success');
-        $sessionType    = 'success';
-    } elseif (session()->has('warning')) {
-        $sessionMessage = session('warning');
-        $sessionType    = 'warning';
-    } elseif (session()->has('info')) {
-        $sessionMessage = session('info');
-        $sessionType    = 'info';
-    } elseif (session()->has('error') || (isset($errors) && $errors->any())) {
-        $sessionMessage = session('error') ?? $errors->first();
-        $sessionType    = 'error';
+// Mensagem passada explicitamente via prop
+if ($message) {
+    $alerts[] = [
+        'type' => $type ?? 'info',
+        'message' => $message,
+        'noticeId' => $noticeId,
+    ];
+} else {
+    // Mapeamento sem exclusao mutua: exibe todas as mensagens presentes na sessao
+    $types = ['error', 'warning', 'success', 'info'];
+
+    foreach ($types as $t) {
+        if (session()->has($t)) {
+            $alerts[] = [
+                'type' => $t,
+                'message' => session($t),
+                'noticeId' => null,
+            ];
+        }
+    }
+
+    if (isset($errors) && $errors->any() && !session()->has('error')) {
+        $alerts[] = [
+            'type' => 'error',
+            'message' => $errors->first(),
+            'noticeId' => null,
+        ];
     }
 }
-$sessionType = $sessionType ?? 'info';
 @endphp
 
-{{-- RENDERIZA OS AVISOS PERSISTENTES DO BANCO (Injetados pelo Composer) --}}
+{{-- Renderiza os avisos persistentes do banco --}}
 @if(isset($persistentNotices) && $persistentNotices->isNotEmpty() && !$message)
     @foreach($persistentNotices as $pNotice)
         @php
@@ -80,25 +92,25 @@ $sessionType = $sessionType ?? 'info';
     @endforeach
 @endif
 
-{{-- RENDERIZA A MENSAGEM COMUM DE SESSÃO OU MANUAL --}}
-@if($sessionMessage)
+{{-- Renderiza todas as mensagens de sessao acumuladas --}}
+@foreach($alerts as $alertItem)
     <div
-        class="admin-alert admin-alert-{{ $sessionType }}"
-        @if($noticeId) data-persistent-id="{{ $noticeId }}" @endif
+        class="admin-alert admin-alert-{{ $alertItem['type'] }}"
+        @if($alertItem['noticeId']) data-persistent-id="{{ $alertItem['noticeId'] }}" @endif
     >
-        @if($sessionType === 'success')
+        @if($alertItem['type'] === 'success')
             <x-lucide-circle-check class="lucid-icon" />
-        @elseif($sessionType === 'warning')
+        @elseif($alertItem['type'] === 'warning')
             <x-lucide-circle-alert class="lucid-icon" />
-        @elseif($sessionType === 'error')
+        @elseif($alertItem['type'] === 'error')
             <x-lucide-circle-x class="lucid-icon" />
         @else
             <x-lucide-info class="lucid-icon" />
         @endif
 
         <span class="alert-content">
-            {!! $sessionMessage !!}
-            {!! addLinkIcon($sessionMessage) !!}
+            {!! $alertItem['message'] !!}
+            {!! addLinkIcon($alertItem['message']) !!}
         </span>
 
         @if($dismissible)
@@ -107,9 +119,9 @@ $sessionType = $sessionType ?? 'info';
             </button>
         @endif
     </div>
-@endif
+@endforeach
 
-{{-- SCRIPT ÚNICO DE DESCARTE --}}
+{{-- Script unico de descarte mantido --}}
 <script>
     if (!window.__adminAlertDismissInitialized) {
         window.__adminAlertDismissInitialized = true;

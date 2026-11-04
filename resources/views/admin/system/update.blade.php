@@ -72,10 +72,6 @@
             </h3>
         </div>
 
-        {{-- BLOCO 3: Conteúdo Formatado do Changelog --}}
-        {{-- <div class="changelog-content" style="line-height: 1.7; color: #334155;">
-            {!! $updateInfo['changelog_html'] !!}
-        </div> --}}
         {{-- BLOCO 3: Lista de Versões da Família --}}
         <div class="changelog-list">
             @forelse($updateInfo['changelog_entries'] as $entry)

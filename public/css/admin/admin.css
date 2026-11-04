@@ -20,6 +20,7 @@
 /* Components */
 @import url('components/cards.css');
 @import url('components/buttons.css');
+/* forms deve ser elminado quando os componentes forem aplicados em tudo */
 @import url('components/forms.css');
 @import url('components/tables.css');
 @import url('components/badges.css');
@@ -32,8 +33,6 @@
 @import url('pages/dashboard.css');
 @import url('pages/edit-page.css');
 @import url('pages/filters.css');
-/* @import url('pages/marketing.css'); */
 @import url('pages/texts.css');
 @import url('pages/users.css');
 @import url('pages/profile.css');
-/* @import url('pages/widgets.css'); */

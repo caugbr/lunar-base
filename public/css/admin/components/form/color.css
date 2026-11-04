@@ -1,0 +1,53 @@
+.color-picker-wrapper {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+}
+
+input.color-picker-input {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 4.5rem;
+    height: 2.5rem;
+    padding: 0;
+    border: 1px solid var(--color-border, #cccccc);
+    border-radius: 8px;
+    cursor: pointer;
+    background: transparent;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+input.color-picker-input:focus {
+    outline: none;
+    border-color: var(--color-primary, #0056b3);
+}
+
+input.color-picker-input::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+input.color-picker-input::-webkit-color-swatch {
+    border: none;
+    border-radius: 6px;
+}
+
+input.color-picker-input::-moz-color-swatch {
+    border: none;
+    border-radius: 6px;
+}
+
+.color-picker-output {
+    font-family: monospace;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text, #333333);
+    background-color: #f8f9fa;
+    padding: 0.35rem 0.65rem;
+    border-radius: 6px;
+    border: 1px solid var(--color-border, #ced4da);
+    min-width: 5.5rem;
+    text-align: center;
+    user-select: all;
+}

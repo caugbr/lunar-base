@@ -13,6 +13,21 @@
 
     <meta name="robots" content="noindex, nofollow">
 
+    {{-- Estilos injetados pelos componentes de form (ex: toggle de senha) --}}
+    @stack('styles')
+
+    <style>
+        /* Oculta a barra de força da senha especificamente na tela de login */
+        .login-container .password-strength-meter {
+            display: none !important;
+        }
+        /* Garante que o botão de submit ocupe a largura total */
+        .login-btn {
+            width: 100%;
+            justify-content: center;
+        }
+    </style>
+
     <script>
         // Se a página foi restaurada do cache de memória do celular (BFCache), força um reload limpo
         window.addEventListener('pageshow', function (event) {
@@ -28,7 +43,7 @@ if (isset($_GET['interim'])) {
     $bodyClass = ' class="interim"';
 }
 @endphp
-<body{{ $bodyClass }}>
+<body{!! $bodyClass !!} data-theme="light">
     <div class="login-container">
         <h1>
             <x-lucide-lock class="lucid-icon" style="width: 20px; height: 20px;" />
@@ -55,26 +70,38 @@ if (isset($_GET['interim'])) {
             </div>
         @endif
 
-        <form method="POST" action="{{ route('login') }}" @if(!request()->has('interim')) target="_top" @endif>
-            @csrf
-
+        {{-- Componente de Formulário: CSRF e prevenção de duplo submit já inclusos --}}
+        <x-form
+            method="POST"
+            :action="route('login')"
+            :target="!request()->has('interim') ? '_top' : null"
+        >
             @if(request()->filled('interim'))
                 <input type="hidden" name="interim" value="1">
             @endif
 
-            <div class="form-group">
-                <label for="email"><x-lucide-mail class="lucid-icon" /> E-mail</label>
-                <input type="email" name="email" id="email" value="{{ old('email') }}" required autofocus>
-            </div>
+            {{-- Campo de E-mail --}}
+            <x-form.text
+                type="email"
+                name="email"
+                label="E-mail"
+                :value="old('email')"
+                required
+                autofocus
+            />
 
-            <div class="form-group">
-                <label for="password"><x-lucide-key class="lucid-icon" /> Senha</label>
-                <span class="pwd">
-                    <input type="password" name="password" id="password" required>
-                    <x-lucide-eye class="lucid-icon show" />
-                    <x-lucide-eye-off class="lucid-icon hide" />
-                </span>
-            </div>
+            {{-- Campo de Senha com o botão de exibir/ocultar integrado --}}
+            {{-- <x-form.text
+                type="password"
+                name="password"
+                label="Senha"
+                required
+            /> --}}
+            <x-form.password
+                name="password"
+                label="Senha"
+                required
+            />
 
             @if(setting('auth.use_captcha'))
             @php
@@ -99,8 +126,15 @@ if (isset($_GET['interim'])) {
                 </a>
             </div>
 
-            <button type="submit"><x-lucide-log-in class="lucid-icon" /> Entrar</button>
-        </form>
+            {{-- Botão de submit: desabilitado e com spinner ativado pelo <x-form> --}}
+            <x-form.button
+                type="submit"
+                icon="log-in"
+                class="login-btn"
+            >
+                Entrar
+            </x-form.button>
+        </x-form>
 
         <div class="info">
             @php
@@ -109,26 +143,9 @@ if (isset($_GET['interim'])) {
             {{ $footerMsg }}
         </div>
     </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const pwd = document.querySelector('span.pwd');
-            const input = pwd.querySelector('input');
-            const eyes = pwd.querySelectorAll('.lucid-icon');
 
-            eyes.forEach(eye => {
-                eye.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    if (input.type === 'password') {
-                        input.type = 'text';
-                        pwd.classList.add('visible');
-                    } else {
-                        input.type = 'password';
-                        pwd.classList.remove('visible');
-                    }
-                });
-            });
-        });
-    </script>
+    {{-- Scripts injetados pelos componentes de form (duplo submit, toggle de senha, etc.) --}}
+    @stack('scripts')
 
     @if(setting('auth.use_captcha'))
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>

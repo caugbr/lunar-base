@@ -1,25 +1,42 @@
 @php
     $post = $post ?? new \App\Models\Post();
     $isEdit = $post->exists;
+
+    $userOptions = collect($users)->mapWithKeys(function ($user) {
+        return [$user->id => "{$user->name} ({$user->role})"];
+    })->all();
+
+    $statusOptions = [
+        'draft' => 'Rascunho',
+        'published' => 'Publicado',
+        'archived' => 'Arquivado',
+    ];
+
+    $thumbInitial = [
+        'id' => old('thumbnail_id', $post->thumbnail_id),
+        'url' => old('thumbnail_url', optional($post->thumbnail)->url ?? '')
+    ];
 @endphp
 
-<form method="POST" action="{{ $action }}" id="{{ $isEdit ? 'edit_form' : 'create_form' }}">
-    @csrf
-    @if($isEdit)
-        @method('PUT')
-    @endif
-
+<x-form
+    :action="$action"
+    :method="$isEdit ? 'PUT' : 'POST'"
+    :id="$isEdit ? 'edit_form' : 'create_form'"
+    :warn-changes="$isEdit"
+>
     <div class="edit-page-inner">
         <div class="main-column">
             {{-- Título --}}
-            <div class="admin-form-row">
-                <div class="form-group">
-                    <input type="text" name="title" id="title" value="{{ old('title', $post->title) }}" placeholder="Título do post" required>
-                    @error('title') <small class="error">{{ $message }}</small> @enderror
-                </div>
+            <div class="form-row">
+                <x-form.text
+                    name="title"
+                    :value="$post->title"
+                    placeholder="Título do post"
+                    required
+                />
             </div>
 
-            {{-- CONTEÚDO (COMPONENTE X-EDITOR) --}}
+            {{-- Conteúdo --}}
             <div class="form-group">
                 <x-editor
                     name="content"
@@ -33,10 +50,13 @@
             <div class="edit-box">
                 <header>Descrição curta</header>
                 <article>
-                    <div class="form-group excerpt">
-                        <textarea name="excerpt" id="excerpt" rows="4">{{ old('excerpt', $post->excerpt) }}</textarea>
-                        <small>Breve resumo do post (opcional — gera automaticamente do conteúdo se vazio)</small>
-                    </div>
+                    <x-form.textarea
+                        name="excerpt"
+                        rows="4"
+                        :value="$post->excerpt"
+                        help="Breve resumo do post (opcional — gera automaticamente do conteúdo se vazio)"
+                        class="excerpt"
+                    />
                 </article>
             </div>
 
@@ -67,36 +87,30 @@
             <div class="edit-box">
                 <header>Detalhes do post</header>
                 <article>
-                    <div class="form-group">
-                        <label for="author_id">Autor</label>
-                        <select name="author_id" id="author_id">
-                            <option value="">-- Selecione um autor --</option>
-                            @foreach($users as $user)
-                                <option value="{{ $user->id }}"
-                                    {{ old('author_id', $post->author_id ?? Auth::id()) == $user->id ? 'selected' : '' }}>
-                                    {{ $user->name }} ({{ $user->role }})
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('author_id') <small class="error">{{ $message }}</small> @enderror
-                    </div>
+                    <x-form.select
+                        name="author_id"
+                        label="Autor"
+                        :options="$userOptions"
+                        :value="$post->author_id ?? Auth::id()"
+                        placeholder="-- Selecione um autor --"
+                    />
 
-                    <div class="form-group">
-                        <label for="published_at">Data de publicação</label>
-                        <input type="datetime-local" name="published_at" id="published_at"
-                            value="{{ old('published_at', $post->published_at ? $post->published_at->format('Y-m-d\TH:i') : ($isEdit ? '' : now()->format('Y-m-d\TH:i'))) }}">
-                        <small>{{ $isEdit ? 'Altere para agendar ou reagendar' : 'Deixe em branco para publicar agora (se status = Publicado)' }}</small>
-                        @error('published_at') <small class="error">{{ $message }}</small> @enderror
-                    </div>
+                    <x-form.date
+                        type="datetime-local"
+                        name="published_at"
+                        label="Data de publicação"
+                        :value="$post->published_at ?? ($isEdit ? null : now())"
+                        :help="$isEdit ? 'Altere para agendar ou reagendar' : 'Deixe em branco para publicar agora (se status = Publicado)'"
+                    />
 
-                    <div class="form-group">
-                        <label for="status">Status *</label>
-                        <select name="status" id="status" required>
-                            <option value="draft" {{ old('status', $post->status ?? 'draft') == 'draft' ? 'selected' : '' }}>Rascunho</option>
-                            <option value="published" {{ old('status', $post->status) == 'published' ? 'selected' : '' }}>Publicado</option>
-                            <option value="archived" {{ old('status', $post->status) == 'archived' ? 'selected' : '' }}>Arquivado</option>
-                        </select>
-                    </div>
+                    <x-form.select
+                        name="status"
+                        label="Status"
+                        :options="$statusOptions"
+                        :value="$post->status ?? 'draft'"
+                        :placeholder="false"
+                        required
+                    />
 
                     @if($isEdit)
                         <x-set-robots :model="$post" />
@@ -105,9 +119,9 @@
                     @endif
 
                     <div class="buttons">
-                        <button type="submit" class="admin-btn admin-btn-primary">
-                            <x-lucide-save class="lucid-icon" /> {{ $isEdit ? 'Atualizar' : 'Salvar' }}
-                        </button>
+                        <x-form.button type="submit" variant="primary" icon="save">
+                            {{ $isEdit ? 'Atualizar' : 'Salvar' }}
+                        </x-form.button>
                     </div>
                 </article>
             </div>
@@ -115,52 +129,44 @@
             <div class="edit-box">
                 <header>Propriedades</header>
                 <article>
-                    <div class="form-group">
-                        <label for="slug">Slug *</label>
-                        <input type="text" name="slug" id="slug" value="{{ old('slug', $post->slug) }}" required>
-                        <small>URL amigável (ex: introducao-laravel, dicas-vue-js)</small>
-                        @error('slug') <small class="error">{{ $message }}</small> @enderror
-                    </div>
+                    <x-form.text
+                        name="slug"
+                        label="Slug"
+                        :value="$post->slug"
+                        help="URL amigável (ex: introducao-laravel, dicas-vue-js)"
+                        required
+                    />
 
-                    <div class="form-group">
-                        <label for="template">Template do post</label>
-                        <select name="template" id="template">
-                            @foreach($templates as $value => $label)
-                                <option value="{{ $value }}" {{ old('template', $post->template ?? config('postTemplates.default')) == $value ? 'selected' : '' }}>
-                                    {{ $label }}
-                                </option>
-                            @endforeach
-                        </select>
-                        <small>Define como o post será exibido publicamente</small>
-                        @error('template') <small class="error">{{ $message }}</small> @enderror
-                    </div>
+                    <x-form.select
+                        name="template"
+                        label="Template do post"
+                        :options="$templates"
+                        :value="$post->template ?? config('postTemplates.default')"
+                        :placeholder="false"
+                        help="Define como o post será exibido publicamente"
+                    />
 
-                    <div class="form-group">
-                        <label>
-                            <x-switch name="featured" checked="{{ old('featured', $post->featured) }}" active="" inactive="" />
-                            <span>Destacar na home</span>
-                        </label>
-                        <small>Exibe este post em destaque na página inicial</small>
-                    </div>
+                    <x-form.switch
+                        name="featured"
+                        label="Destacar na home"
+                        :checked="(bool) $post->featured"
+                        active=""
+                        inactive=""
+                        help="Exibe este post em destaque na página inicial"
+                    />
 
-                    <div class="form-group">
-                        <label>
-                            <x-switch name="sticky" checked="{{ old('sticky', $post->sticky) }}" active="" inactive="" />
-                            <span>Fixar no topo</span>
-                        </label>
-                        <small>Mantém este post sempre no topo da listagem</small>
-                    </div>
+                    <x-form.switch
+                        name="sticky"
+                        label="Fixar no topo"
+                        :checked="(bool) $post->sticky"
+                        active=""
+                        inactive=""
+                        help="Mantém este post sempre no topo da listagem"
+                    />
 
                     <x-hook name="admin.post_properties" :params="['post' => $post ?? null]" desc="No final do box Propriedades na criação/edição de posts" />
                 </article>
             </div>
-
-            @php
-            $thumbInitial = [
-                'id' => old('thumbnail_id', $post->thumbnail_id),
-                'url' => old('thumbnail_url', optional($post->thumbnail)->url ?? '')
-            ];
-            @endphp
 
             <div class="edit-box" x-data='thumbnailManager({{ json_encode($thumbInitial) }})'>
                 <header>Imagem do post</header>
@@ -215,12 +221,8 @@
     </div>
 
     <div class="buttons bottom-buttons">
-        <button type="submit" class="admin-btn admin-btn-primary">
-            <x-lucide-save class="lucid-icon" /> Salvar
-        </button>
+        <x-form.button type="submit" variant="primary" icon="save">
+            {{ $isEdit ? 'Atualizar' : 'Salvar' }}
+        </x-form.button>
     </div>
-</form>
-
-@if($isEdit)
-    <x-lost-changes-warn selector="#edit_form" />
-@endif
+</x-form>

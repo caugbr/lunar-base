@@ -143,17 +143,22 @@
                             @endif
                         </div>
 
-                        <form method="POST" action="{{ route('admin.themes.toggle', $theme->id) }}">
-                            @csrf
-                            <x-switch
+                        <x-form
+                            method="POST"
+                            action="{{ route('admin.themes.toggle', $theme->id) }}"
+                            class="form-inline-action"
+                            :includeCss="false"
+                        >
+                            <x-form.switch
                                 name="is_active"
                                 id="theme_{{ $theme->id }}"
-                                :checked="$theme->is_active"
+                                :checked="(bool) $theme->is_active"
                                 active="Ativo"
                                 inactive="Inativo"
-                                onChange="this.form.submit()"
+                                onchange="this.form.submit()"
+                                :includeCss="true"
                             />
-                        </form>
+                        </x-form>
                     </div>
                 </div>
             </div>
@@ -461,8 +466,9 @@ function closeThemePreview() {
         height: 38px;
     }
 
-    .switch-label {
-        position: static !important;
+    .theme-details .switch-control,
+    .theme-details .form-field {
+        margin-bottom: 0;
     }
 </style>
 @endpush

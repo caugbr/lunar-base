@@ -5,37 +5,54 @@
 ])
 
 @php
-// $values vem como ['meta_key' => 'meta_value', ...]
-$pairs = [];
-foreach ($values as $key => $val) {
-    $pairs[] = ['key' => $key, 'value' => $val];
-}
-// Se vazio, começa com um par vazio
-if (empty($pairs)) {
-    $pairs[] = ['key' => '', 'value' => ''];
-}
+    $resolvedValues = old($name, $values);
+
+    $pairs = [];
+    if (is_array($resolvedValues) || $resolvedValues instanceof \Illuminate\Support\Collection) {
+        foreach ($resolvedValues as $key => $val) {
+            if (is_array($val) && array_key_exists('key', $val)) {
+                $pairs[] = [
+                    'key' => (string) ($val['key'] ?? ''),
+                    'value' => (string) ($val['value'] ?? ''),
+                ];
+            } else {
+                $pairs[] = [
+                    'key' => (string) $key,
+                    'value' => (string) $val,
+                ];
+            }
+        }
+    }
+
+    if (empty($pairs)) {
+        $pairs[] = ['key' => '', 'value' => ''];
+    }
 @endphp
 
 <div class="meta-editor" id="{{ $name }}_editor" data-meta-name="{{ $name }}">
     <template id="{{ $name }}_template">
         <div class="meta-pair">
-            <div class="form-group">
-                <x-select-input
-                    :name="'__NAME__[__INDEX__][key]'"
+            <div class="meta-key-group">
+                <x-form.select
+                    name="__NAME__[__INDEX__][key]"
                     :options="$existingKeys"
                     placeholder="-- Selecione ou insira --"
-                    :allowInsert="true"
-                    insertLabel="Inserir nova chave..."
-                    insertPlaceholder="Nova chave"
+                    allow-insert
+                    insert-label="Inserir nova chave..."
+                    insert-placeholder="Nova chave (Enter para confirmar)"
                 />
             </div>
-            <div class="form-group" style="flex: 1">
-                <input type="text"
-                       name="__NAME__[__INDEX__][value]"
-                       placeholder="Valor"
-                       class="meta-value-input">
+
+            <div class="meta-value-group">
+                <input
+                    type="text"
+                    name="__NAME__[__INDEX__][value]"
+                    placeholder="Valor"
+                    class="form-control meta-value-input"
+                >
             </div>
-            <button type="button" class="meta-remove" title="Remover">
+
+            <button type="button" class="meta-remove" title="Remover metadado">
                 <x-lucide-trash-2 class="lucid-icon" />
             </button>
         </div>
@@ -44,34 +61,38 @@ if (empty($pairs)) {
     <div class="meta-pairs-list">
         @foreach($pairs as $index => $pair)
             <div class="meta-pair">
-                <div class="form-group">
-                    <x-select-input
+                <div class="meta-key-group">
+                    <x-form.select
                         :name="$name . '[' . $index . '][key]'"
                         :options="$existingKeys"
                         :value="$pair['key']"
                         placeholder="-- Selecione ou insira --"
-                        :allowInsert="true"
-                        insertLabel="Inserir nova chave..."
-                        insertPlaceholder="Nova chave (pressione Enter depois de digitar)"
+                        allow-insert
+                        insert-label="Inserir nova chave..."
+                        insert-placeholder="Nova chave (Enter para confirmar)"
                     />
                 </div>
-                <div class="form-group" style="flex: 1">
-                    <input type="text"
+
+                <div class="meta-value-group">
+                    <input
+                        type="text"
                         name="{{ $name }}[{{ $index }}][value]"
                         value="{{ $pair['value'] }}"
                         placeholder="Valor"
-                        class="meta-value-input">
+                        class="form-control meta-value-input"
+                    >
                 </div>
-                <button type="button" class="meta-remove" title="Remover">
+
+                <button type="button" class="meta-remove" title="Remover metadado">
                     <x-lucide-trash-2 class="lucid-icon" />
                 </button>
             </div>
         @endforeach
     </div>
 
-    <button type="button" class="admin-btn admin-btn-secondary meta-add">
-        <x-lucide-plus class="lucid-icon" /> Adicionar meta
-    </button>
+    <x-form.button type="button" variant="secondary" class="meta-add" icon="plus">
+        Adicionar meta
+    </x-form.button>
 </div>
 
 @once
@@ -82,41 +103,52 @@ if (empty($pairs)) {
     flex-direction: column;
     gap: 0.75rem;
 }
+
 .meta-editor .meta-pair {
     display: flex;
     align-items: flex-start;
     gap: 0.5rem;
+    width: 100%;
 }
-.meta-editor .meta-pair .form-group {
-    margin-bottom: 0;
+
+.meta-editor .meta-key-group {
     flex: 0 0 40%;
+    min-width: 0;
 }
-.meta-editor .meta-pair .meta-value-input {
-    flex: 1;
-    padding: 0.5rem 0.75rem;
-    border: 1px solid var(--border-color, #d1d5db);
-    border-radius: 0.375rem;
-    font-size: 0.875rem;
-    min-height: 38px;
+
+.meta-editor .meta-key-group .form-field {
+    margin-bottom: 0;
 }
+
+.meta-editor .meta-value-group {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.meta-editor .meta-value-input {
+    width: 100%;
+}
+
 .meta-editor .meta-remove {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     padding: 0.5rem;
     background: transparent;
     border: 1px solid transparent;
     border-radius: 0.375rem;
-    color: #ef4444;
+    color: #dc3545;
     cursor: pointer;
-    transition: all 0.15s;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
     min-height: 38px;
-    /* margin-top: 1.5rem; */
+    flex-shrink: 0;
 }
+
 .meta-editor .meta-remove:hover {
-    background: #fef2f2;
-    border-color: #fecaca;
+    background-color: rgba(220, 53, 69, 0.1);
+    border-color: rgba(220, 53, 69, 0.2);
 }
+
 .meta-editor .meta-add {
     margin-top: 0.75rem;
 }
@@ -125,93 +157,39 @@ if (empty($pairs)) {
 
 @push('scripts')
 <script>
-(function() {
+document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.meta-editor').forEach(editor => {
         const name = editor.dataset.metaName;
         const list = editor.querySelector('.meta-pairs-list');
         const template = editor.querySelector('template');
         const addBtn = editor.querySelector('.meta-add');
 
-        let index = list.querySelectorAll('.meta-pair').length;
+        if (!list || !template || !addBtn) return;
 
-        function updateIndices() {
+        const updateIndices = () => {
             list.querySelectorAll('.meta-pair').forEach((pair, i) => {
                 const select = pair.querySelector('select');
                 const input = pair.querySelector('.meta-value-input');
                 if (select) select.name = `${name}[${i}][key]`;
                 if (input) input.name = `${name}[${i}][value]`;
             });
-            index = list.querySelectorAll('.meta-pair').length;
-        }
+        };
 
-        function createPair() {
-            const html = template.innerHTML
+        const createPair = () => {
+            const nextIndex = list.querySelectorAll('.meta-pair').length;
+            const markup = template.innerHTML
                 .replace(/__NAME__/g, name)
-                .replace(/__INDEX__/g, index);
-            const wrapper = document.createElement('div');
-            wrapper.innerHTML = html.trim();
-            const pair = wrapper.firstElementChild;
+                .replace(/__INDEX__/g, nextIndex);
 
-            // Re-inicializa o select-input do par novo
-            const selectWrapper = pair.querySelector('.form-group[id$="_wrapper"]');
-            if (selectWrapper) {
-                const select = selectWrapper.querySelector('select');
-                const input = selectWrapper.querySelector('input[id$="_input"]');
+            const container = document.createElement('div');
+            container.innerHTML = markup.trim();
+            const pairElement = container.firstElementChild;
 
-                const undo = () => {
-                    if (!selectWrapper.hasAttribute('data-insert-mode')) return;
-                    selectWrapper.removeAttribute('data-insert-mode');
-                    if (input.value) {
-                        let exists = false;
-                        for (let opt of select.options) {
-                            if (opt.value === input.value) {
-                                exists = true;
-                                select.value = opt.value;
-                                break;
-                            }
-                        }
-                        if (!exists) {
-                            const option = document.createElement('option');
-                            option.value = input.value;
-                            option.textContent = input.value;
-                            option.selected = true;
-                            select.insertBefore(option, select.lastElementChild);
-                        }
-                    }
-                    input.value = '';
-                    select.focus();
-                };
-
-                const cancel = () => {
-                    if (!selectWrapper.hasAttribute('data-insert-mode')) return;
-                    selectWrapper.removeAttribute('data-insert-mode');
-                    input.value = '';
-                    select.selectedIndex = 0;
-                    select.focus();
-                };
-
-                select.addEventListener('change', function() {
-                    if (this.value === '__insert__') {
-                        selectWrapper.setAttribute('data-insert-mode', '');
-                        setTimeout(() => input.focus(), 80);
-                    } else {
-                        selectWrapper.removeAttribute('data-insert-mode');
-                    }
-                });
-
-                input.addEventListener('keydown', function(e) {
-                    if (e.key === 'Enter') { e.preventDefault(); undo(); }
-                    if (e.key === 'Escape') { e.preventDefault(); cancel(); }
-                });
-
-                document.addEventListener('click', (e) => {
-                    if (!selectWrapper.contains(e.target)) cancel();
-                });
+            if (pairElement) {
+                list.appendChild(pairElement);
+                updateIndices();
             }
-
-            list.appendChild(pair);
-            updateIndices();
-        }
+        };
 
         addBtn.addEventListener('click', createPair);
 
@@ -220,19 +198,25 @@ if (empty($pairs)) {
             if (!removeBtn) return;
 
             const pair = removeBtn.closest('.meta-pair');
+            if (!pair) return;
+
             if (list.querySelectorAll('.meta-pair').length > 1) {
                 pair.remove();
                 updateIndices();
             } else {
-                // Limpa em vez de remover o último
                 const select = pair.querySelector('select');
                 const input = pair.querySelector('.meta-value-input');
-                if (select) { select.value = ''; select.selectedIndex = 0; }
-                if (input) input.value = '';
+                if (select) {
+                    select.selectedIndex = 0;
+                    select.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+                if (input) {
+                    input.value = '';
+                }
             }
         });
     });
-})();
+});
 </script>
 @endpush
 @endonce

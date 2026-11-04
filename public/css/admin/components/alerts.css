@@ -60,13 +60,6 @@
 }
 
 
-
-/* .admin-alert {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-} */
-
 .admin-alert .alert-content {
     flex: 1; /* Empurra o botão de fechar para o canto direito */
 }
@@ -75,7 +68,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 4px;
+    padding: 0 4px;
     cursor: pointer;
     opacity: 0.6;
     transition: opacity 0.2s ease;

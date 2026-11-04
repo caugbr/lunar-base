@@ -1,97 +1,125 @@
 @php
     $inputName = $name ?? $def['key'];
+    $inputId = str_replace(['[', ']', '.'], ['_', '', '_'], $inputName);
     $inputValue = old($inputName, $value ?? ($def['default'] ?? ''));
     $options = $def['options'] ?? [];
-    $attributes = $def['attributes'] ?? [];
+
+    $withLabel = $withLabel ?? false;
+    $label = $withLabel ? ($def['label'] ?? null) : null;
+    $help = $withLabel ? ($def['description'] ?? null) : null;
 @endphp
 
 @switch($def['type'] ?? 'text')
     @case('icon')
-        <x-icon-selector
+        <x-picker.icon
             name="{{ $inputName }}"
-            id="{{ str_replace(['[', ']'], ['_', ''], $inputName) }}"
-            value="{{ $inputValue }}"
-            can_clear="{{ $def['can_clear'] ?? true }}"
+            id="{{ $inputId }}"
+            :value="$inputValue"
+            :label="$label"
+            :help="$help"
+            :can-clear="$def['can_clear'] ?? true"
         />
         @break
 
     @case('publication_types')
-        <x-publication-types
+        <x-picker.pubtypes
             name="{{ $inputName }}"
-            id="{{ str_replace(['[', ']'], ['_', ''], $inputName) }}"
+            id="{{ $inputId }}"
             :value="$inputValue"
             :unique="$def['unique'] ?? false"
+            :label="$label"
+            :help="$help"
+            inline
         />
         @break
 
     @case('page')
-        <x-page-picker
+        <x-picker.page
             name="{{ $inputName }}"
-            id="{{ str_replace(['[', ']'], ['_', ''], $inputName) }}"
-            selected="{{ $inputValue }}"
+            id="{{ $inputId }}"
+            :value="$inputValue"
+            :label="$label"
+            :help="$help"
+            :placeholder="$def['placeholder'] ?? '-- Selecionar página --'"
         />
         @break
 
     @case('textarea')
-        <textarea name="{{ $inputName }}" id="{{ str_replace(['[', ']'], ['_', ''], $inputName) }}" rows="3" class="form-input">{{ $inputValue }}</textarea>
+        <x-form.textarea
+            name="{{ $inputName }}"
+            id="{{ $inputId }}"
+            :value="$inputValue"
+            :label="$label"
+            :help="$help"
+            :rows="$def['rows'] ?? 3"
+            :editable="$def['editable'] ?? false"
+        />
         @break
 
     @case('select')
-        <select name="{{ $inputName }}" id="{{ str_replace(['[', ']'], ['_', ''], $inputName) }}" class="form-input">
-            @if(isset($def['placeholder']))
-                <option value="">{{ $def['placeholder'] }}</option>
-            @endif
-            @foreach($options as $optValue => $optLabel)
-                <option value="{{ $optValue }}" {{ $inputValue == $optValue ? 'selected' : '' }}>
-                    {{ $optLabel }}
-                </option>
-            @endforeach
-        </select>
+        <x-form.select
+            name="{{ $inputName }}"
+            id="{{ $inputId }}"
+            :options="$options"
+            :value="$inputValue"
+            :label="$label"
+            :help="$help"
+            :placeholder="$def['placeholder'] ?? null"
+            :multiple="$def['multiple'] ?? false"
+            :allow-insert="$def['allow_insert'] ?? false"
+            :insert-label="$def['insert_label'] ?? 'Inserir novo...'"
+            :insert-placeholder="$def['insert_placeholder'] ?? 'Novo valor'"
+        />
         @break
 
     @case('radio')
-        <div class="radio-group">
-            @foreach($options as $optValue => $optLabel)
-                <label class="radio-label">
-                    <input type="radio" name="{{ $inputName }}" value="{{ $optValue }}" {{ $inputValue == $optValue ? 'checked' : '' }}>
-                    <span>{{ $optLabel }}</span>
-                </label>
-            @endforeach
-        </div>
+        <x-form.radio
+            name="{{ $inputName }}"
+            id="{{ $inputId }}"
+            :options="$options"
+            :value="$inputValue"
+            :label="$label"
+            :help="$help"
+            :inline="$def['inline'] ?? true"
+        />
         @break
 
     @case('checkbox')
         @if(!empty($options))
             @php
-                $currentValues = is_array($inputValue) ? $inputValue : ($inputValue ? explode(',', $inputValue) : []);
+                $currentValues = is_array($inputValue) ? $inputValue : ($inputValue ? explode(',', (string) $inputValue) : []);
             @endphp
-            <div class="checkbox-group">
-                @foreach($options as $optValue => $optLabel)
-                    <label class="checkbox-label">
-                        <input type="checkbox"
-                            name="{{ $inputName }}[]"
-                            value="{{ $optValue }}"
-                            {{ in_array($optValue, $currentValues) ? 'checked' : '' }}
-                        >
-                        <span>{{ $optLabel }}</span>
-                    </label>
-                @endforeach
-            </div>
+            <x-form.checkbox
+                name="{{ $inputName }}"
+                id="{{ $inputId }}"
+                :options="$options"
+                :value="$currentValues"
+                :label="$label"
+                :help="$help"
+                :inline="$def['inline'] ?? false"
+            />
         @else
-            <label class="checkbox-label">
-                <input type="hidden" name="{{ $inputName }}" value="0">
-                <input type="checkbox" name="{{ $inputName }}" value="1" {{ $inputValue ? 'checked' : '' }}>
-                <span>Sim</span>
-            </label>
+            <x-form.checkbox
+                name="{{ $inputName }}"
+                id="{{ $inputId }}"
+                value="1"
+                :checked="(bool) $inputValue"
+                :text="$def['text'] ?? 'Sim'"
+                :label="$label"
+                :help="$help"
+            />
         @endif
         @break
 
     @case('switch')
-        <x-switch
+        <x-form.switch
             name="{{ $inputName }}"
-            active="{{ $def['active'] ?? 'Ativado' }}"
-            inactive="{{ $def['inactive'] ?? 'Desativado' }}"
-            checked="{{ $inputValue }}"
+            id="{{ $inputId }}"
+            :checked="(bool) $inputValue"
+            :active="$def['active'] ?? 'Ativado'"
+            :inactive="$def['inactive'] ?? 'Desativado'"
+            :label="$label"
+            :help="$help"
         />
         @break
 
@@ -99,29 +127,30 @@
         <div class="image-type">
             @if($value)
                 <div class="image-preview">
-                    <img src="{{ $value }}" alt="{{ $def['label'] }}">
+                    <img src="{{ $value }}" alt="{{ $def['label'] ?? '' }}">
                 </div>
             @endif
 
             <div class="image-input">
-                <x-upload-area name="{{ $def['key'] }}" />
+                <x-form.upload
+                    name="{{ $def['key'] }}"
+                    id="{{ $inputId }}"
+                    accept="image/*"
+                    button-label="Escolher imagem"
+                    message="Solte uma nova imagem para substituir"
+                />
 
                 @if($value)
                     <label class="remove-image-label">
-                        <input type="checkbox"
-                            name="remove_settings[{{ $def['key'] }}]"
-                            value="1"
-                        >
+                        <input type="checkbox" name="remove_settings[{{ $def['key'] }}]" value="1">
                         Remover imagem
                     </label>
                 @endif
 
-                <input type="hidden"
-                    name="{{ $def['key'] }}_current"
-                    value="{{ $def['path'] ?? $value }}">
+                <input type="hidden" name="{{ $def['key'] }}_current" value="{{ $def['path'] ?? $value }}">
             </div>
         </div>
-        <small class="image-help">
+        <small class="form-help image-help">
             @if($value)
                 Marque "Remover imagem" para apagar, ou selecione um novo arquivo para substituir.
             @else
@@ -131,48 +160,87 @@
         @break
 
     @case('number')
-        <input type="number"
+        <x-form.text
+            type="number"
             name="{{ $inputName }}"
-            id="{{ str_replace(['[', ']'], ['_', ''], $inputName) }}"
-            value="{{ $inputValue }}"
-            @foreach($attributes as $attr => $attrValue)
-                {{ $attr }}="{{ $attrValue }}"
-            @endforeach
-            class="form-input form-input-narrow"
-        >
+            id="{{ $inputId }}"
+            :value="$inputValue"
+            :label="$label"
+            :help="$help"
+            :min="$def['attributes']['min'] ?? null"
+            :max="$def['attributes']['max'] ?? null"
+            :step="$def['attributes']['step'] ?? null"
+            class="form-input-narrow"
+        />
         @break
 
     @case('url')
-        <input type="url" name="{{ $inputName }}" id="{{ str_replace(['[', ']'], ['_', ''], $inputName) }}" value="{{ $inputValue }}" class="form-input" placeholder="{{ $def['placeholder'] ?? 'https://...' }}" autocomplete="off">
+        <x-form.text
+            type="url"
+            name="{{ $inputName }}"
+            id="{{ $inputId }}"
+            :value="$inputValue"
+            :label="$label"
+            :help="$help"
+            :placeholder="$def['placeholder'] ?? 'https://...'"
+            autocomplete="off"
+        />
         @break
 
     @case('email')
-        <input type="email" name="{{ $inputName }}" id="{{ str_replace(['[', ']'], ['_', ''], $inputName) }}" value="{{ $inputValue }}" class="form-input" placeholder="{{ $def['placeholder'] ?? 'email@exemplo.com' }}" autocomplete="off">
+        <x-form.text
+            type="email"
+            name="{{ $inputName }}"
+            id="{{ $inputId }}"
+            :value="$inputValue"
+            :label="$label"
+            :help="$help"
+            :placeholder="$def['placeholder'] ?? 'email@exemplo.com'"
+            autocomplete="off"
+        />
         @break
 
     @case('color')
-        <input type="color" name="{{ $inputName }}" id="{{ str_replace(['[', ']'], ['_', ''], $inputName) }}" value="{{ $inputValue ?? '#000000' }}" class="form-input">
+        <x-form.color
+            name="{{ $inputName }}"
+            id="{{ $inputId }}"
+            :value="$inputValue ?: '#000000'"
+            :label="$label"
+            :help="$help"
+        />
         @break
 
     @case('password')
-        <div class="password-field">
-            <input type="password" name="{{ $inputName }}" id="{{ str_replace(['[', ']'], ['_', ''], $inputName) }}" value="" class="form-input" placeholder="••••••••" autocomplete="new-password">
-            @if(!$value)
-                <a href="#" class="show" title="Ver senha"><x-lucide-eye class="lucid-icon" /></a>
-                <a href="#" class="hide" title="Esconder senha"><x-lucide-eye-off class="lucid-icon" /></a>
-            @endif
-        </div>
+        @php
+            $passwordHelp = $value
+                ? 'Senha configurada. Deixe em branco para manter, ou marque para remover.'
+                : 'Nenhuma senha configurada.';
+        @endphp
+        <x-form.password
+            name="{{ $inputName }}"
+            id="{{ $inputId }}"
+            :label="$label"
+            :help="$help ?? $passwordHelp"
+            placeholder="••••••••"
+        />
         @if($value)
             <label class="remove-password-label">
-                <input type="checkbox" name="remove_settings[{{ $def['key'] }}]" value="1" style="font-weight: 400; font-size: 0.75em;">
+                <input type="checkbox" name="remove_settings[{{ $def['key'] }}]" value="1">
                 Remover senha atual
             </label>
-            <small class="form-help">Senha configurada. Deixe em branco para manter, ou marque para remover.</small>
-        @else
-            <small class="form-help">Nenhuma senha configurada.</small>
         @endif
         @break
 
     @default
-        <input type="text" name="{{ $inputName }}" id="{{ str_replace(['[', ']'], ['_', ''], $inputName) }}" value="{{ $inputValue }}" class="form-input" placeholder="{{ $def['placeholder'] ?? '' }}" autocomplete="off" spellcheck="false">
+        <x-form.text
+            type="text"
+            name="{{ $inputName }}"
+            id="{{ $inputId }}"
+            :value="$inputValue"
+            :label="$label"
+            :help="$help"
+            :placeholder="$def['placeholder'] ?? ''"
+            autocomplete="off"
+            spellcheck="false"
+        />
 @endswitch

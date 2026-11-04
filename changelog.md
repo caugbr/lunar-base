@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.27.0] 2026-11-03
+
+### Added
+- Componentes blade para formulários e seus elementos
+
+### Changed
+- Index de Referências mostra agora os PHP Hooks e não mostra mais o link para os tutoriais
+- Substituição de forms e form elements por componentes em vários arquivos da admin
+
+### Fixed
+- Remoção do redirecionamento do erro 419 para o login (interim login nunca aparecia)
+- Alertas na admin agora mostram mais de um alert por vez se for necessário
+
 ## [2.26.0] 2026-10-29
 
 ### Added

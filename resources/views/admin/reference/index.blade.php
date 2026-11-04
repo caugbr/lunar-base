@@ -137,6 +137,27 @@
             </div>
         </div>
 
+
+        <div class="reference-card">
+            <div class="reference-card-header">
+                <div class="reference-card-icon">
+                    <x-lucide-code class="lucid-icon" />
+                </div>
+                <h4 class="reference-card-title">Hooks PHP</h4>
+            </div>
+            <div class="reference-card-body">
+                <p class="reference-card-desc">
+                    Lista dos hooks (actions e filters) disponibilizados no nível do PHP. São modos de plugins e temas interagirem com o ciclo de vida do sistema, inserindo ações ou filtrando variáveis.
+                </p>
+            </div>
+            <div class="reference-card-footer">
+                {{-- Nota: Ajuste os nomes das rotas abaixo de acordo com seu arquivo de rotas --}}
+                <a href="{{ route('admin.php-hooks') }}" class="admin-btn admin-btn-secondary">
+                    Ver Hooks
+                </a>
+            </div>
+        </div>
+
         {{-- Card 2: Shortcodes do Sistema --}}
         <div class="reference-card">
             <div class="reference-card-header">
@@ -197,7 +218,7 @@
             </div>
         </div>
 
-        <div class="reference-card">
+        {{-- <div class="reference-card">
             <div class="reference-card-header">
                 <div class="reference-card-icon">
                     <x-lucide-school class="lucid-icon" />
@@ -215,7 +236,7 @@
                     Ver Tutoriais
                 </a>
             </div>
-        </div>
+        </div> --}}
 
     </div>
 </div>
