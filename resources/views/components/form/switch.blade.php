@@ -65,6 +65,6 @@
 
 @once
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('css/admin/components/switch.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/admin/components/form/switch.css') }}">
 @endpush
 @endonce

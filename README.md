@@ -1,7 +1,6 @@
-﻿
-# Lunar Base
+﻿# Lunar Base
 
-O **Lunar Base** é um Starter Kit híbrido para Laravel 12, projetado com características de CMS modular para servir como base sólida e flexível no desenvolvimento de aplicações web.
+O Lunar Base é um Starter Kit híbrido para Laravel 12, projetado como um CMS modular, extensível e pronto para produção. Une a flexibilidade de desenvolvimento do ecossistema Laravel à convenência de um painel administrativo com temas, plugins e edição visual.
 
 *This is a work in progress*
 
@@ -11,74 +10,94 @@ O **Lunar Base** é um Starter Kit híbrido para Laravel 12, projetado com carac
   <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License">
 </p>
 
-## Addons
-O Lunar Base trabalha com o conceito de temas e plugins. Esse material está em um repositório separado,  que serve de base para baixar e atualizar através da própria interface. Veja no repositório: https://github.com/caugbr/lunar-base-addons.
+
+## Ecossistema de Temas e Plugins (Addons)
+
+O Lunar Base gerencia complementos de forma desacoplada atravës do repositório oficial caugbr/lunar-base-addons, que atua como marketplace nativo:
+
+* Instalação e Atualização em 1 Clique: Baixe, atualize e gerencie complementos direto pelo painel.
+* Gestor de Dependências Automático: Detecta se um tema ou plugin requer outras extensões e oferece atalhos para download e ativação imediata.
+* Live Preview de Temas: Teste temas visuais em tempo real por iframe antes de ativá-los publicamente.
+* Asset Pipeline Isolado: Links simbólicos automáticos (public/plugins/ e public/themes/) criados e removidos dinamicamente na ativação/desativação.
+---
 
 ## Principais Funcionalidades
 
-### Gestão de Conteúdo
-* **Páginas e Posts:** Gerenciamento completo de publicações, rascunhos, agendamentos, autores e categorias.
-* **Editor de Blocos Moderno (Tiptap / Vue 3):** Edição estruturada em árvore JSON com salvamento duplo (JSON + HTML pré-renderizado).
-* **Editor com Barra de Ferramentas Configurável:** Controle visual no painel administrativo para habilitar/desabilitar botões do editor e definir a paleta de cores.
-* **Blocos Nativos Inclusos:** Caixas de aviso (Callouts), grid de colunas responsivo (2 a 4), cards de conteúdo, botões CTA, tabelas interativas, imagens com legenda/redimensionamento e bloco de código com realce de sintaxe.
-* **Sistema de Shortcodes:** Inspirado nos shortcodes do WP, mas com um box de suporte no editor.
-* **SEO Automático Inteligente:** Geração nativa de OpenGraph e meta tags com base em títulos, resumos e thumbnails.
-* **Importação e Exportação:** Backup, migração e transporte de conteúdos com facilidade.
+### Gestão de Conteúdo e Colaboração
 
+* Paginas, Posts e CPTs: Gestão de conteúdo estruturado, rascunhos, agendamento de publicações e taxonomias hierárquicas ou símples.
+* Editor em Blocos (Tiptap / Vue 3): Edição moderna baseada em Árvore JSON + HTML com barra de ferramentas e paleta de cores configuráveis.
+* Bloqueio de Concorrência (Content Lock): Proteção em tempo real via Heartbeat API que impede conflito entre múltiplos usuários editando o mesmo material (com suporte a Take Over).
+* Motor de Imagens Avançado: Upload com compressão automática (WebP/JPEG), recorte inteligente centrado em Ponto Focal (Focal Point) e geração dinâmica de variantes.
+* Shortcodes e Embeds: Suporte nativo a tags [embed], [script], [style], [link] e shortcodes customizados registrados por plugins.
+* Importação e Exportação: Migração completa de conteúdos, taxonomias e vínculos via arquivos JSON.
+
+### Roteamento e Multidomínio
+
+* Orquestrador de Rotas Dinâmicas: URLs limpas com bases personalizáveis (/blog, /pagina, /taxonomia) e suporte a rotas injetadas dinamicamente em tempo de execução.
+* Suporte a Múltiplos Domínios e Namespaces: Segmentação de páginas e menus por domënio ou subdomínio configurado nas settings.
+* Headless Ready (Resolve API): Endpoint universal (/api/v1/resolve?path=...) capaz de resolver páginas, posts e rotas de plugins para consumo em SPAs (Nuxt/Vue).
+
+### Extensibilidade para Desenvolvedores
+
+* Barramento Completo de Hooks:
+	* PHP Actions & Filters: addAction(), doAction(), addFilter(), applyFilters().
+	* Template Hooks: Injeção e substituição de blocos no Blade com &lt;x-hook name="..." /&gt;.
+	* Hooks Scanner CLI: Varredura estática de código com compilação de cache em bootstrap/cache/hooks.php.
+* Publication Types API: Registre novos tipos de conteúdo (cursos, produtos, portfólios) com injeção automática de eventos Eloquent e campos de busca.
+* Settings & Options API: Interface declarativa para criar campos (switches, cores, repeaters, selects) persistidos com suporte a tipagem e criptografia nativa.
+* AssetManager: Enfileiramento ordenado de scripts, folhas de estilo e códigos inline (addStyle, addScript).
+
+### Segurança & Auditoria
+
+* Controle de Acesso (RBAC): Papéis e permissóes granulares dinâmicos integrados com os Gates do Laravel (@permission, @isRole).
+* 2FA Híbrido: Autenticação em duas etapas via aplicativo autenticador (TOTP) ou código temporário por E-mail (OTP), com limitador de tentativas (Rate Limiter).
+* Trilha de Auditoria (Admin Logs): Registro automático de ações senísveis (criação, edição, exclusão, acessos com IP e User-Agent).
+* Proteção contra Bots: Suporte integrado ao Cloudflare Turnstile na tela de autenticação.
+* Avisos Administrativos Persistentes: Notificações segmentadas por papel (role) ou usuário, com histórico de dispensa.
+
+## Ferramentas CLI (Artisan)
+
+O Lunar Base traiz geradores de código específicos para acelerar o desenvolvimento de extensões:
+
+```bash
+# Criação estruturada de complementos
+php  artisan  plugin:create  {nome}
+php  artisan  theme:create  {nome}
+
+# Gestão de links e metadados
+php  artisan  plugin:link  {nome}
+php  artisan  theme:link  {nome}
+php  artisan  plugin:edit-tags
+php  artisan  theme:edit-tags
+
+# Varredura de Hooks e Utilitários
+php  artisan  hooks:scan  # Compila todos os hooks Blade e PHP para cache
+php  artisan  config:lang  {locale}  # Extrai termos configuráveis para JSON em /lang
+php  artisan  user:quick-create  # Criação rápida de usuários pelo terminal
+php  artisan  migrate:fake  # Marca migrations como executadas sem rodá-las
+```
 ---
-
-### Ecossistema de Temas & Plugins
-* **Repositório GitHub usado como Marketplace:** Instalação, ativação e atualização de plugins e temas com 1 clique direto no painel administrativo.
-* **Mais de 20 Plugins Prontos:** Ecossistema inicial com extensões funcionais prontas para uso.
-* **Extensibilidade Total:** Plugins e temas podem:
-  * Injetar novos blocos, ferramentas e botões na toolbar do editor em tempo de execução.
-  * Criar novos grupos e campos no painel de configurações.
-  * Injetar e substituir elementos em views Blade via **Sistema de Hooks** (`<x-hook />`).
-  * Adicionar itens e páginas no menu administrativo.
-  * Registrar **Rotas Dinâmicas** públicas em tempo de execução.
-  * Criar novos widgets para o Dashboard.
-  * Registrar shortcodes customizados.
-
----
-
-### Segurança
-* **Logs de Ações (Audit Trail):** Rastreamento e auditoria de ações executadas pelos usuários na admin.
-* **Controle de Acesso (Roles & Permissions):** Gestão de papéis e permissões, originalmente para administradores, editores, autores e assinantes, mas novos roles e permissions podem ser criados facilmente.
-* **2FA Nativo (TOTP):** Autenticação de dois fatores integrada.
-* **Proteção CAPTCHA:** Suporte nativo ao Cloudflare Turnstile para proteção contra bots no login.
-
----
-
-### Outros
-* **Atualização do Core em 1 Clique:** Atualização do núcleo do sistema diretamente pelo painel administrativo.
-* **Asset Pipeline Inteligente (AssetManager):** Enfileiramento de scripts e estilos (`addStyle`, `addScript`).
-* **Settings & Options API:**
-  * *Settings:* Criação declarativa de elementos como switches, selects, number, color picker e outros para as configurações na administração.
-  * *Options:* Armazenamento leve de chave/valor tipado (com casting automático para arrays e encriptação nativa).
-* **REST API Básica:** Endpoints prontos para consumo de dados por aplicações externas.
-* **Ajuda Contextual Integrada:** Tutoriais de uso acessíveis diretamente na interface administrativa.
-
----
-
-## Estrutura do Painel Administrativo
+## Módulos do Painel Administrativo
 
 | Módulo | Descrição |
 | :--- | :--- |
-| **Dashboard** | Visão geral e métricas do sistema. |
-| **Páginas** | Gerenciador de páginas estáticas e dinâmicas (com atalho para *Nova Página*). |
-| **Posts** | Gerenciador de publicações e artigos do blog (com atalho para *Novo Post*). |
-| **Mídia** | Biblioteca centralizada para upload e gestão de arquivos e imagens. |
-| **Taxonomias** | Categorização de conteúdos (com gestão de *Taxonomias* e *Termos*). |
-| **Usuários** | Gerenciamento de acessos e contas do sistema (com atalho para *Novo Usuário*). |
-| **Avisos** | Avisos persistentes na administração, direcionados a roles ou usuários. |
-| **Plugins** | Gerenciador de extensões ativas e acesso ao *Marketplace de Plugins*. |
-| **Temas** | Gerenciador de temas visuais e acesso ao *Marketplace de Temas*. |
-| **Configurações** | Painel para parametrização de variáveis globais do sistema. |
-| **Ferramentas** | Exportar ou exportar posta, páginas, taxonomias e outros. |
-| **Referências** | Documentação e auditoria técnica interna (*Hooks*, *Shortcodes*, *Permissões*, *Logs* e *Tutoriais*). |
+| **Dashboard** | Métricas gerais do sistema e suporte a widgets adicionados via API. |
+| **Páginas** | Gerenciador de páginas estáticas, dinâmicas e com namespace. |
+| **Posts** | Artigos do blog, agendamentos, autores e destaques fixados. |
+| **Mídia** | Biblioteca de uploads, ponto focal, gerenciamento de variantes e redimensionamento. |
+| **Taxonomias** | Categorias, tags e taxonomias personalizadas (hierárquicas ou únicas). |
+| **Usuários** | Contas, níveis de acesso (roles/permissions) e gestão de 2FA. |
+| **Avisos** | Sistema de comunicados persistentes direcionados no topo da administração. |
+| **Plugins** | Gerenciamento local e cathálogo de instalação direta via Marketplace. |
+| **Temas** | Galeria de temas com preview interativo e ativação com 1 clique. |
+| **Configurações** | Central declarativa de opções visuais, e-mail SMTP, multisite e leitura. |
+| **Ferramentas** | Importação e exportação de dados em lote no formato JSON. |
+| **Referências** | Guia interno de auditoria: Hooks PHP/Blade, Shortcodes, Permissões e Logs. |
+| **Atualização do Core** | Verificação de releases e atualização completa do núcleo com 1 clique. |
 
 ---
+## Licença
 
-Projeto desenvolvido por [Cau Guanabara](https://cauguanabara.com.br)
-
-Licenciado sob a [MIT License](https://mit-license.org/).
+Desenvolvido por Cau Guanabara (https://cauguanabar.com.br).
+Distribuído sob a licença MIT (https://mit-license.org/).
