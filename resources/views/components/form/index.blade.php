@@ -48,7 +48,7 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Intercepta o envio do formulário
+    // Intercepta o envio do formulário
     document.addEventListener('submit', (e) => {
         const form = e.target;
         if (!form.hasAttribute('data-prevent-double-submit')) return;
@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 2. Histórico do navegador (bfcache)
+    // Histórico do navegador (bfcache)
     window.addEventListener('pageshow', (e) => {
         if (e.persisted) {
             document.querySelectorAll('form[data-prevent-double-submit]').forEach(form => {

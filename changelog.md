@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.27.2] 2026-11-05
+
+### Fixed
+- Views de autenticação refeitas para lidar corretamente com os push
+
 ## [2.27.1] 2026-11-04
 
 ### Fixed
