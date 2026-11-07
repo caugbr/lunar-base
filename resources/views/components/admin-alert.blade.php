@@ -72,6 +72,13 @@ if ($message) {
             @endif
 
             <span class="alert-content">
+                <button type="button" class="transparent-btn alert-dismiss-btn dismiss-check">
+                    @php
+                    $closeText = $pNotice->close_text ?? 'Ok, ciente';
+                    @endphp
+                    <span class="close-txt">{{ $closeText }}</span>
+                    <x-lucide-check class="lucid-icon" />
+                </button>
                 {!! $pNotice->type === 'custom' ? nl2br($pNotice->message) : $pNotice->message !!}
                 {!! addLinkIcon($pNotice->message) !!}
             </span>
@@ -84,7 +91,7 @@ if ($message) {
                     @php
                     $closeText = $pNotice->close_text ?? 'Ok, ciente';
                     @endphp
-                    {{ $closeText }}
+                    <span class="close-txt">{{ $closeText }}</span>
                     <x-lucide-check class="lucid-icon" />
                 </button>
             </span>

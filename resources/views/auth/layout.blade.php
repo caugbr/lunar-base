@@ -11,6 +11,7 @@
     @endphp
     <link rel="stylesheet" href="{{ asset($varsFile) }}">
     <link rel="stylesheet" href="{{ asset('css/auth.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/admin/components/buttons.css') }}">
 
     <meta name="robots" content="noindex, nofollow">
 

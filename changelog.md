@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.27.3] 2026-11-06
+
+### Fixed
+- CSS de botões adicionado a views de autenticação - corrige a aparência do botão
+- Ajuste no CSS do botão Ok nos custom admin alerts
+- Margens do primeiro e último elementos no editor que extrapolavam foram corrigidas
+
 ## [2.27.2] 2026-11-05
 
 ### Fixed

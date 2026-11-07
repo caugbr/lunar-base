@@ -10,10 +10,6 @@ class AdminMenu
 
     /**
      * Adiciona uma nova seção (grupo) ao menu lateral.
-     *
-     * @param string   $title Título do grupo/seção (ex: 'Ensino', 'Ferramentas')
-     * @param array    $items Itens iniciais da seção (opcional)
-     * @param int|null $index Posição numérica (0 = topo, 1 = segundo, null = final)
      */
     public static function addSection(string $title, array $items = [], ?int $index = null): void
     {
@@ -28,16 +24,26 @@ class AdminMenu
      * Injeta um item de primeiro nível no menu lateral.
      *
      * @param array       $item       Dados do item (label, icon, route, active, etc.)
-     * @param string|null $afterLabel Label do item após o qual inserir. Se null, vai pro final da seção.
-     * @param int         $groupIndex Índice do grupo no menu (0 por padrão = grupo principal).
+     * @param string|null $afterLabel Label do item referência (ex: 'Plugins').
+     * @param int         $groupIndex Índice do grupo no menu (0 = principal).
+     * @param int         $steps      Deslocamento relativo (+1 = após, -1 = antes).
      */
-    public static function add(array $item, ?string $afterLabel = null, int $groupIndex = 0): void
+    public static function add(array $item, ?string $afterLabel = null, int $groupIndex = 0, int $steps = 1): void
     {
         self::$injectedItems[] = [
             'item'       => $item,
             'after'      => $afterLabel,
             'groupIndex' => $groupIndex,
+            'steps'      => $steps,
         ];
+    }
+
+    /**
+     * Atalho expressivo para inserir antes de um item de primeiro nível.
+     */
+    public static function addBefore(array $item, string $beforeLabel, int $groupIndex = 0): void
+    {
+        self::add($item, $beforeLabel, $groupIndex, steps: -1);
     }
 
     /**
@@ -45,15 +51,28 @@ class AdminMenu
      *
      * @param string      $parentLabel Label do item pai (ex: 'Logs', 'Páginas').
      * @param array       $subItem     Dados do sub-item (label, icon, route, active, etc.)
-     * @param string|null $afterLabel  Label do sub-item após o qual inserir. Se null, vai pro final.
+     * @param string|null $afterLabel  Label do sub-item referência.
+     * @param int         $steps       Deslocamento relativo (+1 = após, -1 = antes).
      */
-    public static function addSubItem(string $parentLabel, array $subItem, ?string $afterLabel = null): void
+    public static function addSubItem(string $parentLabel, array $subItem, ?string $afterLabel = null, int $steps = 1): void
     {
         if (!isset(self::$injectedSubItems[$parentLabel])) {
             self::$injectedSubItems[$parentLabel] = [];
         }
 
-        self::$injectedSubItems[$parentLabel][] = ['item' => $subItem, 'after' => $afterLabel];
+        self::$injectedSubItems[$parentLabel][] = [
+            'item'  => $subItem,
+            'after' => $afterLabel,
+            'steps' => $steps,
+        ];
+    }
+
+    /**
+     * Atalho expressivo para inserir antes de um sub-item existente.
+     */
+    public static function addSubItemBefore(string $parentLabel, array $subItem, string $beforeLabel): void
+    {
+        self::addSubItem($parentLabel, $subItem, $beforeLabel, steps: -1);
     }
 
     public static function getInjectedSections(): array

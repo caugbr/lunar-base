@@ -5,35 +5,71 @@
     'json' => null,
     'forceType' => null,
     'toolbarTop' => 100,
-    'minHeight' => 250
+    'minHeight' => 250,
+    'excludeTools' => null,       // Remove ferramentas específicas (ex: 'media_upload,media_library')
+    'tools' => null,              // Sobrescreve as ferramentas (string ou array)
+    'preset' => null,             // Atalhos prontos: 'email', 'simple'
+    'colors' => null,             // Sobrescreve as cores
+    'allowCustomColor' => null,   // bool
+    'groupInlineTools' => null,   // bool
+    'compactDropdowns' => null,   // bool
+    'stickyToolbar' => null,      // bool
 ])
 
 @php
     $isTiptap = $forceType === 'tiptap' || (!empty($json) || empty($value));
 
-    // Lê as configurações do grupo 'editor' via helper nativo
+    // 1. Lê as configurações globais do banco como base
     $editorSettings = settingsGroup('editor');
 
-    // Converte a string de cores separadas por vírgula em um array limpo
-    $rawPalette = $editorSettings['color_palette'] ?? '#0f172a, #64748b, #ef4444, #f97316, #eab308, #22c55e, #3b82f6, #a855f7, #ec4899';
-    $colorPalette = is_array($rawPalette)
-        ? $rawPalette
-        : array_values(array_filter(array_map('trim', explode(',', $rawPalette))));
+    // 2. Presets prontos para cenários comuns
+    $presets = [
+        'email' => [
+            'heading', 'bold', 'italic', 'underline', 'strike',
+            'text_color', 'link', 'bullet_list', 'ordered_list',
+            'blockquote', 'hr', 'history'
+        ],
+        'simple' => [
+            'bold', 'italic', 'underline', 'link',
+            'bullet_list', 'ordered_list', 'history'
+        ],
+    ];
 
-    // Garante que a lista de ferramentas ativas seja um array
-    $rawTools = $editorSettings['toolbar_tools'] ?? [];
+    // 3. Resolve a lista de ferramentas (Prop > Preset > Configuração Global)
+    if (!empty($tools)) {
+        $rawTools = $tools;
+    } elseif ($preset && isset($presets[$preset])) {
+        $rawTools = $presets[$preset];
+    } else {
+        $rawTools = $editorSettings['toolbar_tools'] ?? [];
+    }
+
     $toolbarTools = is_array($rawTools)
         ? $rawTools
         : (is_string($rawTools) ? array_values(array_filter(array_map('trim', explode(',', $rawTools)))) : []);
 
-    // Monta o pacote de configuração para o Vue
+    // 4. Se 'excludeTools' foi informado, remove apenas essas ferramentas da lista
+    if (!empty($excludeTools)) {
+        $excluded = is_array($excludeTools)
+            ? $excludeTools
+            : array_values(array_filter(array_map('trim', explode(',', $excludeTools))));
+        $toolbarTools = array_values(array_diff($toolbarTools, $excluded));
+    }
+
+    // 5. Paleta de cores (Prop > Global > Fallback)
+    $rawPalette = $colors ?? ($editorSettings['color_palette'] ?? '#0f172a, #64748b, #ef4444, #f97316, #eab308, #22c55e, #3b82f6, #a855f7, #ec4899');
+    $colorPalette = is_array($rawPalette)
+        ? $rawPalette
+        : array_values(array_filter(array_map('trim', explode(',', $rawPalette))));
+
+    // 6. Flags booleanas (Prop > Global > Default)
     $editorConfig = [
         'tools'              => $toolbarTools,
         'colors'             => $colorPalette,
-        'allow_custom_color' => (bool) ($editorSettings['allow_custom_color'] ?? true),
-        'group_inline_tools' => (bool) ($editorSettings['group_inline_tools'] ?? true),
-        'compact_dropdowns'  => (bool) ($editorSettings['compact_dropdowns'] ?? true),
-        'sticky_toolbar'     => (bool) ($editorSettings['sticky_toolbar'] ?? true),
+        'allow_custom_color' => (bool) ($allowCustomColor ?? ($editorSettings['allow_custom_color'] ?? true)),
+        'group_inline_tools' => (bool) ($groupInlineTools ?? ($editorSettings['group_inline_tools'] ?? true)),
+        'compact_dropdowns'  => (bool) ($compactDropdowns ?? ($editorSettings['compact_dropdowns'] ?? true)),
+        'sticky_toolbar'     => (bool) ($stickyToolbar    ?? ($editorSettings['sticky_toolbar'] ?? true)),
     ];
 
     $editorConfigJson = json_encode($editorConfig);

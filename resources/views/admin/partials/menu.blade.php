@@ -96,24 +96,57 @@
         }
 
         // Helper: insere itens por posição 'after'
+        // $injectIntoItems = function(array $baseItems, array $injections) {
+        //     $items = $baseItems;
+
+        //     foreach ($injections as $injection) {
+        //         $afterLabel = $injection['after'];
+        //         $newItem = $injection['item'];
+
+        //         if ($afterLabel !== null) {
+        //             $index = collect($items)->search(function($item) use ($afterLabel) {
+        //                 return strtolower($item['label'] ?? '') === strtolower($afterLabel);
+        //             });
+
+        //             if ($index !== false) {
+        //                 array_splice($items, $index + 1, 0, [$newItem]);
+        //                 continue;
+        //             }
+        //         }
+
+        //         $items[] = $newItem;
+        //     }
+
+        //     return $items;
+        // };
+        // Helper: insere itens por posição relativa (após ou antes, com clamping seguro)
         $injectIntoItems = function(array $baseItems, array $injections) {
             $items = $baseItems;
 
             foreach ($injections as $injection) {
-                $afterLabel = $injection['after'];
-                $newItem = $injection['item'];
+                $refLabel = $injection['after'];
+                $steps    = (int) ($injection['steps'] ?? 1);
+                $newItem  = $injection['item'];
 
-                if ($afterLabel !== null) {
-                    $index = collect($items)->search(function($item) use ($afterLabel) {
-                        return strtolower($item['label'] ?? '') === strtolower($afterLabel);
+                if ($refLabel !== null) {
+                    $index = collect($items)->search(function($item) use ($refLabel) {
+                        return strtolower($item['label'] ?? '') === strtolower($refLabel);
                     });
 
                     if ($index !== false) {
-                        array_splice($items, $index + 1, 0, [$newItem]);
+                        // Se steps >= 0: insere após (steps = 1 -> $index + 1)
+                        // Se steps < 0:  insere antes (steps = -1 -> $index + 0 = antes do item)
+                        $insertAt = $steps >= 0 ? ($index + $steps) : ($index + $steps + 1);
+
+                        // Garante que o índice nunca seja menor que 0 ou maior que o total de itens
+                        $insertAt = max(0, min(count($items), $insertAt));
+
+                        array_splice($items, $insertAt, 0, [$newItem]);
                         continue;
                     }
                 }
 
+                // Se não informou referência ou ela não foi encontrada, joga para o fim
                 $items[] = $newItem;
             }
 
