@@ -14,10 +14,20 @@
     border: 1px solid var(--color-success);
 }
 
+.admin-alert-success .close-txt {
+    background: var(--color-success-bg) !important;
+    color: var(--color-success-text) !important;
+}
+
 .admin-alert-error {
     background: var(--color-danger-bg);
     color: var(--color-danger-text);
     border: 1px solid var(--color-danger);
+}
+
+.admin-alert-error .close-txt {
+    background: var(--color-danger-bg) !important;
+    color: var(--color-danger-text) !important;
 }
 
 .admin-alert-info {
@@ -26,10 +36,20 @@
     border: 1px solid var(--color-info);
 }
 
+.admin-alert-info .close-txt {
+    background: var(--color-info-bg) !important;
+    color: var(--color-info-text) !important;
+}
+
 .admin-alert-warning {
     background: var(--color-warning-bg);
     color: var(--color-warning-text);
     border: 1px solid var(--color-warning);
+}
+
+.admin-alert-warning .close-txt {
+    background: var(--color-warning-bg) !important;
+    color: var(--color-warning-text) !important;
 }
 
 .admin-alert .link-icon {
@@ -125,10 +145,47 @@
     }
     .alert-content .dismiss-check {
         display: inline-block;
-    padding: 5px;
-    border-radius: 8px;
-    border: 1px solid var(--box-color, #3b82f6);
-    background-color: color-mix(in srgb, var(--box-color, #3b82f6) 10%, white);
+        padding: 5px;
+        border-radius: 8px;
+        border: 1px solid var(--box-color, #3b82f6);
+        background-color: color-mix(in srgb, var(--box-color, #3b82f6) 10%, white);
+    }
+
+    .admin-alert-success .alert-content .dismiss-check .close-txt {
+        background: transparent !important;
+    }
+
+    .admin-alert-error .alert-content .dismiss-check .close-txt {
+        background: transparent !important;
+    }
+
+    .admin-alert-info .alert-content .dismiss-check .close-txt {
+        background: transparent !important;
+    }
+
+    .admin-alert-warning .alert-content .dismiss-check .close-txt {
+        background: transparent !important;
+    }
+
+
+    .admin-alert-success .alert-content .dismiss-check {
+        background-color: var(--color-success-bg) !important;
+        color: var(--color-success-text) !important;
+    }
+
+    .admin-alert-error .alert-content .dismiss-check {
+        background-color: var(--color-danger-bg) !important;
+        color: var(--color-danger-text) !important;
+    }
+
+    .admin-alert-info .alert-content .dismiss-check {
+        background-color: var(--color-info-bg) !important;
+        color: var(--color-info-text) !important;
+    }
+
+    .admin-alert-warning .alert-content .dismiss-check {
+        background-color: var(--color-warning-bg) !important;
+        color: var(--color-warning-text) !important;
     }
 
     .admin-alert .dismiss-x-check .dismiss-x,

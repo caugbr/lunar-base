@@ -42,26 +42,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Alpine data para thumbnail
-// function thumbnailManager(initial = {}) {
-//     return {
-//         thumbnailId: initial.id || null,
-//         thumbnailUrl: initial.url || '',
-
-//         openSelector() {
-//             openGridModal('thumbnail', false, initial.id || null);
-//         },
-
-//         setMedia(media) {
-//             this.thumbnailId = media.id;
-//             this.thumbnailUrl = media.thumbnail_url || media.url;
-//         },
-
-//         clearMedia() {
-//             this.thumbnailId = null;
-//             this.thumbnailUrl = '';
-//         }
-//     }
-// }
 function thumbnailManager(initial = {}) {
     return {
         thumbnailId: initial.id || null,

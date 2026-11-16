@@ -9,7 +9,6 @@
                    id="{{ $id }}"
                    class="password-input"
                    autocomplete="new-password"
-                   readonly
                    {{ $required ? 'required' : '' }}>
             <button type="button" class="toggle-password" data-target="{{ $id }}">
                 <x-lucide-eye class="lucid-icon" />
@@ -26,8 +25,7 @@
                    name="{{ $name }}_confirmation"
                    id="{{ $id }}_confirmation"
                    class="password-input"
-                   autocomplete="new-password"
-                   readonly>
+                   autocomplete="new-password">
             <button type="button" class="toggle-password" data-target="{{ $id }}_confirmation">
                 <x-lucide-eye class="lucid-icon" />
             </button>
@@ -39,35 +37,26 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Configurar todos os campos de senha
-    document.querySelectorAll('.password-input[readonly]').forEach(input => {
-        input.addEventListener('focus', function() {
-            setTimeout(() => this.removeAttribute('readonly'), 100);
-        });
-        input.addEventListener('blur', function() {
-            this.setAttribute('readonly', true);
-        });
-    });
-
-    // Configurar botões de visualização
+    // Configurar botões de visualização (Segurar para ver)
     document.querySelectorAll('.toggle-password').forEach(button => {
         const targetId = button.dataset.target;
         const input = document.getElementById(targetId);
 
+        if (!input) return;
+
         const showPassword = () => input.setAttribute('type', 'text');
         const hidePassword = () => input.setAttribute('type', 'password');
 
-        button.addEventListener('mousedown', (e) => {
+        // Usando pointerdown/pointerup (funciona para mouse e toque sem conflito de foco)
+        button.addEventListener('pointerdown', (e) => {
+            // Opcional: se quiser evitar que o botão roube o foco do input ao segurar
             e.preventDefault();
             showPassword();
         });
-        button.addEventListener('mouseup', hidePassword);
-        button.addEventListener('mouseleave', hidePassword);
-        button.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            showPassword();
-        });
-        button.addEventListener('touchend', hidePassword);
+
+        button.addEventListener('pointerup', hidePassword);
+        button.addEventListener('pointerleave', hidePassword);
+        button.addEventListener('pointercancel', hidePassword);
     });
 
     // Força da senha (apenas no campo principal)

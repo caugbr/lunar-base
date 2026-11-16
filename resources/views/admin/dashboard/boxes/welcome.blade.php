@@ -77,25 +77,25 @@
             <span>Temas</span>
         </a>
 
-        <a href="/tutorials/index.html" class="welcome-action-btn" target="_blank">
+        {{-- <a href="/tutorials/index.html" class="welcome-action-btn" target="_blank">
             <x-lucide-external-link class="lucid-icon" />
             <span>Tutoriais</span>
-        </a>
+        </a> --}}
 
-        {{-- <a href="{{ route('admin.pages.index') }}" class="welcome-action-btn">
+        <a href="{{ route('admin.pages.index') }}" class="welcome-action-btn">
             <x-lucide-file class="lucid-icon" />
             <span>Páginas</span>
-        </a> --}}
+        </a>
 
-        {{-- <a href="{{ route('admin.posts.index') }}" class="welcome-action-btn">
+        <a href="{{ route('admin.posts.index') }}" class="welcome-action-btn">
             <x-lucide-files class="lucid-icon" />
             <span>Posts</span>
-        </a> --}}
+        </a>
 
-        {{-- <a href="{{ route('admin.media.index') }}" class="welcome-action-btn">
+        <a href="{{ route('admin.media.index') }}" class="welcome-action-btn">
             <x-lucide-image class="lucid-icon" />
             <span>Mídia</span>
-        </a> --}}
+        </a>
     </div>
     @endpermission
 
@@ -156,9 +156,10 @@
 }
 
 .welcome-info {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 1.5rem;
     padding: 1rem;
     background: var(--color-bg-dark);
     border-radius: 8px;
@@ -201,7 +202,7 @@
 
 .welcome-actions {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 0.75rem;
 }
 

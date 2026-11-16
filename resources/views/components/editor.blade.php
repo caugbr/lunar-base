@@ -8,12 +8,12 @@
     'minHeight' => 250,
     'excludeTools' => null,       // Remove ferramentas específicas (ex: 'media_upload,media_library')
     'tools' => null,              // Sobrescreve as ferramentas (string ou array)
-    'preset' => null,             // Atalhos prontos: 'email', 'simple'
     'colors' => null,             // Sobrescreve as cores
     'allowCustomColor' => null,   // bool
     'groupInlineTools' => null,   // bool
     'compactDropdowns' => null,   // bool
     'stickyToolbar' => null,      // bool
+    'loadModals' => null          // bool
 ])
 
 @php
@@ -22,24 +22,9 @@
     // 1. Lê as configurações globais do banco como base
     $editorSettings = settingsGroup('editor');
 
-    // 2. Presets prontos para cenários comuns
-    $presets = [
-        'email' => [
-            'heading', 'bold', 'italic', 'underline', 'strike',
-            'text_color', 'link', 'bullet_list', 'ordered_list',
-            'blockquote', 'hr', 'history'
-        ],
-        'simple' => [
-            'bold', 'italic', 'underline', 'link',
-            'bullet_list', 'ordered_list', 'history'
-        ],
-    ];
-
     // 3. Resolve a lista de ferramentas (Prop > Preset > Configuração Global)
     if (!empty($tools)) {
         $rawTools = $tools;
-    } elseif ($preset && isset($presets[$preset])) {
-        $rawTools = $presets[$preset];
     } else {
         $rawTools = $editorSettings['toolbar_tools'] ?? [];
     }
@@ -55,6 +40,11 @@
             : array_values(array_filter(array_map('trim', explode(',', $excludeTools))));
         $toolbarTools = array_values(array_diff($toolbarTools, $excluded));
     }
+
+    $hasMedia = (
+        in_array("media_upload", $toolbarTools) ||
+        in_array("media_library", $toolbarTools)
+    );
 
     // 5. Paleta de cores (Prop > Global > Fallback)
     $rawPalette = $colors ?? ($editorSettings['color_palette'] ?? '#0f172a, #64748b, #ef4444, #f97316, #eab308, #22c55e, #3b82f6, #a855f7, #ec4899');
@@ -224,3 +214,10 @@
 
     <x-hook name="admin.editor_scripts" desc="Injeção de scripts para o editor Tiptap" />
 </div>
+
+@if(!empty($loadModals))
+@once
+<x-media.grid-modal />
+<x-media.upload-modal id="mainUploader" folder="uploads" accept="image/*,application/pdf" :max-size="10240" />
+@endonce
+@endif

@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.28.0] 2026-11-15
+
+### Changed
+- Componente editor agora pode carregar os modais de mídia
+- Preserve search agora aceita um atributo no form para não agir em determinadas páginas
+- URLs 404 na admin, para logados, agora levam para o dashboard com um aviso
+
+### Fixed
+- Componente <x-password-field> não usa mais readonly para evitar sugestões - bugava no celular
+
 ## [2.27.3] 2026-11-06
 
 ### Fixed

@@ -3,7 +3,10 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use Illuminate\Session\TokenMismatchException;
+// use Illuminate\Session\TokenMismatchException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Illuminate\Http\Request;
+
 
 $app = Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -45,6 +48,26 @@ $app = Application::configure(basePath: dirname(__DIR__))
         //     return redirect()->route('login')
         //         ->with('warning', 'Sua sessão expirou por inatividade. Faça login novamente.');
         // });
+
+        // Intercepta qualquer 404 (página não encontrada)
+        $exceptions->render(function (NotFoundHttpException $e, Request $request) {
+
+            // Verifica se a URL começa com 'admin' ou 'admin/*'
+            if ($request->is('admin', 'admin/*')) {
+
+                // Se o usuário estiver autenticado:
+                if (auth()->check()) {
+                    return redirect()
+                        ->to('/admin/dashboard') // ou route('admin.dashboard')
+                        ->with('warning', "A página buscada ('/{$request->path()}') não existe!");
+                }
+
+                // Se NÃO estiver logado: deixa seguir o fluxo normal do 404
+                return null;
+            }
+
+            return null;
+        });
     })->create();
 
 // === CARREGAMENTO PRECOCE DO .ENV ===

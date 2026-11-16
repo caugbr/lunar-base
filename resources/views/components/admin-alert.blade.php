@@ -54,7 +54,7 @@ if ($message) {
     @foreach($persistentNotices as $pNotice)
         @php
         $color = '';
-        if ($pNotice->color ?? null && $pNotice->color !== '') {
+        if ($pNotice->type === 'custom' && $pNotice->color ?? null && $pNotice->color !== '') {
             $color = " style=\"--box-color: {$pNotice->color}\"";
         }
         @endphp

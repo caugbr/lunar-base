@@ -34,7 +34,7 @@ class AdminMenu
             'item'       => $item,
             'after'      => $afterLabel,
             'groupIndex' => $groupIndex,
-            'steps'      => $steps,
+            'steps'      => $steps ? ($steps < 0 ? -1 : $steps) : 1,
         ];
     }
 
@@ -63,7 +63,7 @@ class AdminMenu
         self::$injectedSubItems[$parentLabel][] = [
             'item'  => $subItem,
             'after' => $afterLabel,
-            'steps' => $steps,
+            'steps' => $steps ? ($steps < 0 ? -1 : $steps) : 1,
         ];
     }
 

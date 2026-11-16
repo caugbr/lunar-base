@@ -21,8 +21,10 @@
     ])
 </div>
 
+@once
 <x-media.grid-modal />
 <x-media.upload-modal id="mainUploader" folder="uploads" accept="image/*,application/pdf" :max-size="10240" />
+@endonce
 @endsection
 
 @push('styles')

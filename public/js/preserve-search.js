@@ -22,6 +22,10 @@
     if (params.toString()) {
         document.addEventListener('DOMContentLoaded', () => {
             const form = document.querySelector('.admin-filters');
+            if (form.hasAttribute('data-ignore-preserve')) {
+                localStorage.removeItem(key);
+                return;
+            }
             if (form) {
                 form.classList.add('searched');
                 const elems = form.querySelectorAll('input, select, textarea');
